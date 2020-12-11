@@ -17,7 +17,7 @@ import SCN2A_nb_helper_actinact as nb
 import genSimData_Na12ShortenTime as gsd
 import time
 import multiprocessing
-from deap import algorithms, base, creator, tools
+#from deap import algorithms, base, creator, tools
 import random
 import csv
 
@@ -177,29 +177,84 @@ def scale_params(down, params):
     Return: list of scaled param values
     '''
     #values to scale by
-    scale_by = [0.02,7.2,7,0.4,0.124,0.003,-30,-85,-45,-85,0.001,2]
+    #scale_by = [0.02,7.2,7,0.4,0.124,0.003,-30,-85,-45,-85,0.001,2]
+    scale_by = {'sh' : 8, 
+                'gbar' : 0.010,
+                'tha' : -30,
+                'qa' : 7.2,
+                'Ra' : 0.4,
+                'Rb' : 0.124,
+                'thi1' : -45,
+                'thi2' : -45,
+                'qd' : 0.5,
+                'qg' : 1.5,
+                'q10' : 2,
+                'Rg' : 0.01,
+                'Rd' : 0.03,
+                'thinf' : -45,
+                'qinf' : 7,
+                'vhalfs' : -60,
+                'a0s' : 0.0003,
+                'zetas' : 12,
+                'gms' : 0.2,
+                'vvh' : -58,
+                'vvs' : 2}
+
     #variable type (k = kinetic, v = voltage)
-    types = ['k','k','k','k','k','k','v','v','v','v','k','k'] 
-    
-    bounds = []
-    for i in range(len(scale_by)):
-        val = scale_by[i]
-        val_type = types[i] 
-        if val_type == 'k': #scale kinetic param 
-            bounds.append((val/25, val*5))
-        elif val_type == 'v': #scale voltage param
-            bounds.append((val-20, val+20))
-            
+    #types = ['k','k','k','k','k','k','v','v','v','v','k','k']     
+    types =    {'sh' : 'a', 
+                'gbar' : 'a',
+                'tha' : 'a',
+                'qa' : 'm',
+                'Ra' : 'a',
+                'Rb' : 'a',
+                'thi1' : 'a',
+                'thi2' : 'a',
+                'qd' : 'm',
+                'qg' : 'm',
+                'q10' : 'a',
+                'Rg' : 'a',
+                'Rd' : 'a',
+                'thinf' : 'a',
+                'qinf' : 'm',
+                'vhalfs' : 'a',
+                'a0s' : 'm',
+                'zetas' : 'a',
+                'gms' : 'a',
+                'vvh' : 'a',
+                'vvs' : 'm'}
+
+    scaled_params = {}
+    for k in params.keys():
+        val = scale_by[k]
+        val_type = types[k] 
+        if val_type == 'm': #scale kinetic param with mul-div
+            upper = val*40
+            lower = val/40
+            #bounds.append((val/25, val*5))
+        elif val_type == 'a': #scale voltage param with add-subtract
+            upper = val + 1.5* val
+            lower = val - 1.5* val
+            #bounds.append((val-20, val+20))
+        if down:
+            scaled_params[k] = (params[k] - lower)/(upper - lower)
+        else:
+            scaled_params[k] = (params[k]*(upper - lower) + lower)
+    return scaled_params
+    '''        
     if down:
         return [(params[i]-bounds[i][0])/(bounds[i][1]-bounds[i][0]) for i in range(len(params))]
     return [params[i]*(bounds[i][1]-bounds[i][0]) + bounds[i][0] for i in range(len(params))]
+    '''
+
+
 
 
 def change_params(new_params_scaled):
     '''
     Change params on Na12mut channel in NEURON.
     ---
-    Param new_params_scaled: list of scaled param values
+    Param new_params_scaled: dictionary of scaled param values
     '''
     # params_orig = [0.02,7.2,7,0.4,0.124,0.03,-30,-45,-45,-45,0.01,2]
     #scale params up
@@ -208,6 +263,52 @@ def change_params(new_params_scaled):
     currh = gsd.activationNa12("geth")
     
     #change values of params
+    for k in new_params.keys():
+        new_val = new_params[k]
+        if k == 'sh':
+            currh.sh_na12mut = new_val
+        elif k == 'gbar':
+            currh.gbar_na12mut = new_val
+        elif k == 'tha':
+            currh.tha_na12mut = new_val
+        elif k == 'qa':
+            currh.qa_na12mut = new_val
+        elif k == 'Ra':
+            currh.Ra_na12mut = new_val
+        elif k == 'Rb':
+            currh.Rb_na12mut = new_val
+        elif k == 'thi1':
+            currh.thi1_na12mut = new_val
+        elif k == 'thi2':
+            currh.thi2_na12mut = new_val
+        elif k == 'qd':
+            currh.qd_na12mut = new_val
+        elif k == 'qg':
+            currh.qg_na12mut = new_val
+        elif k == 'q10':
+            currh.q10_na12mut = new_val
+        elif k == 'Rg':
+            currh.Rg_na12mut = new_val
+        elif k == 'Rd':
+            currh.Rd_na12mut = new_val
+        elif k == 'thinf':
+            currh.thinf_na12mut = new_val
+        elif k == 'qinf':
+            currh.qinf_na12mut = new_val
+        elif k == 'vhalfs':
+            currh.vhalfs_na12mut = new_val
+        elif k == 'a0s':
+            currh.a0s_na12mut = new_val
+        elif k == 'zetas':
+            currh.zetas_na12mut = new_val
+        elif k == 'gms':
+            currh.gms_na12mut = new_val
+        elif k == 'vvh':
+            currh.vvh_na12mut = new_val
+        elif k == 'vvs':
+            currh.vvs_na12mut = new_val
+
+    '''
     currh.mmin_na12mut = new_params[0] 
     currh.qa_na12mut = new_params[1] 
     currh.qinf_na12mut = new_params[2] 
@@ -220,6 +321,7 @@ def change_params(new_params_scaled):
     currh.thi2_na12mut = new_params[9]
     currh.Rg_na12mut = new_params[10]
     currh.q10_na12mut = new_params[11]
+    '''
     return
  
 
