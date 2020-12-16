@@ -17,15 +17,81 @@ import SCN2A_nb_helper_actinact as nb
 import genSimData_Na12ShortenTime as gsd
 import time
 import multiprocessing
-#from deap import algorithms, base, creator, tools
+from deap import algorithms, base, creator, tools
 import random
 import csv
 
+nparams = 21
+scale_by = {'sh' : 8, 
+            'gbar' : 0.010,
+            'tha' : -30,
+            'qa' : 7.2,
+            'Ra' : 0.4,
+            'Rb' : 0.124,
+            'thi1' : -45,
+            'thi2' : -45,
+            'qd' : 0.5,
+            'qg' : 1.5,
+            'q10' : 2,
+            'Rg' : 0.01,
+            'Rd' : 0.03,
+            'thinf' : -45,
+            'qinf' : 7,
+            'vhalfs' : -60,
+            'a0s' : 0.0003,
+            'zetas' : 12,
+            'gms' : 0.2,
+            'vvh' : -58,
+            'vvs' : 2}
 
+#variable type (k = kinetic, v = voltage)
+#types = ['k','k','k','k','k','k','v','v','v','v','k','k']     
+types =    {'sh' : 'a', 
+            'gbar' : 'a',
+            'tha' : 'a',
+            'qa' : 'm',
+            'Ra' : 'a',
+            'Rb' : 'a',
+            'thi1' : 'a',
+            'thi2' : 'a',
+            'qd' : 'm',
+            'qg' : 'm',
+            'q10' : 'a',
+            'Rg' : 'a',
+            'Rd' : 'a',
+            'thinf' : 'a',
+            'qinf' : 'm',
+            'vhalfs' : 'a',
+            'a0s' : 'm',
+            'zetas' : 'a',
+            'gms' : 'a',
+            'vvh' : 'a',
+            'vvs' : 'm'}
+inds =    {'sh' : 0, 
+            'gbar' : 1,
+            'tha' : 2,
+            'qa' : 3,
+            'Ra' : 4,
+            'Rb' : 5,
+            'thi1' : 6,
+            'thi2' : 7,
+            'qd' : 8,
+            'qg' : 9,
+            'q10' : 10,
+            'Rg' : 11,
+            'Rd' : 12,
+            'thinf' : 13,
+            'qinf' : 14,
+            'vhalfs' : 15,
+            'a0s' : 16,
+            'zetas' : 17,
+            'gms' : 18,
+            'vvh' : 19,
+            'vvs' : 20}
 ###############
 ## Read Data ##
 ###############
-
+raw_data = "./Data/NW_all_raw_data.csv"
 def read_all_raw_data():
     '''
     Reads data in from CSV. 
@@ -36,7 +102,7 @@ def read_all_raw_data():
     '''
     #open file
     lines = []
-    with open("./all_raw_data.csv", 'r') as csv_file:
+    with open(raw_data, 'r') as csv_file:
         lines = [line.split(",") for line in csv_file]
         
     #get all experiment names and make dictionary
@@ -121,7 +187,7 @@ def get_mutant_list(exp, real_data=None):
     
     #read raw data file to get mutants
     lines = []
-    with open("./all_raw_data.csv", 'r') as csv_file:
+    with open(raw_data, 'r') as csv_file:
         lines = [line.split(",") for line in csv_file]
     experiments = lines[0]
     mutants = lines[1]
@@ -178,68 +244,23 @@ def scale_params(down, params):
     '''
     #values to scale by
     #scale_by = [0.02,7.2,7,0.4,0.124,0.003,-30,-85,-45,-85,0.001,2]
-    scale_by = {'sh' : 8, 
-                'gbar' : 0.010,
-                'tha' : -30,
-                'qa' : 7.2,
-                'Ra' : 0.4,
-                'Rb' : 0.124,
-                'thi1' : -45,
-                'thi2' : -45,
-                'qd' : 0.5,
-                'qg' : 1.5,
-                'q10' : 2,
-                'Rg' : 0.01,
-                'Rd' : 0.03,
-                'thinf' : -45,
-                'qinf' : 7,
-                'vhalfs' : -60,
-                'a0s' : 0.0003,
-                'zetas' : 12,
-                'gms' : 0.2,
-                'vvh' : -58,
-                'vvs' : 2}
-
-    #variable type (k = kinetic, v = voltage)
-    #types = ['k','k','k','k','k','k','v','v','v','v','k','k']     
-    types =    {'sh' : 'a', 
-                'gbar' : 'a',
-                'tha' : 'a',
-                'qa' : 'm',
-                'Ra' : 'a',
-                'Rb' : 'a',
-                'thi1' : 'a',
-                'thi2' : 'a',
-                'qd' : 'm',
-                'qg' : 'm',
-                'q10' : 'a',
-                'Rg' : 'a',
-                'Rd' : 'a',
-                'thinf' : 'a',
-                'qinf' : 'm',
-                'vhalfs' : 'a',
-                'a0s' : 'm',
-                'zetas' : 'a',
-                'gms' : 'a',
-                'vvh' : 'a',
-                'vvs' : 'm'}
 
     scaled_params = {}
-    for k in params.keys():
-        val = scale_by[k]
-        val_type = types[k] 
-        if val_type == 'm': #scale kinetic param with mul-div
-            upper = val*40
-            lower = val/40
+    for curr_p in inds.keys():
+        base_val = scale_by[curr_p]
+        curr_val_type = types[curr_p] 
+        if curr_val_type == 'm': #scale kinetic param with mul-div
+            upper = base_val*40
+            lower = base_val/40
             #bounds.append((val/25, val*5))
-        elif val_type == 'a': #scale voltage param with add-subtract
-            upper = val + 1.5* val
-            lower = val - 1.5* val
+        elif curr_val_type == 'a': #scale voltage param with add-subtract
+            upper = base_val + 1.5* base_val
+            lower = base_val - 1.5* base_val
             #bounds.append((val-20, val+20))
         if down:
-            scaled_params[k] = (params[k] - lower)/(upper - lower)
+            scaled_params[inds[curr_p]] = (base_val - lower)/(upper - lower)
         else:
-            scaled_params[k] = (params[k]*(upper - lower) + lower)
+            scaled_params[inds[curr_p]] = (params[inds[curr_p]]*(upper - lower) + lower)
     return scaled_params
     '''        
     if down:
@@ -329,7 +350,7 @@ def change_params(new_params_scaled):
 ## Optimization ##
 ##################
 
-def genetic_alg(target_data, to_score=["inact", "act", "recov", "tau0"], pop_size=300, num_gens=50):
+def genetic_alg(target_data, to_score=["inact", "act", "recov", "tau0"], pop_size=10, num_gens=50):
     '''
     Runs DEAP genetic algorithm to optimize parameters of channel such that simulated data fits real data.
     ---
@@ -342,6 +363,7 @@ def genetic_alg(target_data, to_score=["inact", "act", "recov", "tau0"], pop_siz
     Return ga_stats: statistics of algorithm run
     Return hof: hall of fame object containing best individual (ie. best parameters)
     '''
+    global pool
     #set global variables for caculating error
     global global_target_data
     global global_to_score
@@ -357,7 +379,7 @@ def genetic_alg(target_data, to_score=["inact", "act", "recov", "tau0"], pop_siz
     #randomly selected scaled param values between 0 and 1
     toolbox.register("attr_bool", random.uniform, 0, 1)
     #create individials as array of randomly selected scaled param values
-    toolbox.register("individual", tools.initRepeat, creator.Individual, toolbox.attr_bool, 12)
+    toolbox.register("individual", tools.initRepeat, creator.Individual, toolbox.attr_bool, nparams)
     toolbox.register("population", tools.initRepeat, list, toolbox.individual)
 
     #use calc_rmse to score individuals
@@ -367,8 +389,8 @@ def genetic_alg(target_data, to_score=["inact", "act", "recov", "tau0"], pop_siz
     toolbox.register("select", tools.selTournament, tournsize=3)
     
     #allow multiprocessing
-    pool = multiprocessing.Pool()
-    toolbox.register("map", pool.map)
+    
+    #toolbox.register("map", pool.map)
 
     pop = toolbox.population(n=pop_size) 
     #store best individual
@@ -721,10 +743,13 @@ def main():
     '''
     refits = [('M1879 T and R1626Q', 'NaV12 adult R1626Q'),
               ('M1879 T and R1626Q', 'NaV12 adult M1879T')]
+    refits = [('M1879 T and R1626Q', 'NaV12 adult R1626Q')]
     
     for exp, mut in refits:
         opt_na_pipeline(exp, mut)
 
 
 if __name__ == '__main__':
+   #global pool 
+   #pool = multiprocessing.Pool(processes=4)
    main()
