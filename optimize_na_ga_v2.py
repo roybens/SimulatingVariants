@@ -23,7 +23,13 @@ import csv
 
 raw_data = "./Data/NW_all_raw_data.csv"
 plot_flg = True
-
+new_params_flg = True
+if new_params_flg:
+    nparams = 24
+else:
+    nparams = 12
+scale_voltage = 1
+scale_fact = 1.1
 ###############
 ## Read Data ##
 ###############
@@ -288,27 +294,34 @@ def change_params(new_params_scaled):
     ---
     Param new_params_scaled: list of scaled param values
     '''
+    
+    #use old params
     # params_orig = [0.02,7.2,7,0.4,0.124,0.03,-30,-45,-45,-45,0.01,2]
     #scale params up
-    new_params = scale_params(False, new_params_scaled)
-    #get NEURON h
-    currh = gsd.activationNa12("geth")
-    #change values of params
-    currh.mmin_na12mut = new_params[0]
-    currh.qa_na12mut = new_params[1]
-    currh.qinf_na12mut = new_params[2]
-    currh.Ra_na12mut = new_params[3]
-    currh.Rb_na12mut = new_params[4]
-    currh.Rd_na12mut = new_params[5]
-    currh.tha_na12mut = new_params[6]
-    currh.thi1_na12mut = new_params[7]
-    currh.thinf_na12mut = new_params[8]
-    currh.thi2_na12mut = new_params[9]
-    currh.Rg_na12mut = new_params[10]
-    currh.q10_na12mut = new_params[11]
+    if new_params_flg:
+        #use new params
+        new_param_dict = scale_params_dict(False, new_params_scaled)
+        change_params_dict(new_param_dict)
+    else:
+        new_params = scale_params(False, new_params_scaled)
+        #get NEURON h
+        currh = gsd.activationNa12("geth")
+        #change values of params
+        currh.mmin_na12mut = new_params[0]
+        currh.qa_na12mut = new_params[1]
+        currh.qinf_na12mut = new_params[2]
+        currh.Ra_na12mut = new_params[3]
+        currh.Rb_na12mut = new_params[4]
+        currh.Rd_na12mut = new_params[5]
+        currh.tha_na12mut = new_params[6]
+        currh.thi1_na12mut = new_params[7]
+        currh.thinf_na12mut = new_params[8]
+        currh.thi2_na12mut = new_params[9]
+        currh.Rg_na12mut = new_params[10]
+        currh.q10_na12mut = new_params[11]
     return
 
-def scale_params_dict(down, params_dict):
+def scale_params_dict(down, params_arr):
     '''
     Scale parameters between 0 and 1.
     ---
@@ -317,8 +330,8 @@ def scale_params_dict(down, params_dict):
 
     Return: list of scaled param values
     '''
-    #values to scale by
-    scale_by = {
+    #original values of the paramter
+    bsae_value = {
     'Ena_na12mut': 55,
     'Rd_na12mut': .03,
     'Rg_na12mut': .01,
@@ -371,29 +384,57 @@ def scale_params_dict(down, params_dict):
     'vhalfs_na12mut': 'p',
     'zetas_na12mut': 'p'
     }
-
-
+    inds = {
+    'Ena_na12mut': 0,
+    'Rd_na12mut': 1,
+    'Rg_na12mut': 2,
+    'Rb_na12mut': 3,
+    'Ra_na12mut': 4,
+    'a0s_na12mut': 5,
+    'gms_na12mut': 6,
+    'hmin_na12mut': 7,
+    'mmin_na12mut': 8,
+    'qinf_na12mut': 9,
+    'q10_na12mut': 10,
+    'qg_na12mut': 11,
+    'qd_na12mut': 12,
+    'qa_na12mut': 13,
+    'smax_na12mut': 14,
+    'sh_na12mut': 15,
+    'thinf_na12mut': 16,
+    'thi2_na12mut': 17,
+    'thi1_na12mut': 18,
+    'tha_na12mut': 19,
+    'vvs_na12mut': 20,
+    'vvh_na12mut': 21,
+    'vhalfs_na12mut': 22,
+    'zetas_na12mut': 23
+    }
+    params_dict = {}
     bounds = {}
-    for k, v in scale_by.items():
+    for k, v in bsae_value.items():
+        print(f'k is {k} inds[k] is {inds[k]}')
+        params_dict[k] = params_arr[inds[k]]
         val_type = types[k]
         if val_type == 'md': #scale kinetic param
-            bounds[k] = (v/25, v*5)
+            bounds[k] = (v/scale_fact, v*scale_fact)
         elif val_type == 'p': #scale voltage param
-            bounds[k] = (v-20, v+20)
+            bounds[k] = (v-scale_voltage, v+scale_voltage)
         else:
             bounds[k]= (0,1)
-
+    
     if down:
         return [(v-bounds[k][0])/(bounds[k][1]-bounds[k][0]) for k,v in params_dict.items()]
 
     new_params = {}
     for  k,v  in params_dict.items():
         new_params[k]= v*(bounds[k][1]-bounds[k][0]) + bounds[k][0]
+    print(new_params)
     return new_params
 
 
 
-def change_params_dict(new_params_dict):
+def change_params_dict(new_params):
     '''
     Change params on Na12mut channel in NEURON.
     ---
@@ -401,11 +442,11 @@ def change_params_dict(new_params_dict):
     '''
     # params_orig = [0.02,7.2,7,0.4,0.124,0.03,-30,-45,-45,-45,0.01,2]
     #scale params up
-    new_params = scale_params_dict(False, new_params_dict)
+    #new_params = scale_params_dict(False, new_params_dict)
     #get NEURON h
     currh = gsd.activationNa12("geth")
     #change values of params
-    print(new_params)
+    #print(new_params)
     currh.Rd_na12mut= new_params['Rd_na12mut']
     currh.Rg_na12mut= new_params['Rg_na12mut']
     currh.Rb_na12mut= new_params['Rb_na12mut']
@@ -436,7 +477,7 @@ def change_params_dict(new_params_dict):
 ## Optimization ##
 ##################
 
-def genetic_alg(target_data, to_score=["inact", "act", "recov", "tau0"], pop_size=10, num_gens=5):
+def genetic_alg(target_data, to_score=["inact", "act", "recov", "tau0"], pop_size=50, num_gens=50):
     '''
     Runs DEAP genetic algorithm to optimize parameters of channel such that simulated data fits real data.
     ---
@@ -464,7 +505,7 @@ def genetic_alg(target_data, to_score=["inact", "act", "recov", "tau0"], pop_siz
     #randomly selected scaled param values between 0 and 1
     toolbox.register("attr_bool", random.uniform, 0, 1)
     #create individials as array of randomly selected scaled param values
-    toolbox.register("individual", tools.initRepeat, creator.Individual, toolbox.attr_bool, 12)
+    toolbox.register("individual", tools.initRepeat, creator.Individual, toolbox.attr_bool, nparams)
     toolbox.register("population", tools.initRepeat, list, toolbox.individual)
 
     #use calc_rmse to score individuals
@@ -508,6 +549,8 @@ def calc_rmse(indiv):
         sim_data = gen_sim_data()
     except ZeroDivisionError: #catch error to prevent bad individuals from halting run
         print("ZeroDivisionError when generating sim_data, returned infinity.")
+        sim_data =None
+        return (1e9,)
 
     total_rmse = 0
     #score only desired simulations at desired indicies
@@ -709,7 +752,11 @@ def gen_figure_given_params(params, target_data, save=True, file_name=None,mutan
     for i in range(len(data)):
         data_pts = data[i]["inact"]
         sweeps = data[i]["inact sweeps"]
-        popt, pcov = optimize.curve_fit(fit_sigmoid, sweeps, data_pts, p0=[-.120, data_pts[0]], maxfev=max_calls)
+        try:
+            popt, pcov = optimize.curve_fit(fit_sigmoid, sweeps, data_pts, p0=[-.120, data_pts[0]], maxfev=max_calls)
+        except:
+            print("Very bad voltages in inact")
+            return
         even_xs = np.linspace(sweeps[0], sweeps[len(sweeps)-1], 100)
         curve = fit_sigmoid(even_xs, *popt)
         
@@ -722,7 +769,10 @@ def gen_figure_given_params(params, target_data, save=True, file_name=None,mutan
     for i in range(len(data)):
         data_pts = data[i]["act"]
         sweeps = data[i]["act sweeps"]
-        popt, pcov = optimize.curve_fit(fit_sigmoid, sweeps, data_pts, p0=[-.120, data_pts[0]], maxfev=max_calls)
+        try:
+            popt, pcov = optimize.curve_fit(fit_sigmoid, sweeps, data_pts, p0=[-.120, data_pts[0]], maxfev=max_calls)
+        except:
+            print("Very bad voltages in act")    
         even_xs = np.linspace(sweeps[0], sweeps[len(sweeps)-1], 100)
         curve = fit_sigmoid(even_xs, *popt)
         if names[i] == "experimental":
@@ -740,7 +790,11 @@ def gen_figure_given_params(params, target_data, save=True, file_name=None,mutan
     for i in range(len(data)):
         data_pts = data[i]["recov"]
         times = data[i]["recov times"]
-        popt, pcov = optimize.curve_fit(fit_sigmoid, times, data_pts, p0=[-.120, data_pts[0]], maxfev=max_calls)
+        try:
+            popt, pcov = optimize.curve_fit(fit_sigmoid, times, data_pts, p0=[-.120, data_pts[0]], maxfev=max_calls)
+        except:
+            print("Very bad voltages in recovery")
+            return
         even_xs = np.linspace(times[0], times[len(times)-1], 100)
         curve = fit_sigmoid(even_xs, *popt)
         axs[1].semilogx(even_xs, curve, c="r",label=names[i]+" recovery")
