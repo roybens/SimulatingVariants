@@ -28,8 +28,8 @@ if new_params_flg:
     nparams = 24
 else:
     nparams = 12
-scale_voltage = 1
-scale_fact = 1.1
+scale_voltage = 5
+scale_fact = 1.01
 ###############
 ## Read Data ##
 ###############
@@ -413,7 +413,7 @@ def scale_params_dict(down, params_arr):
     params_dict = {}
     bounds = {}
     for k, v in bsae_value.items():
-        print(f'k is {k} inds[k] is {inds[k]}')
+        #print(f'k is {k} inds[k] is {inds[k]}')
         params_dict[k] = params_arr[inds[k]]
         val_type = types[k]
         if val_type == 'md': #scale kinetic param
@@ -429,7 +429,7 @@ def scale_params_dict(down, params_arr):
     new_params = {}
     for  k,v  in params_dict.items():
         new_params[k]= v*(bounds[k][1]-bounds[k][0]) + bounds[k][0]
-    print(new_params)
+    #print(new_params)
     return new_params
 
 
@@ -477,7 +477,7 @@ def change_params_dict(new_params):
 ## Optimization ##
 ##################
 
-def genetic_alg(target_data, to_score=["inact", "act", "recov", "tau0"], pop_size=50, num_gens=50):
+def genetic_alg(target_data, to_score=["inact", "act", "recov", "tau0"], pop_size=10, num_gens=50):
     '''
     Runs DEAP genetic algorithm to optimize parameters of channel such that simulated data fits real data.
     ---
@@ -542,7 +542,7 @@ def calc_rmse(indiv):
 
     Return: tuple containing inverted rmse score (due to maximization)
     '''
-    print(f' params are: {list(indiv)}')
+    #print(f' params are: {list(indiv)}')
     #change params then simulate data
     change_params(indiv)
     try:
@@ -638,7 +638,7 @@ def gen_real_and_opt(exp, mutant):
     '''
     real_data_map = read_all_raw_data()
     real_data = real_data_map[exp][mutant]
-    pop, ga_stats, hof = genetic_alg(real_data, ["inact", "act", "tau0"])
+    pop, ga_stats, hof = genetic_alg(real_data, ["inact", "act", "tau0", "recov"])
     print(hof)
     return list(hof[0])
 
@@ -658,6 +658,10 @@ def fit_exp(x, a, b, c):
     Fit an exponential curve to an array of datapoints.
     '''
     return a*np.exp(-b*x)+c
+def fit_dblexp(x, a, b, c, d):
+    return a * np.exp(-b * x) + c * np.exp(-d * x)
+def fit_hill(x, a, b, c): # Hill sigmoidal equation from zunzun.com
+    return  a * np.power(x, b) / (np.power(c, b) + np.power(x, b)) 
 
 def gen_curves(data, names):
     '''
@@ -701,9 +705,9 @@ def gen_curves(data, names):
     for i in range(len(data)):
         data_pts = data[i]["recov"]
         times = data[i]["recov times"]
-        popt, pcov = optimize.curve_fit(fit_sigmoid, times, data_pts, p0=[-.120, data_pts[0]], maxfev=5000)
+        popt, pcov = optimize.curve_fit(fit_hill, times, data_pts, p0=[-.120, data_pts[0]], maxfev=5000)
         even_xs = np.linspace(times[0], times[len(sweeps)-1], 100)
-        curve = fit_sigmoid(even_xs, *popt)
+        curve = fit_hill(even_xs, *popt)
         plt.scatter(np.log(times), data_pts, label=names[i])
         plt.plot(even_xs, curve, label=names[i])
 
@@ -788,17 +792,23 @@ def gen_figure_given_params(params, target_data, save=True, file_name=None,mutan
     axs[1].set_ylabel('Fractional Recovery')
     axs[1].set_title("Recovery from Inactivation")
     for i in range(len(data)):
+        if names[i] == "experimental":
+            curr_marker = 'o'
+            fit_color = 'black'
+        else:
+            curr_marker = 's'
+            fit_color = 'red'
         data_pts = data[i]["recov"]
         times = data[i]["recov times"]
         try:
-            popt, pcov = optimize.curve_fit(fit_sigmoid, times, data_pts, p0=[-.120, data_pts[0]], maxfev=max_calls)
+            popt, pcov = optimize.curve_fit(fit_hill, times, data_pts, maxfev=max_calls)
         except:
             print("Very bad voltages in recovery")
             return
         even_xs = np.linspace(times[0], times[len(times)-1], 100)
-        curve = fit_sigmoid(even_xs, *popt)
-        axs[1].semilogx(even_xs, curve, c="r",label=names[i]+" recovery")
-        axs[1].scatter(np.log(times), data_pts, label=names[i], color='black',marker='o')
+        curve = fit_hill(even_xs, *popt)
+        axs[1].plot(np.log(even_xs), curve, c=fit_color,label=names[i]+" recovery")
+        axs[1].scatter(np.log(times), data_pts, label=names[i], color=fit_color,marker=curr_marker)
         
     axs[1].legend()
 
