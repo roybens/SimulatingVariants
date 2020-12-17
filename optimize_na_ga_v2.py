@@ -28,8 +28,8 @@ if new_params_flg:
     nparams = 24
 else:
     nparams = 12
-scale_voltage = 5
-scale_fact = 1.01
+scale_voltage = 10
+scale_fact = 2
 ###############
 ## Read Data ##
 ###############
@@ -497,7 +497,7 @@ def genetic_alg(target_data, to_score=["inact", "act", "recov", "tau0"], pop_siz
     global_to_score = to_score
 
     #Set goal to maximize rmse (which has been inverted)
-    creator.create("FitnessMax", base.Fitness, weights=(1.0,))
+    creator.create("FitnessMax", base.Fitness, weights=(-1.0,))
     #make "individual" an array of parameters
     creator.create("Individual", np.ndarray, fitness=creator.FitnessMax)
 
@@ -577,11 +577,12 @@ def calc_rmse(indiv):
             else:
                 print("cannot calc mse of {}".format(var))
                 break
-    if (plot_flg):
-        gen_figure_given_params(list(indiv), global_target_data, save=False)
+
     #normalize inact, act, recov, add voltage comparision. Keep log of all component for optimization, write components to file. Add more weight to recrovery, why is i5t not loking good.
     print("rmse:{}".format(total_rmse))
-    return (1/total_rmse,)
+    if (plot_flg):
+        gen_figure_given_params(list(indiv), global_target_data, save=False,rmse = total_rmse)
+    return (total_rmse,)
 
 def cx_two_point_copy(ind1, ind2):
     '''
@@ -727,7 +728,7 @@ def gen_curve_given_params(params):
     sim_data = gen_sim_data()
     gen_curves([sim_data], ["sim data"])
 
-def gen_figure_given_params(params, target_data, save=True, file_name=None,mutant='N_A', exp='N_A'):
+def gen_figure_given_params(params, target_data, save=True, file_name=None,mutant='N_A', exp='N_A',rmse=None):
     '''
     Generate figure including all curves and tau value for a mutant.
     ---
@@ -743,7 +744,12 @@ def gen_figure_given_params(params, target_data, save=True, file_name=None,mutan
     fig, axs = plt.subplots(2, figsize=(10,10))
     fig.suptitle("Mutant: {} \n Experiment: {}".format(mutant, exp))
     change_params(params)
-    sim_data = gen_sim_data()
+    try:
+        sim_data = gen_sim_data()
+    except ZeroDivisionError: #catch error to prevent bad individuals from halting run
+        print("ZeroDivisionError when generating sim_data, returned infinity.")
+        sim_data =None
+        return 
     data = [target_data, sim_data]
     names = ["experimental", "simulated"]
     max_calls = 500
@@ -813,7 +819,7 @@ def gen_figure_given_params(params, target_data, save=True, file_name=None,mutan
     axs[1].legend()
 
     #add text containing tau information
-    fig.text(.5, .92, "\n Target tau: {}, Sim tau: {}".format(target_data['tau0'], sim_data['tau0']), ha='center')
+    fig.text(.5, .92, "\n Target tau: {}, Sim tau: {}\n rmse: {}".format(target_data['tau0'], sim_data['tau0'],rmse), ha='center')
     plt.show()
 
     #save figure
@@ -851,24 +857,28 @@ def make_params_dict(exp, name, params, scale=True):
 
     Return params_dict: dictionary of params
     '''
-    if scale:
+    if new_params_flg:
+        params_dict = scale_params_dict(False,params)
+        params_dict["exp"] = exp
+        params_dict["name"] = name
+    else: 
         params = scale_params(False, params)
 
-    params_dict = {}
-    params_dict["exp"] = exp
-    params_dict["name"] = name
-    params_dict["mmin"] = params[0]
-    params_dict["qa"] = params[1]
-    params_dict["qinf"] = params[2]
-    params_dict["Ra"] = params[3]
-    params_dict["Rb"] = params[4]
-    params_dict["Rd"] = params[5]
-    params_dict["tha"] = params[6]
-    params_dict["thi1"] = params[7]
-    params_dict["thinf"] = params[8]
-    params_dict["thi2"] = params[9]
-    params_dict["Rg"] = params[10]
-    params_dict["q10"] = params[11]
+        params_dict = {}
+        params_dict["exp"] = exp
+        params_dict["name"] = name
+        params_dict["mmin"] = params[0]
+        params_dict["qa"] = params[1]
+        params_dict["qinf"] = params[2]
+        params_dict["Ra"] = params[3]
+        params_dict["Rb"] = params[4]
+        params_dict["Rd"] = params[5]
+        params_dict["tha"] = params[6]
+        params_dict["thi1"] = params[7]
+        params_dict["thinf"] = params[8]
+        params_dict["thi2"] = params[9]
+        params_dict["Rg"] = params[10]
+        params_dict["q10"] = params[11]
     return params_dict
 
 def save_dict(params_dict, name):
@@ -904,6 +914,7 @@ def opt_na_pipeline(exp, mutant=None):
         plot_real_opt(exp, mut, opt_params, save=True)
         t1 = time.time()
         print("runtime: {}".format(t1-t0))
+        
         opt_dict = make_params_dict(exp, mut, opt_params)
         save_dict(opt_dict, exp+mut+"_params_new".replace(" ", "_"))
 
@@ -917,6 +928,7 @@ def main():
     '''
     refits = [('M1879 T and R1626Q', 'NaV12 adult R1626Q'),
               ('M1879 T and R1626Q', 'NaV12 adult M1879T')]
+    refits = [('M1879 T and R1626Q', 'NaV12 adult R1626Q')]
 
     for exp, mut in refits:
         opt_na_pipeline(exp, mut)
