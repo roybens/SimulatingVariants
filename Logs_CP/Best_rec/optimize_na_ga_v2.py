@@ -39,26 +39,21 @@ if new_params_flg:
     nparams = 24
 else:
     nparams = 12
-scale_voltage = 30
-scale_fact = 7.5
-global global_best_indv
-global global_rmse
-global_rmse = 1e9
+scale_voltage = 20
+scale_fact = 5
 def my_update(halloffame, population):
     global gen_counter,cp_freq
     #old_update(halloffame, history, population)
-    
     if halloffame:
         best_indvs.append(halloffame[0])
-        best_indvs.append(global_best_indv)
     gen_counter = gen_counter+1
     print("Current generation: ", gen_counter)
     
     if gen_counter%cp_freq == 0:
         fn = '.pkl'
         save_logs(fn,best_indvs,population)
-        rmse = calc_rmse(global_best_indv)
-        gen_figure_given_params(list(global_best_indv),global_target_data,save=False,rmse = rmse)
+        rmse = calc_rmse(halloffame[0])
+        gen_figure_given_params(list(halloffame[0]),global_target_data,save=False,rmse = rmse)
 
 def save_logs(fn, best_indvs, hof):
     output = open("indv"+fn, 'wb')
@@ -514,7 +509,7 @@ def change_params_dict(new_params):
 ## Optimization ##
 ##################
 
-def genetic_alg(target_data, to_score=["inact", "act", "recov", "tau0"], pop_size=1000, num_gens=100):
+def genetic_alg(target_data, to_score=["inact", "act", "recov", "tau0"], pop_size=100, num_gens=30):
     '''
     Runs DEAP genetic algorithm to optimize parameters of channel such that simulated data fits real data.
     ---
@@ -534,7 +529,7 @@ def genetic_alg(target_data, to_score=["inact", "act", "recov", "tau0"], pop_siz
     global_to_score = to_score
 
     #Set goal to maximize rmse (which has been inverted)
-    creator.create("FitnessMulti", base.Fitness, weights=(-0.01,-1.0,-1.0,-4.0))
+    creator.create("FitnessMulti", base.Fitness, weights=(-0.01,-1.0,-1.0,-1.0))
     #make "individual" an array of parameters
     creator.create("Individual", np.ndarray, fitness=creator.FitnessMulti)
 
@@ -573,8 +568,6 @@ def genetic_alg(target_data, to_score=["inact", "act", "recov", "tau0"], pop_siz
     return pop, ga_stats, hof
 
 def calc_rmse(indiv):
-    global global_best_indv
-    global global_rmse
     '''
     Score individual using rmse.
     ---
@@ -626,12 +619,6 @@ def calc_rmse(indiv):
     print(f'total_rmse is : {total_rmse} rmse is {[tau_rmse,act_rmse,inact_rmse,recov_rmse]}')
     if (plot_flg):
         gen_figure_given_params(list(indiv), global_target_data, save=False,rmse =[tau_rmse,act_rmse,inact_rmse,recov_rmse])
-        
-    if total_rmse<global_rmse:
-        global_rmse = total_rmse
-        global_best_indv = indiv
-        print(f'updated best indv total_rmse{total_rmse} rmse - {[tau_rmse,act_rmse,inact_rmse,recov_rmse]}')
-        
     return (tau_rmse,act_rmse,inact_rmse,recov_rmse)
 
 def cx_two_point_copy(ind1, ind2):
