@@ -19,10 +19,21 @@ import time
 import multiprocessing
 from deap import algorithms, base, creator, tools
 import random
+import pickle
 import csv
 
+gen_counter = 0
+best_indvs = []
+cp_freq = 1
+
+cp_file = 'cp.pkl'
+cp_true = True
+
+
+
+
 raw_data = "./Data/NW_all_raw_data.csv"
-plot_flg = True
+plot_flg = False
 new_params_flg = True
 if new_params_flg:
     nparams = 24
@@ -30,6 +41,27 @@ else:
     nparams = 12
 scale_voltage = 10
 scale_fact = 2
+def my_update(halloffame, population):
+    global gen_counter,cp_freq
+    #old_update(halloffame, history, population)
+    if halloffame:
+        best_indvs.append(halloffame[0])
+    gen_counter = gen_counter+1
+    print("Current generation: ", gen_counter)
+    
+    if gen_counter%cp_freq == 0:
+        fn = '.pkl'
+        save_logs(fn,best_indvs,population)
+        rmse = calc_rmse(halloffame[0])
+        gen_figure_given_params(list(halloffame[0]),global_target_data,save=False,rmse = rmse)
+
+def save_logs(fn, best_indvs, hof):
+    output = open("indv"+fn, 'wb')
+    pickle.dump(best_indvs, output)
+    output.close()
+    output = open("hof"+fn, 'wb')
+    pickle.dump(hof, output)
+    output.close()
 ###############
 ## Read Data ##
 ###############
@@ -477,7 +509,7 @@ def change_params_dict(new_params):
 ## Optimization ##
 ##################
 
-def genetic_alg(target_data, to_score=["inact", "act", "recov", "tau0"], pop_size=10, num_gens=50):
+def genetic_alg(target_data, to_score=["inact", "act", "recov", "tau0"], pop_size=20, num_gens=5):
     '''
     Runs DEAP genetic algorithm to optimize parameters of channel such that simulated data fits real data.
     ---
@@ -497,7 +529,7 @@ def genetic_alg(target_data, to_score=["inact", "act", "recov", "tau0"], pop_siz
     global_to_score = to_score
 
     #Set goal to maximize rmse (which has been inverted)
-    creator.create("FitnessMax", base.Fitness, weights=(-1.0,))
+    creator.create("FitnessMax", base.Fitness, weights=(-0.2,-1.0,-1.0,-10.0))
     #make "individual" an array of parameters
     creator.create("Individual", np.ndarray, fitness=creator.FitnessMax)
 
@@ -515,7 +547,7 @@ def genetic_alg(target_data, to_score=["inact", "act", "recov", "tau0"], pop_siz
     toolbox.register("select", tools.selTournament, tournsize=3)
 
     #allow multiprocessing
-    #pool = multiprocessing.Pool()
+    #pool = multiprocessing.Pool(processes=1)
     #toolbox.register("map", pool.map)
 
     pop = toolbox.population(n=pop_size)
@@ -530,7 +562,8 @@ def genetic_alg(target_data, to_score=["inact", "act", "recov", "tau0"], pop_siz
     ga_stats.register("max", np.max)
 
     #run DEAP algorithm
-    algorithms.eaSimple(pop, toolbox, cxpb=0.5, mutpb=0.2, ngen=num_gens, stats=ga_stats,
+    algorithms.eaSimple = eaSimple
+    eaSimple(pop, toolbox, cxpb=0.5, mutpb=0.2, ngen=num_gens, stats=ga_stats,
                         halloffame=hof)
     return pop, ga_stats, hof
 
@@ -550,39 +583,43 @@ def calc_rmse(indiv):
     except ZeroDivisionError: #catch error to prevent bad individuals from halting run
         print("ZeroDivisionError when generating sim_data, returned infinity.")
         sim_data =None
-        return (1e9,)
+        return (1000,1000,1000,1000)
 
     total_rmse = 0
     #score only desired simulations at desired indicies
-    for var in global_to_score:
-        if var == "tau0":
-            tau_rmse = ((global_target_data["tau0"]-sim_data["tau0"])**2)**.5
-            total_rmse = total_rmse + tau_rmse
-        else:
-            if var == "inact":
-                inds = global_target_data["inact sig inds"]
-                squared_diffs = [(global_target_data[var][i]-sim_data[var][i])**2 for i in inds]
-                inact_rmse = (sum(squared_diffs)/len(inds))**.5
-                total_rmse = total_rmse + inact_rmse
-            elif var == "act":
-                inds = global_target_data["act sig inds"]
-                squared_diffs = [(global_target_data[var][i]-sim_data[var][i])**2 for i in inds]
-                act_rmse = (sum(squared_diffs)/len(inds))**.5
-                total_rmse = total_rmse + act_rmse
-            elif var == "recov":
-                inds = global_target_data["recov sig inds"]
-                squared_diffs = [(global_target_data[var][i]-sim_data[var][i])**2 for i in inds]
-                recov_rmse = (sum(squared_diffs)/len(inds))**.5
-                total_rmse = total_rmse + recov_rmse
+    try:
+        for var in global_to_score:
+            if var == "tau0":
+                tau_rmse = ((global_target_data["tau0"]-sim_data["tau0"])**2)**.5
+                total_rmse = total_rmse + tau_rmse
             else:
-                print("cannot calc mse of {}".format(var))
-                break
+                if var == "inact":
+                    inds = global_target_data["inact sig inds"]
+                    squared_diffs = [(global_target_data[var][i]-sim_data[var][i])**2 for i in inds]
+                    inact_rmse = (sum(squared_diffs)/len(inds))**.5
+                    total_rmse = total_rmse + inact_rmse
+                elif var == "act":
+                    inds = global_target_data["act sig inds"]
+                    squared_diffs = [(global_target_data[var][i]-sim_data[var][i])**2 for i in inds]
+                    act_rmse = (sum(squared_diffs)/len(inds))**.5
+                    total_rmse = total_rmse + act_rmse
+                elif var == "recov":
+                    inds = global_target_data["recov sig inds"]
+                    squared_diffs = [(global_target_data[var][i]-sim_data[var][i])**2 for i in inds]
+                    recov_rmse = (sum(squared_diffs)/len(inds))**.5
+                    total_rmse = total_rmse + recov_rmse
+                else:
+                    print("cannot calc mse of {}".format(var))
+                    break
+    except:
+        print("calculating rmse throw an error ")
+        return(1000,1000,1000,1000)
 
     #normalize inact, act, recov, add voltage comparision. Keep log of all component for optimization, write components to file. Add more weight to recrovery, why is i5t not loking good.
-    print("rmse:{}".format(total_rmse))
+    print(f'total_rmse is : {total_rmse} rmse is {[tau_rmse,act_rmse,inact_rmse,recov_rmse]}')
     if (plot_flg):
-        gen_figure_given_params(list(indiv), global_target_data, save=False,rmse = total_rmse)
-    return (total_rmse,)
+        gen_figure_given_params(list(indiv), global_target_data, save=False,rmse =[tau_rmse,act_rmse,inact_rmse,recov_rmse])
+    return (tau_rmse,act_rmse,inact_rmse,recov_rmse)
 
 def cx_two_point_copy(ind1, ind2):
     '''
@@ -918,9 +955,122 @@ def opt_na_pipeline(exp, mutant=None):
         opt_dict = make_params_dict(exp, mut, opt_params)
         save_dict(opt_dict, exp+mut+"_params_new".replace(" ", "_"))
 
+
 ##########
-## Main ##
+## DEAP override ##
 ##########
+
+
+def eaSimple(population, toolbox, cxpb, mutpb, ngen, stats=None,
+             halloffame=None, verbose=__debug__):
+    """This algorithm reproduce the simplest evolutionary algorithm as
+    presented in chapter 7 of [Back2000]_.
+
+    :param population: A list of individuals.
+    :param toolbox: A :class:`~deap.base.Toolbox` that contains the evolution
+                    operators.
+    :param cxpb: The probability of mating two individuals.
+    :param mutpb: The probability of mutating an individual.
+    :param ngen: The number of generation.
+    :param stats: A :class:`~deap.tools.Statistics` object that is updated
+                  inplace, optional.
+    :param halloffame: A :class:`~deap.tools.HallOfFame` object that will
+                       contain the best individuals, optional.
+    :param verbose: Whether or not to log the statistics.
+    :returns: The final population
+    :returns: A class:`~deap.tools.Logbook` with the statistics of the
+              evolution
+
+    The algorithm takes in a population and evolves it in place using the
+    :meth:`varAnd` method. It returns the optimized population and a
+    :class:`~deap.tools.Logbook` with the statistics of the evolution. The
+    logbook will contain the generation number, the number of evaluations for
+    each generation and the statistics if a :class:`~deap.tools.Statistics` is
+    given as argument. The *cxpb* and *mutpb* arguments are passed to the
+    :func:`varAnd` function. The pseudocode goes as follow ::
+
+        evaluate(population)
+        for g in range(ngen):
+            population = select(population, len(population))
+            offspring = varAnd(population, toolbox, cxpb, mutpb)
+            evaluate(offspring)
+            population = offspring
+
+    As stated in the pseudocode above, the algorithm goes as follow. First, it
+    evaluates the individuals with an invalid fitness. Second, it enters the
+    generational loop where the selection procedure is applied to entirely
+    replace the parental population. The 1:1 replacement ratio of this
+    algorithm **requires** the selection procedure to be stochastic and to
+    select multiple times the same individual, for example,
+    :func:`~deap.tools.selTournament` and :func:`~deap.tools.selRoulette`.
+    Third, it applies the :func:`varAnd` function to produce the next
+    generation population. Fourth, it evaluates the new individuals and
+    compute the statistics on this population. Finally, when *ngen*
+    generations are done, the algorithm returns a tuple with the final
+    population and a :class:`~deap.tools.Logbook` of the evolution.
+
+    .. note::
+
+        Using a non-stochastic selection method will result in no selection as
+        the operator selects *n* individuals from a pool of *n*.
+
+    This function expects the :meth:`toolbox.mate`, :meth:`toolbox.mutate`,
+    :meth:`toolbox.select` and :meth:`toolbox.evaluate` aliases to be
+    registered in the toolbox.
+
+    .. [Back2000] Back, Fogel and Michalewicz, "Evolutionary Computation 1 :
+       Basic Algorithms and Operators", 2000.
+    """
+    logbook = tools.Logbook()
+    logbook.header = ['gen', 'nevals'] + (stats.fields if stats else [])
+
+    # Evaluate the individuals with an invalid fitness
+    invalid_ind = [ind for ind in population if not ind.fitness.valid]
+    fitnesses = toolbox.map(toolbox.evaluate, invalid_ind)
+    for ind, fit in zip(invalid_ind, fitnesses):
+        ind.fitness.values = fit
+
+    if halloffame is not None:
+        halloffame.update(population)
+
+    record = stats.compile(population) if stats else {}
+    logbook.record(gen=0, nevals=len(invalid_ind), **record)
+    if verbose:
+        print(logbook.stream)
+
+    # Begin the generational process
+    for gen in range(1, ngen + 1):
+        # Select the next generation individuals
+        offspring = toolbox.select(population, len(population))
+
+        # Vary the pool of individuals
+        offspring = algorithms.varAnd(offspring, toolbox, cxpb, mutpb)
+
+        # Evaluate the individuals with an invalid fitness
+        invalid_ind = [ind for ind in offspring if not ind.fitness.valid]
+        fitnesses = toolbox.map(toolbox.evaluate, invalid_ind)
+        for ind, fit in zip(invalid_ind, fitnesses):
+            ind.fitness.values = fit
+
+        # Update the hall of fame with the generated individuals
+        if halloffame is not None:
+            halloffame.update(offspring)
+
+        # Replace the current population by the offspring
+        population[:] = offspring
+
+        # Append the current generation statistics to the logbook
+        record = stats.compile(population) if stats else {}
+        logbook.record(gen=gen, nevals=len(invalid_ind), **record)
+        my_update(halloffame, population)
+        if verbose:
+            print(logbook.stream)
+
+    return population, logbook
+
+
+
+
 
 def main():
     '''
