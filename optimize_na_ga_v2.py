@@ -21,6 +21,7 @@ from deap import algorithms, base, creator, tools
 import random
 import pickle
 import csv
+import generalized_genSim_shorten_time as ggsd
 
 gen_counter = 0
 best_indvs = []
@@ -276,23 +277,23 @@ def gen_sim_data():
     sim_data = {}
 
     #simulate activation
-    act, act_sweeps, act_i = gsd.activationNa12("genActivation")
+    act, act_sweeps, act_i = ggsd.activationNa12("genActivation")
     sim_data["act"] = act.to_python()
     sim_data["act sweeps"] = act_sweeps.tolist()
 
     #calculate taus from inactivation
-    taus, tau_sweeps, tau0 = gsd.find_tau_inact(act_i)
+    taus, tau_sweeps, tau0 = ggsd.find_tau_inact(act_i)
     sim_data["taus"] = taus
     sim_data["tau sweeps"] = tau_sweeps
     sim_data["tau0"] = tau0
 
     #simulate inactivation
-    inact, inact_sweeps,inact_i = gsd.inactivationNa12("genInactivation")
+    inact, inact_sweeps,inact_i = ggsd.inactivationNa12("genInactivation")
     sim_data["inact"] = inact.to_python()
     sim_data["inact sweeps"] = inact_sweeps.tolist()
 
     #simulate recovery
-    recov, recov_times = gsd.recInactTauNa12("genRecInact")
+    recov, recov_times = ggsd.recInactTauNa12("genRecInact")
     sim_data["recov"] = recov
     sim_data["recov times"] = recov_times
     return sim_data
@@ -342,7 +343,7 @@ def change_params(new_params_scaled):
     else:
         new_params = scale_params(False, new_params_scaled)
         #get NEURON h
-        currh = gsd.activationNa12("geth")
+        currh = ggsd.activationNa12("geth")
         #change values of params
         currh.mmin_na12mut = new_params[0]
         currh.qa_na12mut = new_params[1]
@@ -481,7 +482,7 @@ def change_params_dict(new_params):
     #scale params up
     #new_params = scale_params_dict(False, new_params_dict)
     #get NEURON h
-    currh = gsd.activationNa12("geth")
+    currh = ggsd.activationNa12("geth")
     #change values of params
     #print(new_params)
     currh.Rd_na12mut= new_params['Rd_na12mut']
