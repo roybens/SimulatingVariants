@@ -39,8 +39,8 @@ class neurogpu_evaluator(bpop.evaluators.Evaluator):
         """Constructor""" 
 
         def init_params(filepath):
-            param_names_array = np.loadtxt(filepath, dtype=str, delimiter = ',', skiprows=1, usecols=(0), unpack=True, max_rows=21)
-            param_vals, param_min, param_max = np.loadtxt(filepath, delimiter = ',', skiprows=1, usecols=(1, 2 ,3), unpack=True, max_rows=21)
+            param_names_array = np.loadtxt(filepath, dtype=str, delimiter = ',', skiprows=1, usecols=(0), unpack=True, max_rows=24)
+            param_vals, param_min, param_max = np.loadtxt(filepath, delimiter = ',', skiprows=1, usecols=(1, 2 ,3), unpack=True, max_rows=24)
             param_list = []
             for i in range(len(param_names_array)):
                 param_name = param_names_array[i]
@@ -60,15 +60,18 @@ class neurogpu_evaluator(bpop.evaluators.Evaluator):
 
     def evaluate(self, exp, mutant):
         real_data = self.exp_data_map[exp][mutant]
-        return self.evaluate_with_lists(real_data)
+        self.evaluate_with_lists(real_data)
+        opt_params = []
+        for i in range(len(self.params)):
+            opt_params.append(self.params[i].value)
+        gen_figure_given_params(opt_params, real_data, True, mutant, exp)
+        
 
     def evaluate_with_lists(self, param_values=[]):
         optimized_param_vals = self.run_model(param_values)
-        print(len(optimized_param_vals))
-        print(len(self.params))
         for i in range(len(optimized_param_vals)):
             self.params[i].value = optimized_param_vals[i]
-
+        return self.objectives
 
         '''
         scores = efel_ext.eval(target_volts, volts,times)   # Need to ask about this line
@@ -110,7 +113,7 @@ global global_best_indv
 global global_rmse
 global_rmse = 1e9
 
-def genetic_alg(target_data, to_score=["inact", "act", "recov", "tau0"], pop_size=10, num_gens=3):
+def genetic_alg(target_data, to_score=["inact", "act", "recov", "tau0"], pop_size=10, num_gens=1):
     '''
     Runs DEAP genetic algorithm to optimize parameters of channel such that simulated data fits real data.
     ---
@@ -340,6 +343,8 @@ def gen_figure_given_params(params, target_data, save=True, file_name=None,mutan
             file_name = "{}_{}_plots".format(exp, mutant).replace(" ", "_")
         fig.savefig("./curves/"+file_name+'.eps')
         fig.savefig("./curves/"+file_name+'.pdf')
+
+
 
 ######################
 ## Helper Functions ##
