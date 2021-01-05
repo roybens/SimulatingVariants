@@ -1,20 +1,42 @@
 import numpy as np
 import bluepyopt as bpop
-import generalized_genSim_shorten_time as ggsd
-
-
-
-
-#########################
-## Evaluator Functions ##
-#########################
+import eval_helper as eh
 
 class vclamp_evaluator(bpop.evaluators.Evaluator):
+    '''
+    A class that holds a set of objectives and a set of parameters.
+    
+    self.params holds the names of each of the parameters to be evaluated along with 
+    their bounds and values
+
+    self.objectives holds a set of categories for which an error will be calculated 
+    through the evaluate_with_lists function
+    '''
 
     def __init__(self, exp_data_file, params_file, exp, mutant):
-        """Constructor""" 
+        '''
+        Constructor
+
+        exp_data_file: a filepath to a csv containing the experimental data, NW style
+        params_file: a filepath to a csv containing the names, starting values, and bounds
+            of each parameter in the following format:
+
+            parameter name | parameter value | lower bound | upper bound
+
+                  sh       |         5       |      3      |      15
+                  ...      |        ...      |     ...     |      ...
+
+        exp: name of the experiment
+        mutant: name of the mutant
+
+        '''
 
         def init_params(filepath):
+            '''
+            Helper to initialize self.params with the parameter file from filepath
+
+            filepath: filepath to csv containing parameter stats
+            '''
             param_names_array = np.loadtxt(filepath, dtype=str, delimiter = ',', skiprows=1, usecols=(0), unpack=True, max_rows=24)
             param_vals, param_min, param_max = np.loadtxt(filepath, delimiter = ',', skiprows=1, usecols=(1, 2 ,3), unpack=True, max_rows=24)
             param_list = []
@@ -32,21 +54,38 @@ class vclamp_evaluator(bpop.evaluators.Evaluator):
                            bpop.objectives.Objective('recov'),\
                            bpop.objectives.Objective('tau0')
                            ]
-        exp_data_map = read_all_raw_data(exp_data_file)
+        exp_data_map = eh.read_all_raw_data(exp_data_file)
         self.target_data = exp_data_map[exp][mutant]
  
 
     def evaluate_with_lists(self, param_values=[]):
-        #calc_all_rmse(param_values)
-        #return self.objectives
+        '''
+        Uses the parameter values in PARAM_VALUES to calculate the objective errors
+
+        Arguments:
+            param_values: list of float parameter values in order
+
+        Returns:
+            List of float values of objective errors
+        '''
         return calc_all_rmse(param_values)
     
 
     def calc_all_rmse(param_values):
+        '''
+        Uses the parameter values in PARAM_VALUES to calculate the objective errors
+
+        Arguments:
+            param_values: list of float parameter values in order
+
+        Returns:
+            List of float values of objective errors
+
+        '''
         assert len(param_values) == len(self.params), 'Parameter value list is not same length number of parameters' 
-        change_params(param_values)
+        eh.change_params(param_values)
         try:
-            sim_data = gen_sim_data()
+            sim_data = eh.gen_sim_data()
         except ZeroDivisionError: #catch error to prevent bad individuals from halting run
             print("ZeroDivisionError when generating sim_data, returned infinity.")
             sim_data =None
@@ -54,323 +93,15 @@ class vclamp_evaluator(bpop.evaluators.Evaluator):
         inds = self.target_data["inact sig inds"]
         squared_diffs = [(self.target_data[var][i]-sim_data[var][i])**2 for i in inds]
         inact_rmse = (sum(squared_diffs)/len(inds))**.5
-        #self.objectives[0].value = inact_rmse
 
         inds = self.target_data["act sig inds"]
         squared_diffs = [(self.target_data[var][i]-sim_data[var][i])**2 for i in inds]
         act_rmse = (sum(squared_diffs)/len(inds))**.5
-        #self.objectives[1].value = act_rmse
 
         inds = self.target_data["recov sig inds"]
         squared_diffs = [(self.target_data[var][i]-sim_data[var][i])**2 for i in inds]
         recov_rmse = (sum(squared_diffs)/len(inds))**.5
-        #self.objectives[2].value = recov_rmse
-                
+        
         tau_rmse = ((self.target_data["tau0"]-sim_data["tau0"])**2)**.5
-        #self.objectives[3].value = tau_rmse
-        
+
         return [inact_rmse, act_rmse, recov_rmse, tau_rmse]
-
-
-
-
-######################
-## Helper Functions ##
-######################
-
-def read_all_raw_data(raw_data):
-    '''
-    Reads data in from CSV. 
-    ---
-    Return real_data: dictionary of experiments, each experiment is a 
-    dictionary of mutants with the activation, inactivation, tau, 
-    and recovery data recorded for that mutant.
-    '''
-    #open file
-    lines = []
-    with open(raw_data, 'r') as csv_file:
-        lines = [line.split(",") for line in csv_file]
-        
-    #get all experiment names and make dictionary
-    experiments = lines[0]
-    real_data = {}
-    for e in experiments:
-        real_data[e] = {}
-        
-    #get all mutants
-    mutants = lines[1]
-    for m in range(int((len(mutants)-1)/4)):
-        col = m*4+1 #select column containing mean data
-        name = mutants[col]
-        exp = experiments[col]
-        unique_name = "{} ({})".format(name, exp)
-        mutant_data = {}
-        mutant_data["unique name"] = unique_name
-        
-        #get activation data
-        act_curve = []
-        sweeps_act = [] #stim voltages
-        for i in range(3,20):
-            sweeps_act.insert(i,float(lines[i][col]))
-            act_curve.insert(i, float(lines[i][col+1]))
-        mutant_data["act"] = act_curve
-        mutant_data["act sweeps"] = sweeps_act
-        act_sig_indices = []
-        #select significant indicies
-        for ind in range(len(act_curve)):
-            curr_frac = act_curve[ind]
-            if (abs(1-curr_frac)>0.05 and abs(curr_frac)>0.05):
-                act_sig_indices.append(ind)
-        mutant_data["act sig inds"] = act_sig_indices
-        
-        #get inactivation data
-        inact_curve = []
-        sweeps_inact = []
-        for i in range(21,34):
-            sweeps_inact.insert(i,float(lines[i][col]))
-            inact_curve.insert(i, float(lines[i][col+1]))
-        mutant_data["inact"] = inact_curve 
-        mutant_data["inact sweeps"] = sweeps_inact
-        inact_sig_indices = []
-        for ind in range(len(inact_curve)):
-            curr_frac = inact_curve[ind]
-            if abs(1-curr_frac)>0.05 and abs(curr_frac)>0.05:
-                inact_sig_indices.append(ind)
-        mutant_data["inact sig inds"] = inact_sig_indices
-        
-        #get tau value
-        tau = float(lines[35][col+1])
-        mutant_data["tau0"] = tau
-        
-        #get recovery data
-        recov_data = []
-        times = []
-        for i in range(37,51):
-            times.insert(i,float(lines[i][col]))
-            recov_data.insert(i, float(lines[i][col+1]))
-        mutant_data["recov"] = recov_data
-        mutant_data["recov times"] = times
-        #select all indicies as significant since unsure how to determine
-        mutant_data["recov sig inds"] = [i for i in range(len(recov_data))]
-        real_data[exp][name] = mutant_data
-
-    #remove extra keys
-    for key in [key for key in real_data if real_data[key] == {}]: del real_data[key] 
-    return real_data
-
-def change_params(new_params_scaled):
-    '''
-    Change params on Na12mut channel in NEURON.
-    ---
-    Param new_params_scaled: list of scaled param values
-    '''
-    
-    #use old params
-    # params_orig = [0.02,7.2,7,0.4,0.124,0.03,-30,-45,-45,-45,0.01,2]
-    #scale params up
-    if new_params_flg:
-        #use new params
-        new_param_dict = scale_params_dict(False, new_params_scaled)
-        change_params_dict(new_param_dict)
-    else:
-        new_params = scale_params(False, new_params_scaled)
-        #get NEURON h
-        currh = ggsd.activationNa12("geth")
-        #change values of params
-        currh.mmin_na12mut = new_params[0]
-        currh.qa_na12mut = new_params[1]
-        currh.qinf_na12mut = new_params[2]
-        currh.Ra_na12mut = new_params[3]
-        currh.Rb_na12mut = new_params[4]
-        currh.Rd_na12mut = new_params[5]
-        currh.tha_na12mut = new_params[6]
-        currh.thi1_na12mut = new_params[7]
-        currh.thinf_na12mut = new_params[8]
-        currh.thi2_na12mut = new_params[9]
-        currh.Rg_na12mut = new_params[10]
-        currh.q10_na12mut = new_params[11]
-    return
-
-def scale_params_dict(down, params_arr):
-    '''
-    Scale parameters between 0 and 1.
-    ---
-    Param down: boolean to determine whether to scale down or up
-    Param params: list of param values to scale
-    Return: list of scaled param values
-    '''
-    #original values of the paramter
-    bsae_value = {
-    'Ena_na12mut': 55,
-    'Rd_na12mut': .03,
-    'Rg_na12mut': .01,
-    'Rb_na12mut': .124,
-    'Ra_na12mut': 0.4,
-    'a0s_na12mut': 0.0003,
-    'gms_na12mut': .02,
-    'hmin_na12mut': .01,
-    'mmin_na12mut': .02,
-    'qinf_na12mut': 7,
-    'q10_na12mut': 2,
-    'qg_na12mut': 1.5,
-    'qd_na12mut': .5,
-    'qa_na12mut': 7.2,
-    'smax_na12mut': 10,
-    'sh_na12mut': 8,
-    'thinf_na12mut': -45,
-    'thi2_na12mut': -45,
-    'thi1_na12mut': -45,
-    'tha_na12mut': -30,
-    'vvs_na12mut': 2,
-    'vvh_na12mut': -58,
-    'vhalfs_na12mut': -60,
-    'zetas_na12mut': 12
-    }
-
-    types = {
-    'Ena_na12mut': 'p',
-    'Rd_na12mut': 'p',
-    'Rg_na12mut': 'p',
-    'Rb_na12mut': 'p',
-    'Ra_na12mut': 'p',
-    'a0s_na12mut': 'md',
-    'gms_na12mut': 'p',
-    'hmin_na12mut': 'p',
-    'mmin_na12mut': 'p',
-    'qinf_na12mut': 'md',
-    'q10_na12mut': 'p',
-    'qg_na12mut': 'md',
-    'qd_na12mut': 'md',
-    'qa_na12mut': 'md',
-    'smax_na12mut': 'p',
-    'sh_na12mut': 'p',
-    'thinf_na12mut': 'p',
-    'thi2_na12mut': 'p',
-    'thi1_na12mut': 'p',
-    'tha_na12mut': 'p',
-    'vvs_na12mut': 'p',
-    'vvh_na12mut': 'p',
-    'vhalfs_na12mut': 'p',
-    'zetas_na12mut': 'p'
-    }
-    inds = {
-    'Ena_na12mut': 0,
-    'Rd_na12mut': 1,
-    'Rg_na12mut': 2,
-    'Rb_na12mut': 3,
-    'Ra_na12mut': 4,
-    'a0s_na12mut': 5,
-    'gms_na12mut': 6,
-    'hmin_na12mut': 7,
-    'mmin_na12mut': 8,
-    'qinf_na12mut': 9,
-    'q10_na12mut': 10,
-    'qg_na12mut': 11,
-    'qd_na12mut': 12,
-    'qa_na12mut': 13,
-    'smax_na12mut': 14,
-    'sh_na12mut': 15,
-    'thinf_na12mut': 16,
-    'thi2_na12mut': 17,
-    'thi1_na12mut': 18,
-    'tha_na12mut': 19,
-    'vvs_na12mut': 20,
-    'vvh_na12mut': 21,
-    'vhalfs_na12mut': 22,
-    'zetas_na12mut': 23
-    }
-    params_dict = {}
-    bounds = {}
-    for k, v in bsae_value.items():
-        #print(f'k is {k} inds[k] is {inds[k]}')
-        params_dict[k] = params_arr[inds[k]]
-        val_type = types[k]
-        if val_type == 'md': #scale kinetic param
-            bounds[k] = (v/scale_fact, v*scale_fact)
-        elif val_type == 'p': #scale voltage param
-            bounds[k] = (v-scale_voltage, v+scale_voltage)
-        else:
-            bounds[k]= (0,1)
-    
-    if down:
-        return [(v-bounds[k][0])/(bounds[k][1]-bounds[k][0]) for k,v in params_dict.items()]
-
-    new_params = {}
-    for  k,v  in params_dict.items():
-        new_params[k]= v*(bounds[k][1]-bounds[k][0]) + bounds[k][0]
-    #print(new_params)
-    return new_params
-
-
-def change_params_dict(new_params):
-    '''
-    Change params on Na12mut channel in NEURON.
-    ---
-    Param new_params_scaled: list of scaled param values
-    '''
-    # params_orig = [0.02,7.2,7,0.4,0.124,0.03,-30,-45,-45,-45,0.01,2]
-    #scale params up
-    #new_params = scale_params_dict(False, new_params_dict)
-    #get NEURON h
-    currh = ggsd.activationNa12("geth")
-    #change values of params
-    #print(new_params)
-    currh.Rd_na12mut= new_params['Rd_na12mut']
-    currh.Rg_na12mut= new_params['Rg_na12mut']
-    currh.Rb_na12mut= new_params['Rb_na12mut']
-    currh.Ra_na12mut= new_params['Ra_na12mut']
-    currh.a0s_na12mut= new_params['a0s_na12mut']
-    currh.gms_na12mut= new_params['gms_na12mut']
-    currh.hmin_na12mut= new_params['hmin_na12mut']
-    currh.mmin_na12mut= new_params['mmin_na12mut']
-    currh.qinf_na12mut= new_params['qinf_na12mut']
-    currh.q10_na12mut= new_params['q10_na12mut']
-    currh.qg_na12mut= new_params['qg_na12mut']
-    currh.qd_na12mut= new_params['qd_na12mut']
-    currh.qa_na12mut= new_params['qa_na12mut']
-    currh.smax_na12mut= new_params['smax_na12mut']
-    currh.sh_na12mut= new_params['sh_na12mut']
-    currh.thinf_na12mut= new_params['thinf_na12mut']
-    currh.thi2_na12mut= new_params['thi2_na12mut']
-    currh.thi1_na12mut= new_params['thi1_na12mut']
-    currh.tha_na12mut= new_params['tha_na12mut']
-    currh.vvs_na12mut= new_params['vvs_na12mut']
-    currh.vvh_na12mut= new_params['vvh_na12mut']
-    currh.vhalfs_na12mut= new_params['vhalfs_na12mut']
-    currh.zetas_na12mut= new_params['zetas_na12mut']
-    return
-
-def gen_sim_data():
-    '''
-    Generate simulated data using the current NEURON state. Returns dictionary
-    with activation, inactivation, tau, and recovery data.
-    ---
-    Return sim_data: dictionary of simulated data
-    '''
-    sim_data = {}
-
-    #simulate activation
-    act, act_sweeps, act_i = ggsd.activationNa12("genActivation")
-    sim_data["act"] = act.to_python()
-    sim_data["act sweeps"] = act_sweeps.tolist()
-
-    #calculate taus from inactivation
-    taus, tau_sweeps, tau0 = ggsd.find_tau_inact(act_i)
-    sim_data["taus"] = taus
-    sim_data["tau sweeps"] = tau_sweeps
-    sim_data["tau0"] = tau0
-
-    #simulate inactivation
-    inact, inact_sweeps,inact_i = ggsd.inactivationNa12("genInactivation")
-    sim_data["inact"] = inact.to_python()
-    sim_data["inact sweeps"] = inact_sweeps.tolist()
-
-    #simulate recovery
-    recov, recov_times = ggsd.recInactTauNa12("genRecInact")
-    sim_data["recov"] = recov
-    sim_data["recov times"] = recov_times
-    return sim_data
-
-
-
-
