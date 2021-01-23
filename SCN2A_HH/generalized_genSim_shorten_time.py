@@ -547,10 +547,12 @@ def recInactTauNa12(command, \
         log_time_vec.append(np.log10(dur))
         rec_vec.append(peak_curr2/peak_curr1)
  
-        #calc tau using RF and tstop
-        #append values to vector
+        # calc RFI tau using RF and tstop
+        ### reference DOI: https://doi.org/10.1038/s41598-019-53662-9 
+            # equation (4): RF(t) = 1 - e^(-t/tau) ### 
         RF_t = peak_curr2/peak_curr1
         tau = -h.tstop / np.log(-RF_t + 1)
+        #append values to vector
         rec_inact_tau_vec.append(tau)
  
     # start RecInact program and plot
