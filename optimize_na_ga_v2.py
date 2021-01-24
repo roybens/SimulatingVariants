@@ -3,10 +3,8 @@ Sodium Channel Optimizer
 --------------------
 Bender Lab
 ____________________
-
 Fits a NEURON mod file Sodium channel model to real data
 or to an ideal Boltzmann model.
-
 """
 
 from neuron import h
@@ -22,6 +20,7 @@ import random
 import pickle
 import csv
 import generalized_genSim_shorten_time as ggsd
+import eval_helper as eh
 
 gen_counter = 0
 best_indvs = []
@@ -243,7 +242,6 @@ def get_mutant_list(exp, real_data=None):
     ---
     Param exp: name of experiment
     Param real_data: dictionary of real data if available
-
     Return names: list of mutants in experiment
     '''
     #if data dict available, just use keys
@@ -304,7 +302,6 @@ def scale_params(down, params):
     ---
     Param down: boolean to determine whether to scale down or up
     Param params: list of param values to scale
-
     Return: list of scaled param values
     '''
     #values to scale by
@@ -365,7 +362,6 @@ def scale_params_dict(down, params_arr):
     ---
     Param down: boolean to determine whether to scale down or up
     Param params: list of param values to scale
-
     Return: list of scaled param values
     '''
     #original values of the paramter
@@ -523,7 +519,6 @@ def genetic_alg(target_data, to_score=["inact", "act", "recov", "tau0"], pop_siz
     Param to_score: list of simulations to run
     Param pop_size: size of population
     Param num_gens: number of generations
-
     Return pop: population at end of algorithm
     Return ga_stats: statistics of algorithm run
     Return hof: hall of fame object containing best individual (ie. best parameters)
@@ -580,7 +575,6 @@ def calc_rmse(indiv):
     Score individual using rmse.
     ---
     Param ind: DEAP individual object to score (essentially a list of param values)
-
     Return: tuple containing inverted rmse score (due to maximization)
     '''
     #print(f' params are: {list(indiv)}')
@@ -661,7 +655,6 @@ def gen_boltz_and_opt(v05act=-15, slopeact=0.1, v05inact=-50, slopeinact=-0.1):
     Param slopeact: desired slope of activation curve
     Param v05inact: desired V0.5 value for inactivation curve
     Param slopeinact: desired slope of inactivation curve
-
     Return: list of optimized param values
     '''
     #generate boltzmann data
@@ -685,7 +678,6 @@ def gen_real_and_opt(exp, mutant):
     ---
     Param exp: name of experiment
     Param mutant: name of mutant
-
     Return: list of optimized param values
     '''
     real_data_map = read_all_raw_data()
@@ -796,7 +788,7 @@ def gen_figure_given_params(params, target_data, save=True, file_name=None,mutan
     fig.suptitle("Mutant: {} \n Experiment: {}".format(mutant, exp))
     change_params(params)
     try:
-        sim_data = gen_sim_data()
+        sim_data = eh.gen_sim_data()
     except ZeroDivisionError: #catch error to prevent bad individuals from halting run
         print("ZeroDivisionError when generating sim_data, returned infinity.")
         sim_data =None
@@ -905,7 +897,6 @@ def make_params_dict(exp, name, params, scale=True):
     Param name: name of mutant
     Param params: list of param values
     Param scale: whether to scale values up before saving
-
     Return params_dict: dictionary of params
     '''
     if new_params_flg:
@@ -979,7 +970,6 @@ def eaSimple(population, toolbox, cxpb, mutpb, ngen, stats=None,
              halloffame=None, verbose=__debug__):
     """This algorithm reproduce the simplest evolutionary algorithm as
     presented in chapter 7 of [Back2000]_.
-
     :param population: A list of individuals.
     :param toolbox: A :class:`~deap.base.Toolbox` that contains the evolution
                     operators.
@@ -994,7 +984,6 @@ def eaSimple(population, toolbox, cxpb, mutpb, ngen, stats=None,
     :returns: The final population
     :returns: A class:`~deap.tools.Logbook` with the statistics of the
               evolution
-
     The algorithm takes in a population and evolves it in place using the
     :meth:`varAnd` method. It returns the optimized population and a
     :class:`~deap.tools.Logbook` with the statistics of the evolution. The
@@ -1002,14 +991,12 @@ def eaSimple(population, toolbox, cxpb, mutpb, ngen, stats=None,
     each generation and the statistics if a :class:`~deap.tools.Statistics` is
     given as argument. The *cxpb* and *mutpb* arguments are passed to the
     :func:`varAnd` function. The pseudocode goes as follow ::
-
         evaluate(population)
         for g in range(ngen):
             population = select(population, len(population))
             offspring = varAnd(population, toolbox, cxpb, mutpb)
             evaluate(offspring)
             population = offspring
-
     As stated in the pseudocode above, the algorithm goes as follow. First, it
     evaluates the individuals with an invalid fitness. Second, it enters the
     generational loop where the selection procedure is applied to entirely
@@ -1022,16 +1009,12 @@ def eaSimple(population, toolbox, cxpb, mutpb, ngen, stats=None,
     compute the statistics on this population. Finally, when *ngen*
     generations are done, the algorithm returns a tuple with the final
     population and a :class:`~deap.tools.Logbook` of the evolution.
-
     .. note::
-
         Using a non-stochastic selection method will result in no selection as
         the operator selects *n* individuals from a pool of *n*.
-
     This function expects the :meth:`toolbox.mate`, :meth:`toolbox.mutate`,
     :meth:`toolbox.select` and :meth:`toolbox.evaluate` aliases to be
     registered in the toolbox.
-
     .. [Back2000] Back, Fogel and Michalewicz, "Evolutionary Computation 1 :
        Basic Algorithms and Operators", 2000.
     """

@@ -1,5 +1,94 @@
 import generalized_genSim_shorten_time as ggsd
 
+scale_voltage = 30
+scale_fact = 7.5
+
+def read_all_raw_data_SCN8A(raw_data):
+    '''
+    Reads data in from CSV.
+    ---
+    Return real_data: dictionary of experiments, each experiment is a
+    dictionary of mutants with the activation, inactivation, tau,
+    and recovery data recorded for that mutant.
+    '''
+    #open file
+    print("Start:")
+    lines = []
+    with open(raw_data, 'r') as csv_file:
+        lines = [line.split(",") for line in csv_file]
+
+    #get all experiment names and make dictionary
+    experiments = lines[0]
+    real_data = {}
+    for e in experiments:
+        real_data[e] = {}
+
+    #get all mutants
+    mutants = lines[1]
+    print("Mutants", mutants)
+    for m in range(1):
+        col = 1 #select column containing mean data
+        name = mutants[col]
+        exp = experiments[col]
+        print("name")
+        print(name, exp)
+        unique_name = "{} ({})".format(name, exp)
+        mutant_data = {}
+        mutant_data["unique name"] = unique_name
+
+        #get activation data
+        act_curve = []
+        sweeps_act = [] #stim voltages
+        for i in range(3,14):
+            sweeps_act.insert(i,float(lines[i][col]))
+            act_curve.insert(i, float(lines[i][col+1]))
+        mutant_data["act"] = act_curve
+        mutant_data["act sweeps"] = sweeps_act
+        act_sig_indices = []
+        #select significant indicies
+        for ind in range(len(act_curve)):
+            curr_frac = act_curve[ind]
+            if (abs(1-curr_frac)>0.05 and abs(curr_frac)>0.05):
+                act_sig_indices.append(ind)
+        mutant_data["act sig inds"] = act_sig_indices
+
+        #get inactivation data
+        inact_curve = []
+        sweeps_inact = []
+        for i in range(15,29):
+            sweeps_inact.insert(i,float(lines[i][col]))
+            inact_curve.insert(i, float(lines[i][col+1]))
+        mutant_data["inact"] = inact_curve
+        mutant_data["inact sweeps"] = sweeps_inact
+        inact_sig_indices = []
+        for ind in range(len(inact_curve)):
+            curr_frac = inact_curve[ind]
+            if abs(1-curr_frac)>0.05 and abs(curr_frac)>0.05:
+                inact_sig_indices.append(ind)
+        mutant_data["inact sig inds"] = inact_sig_indices
+
+        #get tau value
+        tau = float(lines[30][col+1])
+        mutant_data["tau0"] = tau
+
+        #get recovery data
+        recov_data = []
+        times = []
+        for i in range(32,36):
+            times.insert(i,float(lines[i][col]))
+            recov_data.insert(i, float(lines[i][col+1]))
+        mutant_data["recov"] = recov_data
+        mutant_data["recov times"] = times
+        print("Test:")
+        print(mutant_data)
+        #select all indicies as significant since unsure how to determine
+        mutant_data["recov sig inds"] = [i for i in range(len(recov_data))]
+        real_data[exp][name] = mutant_data
+
+    #remove extra keys
+    for key in [key for key in real_data if real_data[key] == {}]: del real_data[key]
+    return real_data
+
 def read_all_raw_data(raw_data):
     '''
     Reads data in from CSV. 
@@ -80,15 +169,54 @@ def read_all_raw_data(raw_data):
     for key in [key for key in real_data if real_data[key] == {}]: del real_data[key] 
     return real_data
 
-def change_params(new_params_scaled):
+def change_params(new_params, scaled=True):
     '''
     Change params on Na12mut channel in NEURON.
     ---
-    Param new_params_scaled: list of scaled param values
+    Param new_params_scaled: list of param values
+        scaled: whether the parameters are scaled to be between 0 and 1
     '''
-    new_param_dict = scale_params_dict(False, new_params_scaled)
+    if scaled:
+        new_param_dict = scale_params_dict(False, new_params)
+    else:
+        new_param_dict = make_params_dict(new_params)
     change_params_dict(new_param_dict)
     return
+
+def make_params_dict(params_list):
+    '''
+    Make a dictionary of 24 parameters out of the raw values
+    in PARAMS_LIST.
+    ---
+    params_list: list of raw parameter values, unscaled to be between 0 and 1
+    '''
+    params_dict = {
+        'Ena_na12mut': params_list[0],
+        'Rd_na12mut': params_list[1],
+        'Rg_na12mut': params_list[2],
+        'Rb_na12mut': params_list[3],
+        'Ra_na12mut': params_list[4],
+        'a0s_na12mut': params_list[5],
+        'gms_na12mut': params_list[6],
+        'hmin_na12mut': params_list[7],
+        'mmin_na12mut': params_list[8],
+        'qinf_na12mut': params_list[9],
+        'q10_na12mut': params_list[10],
+        'qg_na12mut': params_list[11],
+        'qd_na12mut': params_list[12],
+        'qa_na12mut': params_list[13],
+        'smax_na12mut': params_list[14],
+        'sh_na12mut': params_list[15],
+        'thinf_na12mut': params_list[16],
+        'thi2_na12mut': params_list[17],
+        'thi1_na12mut': params_list[18],
+        'tha_na12mut': params_list[19],
+        'vvs_na12mut': params_list[20],
+        'vvh_na12mut': params_list[21],
+        'vhalfs_na12mut': params_list[22],
+        'zetas_na12mut': params_list[23]
+        }
+    return params_dict
 
 def scale_params_dict(down, params_arr):
     '''
@@ -252,16 +380,16 @@ def gen_sim_data():
     sim_data["act"] = act.to_python()
     sim_data["act sweeps"] = act_sweeps.tolist()
 
-    #calculate taus from inactivation
-    taus, tau_sweeps, tau0 = ggsd.find_tau_inact(act_i)
-    sim_data["taus"] = taus
-    sim_data["tau sweeps"] = tau_sweeps
-    sim_data["tau0"] = tau0
-
     #simulate inactivation
     inact, inact_sweeps,inact_i = ggsd.inactivationNa12("genInactivation")
     sim_data["inact"] = inact.to_python()
     sim_data["inact sweeps"] = inact_sweeps.tolist()
+
+    #calculate taus from inactivation
+    taus, tau_sweeps, tau0 = ggsd.find_tau_inact(inact_i)
+    sim_data["taus"] = taus
+    sim_data["tau sweeps"] = tau_sweeps
+    sim_data["tau0"] = tau0
 
     #simulate recovery
     recov, recov_times = ggsd.recInactTauNa12("genRecInact")
