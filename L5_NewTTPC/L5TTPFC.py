@@ -70,8 +70,6 @@ def additional_settings():
     Im_b_pre_exp = 0.01    #0.01 
     Im_b_vshift = -50      #-45
     Im_b_exp_div = 0.05556*10       #0.005556
-    
-    
     #BK Kinetics:
     #PROCEDURE rates( v (mV) ) {
     	#v = v + 5 (mV)
@@ -242,16 +240,82 @@ def additional_settings():
         h.sh_na12 = 4.5  #default is 8
         h.sh_na16 = 4.5
     h.working()
-def run_model():
+
+    
+    # Run model
+def run_model(start_Vm = -72):
+
+    h.finitialize(start_Vm)
+    timesteps = int(h.tstop/h.dt)
+    
+    Vm = np.zeros(timesteps)
+    I = {}
+    I['Na'] = np.zeros(timesteps)
+    I['Ca'] = np.zeros(timesteps)
+    I['K'] = np.zeros(timesteps)
+    t = np.zeros(timesteps)
+    
+    for i in range(timesteps):
+        Vm[i] = h.cell.soma[0].v
+        I['Na'][i] = h.cell.soma[0](0.5).ina
+        I['Ca'][i] = h.cell.soma[0](0.5).ica
+        I['K'][i] = h.cell.soma[0](0.5).ik
+        t[i] = i*h.dt / 1000
+        h.fadvance()
+        
+    return Vm, I, t   
+def plot_model():
     sweep_len = 450
     stim_dur = 300
     amp = 0.15
     dt = 0.01
     init_stim(sweep_len = sweep_len, stim_start = 100,stim_dur = stim_dur, amp = amp, dt = dt)
-    # Run model
     Vm, I, t = run_model()
     dvdt = np.gradient(Vm)/h.dt
+    fig, [ax1, ax2] = plt.subplots(nrows=1, ncols=2, figsize=(20,4), sharex=False, sharey=False)
+    fig_title = 'Model Run Example'
+    fig.suptitle(fig_title) 
 
+    title_txt = '{amp}nA for {stim_dur}ms'.format(amp = amp, stim_dur = stim_dur)
+    ax1.set_title(title_txt) 
+    ax1.set_xlabel('Time (sec)')
+    ax1.set_ylabel('Vm (mV)')
+
+    ax2.set_title('Phase plane')
+    ax2.set_xlabel('Vm (mV)')
+    ax2.set_ylabel('dVdt (V/s)')
+
+    ax1.plot(t, Vm, color = 'k')
+    ax2.plot(Vm, dvdt, color = 'k')
+
+    plt.rcParams['axes.spines.right'] = False
+    plt.rcParams['axes.spines.top'] = False
+
+    tick_major = 6
+    tick_minor = 4
+    plt.rcParams["xtick.major.size"] = tick_major
+    plt.rcParams["xtick.minor.size"] = tick_minor
+    plt.rcParams["ytick.major.size"] = tick_major
+    plt.rcParams["ytick.minor.size"] = tick_minorfont_small = 12
+    font_medium = 13
+    font_large = 14
+    plt.rc('font', size=font_small)          # controls default text sizes
+    plt.rc('axes', titlesize=font_medium)    # fontsize of the axes title
+    plt.rc('axes', labelsize=font_medium)    # fontsize of the x and y labels
+    plt.rc('xtick', labelsize=font_small)    # fontsize of the tick labels
+    plt.rc('ytick', labelsize=font_small)    # fontsize of the tick labels
+    plt.rc('legend', fontsize=font_small)    # legend fontsize
+    plt.rc('figure', titlesize=font_large)   # fontsize of the figure title
+    return fig
+
+
+#TODO Michael
+def update_16(params_dict):
+     for curr_sec in sl:
+         #iterate over all the paramters and assign the param name with the suffix of _na16 to the value 
+         str = f'{param_key}_na16={param_value}'
+         h(str)
+    
 def ko12():
     for curr_sec in sl:
         curr_sec.gbar_na12 = 0
@@ -267,3 +331,8 @@ def add_ttx():
     h.node_na = 0
     h.naked_axon_na = 0
     h.working()
+init_neuron()
+additional_settings()
+#run_model()
+plot_model()
+plt.show()
