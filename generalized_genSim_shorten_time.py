@@ -43,7 +43,7 @@ h.dt = 0.025
 def activationNa12(command, \
                   soma_diam=50, soma_L=63.66198, soma_nseg=1, soma_cm=1, soma_Ra=70, \
                   channel_name='na12mut', soma_ena=55, h_celsius=33, v_init=-120, h_dt=0.025, \
-                  dur=10, step=10, st_cl=-80, end_cl=30, v_cl=-80, \
+                  dur=60, step=10, st_cl=-80, end_cl=30, v_cl=-80, \
                   f3cl_dur0=5, f3cl_amp0=-120, f3cl_dur2=5, f3cl_amp2=-120, \
                   x_axis_min=-100, x_axis_max=40, x_axis_step=10):
  
@@ -210,6 +210,9 @@ def activationNa12(command, \
         return genActivation()
     elif command == "geth":
         return h
+    elif command == "getTimesteps":
+        genActivation()
+        return t_vec
     else:
         print("Invalid command. Function does not exist.")
  
@@ -407,6 +410,9 @@ def inactivationNa12(command, \
         return plotInactivation()
     elif command == "genInactivation":
         return genInactivation()
+    elif command == "getTimesteps":
+        genInactivation()
+        return t_vec
     else:
         print("Invalid command. Function does not exist.")
  
@@ -443,7 +449,7 @@ def recInactTauNa12(command, \
                    channel_name='na12mut', soma_ena=55, h_celsius=33, v_init=-120, h_dt=0.1,\
                    min_inter=0.1, max_inter=5000, num_pts=50, cond_st_dur=1000, res_pot=-120, dur=0.1,\
                    #vec_pts = [1,1.5,3,5.6,10,30,56,100,150,300,560,1000,2930,5000],\
-                   vec_pts = [3, 4, 5, 6],\
+                   vec_pts = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 ,13 ,14, 15],\
                    f3cl_dur0=5, f3cl_amp0=-120, f3cl_amp1=0, f3cl_dur3=20, f3cl_amp3=0, f3cl_dur4=5, f3cl_amp4=-120):
     
     dtype = np.float64
