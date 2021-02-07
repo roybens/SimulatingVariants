@@ -55,6 +55,7 @@ proc biophys() {
 		insert Ih
 		insert na12
 		insert na16
+		insert na16mut
 		insert Ca_LVAst
 		insert CaDynamics_E2
 		insert sk
@@ -62,6 +63,7 @@ proc biophys() {
 		gNaTs2_tbar_NaTs2_t = 0
 		gbar_na12 =0
 		gbar_na16=0
+		gbar_na16mut=0
 		
 	}
 
@@ -74,6 +76,7 @@ proc biophys() {
 		insert Ih
 		insert na12
 		insert na16
+		insert na16mut
 		insert Ca_LVAst
 		insert CaDynamics_E2
 		insert sk
@@ -81,6 +84,7 @@ proc biophys() {
 		gNaTs2_tbar_NaTs2_t = 0
 		gbar_na12 =0
 		gbar_na16=0
+		gbar_na16mut=0
 	}
 
 	forsec $o1.somatic {
@@ -94,11 +98,13 @@ proc biophys() {
 		insert CaDynamics_E2
 		insert na12
 		insert na16
+		insert na16mut
 		insert Im
 		insert sk
 		insert bk
 		gbar_na12 =0
 		gbar_na16=0
+		gbar_na16mut=0
 
 	}
 
@@ -114,11 +120,13 @@ proc biophys() {
 		insert NaTa_t
 		insert na12
 		insert na16
+		insert na16mut
 		insert Im
 		insert sk
 		insert bk
 		gbar_na12 = 0
 		gbar_na16 = 0
+		gbar_na16mut = 0
 	}
 
 	forsec $o1.all {

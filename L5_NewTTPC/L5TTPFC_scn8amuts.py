@@ -103,14 +103,14 @@ def additional_settings():
     ckth1 = -5.2 #(mV)-5.2
     cvth2 = -54.2 #(mV)-54.2
     ckth2 = 12.9 #(mV)12.9
-    #h.dend_na12 =0.0026145
-    #h.dend_na16 =0.0026145
-    
     h.dend_na12 = 0.0196791*0.8*0.6
-    h.dend_na16 = 0.0196791*0.8*0.6
+    h.dend_na16 = 0.5*(0.0196791*0.8*0.6)
+    h.dend_na16mut = 0.5*(0.0196791*0.8*0.6)
     h.soma_na12 = 0.0196791*1.5  #1.9
-    h.soma_na16 = 0.0196791*1.5
-    h.ais_na16=0.8*0.7*1.0   #1.1
+    h.soma_na16 = 0.5*(0.0196791*1.5)
+    h.soma_na16mut = 0.5*(0.0196791*1.5)
+    h.ais_na16=0.5*(0.8*0.7*1.0)
+    h.ais_na16mut=0.5*(0.8*0.7*1.0) #1.1
     h.ais_na12=0.8*0.7*1.0
     
     
@@ -236,10 +236,14 @@ def additional_settings():
         h.ar2_na12 = 0.75 #0 inactivation, 1 no inactivation   0.75
         h.Rg_na16 = 0.01 #ms  0.1
         h.ar2_na16 = 0.25 #0 inactivation, 1 no inactivation  0.25
+        h.Rg_na16mut = 0.01 #ms  0.1
+        h.ar2_na16mut = 0.25 #0 inactivation, 1 no inactivation  0.25
         h.thi2_na12 = -45 #mV
         h.thi2_na16 = -45 #mV
+        h.thi2_na16mut = -45 #mV
         h.sh_na12 = 4.5  #default is 8
         h.sh_na16 = 4.5
+        h.sh_na16mut = 4.5
     h.working()
 
     
@@ -265,15 +269,18 @@ def run_model(start_Vm = -72):
         h.fadvance()
         
     return Vm, I, t   
-def plot_model():
+def plot_model(line_color,fig=None):
     sweep_len = 450
     stim_dur = 300
     amp = 0.15
-    dt = 0.01
+    dt = 0.1
     init_stim(sweep_len = sweep_len, stim_start = 100,stim_dur = stim_dur, amp = amp, dt = dt)
     Vm, I, t = run_model()
     dvdt = np.gradient(Vm)/h.dt
-    fig, [ax1, ax2] = plt.subplots(nrows=1, ncols=2, figsize=(20,4), sharex=False, sharey=False)
+    if (fig==None):
+        fig, [ax1, ax2] = plt.subplots(nrows=1, ncols=2, figsize=(20,4), sharex=False, sharey=False)
+    else:
+        [ax1,ax2] = fig.axes
     fig_title = 'Model Run Example'
     fig.suptitle(fig_title) 
 
@@ -286,8 +293,8 @@ def plot_model():
     ax2.set_xlabel('Vm (mV)')
     ax2.set_ylabel('dVdt (V/s)')
 
-    ax1.plot(t, Vm, color = 'k')
-    ax2.plot(Vm, dvdt, color = 'k')
+    ax1.plot(t, Vm, color = line_color)
+    ax2.plot(Vm, dvdt, color = line_color)
 
     plt.rcParams['axes.spines.right'] = False
     plt.rcParams['axes.spines.top'] = False
@@ -309,16 +316,19 @@ def plot_model():
     plt.rc('figure', titlesize=font_large)   # fontsize of the figure title
     return fig
 
-
-#TODO Michael
 def update_16(yaml_fn,mod_suffix):
     with open(yaml_fn, 'r') as stream:
         param_dict = yaml.safe_load(stream)
     p_names = list(param_dict.keys())
     for curr_sec in sl:
         for p in p_names:
-         str = f'{param_key}_{mod_suffix}={param_value}'
-         h(str)
+            p_value = param_dict[p]
+            if ('Ena' in p):
+                p='Ena'
+                continue
+            str = f'{p}_{mod_suffix}={p_value}'
+            
+            h(str)
     
 def ko12():
     for curr_sec in sl:
@@ -334,15 +344,24 @@ def add_ttx():
     h.dend_na16mut = 0
     h.soma_na12 = 0
     h.soma_na16 = 0
+    h.soma_na16mut = 0
     h.node_na = 0
     h.naked_axon_na = 0
     h.working()
 def plot_na16_muts():
     wt_fn = '../SCN8A_WT_opt_params.yaml'
-    update_16(wt_fn)
+    mut_fn = '../SCN8A_MUT_opt_params.yaml'
+    update_16(wt_fn, 'na16')
+    update_16(wt_fn, 'na16mut')
+    run_model()
+    fig_wt = plot_model('black')
+    plt.save('withena.pdf')
+    
+    
 init_neuron()
 additional_settings()
 plot_na16_muts()
-#run_model()
-plot_model()
+
+fig = plot_model(black)
+
 plt.show()
