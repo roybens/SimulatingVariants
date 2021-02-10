@@ -355,7 +355,7 @@ def plot_na16_muts():
     update_16(wt_fn, 'na16mut')
     run_model()
     fig_wt = plot_model('black')
-    plt.save('withena.pdf')
+    plt.savefig('withena.pdf')
     
     
 init_neuron()

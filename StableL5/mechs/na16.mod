@@ -14,7 +14,7 @@ NEURON {
 
 
 PARAMETER {
-	sh   = 4.5	(mV)
+	sh   = 8	(mV)
 	gbar = 0.010   	(mho/cm2)	
 								
 	tha  =  -35	(mV)		: v 1/2 for act	
@@ -44,7 +44,7 @@ PARAMETER {
         smax=10		(ms)
         vvh=-58		(mV) 
         vvs=2		(mV)
-        ar2=0.25		(1)		: 1=no inact., 0=max inact.
+        ar2=1		(1)		: 1=no inact., 0=max inact.
 	ena		(mV)	
 	Ena = 55	(mV)            : must be explicitly def. in hoc
 	celsius

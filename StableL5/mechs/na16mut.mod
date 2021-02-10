@@ -4,7 +4,7 @@ TITLE na3
 : added sh to account for higher threshold M.Migliore, Apr.2002
 
 NEURON {
-	SUFFIX na16
+	SUFFIX na16mut
 	USEION na READ ena WRITE ina
 	RANGE  gbar, thegna,ina
 	GLOBAL vhalfs,sh,tha,qa,Ra,Rb,thi1,thi2,qd,qg,mmin,hmin,q10,Rg,qq,Rd,tq,thinf,qinf,vhalfs,a0s,zetas,gms,smax,vvh,vvs,ar2
@@ -14,7 +14,7 @@ NEURON {
 
 
 PARAMETER {
-	sh   = 4.5	(mV)
+	sh   = 8	(mV)
 	gbar = 0.010   	(mho/cm2)	
 								
 	tha  =  -35	(mV)		: v 1/2 for act	
@@ -44,7 +44,7 @@ PARAMETER {
         smax=10		(ms)
         vvh=-58		(mV) 
         vvs=2		(mV)
-        ar2=0.25		(1)		: 1=no inact., 0=max inact.
+        ar2=1		(1)		: 1=no inact., 0=max inact.
 	ena		(mV)	
 	Ena = 55	(mV)            : must be explicitly def. in hoc
 	celsius

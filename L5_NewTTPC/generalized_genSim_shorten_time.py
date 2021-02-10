@@ -119,7 +119,7 @@ def activationNa12(command, \
  
                 if ((h.t>5)and(h.t<=10)):       # evaluate the peak 
                     if(abs(dens)>abs(pre_i)):
-                        cond_tr = soma.thegna_na12mut   # updates the peak conductance ### NEED TO CHANGE NAME IF CHANGE MOD FILE NAME
+                        cond_tr = soma.thegna_na16mut   # updates the peak conductance ### NEED TO CHANGE NAME IF CHANGE MOD FILE NAME
                         curr_tr = dens          # updates the peak current
  
                 h.fadvance()
