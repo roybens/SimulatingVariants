@@ -1,7 +1,7 @@
 import numpy as np
 import bluepyopt as bpop
 import eval_helper as eh
-
+# Michael Lam
 class vclamp_evaluator(bpop.evaluators.Evaluator):
     '''
     A class that holds a set of objectives and a set of parameters.
