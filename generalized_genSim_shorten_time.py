@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as colors
 import matplotlib.cm as cmx
 from scipy import optimize, stats
+
 h.dt = 0.025
 ##################
 # Activation Na 1.2 
@@ -43,7 +44,7 @@ h.dt = 0.025
 def activationNa12(command, \
                   soma_diam=50, soma_L=63.66198, soma_nseg=1, soma_cm=1, soma_Ra=70, \
                   channel_name='na12mut', soma_ena=55, h_celsius=33, v_init=-120, h_dt=0.025, \
-                  dur=10, step=10, st_cl=-120, end_cl=40, v_cl=-120, \
+                  dur=60, step=10, st_cl=-80, end_cl=30, v_cl=-80, \
                   f3cl_dur0=5, f3cl_amp0=-120, f3cl_dur2=5, f3cl_amp2=-120, \
                   x_axis_min=-100, x_axis_max=40, x_axis_step=10):
  
@@ -210,6 +211,9 @@ def activationNa12(command, \
         return genActivation()
     elif command == "geth":
         return h
+    elif command == "getTimesteps":
+        genActivation()
+        return t_vec
     else:
         print("Invalid command. Function does not exist.")
  
@@ -243,7 +247,7 @@ def activationNa12(command, \
 def inactivationNa12(command, \
                     soma_diam=50, soma_L=63.66198, soma_nseg=1, soma_cm=1, soma_Ra=70, \
                     channel_name='na12mut', soma_ena=55, h_celsius=33, v_init=-120, h_dt=0.025, \
-                    dur=500, step=10, st_cl=-120, end_cl=40, v_cl=-120, \
+                    dur=500, step=10, st_cl=-130, end_cl=10, v_cl=-130, \
                     f3cl_dur0=40, f3cl_amp0=-120, f3cl_dur2=20, f3cl_amp2=-10, \
                     x_axis_min=-125, x_axis_max=40, x_axis_step=10):
     dtype = np.float64
@@ -407,6 +411,9 @@ def inactivationNa12(command, \
         return plotInactivation()
     elif command == "genInactivation":
         return genInactivation()
+    elif command == "getTimesteps":
+        genInactivation()
+        return t_vec
     else:
         print("Invalid command. Function does not exist.")
  
@@ -442,7 +449,8 @@ def recInactTauNa12(command, \
                    soma_diam=50, soma_L=63.66198, soma_nseg=1, soma_cm=1, soma_Ra=70, \
                    channel_name='na12mut', soma_ena=55, h_celsius=33, v_init=-120, h_dt=0.1,\
                    min_inter=0.1, max_inter=5000, num_pts=50, cond_st_dur=1000, res_pot=-120, dur=0.1,\
-                   vec_pts = [1,1.5,3,5.6,10,30,56,100,150,300,560,1000,2930,5000],\
+                   #vec_pts = [1,1.5,3,5.6,10,30,56,100,150,300,560,1000,2930,5000],\
+                   vec_pts = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 ,13 ,14, 15],\
                    f3cl_dur0=5, f3cl_amp0=-120, f3cl_amp1=0, f3cl_dur3=20, f3cl_amp3=0, f3cl_dur4=5, f3cl_amp4=-120):
     
     dtype = np.float64
@@ -547,12 +555,10 @@ def recInactTauNa12(command, \
         log_time_vec.append(np.log10(dur))
         rec_vec.append(peak_curr2/peak_curr1)
  
-        # calc RFI tau using RF and tstop
-        ### reference DOI: https://doi.org/10.1038/s41598-019-53662-9 
-            # equation (4): RF(t) = 1 - e^(-t/tau) ### 
+        #calc tau using RF and tstop
+        #append values to vector
         RF_t = peak_curr2/peak_curr1
         tau = -h.tstop / np.log(-RF_t + 1)
-        #append values to vector
         rec_inact_tau_vec.append(tau)
  
     # start RecInact program and plot
@@ -1008,7 +1014,7 @@ def fit_exp(x, a, b, c):
 
 
 def find_tau_inact(inact_i,ax=None):
-    all_tau_sweeps = [-120+i*10 for i in range(len(inact_i))]
+    all_tau_sweeps = [-130+i*10 for i in range(len(inact_i))] #Need to change the constant every time. Need to fix.
     all_taus = []
     for i in range(len(inact_i)):
         raw_data = inact_i[i][1:]
