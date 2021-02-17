@@ -1,7 +1,8 @@
 import numpy as np
 import bluepyopt as bpop
 import eval_helper as eh
-# Michael Lam
+import scoring_functions as sf
+
 class vclamp_evaluator(bpop.evaluators.Evaluator):
     '''
     A class that holds a set of objectives and a set of parameters.
@@ -45,16 +46,23 @@ class vclamp_evaluator(bpop.evaluators.Evaluator):
                 param_val = param_vals[i]
                 min_bound = param_min[i]
                 max_bound = param_max[i]
+                #Try removing value from initialization
                 param_list.append(bpop.parameters.Parameter(param_name, value=param_val, bounds=(min_bound, max_bound)))
+                #param_list.append(bpop.parameters.Parameter(param_name, bounds=(min_bound, max_bound)))
+                #Try setting all bounds to 0 and 1
+                #param_list.append(bpop.parameters.Parameter(param_name, bounds=(0, 1)))
+
+
             return param_list
 
         self.params = init_params(params_file)
         self.objectives = [bpop.objectives.Objective('inact'),\
                            bpop.objectives.Objective('act'),\
-                           bpop.objectives.Objective('recov'),\
-                           bpop.objectives.Objective('tau0')
+                           bpop.objectives.Objective('recov'),
+                           #bpop.objectives.Objective('tau0')
                            ]
-        exp_data_map = eh.read_all_raw_data(exp_data_file)
+        #exp_data_map = eh.read_all_raw_data(exp_data_file)
+        exp_data_map = eh.read_all_raw_data_SCN8A(exp_data_file)
         self.target_data = exp_data_map[exp][mutant]
  
 
@@ -68,10 +76,10 @@ class vclamp_evaluator(bpop.evaluators.Evaluator):
         Returns:
             List of float values of objective errors
         '''
-        return calc_all_rmse(param_values)
+        return self.calc_all_rmse(param_values, sf.calc_rmse_sans_tau)
     
 
-    def calc_all_rmse(param_values):
+    def calc_all_rmse(self, param_values, scoring_function):
         '''
         Uses the parameter values in PARAM_VALUES to calculate the objective errors
 
@@ -83,25 +91,5 @@ class vclamp_evaluator(bpop.evaluators.Evaluator):
 
         '''
         assert len(param_values) == len(self.params), 'Parameter value list is not same length number of parameters' 
-        eh.change_params(param_values)
-        try:
-            sim_data = eh.gen_sim_data()
-        except ZeroDivisionError: #catch error to prevent bad individuals from halting run
-            print("ZeroDivisionError when generating sim_data, returned infinity.")
-            sim_data =None
-            return (1000,1000,1000,1000)
-        inds = self.target_data["inact sig inds"]
-        squared_diffs = [(self.target_data[var][i]-sim_data[var][i])**2 for i in inds]
-        inact_rmse = (sum(squared_diffs)/len(inds))**.5
-
-        inds = self.target_data["act sig inds"]
-        squared_diffs = [(self.target_data[var][i]-sim_data[var][i])**2 for i in inds]
-        act_rmse = (sum(squared_diffs)/len(inds))**.5
-
-        inds = self.target_data["recov sig inds"]
-        squared_diffs = [(self.target_data[var][i]-sim_data[var][i])**2 for i in inds]
-        recov_rmse = (sum(squared_diffs)/len(inds))**.5
-        
-        tau_rmse = ((self.target_data["tau0"]-sim_data["tau0"])**2)**.5
-
-        return [inact_rmse, act_rmse, recov_rmse, tau_rmse]
+        eh.change_params(param_values, scaled=False)
+        return scoring_function(self.target_data)
