@@ -1,9 +1,9 @@
 import numpy as np
 import bluepyopt as bpop
 import eval_helper as eh
-import scoring_functions as sf
+import scoring_functions_relative as sf
 
-class vclamp_evaluator(bpop.evaluators.Evaluator):
+class vclamp_evaluator_relative(bpop.evaluators.Evaluator):
     '''
     A class that holds a set of objectives and a set of parameters.
     
@@ -14,13 +14,11 @@ class vclamp_evaluator(bpop.evaluators.Evaluator):
     through the evaluate_with_lists function
     '''
 
-    def __init__(self, exp_data_file, params_file, exp, mutant):
+    def __init__(self, params_file, mutant):
         '''
         Constructor
 
-        exp_data_file: a filepath to a csv containing the experimental data, Israeli style. For 
-                       other file formats like Northwestern, use a different READ_DATA function 
-                       or write your own.
+        exp_data_file: a filepath to a csv containing the experimental data, NW style
         params_file: a filepath to a csv containing the names, starting values, and bounds
             of each parameter in the following format:
 
@@ -29,7 +27,6 @@ class vclamp_evaluator(bpop.evaluators.Evaluator):
                   sh       |         5       |      3      |      15
                   ...      |        ...      |     ...     |      ...
 
-        exp: name of the experiment
         mutant: name of the mutant
 
         '''
@@ -48,25 +45,22 @@ class vclamp_evaluator(bpop.evaluators.Evaluator):
                 param_val = param_vals[i]
                 min_bound = param_min[i]
                 max_bound = param_max[i]
-                #Try removing value from initialization
                 param_list.append(bpop.parameters.Parameter(param_name, value=param_val, bounds=(min_bound, max_bound)))
-                #param_list.append(bpop.parameters.Parameter(param_name, bounds=(min_bound, max_bound)))
-                #Try setting all bounds to 0 and 1
-                #param_list.append(bpop.parameters.Parameter(param_name, bounds=(0, 1)))
-
-
             return param_list
 
         self.params = init_params(params_file)
-        self.objectives = [bpop.objectives.Objective('inact'),\
-                           bpop.objectives.Objective('act'),\
-                           bpop.objectives.Objective('recov'),
-                           #bpop.objectives.Objective('tau0')
-                           ]
-        #exp_data_map = eh.read_all_raw_data(exp_data_file)
-        exp_data_map = eh.read_all_raw_data_SCN8A(exp_data_file)
-        self.target_data = exp_data_map[exp][mutant]
- 
+        self.objectives = [bpop.objectives.Objective('dv_half_act'),\
+                           bpop.objectives.Objective('gv_slope'),\
+                           bpop.objectives.Objective('dv_half_ssi'),\
+                           bpop.objectives.Objective('ssi_slope'),\
+                           bpop.objectives.Objective('tau_fast'),\
+                           bpop.objectives.Objective('tau_slow'),\
+                           bpop.objectives.Objective('percent_fast'),\
+                           bpop.objectives.Objective('udb20'),\
+                           bpop.objectives.Objective('tau0'),\
+                           bpop.objectives.Objective('ramp'),\
+                           bpop.objectives.Objective('persistent')
+                           ] 
 
     def evaluate_with_lists(self, param_values=[]):
         '''
