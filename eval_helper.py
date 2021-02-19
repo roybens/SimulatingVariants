@@ -3,6 +3,36 @@ import generalized_genSim_shorten_time as ggsd
 scale_voltage = 30
 scale_fact = 7.5
 
+def read_mutant_protocols(mutant_protocols_csv, mutant):
+    '''
+    Reads data for a single MUTANT from a csv of mutant protocols.
+    Returns a dictionary with all the relevant protocols for that 
+    MUTANT.
+    '''
+    lines = []
+    with open(mutant_protocols_csv, 'r') as csv_file:
+        lines = [line.split(",") for line in csv_file]
+
+    #Each line[0] except the first should contain the name of the mutant 
+    mutant_line = []
+    for line in lines:
+        if line[0] == mutant:
+            mutant_line = line
+    if mutant_line == []:
+        raise NameError('Invalid mutant name, or mutant is not yet in CSV database')
+    protocols_dict = {}
+    protocols_dict['dv_half_act'] = mutant_line[1]
+    protocols_dict['gv_slope'] = mutant_line[2]
+    protocols_dict['dv_half_ssi'] = mutant_line[3]
+    protocols_dict['ssi_slope'] = mutant_line[4]
+    protocols_dict['tau_fast'] = mutant_line[5]
+    protocols_dict['tau_slow'] = mutant_line[6]
+    protocols_dict['percent_fast'] = mutant_line[7]
+    protocols_dict['udb20'] = mutant_line[8]
+    protocols_dict['tau0'] = mutant_line[9]
+    protocols_dict['ramp'] = mutant_line[10]
+    protocols_dict['persistent'] = mutant_line[11]
+
 def read_all_raw_data_SCN8A(raw_data):
     '''
     Reads data in from CSV.

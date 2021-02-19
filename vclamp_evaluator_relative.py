@@ -3,7 +3,7 @@ import bluepyopt as bpop
 import eval_helper as eh
 import scoring_functions_relative as sf
 
-class vclamp_evaluator_relative(bpop.evaluators.Evaluator):
+class Vclamp_evaluator_relative(bpop.evaluators.Evaluator):
     '''
     A class that holds a set of objectives and a set of parameters.
     
@@ -61,6 +61,7 @@ class vclamp_evaluator_relative(bpop.evaluators.Evaluator):
                            bpop.objectives.Objective('ramp'),\
                            bpop.objectives.Objective('persistent')
                            ] 
+        self.protocols = eh.read_mutant_protocols('mutant_protocols.csv', mutant)
 
     def evaluate_with_lists(self, param_values=[]):
         '''
@@ -72,7 +73,8 @@ class vclamp_evaluator_relative(bpop.evaluators.Evaluator):
         Returns:
             List of float values of objective errors
         '''
-        return self.calc_all_rmse(param_values, sf.calc_rmse_sans_tau)
+        score_calculator = sf.Score_Function(self.protocols)
+        return self.calc_all_rmse(param_values, score_calculator.scorer)
     
 
     def calc_all_rmse(self, param_values, scoring_function):
