@@ -9,7 +9,8 @@ from neuron import h as h1
 import matplotlib.pyplot as plt
 from scipy.signal import find_peaks
 def sigmoid(x,x0,k):
-    y = 1.0/(1.0+np.exp(-x0*(x-k)))
+    #y = 1.0/(1.0+np.exp(-x0*(x-k)))
+    y = 1.0/(1.0 + np.exp((k - x)/x0))
     return y
 def init_neuron():
     h1.load_file("runModel.hoc")
