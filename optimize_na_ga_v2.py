@@ -695,7 +695,8 @@ def fit_sigmoid(x, a, b):
     '''
     Fit a sigmoid curve to the array of datapoints.
     '''
-    return 1.0 / (1.0+np.exp(-a*(x-b)))
+    #return 1.0 / (1.0+np.exp(-a*(x-b)))
+    return 1.0 / (1.0 + np.exp((b - x)/a))
 
 def fit_exp(x, a, b, c):
     '''
