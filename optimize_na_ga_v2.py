@@ -708,6 +708,16 @@ def fit_dblexp(x, a, b, c, d):
 def fit_hill(x, a, b, c): # Hill sigmoidal equation from zunzun.com
     return  a * np.power(x, b) / (np.power(c, b) + np.power(x, b)) 
 
+def fit_two_phase_association(x, y0, plateau, percent_fast, k_fast, k_slow):
+    '''
+    Fit a two-phase association curve to an array of data points X. 
+    For info about the parameters, visit 
+    https://www.graphpad.com/guides/prism/latest/curve-fitting/REG_Exponential_association_2phase.htm
+    '''
+    span_fast = (plateau - y0) * percent_fast * 0.01
+    span_slow = (plateau - y0) * (100 - percent_fast) * 0.01
+    return y0 + span_fast * (1 - np.exp(-k_fast * x)) + span_slow * (1 - np.exp(-k_slow * x))
+
 def gen_curves(data, names):
     '''
     Plot inactivation, activation, and recovery curves separately for each data set.
@@ -750,9 +760,11 @@ def gen_curves(data, names):
     for i in range(len(data)):
         data_pts = data[i]["recov"]
         times = data[i]["recov times"]
-        popt, pcov = optimize.curve_fit(fit_hill, times, data_pts, p0=[-.120, data_pts[0]], maxfev=5000)
+        #popt, pcov = optimize.curve_fit(fit_hill, times, data_pts, p0=[-.120, data_pts[0]], maxfev=5000)
+        popt, pcov = optimize.curve_fit(fit_two_phase_association, times, data_pts, p0=[data_pts[0], data_pts[-1], 10**8, 0.6, 0.6], maxfev=5000)
         even_xs = np.linspace(times[0], times[len(sweeps)-1], 100)
-        curve = fit_hill(even_xs, *popt)
+        #curve = fit_hill(even_xs, *popt)
+        curve = fit_two_phase_association(even_xs, *popt)
         plt.scatter(np.log(times), data_pts, label=names[i])
         plt.plot(even_xs, curve, label=names[i])
 
@@ -824,7 +836,7 @@ def gen_figure_given_params(params, target_data, save=True, file_name=None,mutan
         data_pts = data[i]["act"]
         sweeps = data[i]["act sweeps"]
         try:
-            popt, pcov = optimize.curve_fit(fit_sigmoid, sweeps, data_pts, p0=[-.120, data_pts[0]], maxfev=max_calls)
+            popt, pcov = optimize.curve_fit(fit_sigmoid, sweeps, data_pts, p0=[7, data_pts[0]], maxfev=max_calls)
         except:
             print("Very bad voltages in act")    
         even_xs = np.linspace(sweeps[0], sweeps[len(sweeps)-1], 100)
@@ -851,12 +863,14 @@ def gen_figure_given_params(params, target_data, save=True, file_name=None,mutan
         data_pts = data[i]["recov"]
         times = data[i]["recov times"]
         try:
-            popt, pcov = optimize.curve_fit(fit_hill, times, data_pts, maxfev=max_calls)
+            #popt, pcov = optimize.curve_fit(fit_hill, times, data_pts, maxfev=max_calls)
+            popt, pcov = optimize.curve_fit(fit_two_phase_association, times, data_pts, p0=[data_pts[0], data_pts[-1], 10**8, 0.6, 0.6], maxfev=max_calls)
         except:
             print("Very bad voltages in recovery")
             return
         even_xs = np.linspace(times[0], times[len(times)-1], 100)
-        curve = fit_hill(even_xs, *popt)
+        #curve = fit_hill(even_xs, *popt)
+        curve = fit_two_phase_association(even_xs, *popt)
         axs[1].plot(np.log(even_xs), curve, c=fit_color,label=names[i]+" recovery")
         axs[1].scatter(np.log(times), data_pts, label=names[i], color=fit_color,marker=curr_marker)
         

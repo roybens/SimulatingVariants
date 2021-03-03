@@ -451,7 +451,7 @@ def recInactTauNa12(command, \
                    min_inter=0.1, max_inter=5000, num_pts=50, cond_st_dur=1000, res_pot=-90, dur=0.1,\
                    vec_pts = [1,1.5,3,5.6,10,30,56,100,150,300,560,1000,2930,5000],\
                    #vec_pts = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 ,13 ,14, 15],\
-                   f3cl_dur0=5, f3cl_amp0=-90, f3cl_amp1=0, f3cl_dur3=20, f3cl_amp3=0, f3cl_dur4=5, f3cl_amp4=-90:
+                   f3cl_dur0=5, f3cl_amp0=-90, f3cl_amp1=0, f3cl_dur3=20, f3cl_amp3=0, f3cl_dur4=5, f3cl_amp4=-90):
     
     dtype = np.float64
  
