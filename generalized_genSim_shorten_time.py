@@ -89,7 +89,6 @@ def activationNa12(command, \
     v_vec_t     = h.Vector()  # vector for voltage as function of time
     i_vec       = h.Vector()  # vector for current 
     ipeak_vec   = h.Vector()  # vector for peak current
-    gpeak_vec   = h.Vector()  # vector for peak conductance
     gnorm_vec   = h.Vector()  # vector for normalized conductance
     all_is = []
  
@@ -118,7 +117,6 @@ def activationNa12(command, \
  
                 if ((h.t>5)and(h.t<=10)):       # evaluate the peak 
                     if(abs(dens)>abs(pre_i)):
-                        cond_tr = soma.thegna_na12mut   # updates the peak conductance ### NEED TO CHANGE NAME IF CHANGE MOD FILE NAME
                         curr_tr = dens          # updates the peak current
  
                 h.fadvance()
@@ -126,7 +124,6 @@ def activationNa12(command, \
  
         # updates the vectors at the end of the run        
         v_vec.append(v_cl)              
-        gpeak_vec.append(cond_tr)
         ipeak_vec.append(curr_tr)
  
  
@@ -150,7 +147,6 @@ def activationNa12(command, \
  
         # resizing the vectors
         v_vec.resize(0)          
-        gpeak_vec.resize(0)
         ipeak_vec.resize(0)
  
         k=0     # counter
@@ -164,10 +160,8 @@ def activationNa12(command, \
                 k=k+1
                 all_is.append(i_vec)
  
-        gpeak_max = gpeak_vec.max()           # maximum value of the conductance used to normalize the conductance vector
-        for i in range(0, len(gpeak_vec), 1):
- 
-             gnorm_vec.append(gpeak_vec.x[i]/gpeak_max) # normalization of peak conductance
+        gnorm_vec = findG(v_vec, ipeak_vec)
+        for i in range(0, len(gnorm_vec), 1):
              ln2,=ax1.plot(v_vec.x[i], gnorm_vec.x[i], 'o', c='black')
  
         plt.show()
@@ -180,7 +174,6 @@ def activationNa12(command, \
  
         # resizing the vectors
         v_vec.resize(0)          
-        gpeak_vec.resize(0)
         ipeak_vec.resize(0)
  
         k=0     # counter
@@ -197,11 +190,33 @@ def activationNa12(command, \
                 aa = i_vec.to_python()
                 all_is.append(aa[1:])
  
-        gpeak_max = gpeak_vec.max()           # maximum value of the conductance used to normalize the conductance vector
-        for i in range(0, len(gpeak_vec), 1):
-             gnorm_vec.append(gpeak_vec.x[i]/gpeak_max) # normalization of peak conductance
-         
+        gnorm_vec = findG(v_vec, ipeak_vec)
+
         return gnorm_vec, np.arange(st_cl, end_cl, step),all_is
+ 
+    #returns normalized conductance vector
+    def findG(v_vec, ipeak_vec):
+        inds = 0 #initialize index
+        inds = v_vec.indwhere("==", 0) #find start of linear portion
+                
+        #take linear portion of voltage and current relationship
+        lin_v = v_vec.at(inds)
+        lin_i = ipeak_vec.at(inds)
+        
+        vrev = stats.linregress(lin_i, lin_v).intercept
+                
+        def boltzmann(vm, Gmax, v_half, s):
+            return Gmax * (vm - vrev) / (1 + np.exp((v_half - vm) / s))
+        
+        Gmax, v_half, s = optimize.curve_fit(boltzmann, v_vec, ipeak_vec)[0]
+        
+        #find normalized conductances at each voltage
+        norm_g = h.Vector()
+        
+        for volt in v_vec:
+            norm_g.append(1/ (1 + np.exp(-(volt - v_half) / s)))
+            
+        return norm_g
  
     #Command Processor
     if command == "plotActivation":
