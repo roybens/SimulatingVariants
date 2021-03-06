@@ -23,7 +23,14 @@ import os
 ##################
 # Global
 ##################
-
+def plot_figure(self, x, y, xlabel, ylabel, title, file_name):
+    plt.figure()
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    plt.title(title)
+    plt.plot(x, y, color='black')
+    # save as PGN file
+    plt.savefig(os.path.join(os.path.split(__file__)[0], file_name))
 
 ##################
 # Activation Na 1.2 
@@ -176,16 +183,6 @@ class Activation:
         plt.plot(self.v_vec, self.ipeak_vec, 'o', c='black')
         # save as PGN file
         plt.savefig(os.path.join(os.path.split(__file__)[0], "Activation IV Curve"))
-
-    def plotActivation(self, x, y, xlabel, ylabel, title, file_name):
-        plt.xlabel(xlabel)
-        plt.ylabel(ylabel)
-        plt.title(title)
-        plt.plot(x, y, color='black')
-        # save as PGN file
-        plt.savefig(os.path.join(os.path.split(__file__)[0], file_name))
-
-
 
 
 #######################################################################################################################
