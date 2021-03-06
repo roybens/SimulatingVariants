@@ -32,6 +32,7 @@ def plot_figure(self, x, y, xlabel, ylabel, title, file_name):
     # save as PGN file
     plt.savefig(os.path.join(os.path.split(__file__)[0], file_name))
 
+
 ##################
 # Activation Na 1.2 
 ##################
@@ -154,6 +155,7 @@ class Activation:
         # fit bolzmann
         def boltzmann(vm, Gmax, v_half, s):
             return Gmax * (vm - vrev) / (1 + np.exp((v_half - vm) / s))
+
         vrev = stats.linregress(lin_i, lin_v).intercept
         Gmax, v_half, s = optimize.curve_fit(boltzmann, v_vec, ipeak_vec)[0]
 
@@ -167,6 +169,7 @@ class Activation:
         """
         Saves activation plot as PGN file.
         """
+        # TODO add red line 
         plt.figure()
         plt.xlabel('Voltage $(mV)$')
         plt.ylabel('Normalized conductance')
@@ -176,6 +179,7 @@ class Activation:
         plt.savefig(os.path.join(os.path.split(__file__)[0], 'Activation Voltage-Normalized conductance relation'))
 
     def plotActivation_IVCurve(self):
+        # TODO add black line through pts, and dotted at x,y=0
         plt.figure()
         plt.xlabel('Voltage $(mV)$')
         plt.ylabel('Peak Current')
@@ -187,6 +191,12 @@ class Activation:
     def plotActivation_TimeVRelation(self):
         plot_figure(self, self.t_vec, self.v_vec_t, 'Time $(ms)$', 'Voltage $(mV)$',
                     'Activation Time/Voltage relation', 'Activation Time Voltage relation')
+
+
+##################
+# Inactivation Na 1.2
+##################
+
 
 
 #######################################################################################################################
@@ -1353,4 +1363,3 @@ if __name__ == "__main__":
 
     if args.function == 2:
         print('world')
-
