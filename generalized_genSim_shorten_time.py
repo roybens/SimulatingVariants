@@ -184,6 +184,10 @@ class Activation:
         # save as PGN file
         plt.savefig(os.path.join(os.path.split(__file__)[0], "Activation IV Curve"))
 
+    def plotActivation_TimeVRelation(self):
+        plot_figure(self, self.t_vec, self.v_vec_t, 'Time $(ms)$', 'Voltage $(mV)$',
+                    'Activation Time/Voltage relation', 'Activation Time Voltage relation')
+
 
 #######################################################################################################################
 
@@ -1341,11 +1345,11 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.function == 1:
-        print('hello')
         genAct = Activation(end_cl=40)
         genAct.genActivation()
         genAct.plotActivation_VGnorm()
         genAct.plotActivation_IVCurve()
+        genAct.plotActivation_TimeVRelation()
 
     if args.function == 2:
         print('world')
