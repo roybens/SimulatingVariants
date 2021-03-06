@@ -160,7 +160,6 @@ class Activation:
         """
         Saves activation plot as PGN file.
         """
-        # plot
         plt.figure()
         plt.xlabel('Voltage $(mV)$')
         plt.ylabel('Normalized conductance')
@@ -170,7 +169,6 @@ class Activation:
         plt.savefig(os.path.join(os.path.split(__file__)[0], 'Activation Voltage-Normalized conductance relation'))
 
     def plotActivation_IVCurve(self):
-        # plot
         plt.figure()
         plt.xlabel('Voltage $(mV)$')
         plt.ylabel('Peak Current')
@@ -178,6 +176,16 @@ class Activation:
         plt.plot(self.v_vec, self.ipeak_vec, 'o', c='black')
         # save as PGN file
         plt.savefig(os.path.join(os.path.split(__file__)[0], "Activation IV Curve"))
+
+    def plotActivation(self, x, y, xlabel, ylabel, title, file_name):
+        plt.xlabel(xlabel)
+        plt.ylabel(ylabel)
+        plt.title(title)
+        plt.plot(x, y, color='black')
+        # save as PGN file
+        plt.savefig(os.path.join(os.path.split(__file__)[0], file_name))
+
+
 
 
 #######################################################################################################################
