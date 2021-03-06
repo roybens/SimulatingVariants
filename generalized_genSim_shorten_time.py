@@ -21,7 +21,7 @@ import os
 
 
 ##################
-# Global Variables
+# Global
 ##################
 
 
@@ -29,13 +29,14 @@ import os
 # Activation Na 1.2 
 ##################
 
-
 class Activation:
     def __init__(self, soma_diam=50, soma_L=63.66198, soma_nseg=1, soma_cm=1, soma_Ra=70,
-                 channel_name='na12mut', soma_ena=55, h_celsius=33, v_init=-120, h_dt=0.025,
+                 channel_name='na12mut', soma_ena=55, h_celsius=33, v_init=-120, h_dt=0.025, ntrials=range(30),
                  dur=100, step=10, st_cl=-120, end_cl=70, v_cl=-120,
                  f3cl_dur0=5, f3cl_amp0=-120, f3cl_dur2=5, f3cl_amp2=-120,
                  ):
+
+        self.h = h  # NEURON h
 
         # one-compartment cell (soma)
         self.soma = h.Section(name='soma2')
@@ -48,6 +49,7 @@ class Activation:
         self.soma.ena = soma_ena
 
         # clamping parameters
+        self.ntrials = ntrials  #
         h.celsius = h_celsius  # temperature in celsius
         self.v_init = v_init  # holding potential
         h.dt = h_dt  # ms - value of the fundamental integration time step, dt, used by fadvance().
@@ -57,7 +59,7 @@ class Activation:
         self.end_cl = end_cl  # clamp end, mV
         self.v_cl = v_cl  # actual voltage clamp, mV
 
-        # a electrode voltage clamp
+        # a two-electrodes voltage clamp
         self.f3cl = h.VClamp(self.soma(0.5))
         self.f3cl.dur[0] = f3cl_dur0  # ms
         self.f3cl.amp[0] = f3cl_amp0  # mV
@@ -67,16 +69,16 @@ class Activation:
         self.f3cl.amp[2] = f3cl_amp2  # mV
 
         # vectors for data handling
-        self.t_vec = h.Vector()  # vector for time
-        self.v_vec = h.Vector()  # vector for voltage
-        self.v_vec_t = h.Vector()  # vector for voltage as function of time
-        self.i_vec = h.Vector()  # vector for current
-        self.ipeak_vec = h.Vector()  # vector for peak current
-        self.gnorm_vec = h.Vector()  # vector for normalized conductance
+        self.t_vec = []  # vector for time steps (h.dt)
+        self.v_vec = np.arange(st_cl, end_cl, step)  # vector for voltage
+        self.v_vec_t = []  # vector for voltage as function of time
+        self.i_vec = []  # vector for current
+        self.ipeak_vec = []  # vector for peak current
+        self.gnorm_vec = []  # vector for normalized conductance
         self.all_is = []  # all currents
 
     def clamp(self, v_cl):
-        """ Runs a single trace and calculates peak currents.
+        """ Runs a trace and calculates peak currents.
 
         Args:
             v_cl (int): current voltage to run
@@ -86,14 +88,14 @@ class Activation:
         pre_i = 0  # initialization of variables used to commute the peak current
         self.f3cl.amp[1] = v_cl  # mV
 
-        for j in range(30):  # TODO fix
+        for _ in self.ntrials:  # TODO fix?
             while h.t < h.tstop:  # runs a single trace, calculates peak current
                 dens = self.f3cl.i / self.soma(0.5).area() * 100.0 - self.soma(
                     0.5).i_cap  # clamping current in mA/cm2, for each dt
 
-                self.t_vec.append(h.t)  # code for storing the current
-                self.v_vec_t.append(self.soma.v)  # trace to be plotted
-                self.i_vec.append(dens)  # trace to be plotted
+                self.t_vec.append(h.t)
+                self.v_vec_t.append(self.soma.v)
+                self.i_vec.append(dens)
 
                 if (h.t > 5) and (h.t <= 10):  # evaluate the peak
                     if abs(dens) > abs(pre_i):
@@ -103,11 +105,8 @@ class Activation:
                 pre_i = dens
 
         # updates the vectors at the end of the run
-        self.v_vec.append(v_cl)
         self.ipeak_vec.append(curr_tr)
 
-    # Generates simulated activation data
-    # Returns peak current vector
     def genActivation(self):
         """ Generates simulated activation data
 
@@ -116,69 +115,69 @@ class Activation:
             voltages
             all_is: peak current vector
         """
-        h.tstop = 5 + self.dur + 5  # time stop # TODO fix padding
+        time_padding = 5  # ms
+        h.tstop = time_padding + self.dur + time_padding  # time stop
 
-        # resizing the vectors
-        self.v_vec.resize(0)
-        self.ipeak_vec.resize(0)
-
-        for v_cl in np.arange(self.st_cl, self.end_cl, self.step):  # iterates across voltages # TODO fix
-            # resizing the vectors
-            self.t_vec.resize(0)
-            self.i_vec.resize(0)
-            self.v_vec_t.resize(0)
-
+        # iterates across voltages (mV)
+        for v_cl in self.v_vec:
             self.clamp(v_cl)
-            aa = self.i_vec.to_python()
-            self.all_is.append(aa[1:])
+            self.all_is.append(self.i_vec[1:])
 
+        # calculate normalized peak conductance
         self.gnorm_vec = self.findG(self.v_vec, self.ipeak_vec)
-        return self.gnorm_vec, np.arange(self.st_cl, self.end_cl, self.step), self.all_is
+        return self.gnorm_vec, self.v_vec, self.all_is
 
     def findG(self, v_vec, ipeak_vec):
         """ Returns normalized conductance vector
 
+            Notes:
+                gpeak_max = gpeak_vec.max() maximum value of the conductance used to normalize the conductance vector
         """
-        inds = 0  # initialize index
-        inds = v_vec.indwhere("==", 0)  # find start of linear portion
+        # convert to numpy arrays
+        v_vec = np.array(v_vec)
+        ipeak_vec = np.array(ipeak_vec)
+
+        # find start of linear portion (0 mV and onwards)
+        inds = np.where(v_vec >= 0)
 
         # take linear portion of voltage and current relationship
-        lin_v = v_vec.at(inds)
-        lin_i = ipeak_vec.at(inds)
+        lin_v = v_vec[inds]
+        lin_i = ipeak_vec[inds]
 
-        vrev = stats.linregress(lin_i, lin_v).intercept
-
+        # fit bolzmann
         def boltzmann(vm, Gmax, v_half, s):
             return Gmax * (vm - vrev) / (1 + np.exp((v_half - vm) / s))
-
+        vrev = stats.linregress(lin_i, lin_v).intercept
         Gmax, v_half, s = optimize.curve_fit(boltzmann, v_vec, ipeak_vec)[0]
 
         # find normalized conductances at each voltage
         norm_g = h.Vector()
-
         for volt in v_vec:
             norm_g.append(1 / (1 + np.exp(-(volt - v_half) / s)))
-
         return norm_g
 
-    def plotActivation(self, x_axis_min=-100, x_axis_max=40, x_axis_step=10, y_min=-0.05, y_max=1.05):
+    def plotActivation_VGnorm(self):
         """
         Saves activation plot as PGN file.
         """
-
-        # figure definition
-        plt.figure(figsize=(20, 15))
-        plt.xticks(np.arange(x_axis_min, x_axis_max, step=x_axis_step))
-        plt.ylim(y_min, y_max)
+        # plot
+        plt.figure()
         plt.xlabel('Voltage $(mV)$')
         plt.ylabel('Normalized conductance')
-        plt.title('Activation Na1.2: Voltage/Normalized conductance')
-
-        for i in range(0, len(self.gnorm_vec), 1):
-            ln2, = plt.plot(self.v_vec.x[i], self.gnorm_vec.x[i], 'o', c='black')
-
+        plt.title('Activation: Voltage/Normalized conductance')
+        plt.plot(self.v_vec, self.gnorm_vec, 'o', c='black')
         # save as PGN file
-        plt.savefig(os.path.join(os.path.split(__file__)[0], "act_plot"))
+        plt.savefig(os.path.join(os.path.split(__file__)[0], 'Activation Voltage-Normalized conductance relation'))
+
+    def plotActivation_IVCurve(self):
+        # plot
+        plt.figure()
+        plt.xlabel('Voltage $(mV)$')
+        plt.ylabel('Peak Current')
+        plt.title("Activation: IV Curve")
+        plt.plot(self.v_vec, self.ipeak_vec, 'o', c='black')
+        # save as PGN file
+        plt.savefig(os.path.join(os.path.split(__file__)[0], "Activation IV Curve"))
 
 
 #######################################################################################################################
@@ -358,6 +357,10 @@ def activationNa12(command, \
             all_is.append(aa[1:])
 
         gnorm_vec = findG(v_vec, ipeak_vec)
+
+        plt.plot(v_vec, ipeak_vec, 'o', c='black')
+        plt.title("Activation IV Curve")
+        plt.show()
 
         return gnorm_vec, np.arange(st_cl, end_cl, step), all_is
 
@@ -1334,10 +1337,11 @@ if __name__ == "__main__":
 
     if args.function == 1:
         print('hello')
-        genAct = Activation()
+        genAct = Activation(end_cl=40)
         genAct.genActivation()
-        genAct.plotActivation()
+        genAct.plotActivation_VGnorm()
+        genAct.plotActivation_IVCurve()
 
     if args.function == 2:
         print('world')
-        activationNa12("plotActivation")
+
