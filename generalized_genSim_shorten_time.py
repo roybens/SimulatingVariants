@@ -169,7 +169,7 @@ class Activation:
         """
         Saves activation plot as PGN file.
         """
-        # TODO add red line 
+        # TODO add red line
         plt.figure()
         plt.xlabel('Voltage $(mV)$')
         plt.ylabel('Normalized conductance')
@@ -718,6 +718,8 @@ def recInactTauNa12(command, \
     # clamping definition for RecInactTau
     def clampRecInactTau(dur):
 
+        # TODO modify for ramp protocol
+
         f3cl.dur[2] = dur
         h.tstop = 5 + 1000 + dur + 20 + 5  ### DO WE WANNA GENERALIZE THIS? ;-;
         h.finitialize(v_init)
@@ -826,7 +828,8 @@ def recInactTauNa12(command, \
         times = []
 
         k = 0  # counter
-
+        
+        # TODO modify for ramp protocol
         for dur in vec_pts:
             # resizing the vectors
             t_vec.resize(0)
