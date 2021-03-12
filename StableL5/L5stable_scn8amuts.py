@@ -211,6 +211,6 @@ init_settings()
 fig = plot_model('black')
 plot_na16_muts()
 
-fig = plot_model('black')
+#fig = plot_model('black')
 
-plt.show()
+#plt.show()

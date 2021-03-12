@@ -15,7 +15,7 @@ UNITS	{
 
 PARAMETER	{
 	gIhbar = 0.00001 (S/cm2) 
-	ehcn =  -45.0 (mV)
+	ehcn =  -30.0 (mV)
 }
 
 ASSIGNED	{
