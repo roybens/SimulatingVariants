@@ -12,5 +12,12 @@ genSimData_Na12.py, genSimData_Na12_mut_new_parallel.py,
 
 
 
+References:
+
+conductance calculation formulas:
+	DOI: https://doi.org/10.1016/j.biopsych.2017.01.009
+		--supplement 1, page 2 (Electrophysiology) for peak current Boltzmann and norm. conductance equations
+
+
 
 
