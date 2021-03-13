@@ -40,7 +40,7 @@ def plot_figure(self, x, y, xlabel, ylabel, title, file_name):
 class Activation:
     def __init__(self, soma_diam=50, soma_L=63.66198, soma_nseg=1, soma_cm=1, soma_Ra=70,
                  channel_name='na12mut', soma_ena=55, h_celsius=33, v_init=-120, h_dt=0.025, ntrials=range(30),
-                 dur=100, step=10, st_cl=-120, end_cl=70, v_cl=-120,
+                 dur=100, step=10, st_cl=-120, end_cl=40, v_cl=-120,
                  f3cl_dur0=5, f3cl_amp0=-120, f3cl_dur2=5, f3cl_amp2=-120,
                  ):
 
@@ -94,7 +94,7 @@ class Activation:
         """ Runs a trace and calculates peak currents.
 
         Args:
-            v_cl (int): current voltage to run
+            v_cl (int): voltage to run
         """
         curr_tr = 0  # initialization of peak current
         h.finitialize(self.v_init)  # calling the INITIAL block of the mechanism inserted in the section.
@@ -179,9 +179,8 @@ class Activation:
         plt.ylabel('Normalized conductance')
         plt.title('Activation: Voltage/Normalized conductance')
         plt.plot(self.v_vec, self.gnorm_vec, 'o', c='black')
-        plt.plot(range(self.st_cl, self.end_cl, 1), 
-                 (1 / (1 + np.exp(-(range(self.st_cl, self.end_cl, 1) - self.v_half) / self.s))), 
-                 c = 'red')
+        x_values_v = np.arange(self.st_cl, self.end_cl, 1)
+        plt.plot(x_values_v, (1 / (1 + np.exp(-(x_values_v - self.v_half) / self.s))), c='red')
         # save as PGN file
         plt.savefig(os.path.join(os.path.split(__file__)[0], 'Activation Voltage-Normalized conductance relation'))
 
@@ -199,9 +198,15 @@ class Activation:
         plot_figure(self, self.t_vec, self.v_vec_t, 'Time $(ms)$', 'Voltage $(mV)$',
                     'Activation Time/Voltage relation', 'Activation Time Voltage relation')
 
-
-    # TODO current density plot
-
+    def plotActivation_TCurrDensityRelation(self):
+        # TODO fix
+        plt.figure()
+        plt.xlabel('Time $(ms)$')
+        plt.ylabel('Current density $(mA/cm^2)$')
+        plt.title('Activation Time/Current density relation')
+        plt.plot(self.t_vec, self.i_vec, c='black')
+        # save as PGN file
+        plt.savefig(os.path.join(os.path.split(__file__)[0], "Activation Time Current density relation"))
 
 ##################
 # Inactivation
@@ -255,7 +260,11 @@ class Inactivation:  # TODO doc
         self.all_is = []  # all currents
 
     def clamp(self, v_cl):
+        """ Runs a trace and calculates peak currents.
 
+        Args:
+            v_cl (int): voltage to run
+        """
         self.f3cl.amp[1] = v_cl
         h.finitialize(self.v_init)  # calling the INITIAL block of the mechanism inserted in the section.
 
@@ -303,16 +312,26 @@ class Inactivation:  # TODO doc
     def plotInactivation_VInormRelation(self):  # TODO give args
         plt.figure()
         plt.xlabel('Voltage $(mV)$')
-        plt.ylabel('Peak Current')
-        plt.title("Inactivation: IV Curve")
+        plt.ylabel('Normalized current')
+        plt.title('Inactivation: Voltage/Normalized Current Relation')
         plt.plot(self.v_vec, self.inorm_vec, 'o', c='black')
         # save as PGN file
-        plt.savefig(os.path.join(os.path.split(__file__)[0], "Inactivation IV Curve"))
+        plt.savefig(os.path.join(os.path.split(__file__)[0], 'Inactivation Voltage Normalized Current Relation'))
 
-        # plot_figure(self, self.v_vec, self.inorm_vec, 'Voltage $(mV)$', 'Normalized current',
-        #            'Inactivation: Voltage/Normalized Current Relation', 'Inactivation Voltage Normalized Current Relation')
+    def plotInactivation_TimeVRelation(self):
+        # TODO fix
+        plot_figure(self, self.t_vec, self.v_vec_t, 'Time $(ms)$', 'Voltage $(mV)$',
+                    'Inactivation Time/Voltage relation', 'Inactivation Time Voltage relation')
 
-    # TODO add more plots
+    def plotInactivation_TCurrDensityRelation(self):
+        # TODO fix
+        plt.figure()
+        plt.xlabel('Time $(ms)$')
+        plt.ylabel('Current density $(mA/cm^2)$')
+        plt.title('Inactivation Time/Current density relation')
+        plt.plot(self.t_vec, self.i_vec, c='black')
+        # save as PGN file
+        plt.savefig(os.path.join(os.path.split(__file__)[0], "Inactivation Time Current density relation"))
 
 
 ##################
@@ -320,7 +339,7 @@ class Inactivation:  # TODO doc
 # &  RFI Tau
 ##################
 
-class RFI:  # TODO doc
+class RFI:
     def __init__(self, soma_diam=50, soma_L=63.66198, soma_nseg=1, soma_cm=1, soma_Ra=70,
                  channel_name='na12mut', soma_ena=55, h_celsius=33, v_init=-90, h_dt=0.1, ntrials=30,
                  min_inter=0.1, max_inter=5000, num_pts=50, cond_st_dur=1000, res_pot=-90, dur=0.1,
@@ -362,7 +381,7 @@ class RFI:  # TODO doc
         # vec_pts = np.logspace(np.log10(min_inter), np.log10(max_inter), num=num_pts)
 
         # voltage clamp with "five" levels for RecInactTau
-        self.f3cl = h.VClamp(self.soma(0.5))
+        self.f3cl = h.VClamp_plus(self.soma(0.5))
         self.f3cl.dur[0] = f3cl_dur0  # ms
         self.f3cl.amp[0] = f3cl_amp0  # mV
         self.f3cl.dur[1] = cond_st_dur  # ms default 1000
@@ -384,16 +403,18 @@ class RFI:  # TODO doc
         self.rec_inact_tau_vec = []  # RFI taus
 
     def clampRecInactTau(self, dur):
+        """ Runs a trace and calculates peak currents.
 
+        Args:
+            dur (int): duration (ms) to run
+        """
         self.f3cl.dur[2] = dur
-        h.tstop = 5 + 1000 + dur + 20 + 5  ### DO WE WANNA GENERALIZE THIS? ;-;
+        h.tstop = 5 + 1000 + dur + 20 + 5  # TODO fix padding
         h.finitialize(self.v_init)
 
         # variables initialization
         pre_i1 = 0
         pre_i2 = 0
-        dens = 0
-
         peak_curr1 = 0
         peak_curr2 = 0
 
@@ -439,6 +460,28 @@ class RFI:  # TODO doc
 
         return self.rec_inact_tau_vec, recov, self.vec_pts  # TODO note vec_pts is actually times not mV...
 
+    def plotRFI_VInormRelation(self):
+        plt.figure()
+        plt.xlabel('Log(Time)')
+        plt.ylabel('Fractional recovery (P2/P1)')
+        plt.title('Log(Time)/Fractional recovery (P2/P1)')
+        plt.plot(self.log_time_vec, self.rec_vec, 'o', c='black')
+        # save as PGN file
+        plt.savefig(os.path.join(os.path.split(__file__)[0], 'RFI Time Fractional recovery Relation'))
+
+    def plotRFI_TimeVRelation(self):
+        plot_figure(self, self.t_vec, self.v_vec_t, 'Time $(ms)$', 'Voltage $(mV)$',
+                    'RFI Time/Voltage relation', 'RFI Time Voltage Relation')
+
+    def plotRFI_TCurrDensityRelation(self):
+        # TODO fix
+        plt.figure()
+        plt.xlabel('Time $(ms)$')
+        plt.ylabel('Current density $(mA/cm^2)$')
+        plt.title('RFI Time/Current density relation')
+        plt.plot(self.t_vec, self.i_vec_t, c='black')
+        # save as PGN file
+        plt.savefig(os.path.join(os.path.split(__file__)[0], "RFI Time Current density relation"))
 
 
 
@@ -863,7 +906,7 @@ def inactivationNa12(command, \
         return t_vec
     else:
         print("Invalid command. Function does not exist.")
-"""
+
 
 
 ##################
@@ -1159,7 +1202,7 @@ def recInactTauNa12(command, \
         return genRecInact()
     else:
         print("Invalid command. Function does not exist.")
-
+"""
 
 ### ###
 def recInact_dv_TauNa12(command, \
@@ -1601,12 +1644,24 @@ if __name__ == "__main__":
     if args.function == 1:
         genAct = Activation(end_cl=40)
         genAct.genActivation()
+
         genAct.plotActivation_VGnorm()
         genAct.plotActivation_IVCurve()
         genAct.plotActivation_TimeVRelation()
+        genAct.plotActivation_TCurrDensityRelation()
 
-    if args.function == 2:
+    elif args.function == 2:
         genInact = Inactivation(end_cl=40)
         genInact.genInactivation()
+
         genInact.plotInactivation_VInormRelation()
-        print('world')
+        genInact.plotInactivation_TimeVRelation()
+        genInact.plotInactivation_TCurrDensityRelation()
+
+    elif args.function == 3:
+        genRFI = RFI()
+        genRFI.genRecInactTau()
+
+        genRFI.plotRFI_TimeVRelation()
+        genRFI.plotRFI_VInormRelation()
+        genRFI.plotRFI_TCurrDensityRelation()
