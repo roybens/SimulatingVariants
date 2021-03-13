@@ -84,7 +84,12 @@ class Activation:
         self.ipeak_vec = []  # vector for peak current
         self.gnorm_vec = []  # vector for normalized conductance
         self.all_is = []  # all currents
-
+    
+        # conductance attributes for plotting
+        self.vrev = 0
+        self.v_half = 0
+        self.s = 0
+    
     def clamp(self, v_cl):
         """ Runs a trace and calculates peak currents.
 
@@ -151,47 +156,48 @@ class Activation:
         # take linear portion of voltage and current relationship
         lin_v = v_vec[inds]
         lin_i = ipeak_vec[inds]
-
-        # fit bolzmann
+        
+        #boltzmann for conductance
         def boltzmann(vm, Gmax, v_half, s):
-            return Gmax * (vm - vrev) / (1 + np.exp((v_half - vm) / s))
+            return Gmax * (vm - self.vrev) / (1 + np.exp((v_half - vm) / s))
 
-        vrev = stats.linregress(lin_i, lin_v).intercept
-        Gmax, v_half, s = optimize.curve_fit(boltzmann, v_vec, ipeak_vec)[0]
+        self.vrev = stats.linregress(lin_i, lin_v).intercept
+        Gmax, self.v_half, self.s = optimize.curve_fit(boltzmann, v_vec, ipeak_vec)[0]
 
         # find normalized conductances at each voltage
         norm_g = h.Vector()
         for volt in v_vec:
-            norm_g.append(1 / (1 + np.exp(-(volt - v_half) / s)))
+            norm_g.append(1 / (1 + np.exp(-(volt - self.v_half) / self.s)))
         return norm_g
 
     def plotActivation_VGnorm(self):
         """
         Saves activation plot as PGN file.
         """
-        # TODO add red line
         plt.figure()
         plt.xlabel('Voltage $(mV)$')
         plt.ylabel('Normalized conductance')
         plt.title('Activation: Voltage/Normalized conductance')
         plt.plot(self.v_vec, self.gnorm_vec, 'o', c='black')
+        plt.plot(range(self.st_cl, self.end_cl, 1), 
+                 (1 / (1 + np.exp(-(range(self.st_cl, self.end_cl, 1) - self.v_half) / self.s))), 
+                 c = 'red')
         # save as PGN file
         plt.savefig(os.path.join(os.path.split(__file__)[0], 'Activation Voltage-Normalized conductance relation'))
 
     def plotActivation_IVCurve(self):
-        # TODO add black line through pts, and dotted at x,y=0
         plt.figure()
         plt.xlabel('Voltage $(mV)$')
         plt.ylabel('Peak Current')
         plt.title("Activation: IV Curve")
         plt.plot(self.v_vec, self.ipeak_vec, 'o', c='black')
+        plt.text(0, -0.005, 'Vrev at ' + str(round(self.vrev, 1)) + 'mV', fontsize=10, c='blue')
         # save as PGN file
         plt.savefig(os.path.join(os.path.split(__file__)[0], "Activation IV Curve"))
 
     def plotActivation_TimeVRelation(self):
         plot_figure(self, self.t_vec, self.v_vec_t, 'Time $(ms)$', 'Voltage $(mV)$',
                     'Activation Time/Voltage relation', 'Activation Time Voltage relation')
-
 
 ##################
 # Inactivation Na 1.2
