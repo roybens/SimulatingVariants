@@ -47,27 +47,48 @@ proc distribute(){local x localobj sl
 
 proc biophys() {
 	forsec $o1.basal {
+		insert K_Tst
+		insert Im
+		insert NaTs2_t
+		insert SKv3_1
+		insert SK_E2
 		insert Ih
+		insert na12
+		insert na16
+		insert na16mut
+		insert Ca_LVAst
+		insert CaDynamics_E2
+		insert sk
+		insert bk
+		gNaTs2_tbar_NaTs2_t = 0
+		gbar_na12 =0
+		gbar_na16=0
+		gbar_na16mut=0
 		
 	}
 
 	forsec $o1.apical {
+		insert K_Tst
 		insert Im
 		insert NaTs2_t
 		insert SKv3_1
+		insert SK_E2
 		insert Ih
 		insert na12
-		insert na12mut
 		insert na16
 		insert na16mut
+		insert Ca_LVAst
+		insert CaDynamics_E2
+		insert sk
+		insert bk
 		gNaTs2_tbar_NaTs2_t = 0
 		gbar_na12 =0
-		gbar_na12mut =0
 		gbar_na16=0
 		gbar_na16mut=0
 	}
 
 	forsec $o1.somatic {
+		insert K_Tst
 		insert Ca_HVA
 		insert SKv3_1
 		insert SK_E2
@@ -76,12 +97,12 @@ proc biophys() {
 		insert NaTs2_t
 		insert CaDynamics_E2
 		insert na12
-		insert na12mut
 		insert na16
 		insert na16mut
-		gNaTs2_tbar_NaTs2_t = 0
+		insert Im
+		insert sk
+		insert bk
 		gbar_na12 =0
-		gbar_na12mut =0
 		gbar_na16=0
 		gbar_na16mut=0
 
@@ -98,14 +119,14 @@ proc biophys() {
 		insert Ca_LVAst
 		insert NaTa_t
 		insert na12
-		insert na12mut
 		insert na16
 		insert na16mut
+		insert Im
+		insert sk
+		insert bk
 		gbar_na12 = 0
-		gbar_na12mut = 0
 		gbar_na16 = 0
 		gbar_na16mut = 0
-		gbar_Nap_Et2 = 0
 	}
 
 	forsec $o1.all {
@@ -161,10 +182,17 @@ proc biophys() {
 	}
 
 		distribute($o1.basal,"gIhbar_Ih","(0.0 * %g + 1.0)*0.000080")
+		distribute($o1.basal,"gNaTs2_tbar_NaTs2_t","(0.0 * %g + 1.0)*0.026145")
+		distribute($o1.basal,"gSKv3_1bar_SKv3_1","(0.0 * %g + 1.0)*0.004226")
+		distribute($o1.basal,"gImbar_Im","(0.0 * %g + 1.0)*0.000143")
+		distribute($o1.basal,"gamma_CaDynamics_E2","(0.0 * %g + 1.0)*0.000609")
+		distribute($o1.somatic,"gSK_E2bar_SK_E2","(0.0 * %g + 1.0)*0.008407")
 		distribute($o1.apical,"gNaTs2_tbar_NaTs2_t","(0.0 * %g + 1.0)*0.026145")
 		distribute($o1.apical,"gSKv3_1bar_SKv3_1","(0.0 * %g + 1.0)*0.004226")
-		distribute($o1.apical,"gIhbar_Ih","(-0.869600 + 2.087000*exp((%g-0.000000)*0.003100))*0.000110")
+		distribute($o1.apical,"gIhbar_Ih","(-0.869600 + 2.087000*exp((%g-0.000000)*0.003100))*0.000080")
 		distribute($o1.apical,"gImbar_Im","(0.0 * %g + 1.0)*0.000143")
+		distribute($o1.basal,"gamma_CaDynamics_E2","(0.0 * %g + 1.0)*0.000609")
+		distribute($o1.somatic,"gSK_E2bar_SK_E2","(0.0 * %g + 1.0)*0.008407")
 		distribute($o1.axonal,"gNaTa_tbar_NaTa_t","(0.0 * %g + 1.0)*3.137968")
 		distribute($o1.axonal,"gK_Tstbar_K_Tst","(0.0 * %g + 1.0)*0.089259")
 		distribute($o1.axonal,"gamma_CaDynamics_E2","(0.0 * %g + 1.0)*0.002910")
@@ -188,13 +216,12 @@ proc biophys() {
 		        
 		forsec $o1.all {
 		g_pas = 7.120456108418522658e-06
-		//e_pas = -1.354672766109964641e+02
-		e_pas = -100
+		e_pas = -1.354672766109964641e+02
 		}
 	forsec $o1.axonal{
 		gNaTa_tbar_NaTa_t =  0
 		gK_Tstbar_K_Tst = 7.057598347931356431e-01
-		gNap_Et2bar_Nap_Et2 = 5.474034057879299114e-02
+		gNap_Et2bar_Nap_Et2 = 0
 		gK_Pstbar_K_Pst = 2.995607833249227525e+00
 		gSKv3_1bar_SKv3_1 = 1.795864927118776766e+00 
 		gCa_LVAstbar_Ca_LVAst = 1.376286159287454106e-03

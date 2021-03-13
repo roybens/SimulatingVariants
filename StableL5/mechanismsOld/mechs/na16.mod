@@ -6,9 +6,12 @@ TITLE na3
 NEURON {
 	SUFFIX na16
 	USEION na READ ena WRITE ina
-	RANGE  gbar, ar2, thegna
-	GLOBAL vhalfs,sh,tha,qa,Ra,Rb,thi1,thi2,qd,qg,mmin,hmin,q10,Rg,qq,Rd,tq,thinf,qinf,vhalfs,a0s,zetas,gms,smax,vvh,vvs
+	RANGE  gbar, thegna,ina
+	GLOBAL vhalfs,sh,tha,qa,Ra,Rb,thi1,thi2,qd,qg,mmin,hmin,q10,Rg,qq,Rd,tq,thinf,qinf,vhalfs,a0s,zetas,gms,smax,vvh,vvs,ar2
 }
+
+
+
 
 PARAMETER {
 	sh   = 8	(mV)

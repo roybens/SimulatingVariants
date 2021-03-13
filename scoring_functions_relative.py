@@ -1,5 +1,6 @@
 import eval_helper as eh
 import mutant_protocols as mp
+from scipy.stats import linregress
 '''
 This file contains various scoring functions that can be used in the evaluator's
 calc_rmse function. These functions tend follow the "relative" format where one 
@@ -22,7 +23,12 @@ class Score_Function:
         self.ramp_protocol = protocols_dict['ramp']
         self.persistent_protocol = protocols_dict['persistent']
 
+    def get_values_from_gensim():
+        gen_data = eh.gen_sim_data()
 
+        self.gv_slope = linregress(gen_data['act sweeps'], gen_data['act'])[0]
+        self.tau_0 = gen_data['tau0']
+        
 
 
 
