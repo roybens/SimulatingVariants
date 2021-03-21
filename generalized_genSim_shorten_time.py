@@ -194,7 +194,7 @@ class Activation:
         # save as PGN file
         plt.savefig(os.path.join(os.path.split(__file__)[0], "Activation IV Curve"))
 
-    def plotActivation_TimeVRelation(self):
+    def plotActivation_timevrelation(self):
         plot_figure(self, self.t_vec, self.v_vec_t, 'Time $(ms)$', 'Voltage $(mV)$',
                     'Activation Time/Voltage relation', 'Activation Time Voltage relation')
 
