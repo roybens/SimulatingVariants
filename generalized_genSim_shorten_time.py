@@ -215,7 +215,7 @@ class Activation:
 class Inactivation:  # TODO doc
     def __init__(self, soma_diam=50, soma_L=63.66198, soma_nseg=1, soma_cm=1, soma_Ra=70,
                  channel_name='na12mut', soma_ena=55, h_celsius=33, v_init=-120, h_dt=0.025, ntrials=range(30),
-                 dur=500, step=10, st_cl=-120, end_cl=70, v_cl=-120,
+                 dur=500, step=10, st_cl=-120, end_cl=40, v_cl=-120,
                  f3cl_dur0=40, f3cl_amp0=-120, f3cl_dur2=20, f3cl_amp2=-10):
 
         self.h = h  # NEURON h
@@ -482,6 +482,83 @@ class RFI:
         plt.plot(self.t_vec, self.i_vec_t, c='black')
         # save as PGN file
         plt.savefig(os.path.join(os.path.split(__file__)[0], "RFI Time Current density relation"))
+
+
+
+##################
+# Ramp Protocol
+##################
+class Ramp:  # TODO doc
+    def __init__(self, soma_diam=50, soma_L=63.66198, soma_nseg=1, soma_cm=1, soma_Ra=70,
+                 channel_name='na12mut', soma_ena=55, h_celsius=33, v_init=-120, t_init = 30,
+                 v_first_step = -60, t_first_step = 30, v_ramp_end = 0, t_ramp = 300, t_plateau = 100, 
+                 v_last_step = -120, t_last_step = 30 ,h_dt=0.025):
+        self.h = h  # NEURON h
+        # one-compartment cell (soma)
+        self.soma = h.Section(name='soma2')
+        self.soma.diam = soma_diam  # micron
+        self.soma.L = soma_L  # micron, so that area = 10000 micron2
+        self.soma.nseg = soma_nseg  # adimensional
+        self.soma.cm = soma_cm  # uF/cm2
+        self.soma.Ra = soma_Ra  # ohm-cm
+        self.soma.insert(channel_name)  # insert mechanism
+        self.soma.ena = soma_ena
+        # clamping parameters
+        def make_ramp():
+            time_steps_arr = np.array([t_init,t_first_step,t_ramp,t_plateau,t_last_step])
+            time_steps_arr = (time_steps_arr/h_dt).astype(int)
+            time_steps_arr = np.cumsum(time_steps_arr)
+            ntimesteps = time_steps_arr[-1]
+            ramp_v = np.zeros(ntimesteps)
+            ramp_v[0:time_steps_arr[0]] = v_init
+            ramp_v[time_steps_arr[0]:time_steps_arr[1]] = v_first_step
+            ramp_v[time_steps_arr[1]:time_steps_arr[2]] = np.linspace(v_first_step,v_ramp_end,time_steps_arr[2]-time_steps_arr[1])
+            ramp_v[time_steps_arr[2]:time_steps_arr[3]] = v_ramp_end
+            ramp_v[time_steps_arr[3]:time_steps_arr[4]] = v_last_step
+            return ramp_v
+        self.ntrials = 1  #
+        h.celsius = h_celsius  # temperature in celsius
+        self.stim_ramp= make_ramp()  # the voltage of the whole protocol
+        h.dt = h_dt  # ms - value of the fundamental integration time step, dt, used by fadvance().
+        # a two-electrodes voltage clamp
+        self.f3cl = h.VClamp(self.soma(0.5))
+        self.f3cl.dur[0] = 1e9
+        self.f3cl.amp[0] = self.stim_ramp[0]
+        # vectors for data handling
+        self.t_vec = np.ones(len(self.stim_ramp))*h_dt
+        self.t_vec = np.cumsum(self.t_vec)
+        self.v_vec = self.stim_ramp
+        self.v_vec_t = []  # vector for voltage as function of time
+        self.i_vec = []  # vector for current
+        self.all_is = []  # all currents
+    def clamp(self, v_cl):
+        """ Runs a trace and calculates peak currents.
+        Args:
+            v_cl (int): voltage to run
+        """
+        self.f3cl.amp[0] = v_cl
+        h.finitialize(self.v_init)  # calling the INITIAL block of the mechanism inserted in the section.
+        # parameters initialization
+        stim_counter = 0
+        dtsave = h.dt
+        for _ in self.ntrials:
+            while h.t < h.tstop:  # runs a single trace, calculates peak current
+                self.f3cl.amp[0] = self.stim_ramp[stim_counter]
+                dens = self.f3cl.i / self.soma(0.5).area() * 100.0 - self.soma(
+                    0.5).i_cap  # clamping current in mA/cm2, for each dt
+                self.t_vec.append(h.t)  # code for store the current
+                self.v_vec_t.append(self.soma.v)  # trace to be plotted
+                self.i_vec.append(dens)  # trace to be plotted
+                stim_counter += 1
+                h.fadvance()
+        # updates the vectors at the end of the run
+    def plotRamp_TimeVRelation(self):
+        # TODO fix
+        print(self.t_vec)
+        print(self.v_ramp)
+        plot_figure(self, self.t_vec, self.v_ramp, 'Time $(ms)$', 'Voltage $(mV)$',
+                    'Inactivation Time/Voltage relation', 'Inactivation Time Voltage relation')
+
 
 
 
@@ -1665,3 +1742,7 @@ if __name__ == "__main__":
         genRFI.plotRFI_TimeVRelation()
         genRFI.plotRFI_VInormRelation()
         genRFI.plotRFI_TCurrDensityRelation()
+
+elif args.function == 4:
+        genRamp = Ramp()
+        genRamp.plotRamp_TimeVRelation()
