@@ -10,23 +10,44 @@ are being specified for na12_mut.mod.
 '''
 
 class Score_Function:
-    def __init__(self, protocols_dict):
-        self.dv_half_act_protocol = protocols_dict['dv_half_act']
-        self.gv_slope_protocol = protocols_dict['gv_slope']
-        self.dv_half_ssi_protocol = protocols_dict['dv_half_ssi']
-        self.ssi_slope_protocol = protocols_dict['ssi_slope']
-        self.tau_fast_protocol = protocols_dict['tau_fast']
-        self.tau_slow_protocol = protocols_dict['tau_slow']
-        self.percent_fast_protocol = protocols_dict['percent_fast']
-        self.udb20_protocol = protocols_dict['udb20']
-        self.tau0_protocol = protocols_dict['tau0']
-        self.ramp_protocol = protocols_dict['ramp']
-        self.persistent_protocol = protocols_dict['persistent']
+    def __init__(self, diff_dict, wild_data):
+        self.dv_half_act_diff = diff_dict['dv_half_act']
+        self.gv_slope_diff = diff_dict['gv_slope']
+        self.dv_half_ssi_diff = diff_dict['dv_half_ssi']
+        self.ssi_slope_diff = diff_dict['ssi_slope']
+        self.tau_fast_diff = diff_dict['tau_fast']
+        self.tau_slow_diff = diff_dict['tau_slow']
+        self.percent_fast_diff = diff_dict['percent_fast']
+        self.udb20_diff = diff_dict['udb20']
+        self.tau0_diff = diff_dict['tau0']
+        self.ramp_diff = diff_dict['ramp']
+        self.persistent_diff = diff_dict['persistent']
+
+        self.v_half_act_wild = wild_data['v_half_act']
+        self.gv_slope_wild = wild_data['gv_slope']
+        self.v_half_ssi_wild = wild_data['v_half_ssi']
+        self.ssi_slope_wild = wild_data['ssi_slope']
+        self.tau_fast_wild = wild_data['tau_fast']
+        self.tau_slow_wild = wild_data['tau_slow']
+        self.percent_fast_wild = wild_data['percent_fast']
+        self.udb20_wild = wild_data['udb20']
+        self.tau0_wild = wild_data['tau0']
+        self.ramp_wild = wild_data['ramp']
+        self.persistent_wild = wild_data['persistent']
 
 
-    def dv_half_act(self, plus_minus_wild):
+    def total_error(self):
+        
 
-    def gv_slope(self, percent_wild):
+
+    def dv_half_act(self, plus_minus_wild, v_half):
+        #TODO Normalize for all of these
+        v_half_baseline = self.v_half_act_wild + plus_minus_wild
+        return (v_half - v_half_baseline)**2
+
+    def gv_slope(self, percent_wild, gv_slope):
+        gv_slope_baseline = self.gv_slope_wild * percent_wild
+        return (gv_slope - gv_slope_baseline)**2
 
     def dv_half_ssi(self, plus_minus_wild):
 
@@ -38,13 +59,13 @@ class Score_Function:
 
     def percent_fast(self, percent_wild):
 
-    def udb20(self, percent_wild):
+    #def udb20(self, percent_wild):
 
     def tau0(self, percent_wild):
 
-    def ramp(self, percent_wild):
+    #def ramp(self, percent_wild):
 
-    def persistent(self, percent_wild):
+    #def persistent(self, percent_wild):
 
 
     def get_values_from_gensim(k_fast, k_slow, span_fast, span_slow):
