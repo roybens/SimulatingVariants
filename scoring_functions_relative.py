@@ -47,13 +47,18 @@ class Score_Function:
     def persistent(self, percent_wild):
 
 
-    def get_values_from_gensim():
+    def get_values_from_gensim(k_fast, k_slow, span_fast, span_slow):
+        '''
+        Calculates various values for the scoring function, and stores the result as member variables of the object.
+        ---
+        Args:
+            k_fast and k_slow are the two rate constant, expressed in reciprocal of the X axis time units. If X is in minutes, then K is expressed in inverse minute
+        '''
         gen_data = eh.gen_sim_data()
 
         def find_half_and_slope(v_vec, ipeak_vec):
-            """ Returns V50 and slope
-                Notes:
-                    gpeak_max = gpeak_vec.max() maximum value of the conductance used to normalize the conductance vector
+            """ 
+            Returns V50 and slope
             """
             # convert to numpy arrays
             v_vec = np.array(v_vec)
@@ -72,10 +77,13 @@ class Score_Function:
                 return Gmax * (vm - vrev) / (1 + np.exp((v_half - vm) / s))
 
             Gmax, v_half, s = optimize.curve_fit(boltzmann, v_vec, ipeak_vec)[0]
-            return v_half, s
+            return s, v_half
 
         self.gv_slope, self.dv_half_act = find_half_and_slope(gen_data['act sweeps'], gen_data['act'])
         self.ssi_slope, self.dv_half_ssi = find_half_and_slope(gen_data['inact sweeps'], gen_data['inact'])
         self.tau_0 = gen_data['tau0']
-        #self.udb20 ignore it for now
-        #ramp and persistent not ready yet
+        self.tau_fast = 1 / k_fast
+        self.tau_slow = 1 / k_slow
+        self.percent_fast = span_fast / span_slow
+        #self.udb20: ignore it for now
+        #ramp and persistent: not ready yet
