@@ -39,9 +39,14 @@ class Score_Function:
 
     def total_rmse(self):
         curve_fitter = cf.Curve_Fitter()
-        gv_slope, v_half_act, top, bottom = curve_fitter.calc_act_obj()
-        ssi_slope, v_half_inact, top, bottom = curve_fitter.calc_inact_obj()
-        y0, plateau, percent_fast, k_fast, k_slow, tau0 = curve_fitter.calc_recov_obj()
+        try:
+            gv_slope, v_half_act, top, bottom = curve_fitter.calc_act_obj()
+            ssi_slope, v_half_inact, top, bottom = curve_fitter.calc_inact_obj()
+            y0, plateau, percent_fast, k_fast, k_slow, tau0 = curve_fitter.calc_recov_obj()
+        except ZeroDivisionError:
+            print('Zero Division Error')
+            return 10000
+
         
         v_half_act_err = self.dv_half_act(self.dv_half_act_diff, v_half_act)
 

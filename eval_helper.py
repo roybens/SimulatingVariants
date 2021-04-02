@@ -18,6 +18,7 @@ def read_mutant_protocols(mutant_protocols_csv, mutant):
     for line in lines:
         if line[0] == mutant:
             mutant_line = line
+            break
     if mutant_line == []:
         raise NameError('Invalid mutant name, or mutant is not yet in CSV database')
     protocols_dict = {}
@@ -32,6 +33,8 @@ def read_mutant_protocols(mutant_protocols_csv, mutant):
     protocols_dict['tau0'] = mutant_line[9]
     protocols_dict['ramp'] = mutant_line[10]
     protocols_dict['persistent'] = mutant_line[11]
+
+    return protocols_dict
 
 def read_all_raw_data_SCN8A(raw_data):
     '''
@@ -368,7 +371,7 @@ def change_params_dict(new_params):
     #scale params up
     #new_params = scale_params_dict(False, new_params_dict)
     #get NEURON h
-    currh = ggsd.activationNa12("geth")
+    currh = ggsd.Activation().h
     #change values of params
     #print(new_params)
     currh.Rd_na12mut= new_params['Rd_na12mut']
