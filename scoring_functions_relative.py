@@ -1,5 +1,6 @@
 import eval_helper as eh
-import mutant_protocols as mp
+#import mutant_protocols as mp
+import curve_fitting as cf
 from scipy.stats import linregress
 '''
 This file contains various scoring functions that can be used in the evaluator's
@@ -36,32 +37,67 @@ class Score_Function:
         self.persistent_wild = wild_data['persistent']
 
 
-    def total_error(self):
+    def total_rmse(self):
+        curve_fitter = cf.Curve_Fitter()
+        gv_slope, v_half_act, top, bottom = curve_fitter.calc_act_obj()
+        ssi_slope, v_half_inact, top, bottom = curve_fitter.calc_inact_obj()
+        y0, plateau, percent_fast, k_fast, k_slow, tau0 = curve_fitter.calc_recov_obj()
         
+        v_half_act_err = self.dv_half_act(self.dv_half_act_diff, v_half_act)
+
+        gv_slope_err = self.gv_slope(self.gv_slope_diff, gv_slope)
+
+        v_half_ssi_err = self.dv_half_ssi(self.dv_half_ssi_diff, v_half_inact)
+
+        ssi_slope_err = self.ssi_slope(self.ssi_slope_diff, ssi_slope)
+
+        tau_fast_err = self.tau_fast(self.tau_fast_diff, 1/k_fast)
+
+        tau_slow_err = self.tau_slow(self.tau_slow_diff, 1/k_slow)
+
+        percent_fast_err = self.percent_fast(self.percent_fast_diff, percent_fast)
+
+        tau0_err = self.tau0(self.tau0_diff, tau0)
+
+        sum_squares = v_half_act_err**2 + gv_slope_err**2 + v_half_ssi_err**2 + ssi_slope_err**2 + tau_fast_err**2 + tau_slow_err**2 + percent_fast_err**2 + tau0_err**2
+
+        return sum_squares**(1/2)
+
 
 
     def dv_half_act(self, plus_minus_wild, v_half):
-        #TODO Normalize for all of these
         v_half_baseline = self.v_half_act_wild + plus_minus_wild
-        return (v_half - v_half_baseline)**2
+        return ((v_half - v_half_baseline)/v_half_baseline)**2
 
     def gv_slope(self, percent_wild, gv_slope):
         gv_slope_baseline = self.gv_slope_wild * percent_wild
-        return (gv_slope - gv_slope_baseline)**2
+        return ((gv_slope - gv_slope_baseline)/gv_slope_baseline)**2
 
-    def dv_half_ssi(self, plus_minus_wild):
+    def dv_half_ssi(self, plus_minus_wild, v_half_ssi):
+        v_half_baseline = self.v_half_ssi_wild + plus_minus_wild
+        return ((v_half_ssi - v_half_baseline)/v_half_baseline)**2
 
-    def ssi_slope(self, percent_wild):
+    def ssi_slope(self, percent_wild, ssi_slope_exp):
+        ssi_slope_baseline = self.ssi_slope_wild * percent_wild
+        return ((ssi_slope_exp - ssi_slope_baseline)/ssi_slope_baseline)**2
 
-    def tau_fast(self, percent_wild):
+    def tau_fast(self, percent_wild, tau_fast_exp):
+        tau_fast_baseline = self.tau_fast_wild*percent_wild
+        return ((tau_fast_exp - tau_fast_baseline)/tau_fast_baseline)**2
 
-    def tau_slow(self, percent_wild):
+    def tau_slow(self, percent_wild, tau_slow_exp):
+        tau_slow_baseline = self.tau_slow_wild*percent_wild
+        return ((tau_slow_exp - tau_slow_baseline)/tau_slow_baseline)**2
 
-    def percent_fast(self, percent_wild):
+    def percent_fast(self, percent_wild, percent_fast_exp):
+        percent_fast_baseline = self.percent_fast_wild*percent_wild
+        return ((percent_fast_exp - percent_fast_baseline)/percent_fast_baseline)**2
 
     #def udb20(self, percent_wild):
 
-    def tau0(self, percent_wild):
+    def tau0(self, percent_wild, tau0_exp):
+        tau0_baseline = self.tau0_wild*percent_wild
+        return ((tau0_exp - tau0_baseline)/tau0_baseline)**2
 
     #def ramp(self, percent_wild):
 

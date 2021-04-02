@@ -28,9 +28,7 @@ def two_phase(x, y0, plateau, percent_fast, k_fast, k_slow):
 class Curve_Fitter:
 
     def __init__(self):
-        self.activation = ggsd.Activation()
-        self.inactivation = ggsd.Inactivation()
-        self.recovery = ggsd.RFI()
+        x = 1
 
     def gen_figure_given_params(self, params, save=True, file_name=None,mutant='N_A', exp='N_A',rmse=None, plot=False):
         #set-up figure
@@ -39,7 +37,7 @@ class Curve_Fitter:
         fig, axs = plt.subplots(3, figsize=(10,10))
         fig.suptitle("Mutant: {} \n Experiment: {}".format(mutant, exp))
         # Inactivation curve
-        inorm_vec, v_vec, all_is = self.inactivation.genInactivation()
+        inorm_vec, v_vec, all_is = ggsd.Inactivation().genInactivation()
         inorm_array = np.array(inorm_vec)
         v_array = np.array(v_vec)
         ssi_slope, v_half, top, bottom = self.calc_inact_obj()
@@ -55,7 +53,7 @@ class Curve_Fitter:
         axs[0].legend()
 
         # Activation curve
-        gnorm_vec, v_vec, all_is = self.activation.genActivation()
+        gnorm_vec, v_vec, all_is = ggsd.Activation().genActivation()
         gnorm_array = np.array(gnorm_vec)
         v_array = np.array(v_vec)
         gv_slope, v_half, top, bottom = self.calc_act_obj()
@@ -70,36 +68,54 @@ class Curve_Fitter:
         axs[1].text(-10, 0.3, 'V50: ' + str(v_half) + ' mV')
         axs[1].legend()
         
-        Recovery Curve
+        #Recovery Curve
+        rec_inact_tau_vec, recov_curves, times = ggsd.RFI().genRecInactTau()
+        times = np.array(times)
+        data_pts = np.array(recov_curves[0])
         axs[2].set_xlabel('Log(Time)')
         axs[2].set_ylabel('Fractional Recovery')
         axs[2].set_title("Recovery from Inactivation")
         even_xs = np.linspace(times[0], times[len(times)-1], 100)
-        curve = two_phase(even_xs, *popt)
-        axs[2].plot(np.log(even_xs), curve, c=fit_color,label="Recovery Fit")
-        axs[2].scatter(np.log(times), data_pts, label='Recovery', color=fit_color,marker=curr_marker)
+        y0, plateau, percent_fast, k_fast, k_slow, tau0  = self.calc_recov_obj()
+        curve = two_phase(even_xs, y0, plateau, percent_fast, k_fast, k_slow)
+        axs[2].plot(np.log(even_xs), curve, c='red',label="Recovery Fit")
+        axs[2].scatter(np.log(times), data_pts, label='Recovery', color='black')
         plt.show()
 
     def calc_act_obj(self):
-        gnorm_vec, v_vec, all_is = self.activation.genActivation()
+        gnorm_vec, v_vec, all_is = ggsd.Activation().genActivation()
         try:
             popt, pcov = optimize.curve_fit(boltzmann, v_vec, gnorm_vec)
         except:
             print("Very bad voltages in activation.")
-            return
+            return (1000, 1000, 1000, 1000)
         gv_slope, v_half, top, bottom = popt
         return gv_slope, v_half, top, bottom
 
 
     def calc_inact_obj(self):
-        inorm_vec, v_vec, all_is = self.inactivation.genInactivation()
+        inorm_vec, v_vec, all_is = ggsd.Inactivation().genInactivation()
         try:
             popt, pcov = optimize.curve_fit(boltzmann, v_vec, inorm_vec)
         except:
             print("Very bad voltages in inactivation.")
-            return
+            return (1000, 1000, 1000, 1000)
         ssi_slope, v_half, top, bottom = popt
         return ssi_slope, v_half, top, bottom
 
     def calc_recov_obj(self):
-        return
+        rec_inact_tau_vec, recov_curves, times = ggsd.RFI().genRecInactTau()
+        recov_curve = recov_curves[0]
+        try:
+            popt, pcov = optimize.curve_fit(two_phase, times, recov_curve)
+        except:
+            print("Very bad voltages in Recovery.")
+            return (1000, 1000, 1000, 1000, 1000)
+
+        y0, plateau, percent_fast, k_fast, k_slow = popt
+        #print(popt)
+        tau0 = rec_inact_tau_vec[0]
+        #print(tau0)
+        return y0, plateau, percent_fast, k_fast, k_slow, tau0 
+
+

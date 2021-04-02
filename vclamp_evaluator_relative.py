@@ -2,6 +2,7 @@ import numpy as np
 import bluepyopt as bpop
 import eval_helper as eh
 import scoring_functions_relative as sf
+import curve_fitting as cf
 
 class Vclamp_evaluator_relative(bpop.evaluators.Evaluator):
     '''
@@ -48,6 +49,7 @@ class Vclamp_evaluator_relative(bpop.evaluators.Evaluator):
                 param_list.append(bpop.parameters.Parameter(param_name, value=param_val, bounds=(min_bound, max_bound)))
             return param_list
 
+        self.wild_data = self.initialize_wild_data()
         self.params = init_params(params_file)
         self.objectives = [bpop.objectives.Objective('dv_half_act'),\
                            bpop.objectives.Objective('gv_slope'),\
@@ -63,6 +65,29 @@ class Vclamp_evaluator_relative(bpop.evaluators.Evaluator):
                            ] 
         self.protocols = eh.read_mutant_protocols('mutant_protocols.csv', mutant)
 
+    def initialize_wild_data(self):
+        wild_data = {}
+        curve_fitter = cf.Curve_Fitter()
+        gv_slope, v_half_act, top, bottom = curve_fitter.calc_act_obj()
+        ssi_slope, v_half_inact, top, bottom = curve_fitter.calc_inact_obj()
+        y0, plateau, percent_fast, k_fast, k_slow, tau0 = curve_fitter.calc_recov_obj()
+
+        wild_data['v_half_act'] = v_half_act
+        wild_data['gv_slope'] = gv_slope
+        wild_data['v_half_ssi'] = v_half_inact
+        wild_data['ssi_slope'] = ssi_slope
+        wild_data['tau_fast'] = 1 / k_fast
+        wild_data['tau_slow'] = 1 / k_slow
+        wild_data['percent_fast'] = percent_fast
+        wild_data['udb20'] = 0
+        wild_data['tau0'] = tau0
+        wild_data['ramp'] = 0
+        wild_data['persistent'] = 0
+
+        return wild_data
+
+
+
     def evaluate_with_lists(self, param_values=[]):
         '''
         Uses the parameter values in PARAM_VALUES to calculate the objective errors
@@ -73,11 +98,10 @@ class Vclamp_evaluator_relative(bpop.evaluators.Evaluator):
         Returns:
             List of float values of objective errors
         '''
-        score_calculator = sf.Score_Function(self.protocols)
-        return self.calc_all_rmse(param_values, score_calculator.scorer)
+        return self.calc_all_rmse(param_values)
     
 
-    def calc_all_rmse(self, param_values, scoring_function):
+    def calc_all_rmse(self, param_values):
         '''
         Uses the parameter values in PARAM_VALUES to calculate the objective errors
 
@@ -89,5 +113,7 @@ class Vclamp_evaluator_relative(bpop.evaluators.Evaluator):
 
         '''
         assert len(param_values) == len(self.params), 'Parameter value list is not same length number of parameters' 
+        #print(self.protocols)
+        score_calculator = sf.Score_Function(self.protocols, self.wild_data)
         eh.change_params(param_values, scaled=False)
-        return scoring_function(self.target_data)
+        return score_calculator.total_rmse()
