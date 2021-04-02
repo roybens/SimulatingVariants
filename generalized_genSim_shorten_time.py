@@ -548,11 +548,20 @@ class Ramp:  # TODO doc
                 stim_counter += 1
                 h.fadvance()
         # updates the vectors at the end of the run
+    '''
     def plotRamp_TimeVRelation(self):
         # TODO fix
         print(self.t_vec)
         print(self.v_ramp)
         plot_figure(self, self.t_vec, self.v_ramp, 'Time $(ms)$', 'Voltage $(mV)$',
+                    'Inactivation Time/Voltage relation', 'Inactivation Time Voltage relation')
+    '''                
+
+    def plotRamp_TimeVRelation(self):
+        # TODO fix
+        print(self.t_vec)
+        print(self.v_vec)
+        plot_figure(self, self.t_vec, self.v_vec, 'Time $(ms)$', 'Voltage $(mV)$',
                     'Inactivation Time/Voltage relation', 'Inactivation Time Voltage relation')
 
 
