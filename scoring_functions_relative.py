@@ -49,19 +49,31 @@ class Score_Function:
         gv_slope_baseline = self.gv_slope_wild * percent_wild
         return (gv_slope - gv_slope_baseline)**2
 
-    def dv_half_ssi(self, plus_minus_wild):
+    def dv_half_ssi(self, plus_minus_wild, dv_half_ssi):
+        dv_half_ssi_baseline = self.v_half_ssi_wild + plus_minus_wild
+        return (dv_half_ssi - dv_half_ssi_baseline)**2
 
-    def ssi_slope(self, percent_wild):
+    def ssi_slope(self, percent_wild, ssi_slope):
+        ssi_slope_baseline = self.ssi_slope_wild * percent_wild
+        return (ssi_slope - ssi_slope_baseline)**2
+        
+    def tau_fast(self, percent_wild, tau_fast):
+        tau_fast_baseline = self.tau_fast_wild * percent_wild
+        return (tau_fast - tau_fast_baseline)**2
 
-    def tau_fast(self, percent_wild):
+    def tau_slow(self, percent_wild, tau_slow):
+        tau_slow_baseline = self.tau_slow_wild * percent_wild
+        return (tau_slow - tau_slow_baseline)**2
 
-    def tau_slow(self, percent_wild):
-
-    def percent_fast(self, percent_wild):
+    def percent_fast(self, percent_wild, percent_fast):
+        percent_fast_baseline = self.percent_fast_wild * percent_wild
+        return (percent_fast - percent_fast_baseline)**2
 
     #def udb20(self, percent_wild):
 
-    def tau0(self, percent_wild):
+    def tau0(self, percent_wild, tau0):
+        tau0_baseline = self.tau0_wild * percent_wild
+        return (tau0 - tau0_baseline)**2
 
     #def ramp(self, percent_wild):
 
