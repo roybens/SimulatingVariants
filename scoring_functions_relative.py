@@ -73,6 +73,7 @@ class Score_Function:
         gv_slope_baseline = self.gv_slope_wild * percent_wild
         return ((gv_slope - gv_slope_baseline)/gv_slope_baseline)**2
 
+
     def dv_half_ssi(self, plus_minus_wild, v_half_ssi):
         v_half_baseline = self.v_half_ssi_wild + plus_minus_wild
         return ((v_half_ssi - v_half_baseline)/v_half_baseline)**2
@@ -98,6 +99,7 @@ class Score_Function:
     def tau0(self, percent_wild, tau0_exp):
         tau0_baseline = self.tau0_wild*percent_wild
         return ((tau0_exp - tau0_baseline)/tau0_baseline)**2
+
 
     #def ramp(self, percent_wild):
 
