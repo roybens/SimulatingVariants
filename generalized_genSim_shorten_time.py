@@ -525,8 +525,8 @@ class Ramp:  # TODO doc
         self.stim_ramp = make_ramp()  # the voltage of the whole protocol
         h.dt = h_dt  # ms - value of the fundamental integration time step, dt, used by fadvance().
         self.v_init = v_init  # holding potential
-        self.t_start_persist = (t_init + t_first_step + t_ramp) / h_dt #time that plateau starts
-        self.t_end_persist = (t_init + t_first_step + t_ramp + t_plateau) / h_dt #time that plateau ends
+        self.t_start_persist = int((t_init + t_first_step + t_ramp) / h_dt) #time that plateau starts
+        self.t_end_persist = int((t_init + t_first_step + t_ramp + t_plateau) / h_dt) #time that plateau ends
         self.t_total = t_init + t_first_step + t_ramp + t_plateau + t_last_step
 
         # a two-electrodes voltage clamp
@@ -581,7 +581,7 @@ class Ramp:  # TODO doc
     def persistentCurrent(self):
         """ Calculates persistent current (avg current of last 100 ms at 0 mV)
         """
-        persistent = self.i_vec[int(self.t_start_persist):int(self.t_end_persist)]
+        persistent = self.i_vec[self.t_start_persist:self.t_end_persist]
         return sum(persistent)/len(persistent)
     
     def plotRamp_TimeVRelation(self):
@@ -589,13 +589,26 @@ class Ramp:  # TODO doc
                     'Inactivation Time/Voltage relation', 'Inactivation Time Voltage relation')
     
     def plotRamp_TimeCurrentRelation(self):
-        plt.figure()
+        f, (ax1, ax2) = plt.subplots(1, 2, sharey=True)
+        
+        f.add_subplot(111, frameon=False) #for shared axes labels big title
+        # hide tick and tick label of the big axes
+        plt.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
+        plt.grid(False)
+        plt.title("Ramp: Time Current Density Relation", x = 0.4, y = 1.1)
         plt.xlabel('Time $(ms)$')
-        plt.ylabel('Current')
-        plt.title("Ramp: Time Current Density Relation")
-        plt.plot(self.t_vec[1:], self.i_vec[1:], 'o', c='black', markersize = 0.1)
+        plt.ylabel('Current', labelpad= 25)
+        
+        # starting + first step + ramp section
+        ax1.set_title("Ramp")
+        ax1.plot(self.t_vec[1:self.t_start_persist], self.i_vec[1:self.t_start_persist], 'o', c='black', markersize = 0.1)
+        
+        # persistent current + last step section
+        ax2.set_title("Persistent Current")
+        ax2.plot(self.t_vec[self.t_start_persist:], self.i_vec[self.t_start_persist:], 'o', c='black', markersize = 0.1)
         
         # save as PGN file
+        plt.tight_layout()
         plt.savefig(os.path.join(os.path.split(__file__)[0], "Ramp Time Current Density Relation"))
 
 #######################################################################################################################
