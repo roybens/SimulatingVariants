@@ -18,21 +18,18 @@ import matplotlib.cm as cmx
 from scipy import optimize, stats
 import argparse
 import os
-from sys import api_version
-from test.pythoninfo import collect_platform
+#from sys import api_version
+#from test.pythoninfo import collect_platform
 
 
 ##################
 # Global
 ##################
-def plot_figure(self, x, y, xlabel, ylabel, title, file_name):
-    plt.figure()
-    plt.xlabel(xlabel)
-    plt.ylabel(ylabel)
-    plt.title(title)
-    plt.plot(x, y, color='black')
-    # save as PGN file
-    plt.savefig(os.path.join(os.path.split(__file__)[0], file_name))
+# Create folder in CWD to save plots
+current_directory = os.getcwd()
+final_directory = os.path.join(current_directory, r'Plots_Folder')
+if not os.path.exists(final_directory):
+   os.makedirs(final_directory)
 
 
 ##################
@@ -86,12 +83,13 @@ class Activation:
         self.ipeak_vec = []  # vector for peak current
         self.gnorm_vec = []  # vector for normalized conductance
         self.all_is = []  # all currents
-    
+        self.all_v_vec_t = []
+
         # conductance attributes for plotting
         self.vrev = 0
         self.v_half = 0
         self.s = 0
-    
+
     def clamp(self, v_cl):
         """ Runs a trace and calculates peak currents.
         Args:
@@ -100,13 +98,14 @@ class Activation:
         curr_tr = 0  # initialization of peak current
         h.finitialize(self.v_init)  # calling the INITIAL block of the mechanism inserted in the section.
         pre_i = 0  # initialization of variables used to commute the peak current
+        dens = 0
         self.f3cl.amp[1] = v_cl  # mV
 
-        for _ in self.ntrials:  # TODO fix?
+        for _ in self.ntrials:
             while h.t < h.tstop:  # runs a single trace, calculates peak current
                 dens = self.f3cl.i / self.soma(0.5).area() * 100.0 - self.soma(
                     0.5).i_cap  # clamping current in mA/cm2, for each dt
-                                
+
                 self.t_vec.append(h.t)
                 self.v_vec_t.append(self.soma.v)
                 self.i_vec.append(dens)
@@ -120,27 +119,6 @@ class Activation:
 
         # updates the vectors at the end of the run
         self.ipeak_vec.append(curr_tr)
-
-    def genActivation(self):
-        """ Generates simulated activation data
-        Returns:
-            gnorm_vec: normalized peak conductance vector
-            voltages
-            all_is: peak current vector
-        """
-        if self.gnorm_vec == []:
-            time_padding = 5  # ms
-            h.tstop = time_padding + self.dur + time_padding  # time stop
-
-            # iterates across voltages (mV)
-            for v_cl in self.v_vec:
-                self.clamp(v_cl)
-                self.all_is.append(self.i_vec[1:])
-
-            # calculate normalized peak conductance
-            self.gnorm_vec = self.findG(self.v_vec, self.ipeak_vec)
-            
-        return self.gnorm_vec, self.v_vec, self.all_is
 
     def findG(self, v_vec, ipeak_vec):
         """ Returns normalized conductance vector
@@ -157,8 +135,8 @@ class Activation:
         # take linear portion of voltage and current relationship
         lin_v = v_vec[inds]
         lin_i = ipeak_vec[inds]
-        
-        #boltzmann for conductance
+
+        # boltzmann for conductance
         def boltzmann(vm, Gmax, v_half, s):
             return Gmax * (vm - self.vrev) / (1 + np.exp((v_half - vm) / s))
 
@@ -170,6 +148,33 @@ class Activation:
         for volt in v_vec:
             norm_g.append(1 / (1 + np.exp(-(volt - self.v_half) / self.s)))
         return norm_g
+
+    def genActivation(self):
+        """ Generates simulated activation data
+        Returns:
+            gnorm_vec: normalized peak conductance vector
+            voltages
+            all_is: peak current vector
+        """
+        if self.gnorm_vec == []:
+            time_padding = 5  # ms
+            h.tstop = time_padding + self.dur + time_padding  # time stop
+
+            # iterates across voltages (mV)
+            for v_cl in np.arange(self.st_cl, self.end_cl, self.step):  # self.v_vec:
+                # resizing the vectors
+                self.t_vec = []
+                self.i_vec = []
+                self.v_vec_t = []
+
+                self.clamp(v_cl)
+                self.all_is.append(self.i_vec)
+                self.all_v_vec_t.append(self.v_vec_t)
+
+            # calculate normalized peak conductance
+            self.gnorm_vec = self.findG(self.v_vec, self.ipeak_vec)
+
+        return self.gnorm_vec, self.v_vec, self.all_is
 
     def plotActivation_VGnorm(self):
         """
@@ -183,7 +188,7 @@ class Activation:
         x_values_v = np.arange(self.st_cl, self.end_cl, 1)
         plt.plot(x_values_v, (1 / (1 + np.exp(-(x_values_v - self.v_half) / self.s))), c='red')
         # save as PGN file
-        plt.savefig(os.path.join(os.path.split(__file__)[0], 'Activation Voltage-Normalized Conductance Relation'))
+        plt.savefig(os.path.join(os.path.split(__file__)[0], 'Plots_Folder/Activation Voltage-Normalized Conductance Relation'))
 
     def plotActivation_IVCurve(self):
         plt.figure()
@@ -193,22 +198,36 @@ class Activation:
         plt.plot(self.v_vec, self.ipeak_vec, 'o', c='black')
         plt.text(0, -0.005, 'Vrev at ' + str(round(self.vrev, 1)) + 'mV', fontsize=10, c='blue')
         # save as PGN file
-        plt.savefig(os.path.join(os.path.split(__file__)[0], "Activation IV Curve"))
+        plt.savefig(os.path.join(os.path.split(__file__)[0], "Plots_Folder/Activation IV Curve"))
 
     def plotActivation_TimeVRelation(self):
-        plot_figure(self, self.t_vec, self.v_vec_t, 'Time $(ms)$', 'Voltage $(mV)$',
-                    'Activation Time/Voltage relation', 'Activation Time Voltage Relation')
+        plt.figure()
+        plt.xlabel('Time $(ms)$')
+        plt.ylabel('Voltage $(mV)$')
+        plt.title('Activation Time/Voltage relation')
+        for i in (np.arange(len(self.v_vec))):
+            plt.plot(self.t_vec, self.all_v_vec_t[i], c='black')
+        # save as PGN file
+        plt.savefig(os.path.join(os.path.split(__file__)[0], 'Plots_Folder/Activation Time Voltage Relation'))
 
     def plotActivation_TCurrDensityRelation(self):
-        # TODO fix
         plt.figure()
         plt.xlabel('Time $(ms)$')
         plt.ylabel('Current density $(mA/cm^2)$')
         plt.title('Activation Time/Current density relation')
-        for _ in self.v_vec:
-            plt.plot(self.t_vec, self.i_vec, c='black')
+        for i in (np.arange(len(self.v_vec))):
+            plt.plot(self.t_vec, self.all_is[i], c='black')
         # save as PGN file
-        plt.savefig(os.path.join(os.path.split(__file__)[0], "Activation Time Current Density Relation"))
+        plt.savefig(os.path.join(os.path.split(__file__)[0], "Plots_Folder/Activation Time Current Density Relation"))
+
+    def plotAllActivation(self):
+        """
+        Saves all plots to CWD/Plots_Folder.
+        """
+        genAct.plotActivation_VGnorm()
+        genAct.plotActivation_IVCurve()
+        genAct.plotActivation_TimeVRelation()
+        genAct.plotActivation_TCurrDensityRelation()
 
 ##################
 # Inactivation
@@ -1615,11 +1634,7 @@ if __name__ == "__main__":
     if args.function == 1:
         genAct = Activation()
         genAct.genActivation()
-
-        genAct.plotActivation_VGnorm()
-        genAct.plotActivation_IVCurve()
-        genAct.plotActivation_TimeVRelation()
-        genAct.plotActivation_TCurrDensityRelation()
+        genAct.plotAllActivation()
 
     elif args.function == 2:
         genInact = Inactivation()
