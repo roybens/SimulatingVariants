@@ -11,12 +11,15 @@ Modified from Emilio Andreozzi "Phenomenological models of NaV1.5.
 
 from neuron import h, gui
 import numpy as np
+from numpy import trapz
 import matplotlib.pyplot as plt
 import matplotlib.colors as colors
 import matplotlib.cm as cmx
 from scipy import optimize, stats
 import argparse
 import os
+from sys import api_version
+from test.pythoninfo import collect_platform
 
 
 ##################
@@ -103,7 +106,7 @@ class Activation:
             while h.t < h.tstop:  # runs a single trace, calculates peak current
                 dens = self.f3cl.i / self.soma(0.5).area() * 100.0 - self.soma(
                     0.5).i_cap  # clamping current in mA/cm2, for each dt
-
+                                
                 self.t_vec.append(h.t)
                 self.v_vec_t.append(self.soma.v)
                 self.i_vec.append(dens)
@@ -136,6 +139,7 @@ class Activation:
 
             # calculate normalized peak conductance
             self.gnorm_vec = self.findG(self.v_vec, self.ipeak_vec)
+            
         return self.gnorm_vec, self.v_vec, self.all_is
 
     def findG(self, v_vec, ipeak_vec):
@@ -179,7 +183,7 @@ class Activation:
         x_values_v = np.arange(self.st_cl, self.end_cl, 1)
         plt.plot(x_values_v, (1 / (1 + np.exp(-(x_values_v - self.v_half) / self.s))), c='red')
         # save as PGN file
-        plt.savefig(os.path.join(os.path.split(__file__)[0], 'Activation Voltage-Normalized conductance relation'))
+        plt.savefig(os.path.join(os.path.split(__file__)[0], 'Activation Voltage-Normalized Conductance Relation'))
 
     def plotActivation_IVCurve(self):
         plt.figure()
@@ -193,7 +197,7 @@ class Activation:
 
     def plotActivation_TimeVRelation(self):
         plot_figure(self, self.t_vec, self.v_vec_t, 'Time $(ms)$', 'Voltage $(mV)$',
-                    'Activation Time/Voltage relation', 'Activation Time Voltage relation')
+                    'Activation Time/Voltage relation', 'Activation Time Voltage Relation')
 
     def plotActivation_TCurrDensityRelation(self):
         # TODO fix
@@ -203,7 +207,7 @@ class Activation:
         plt.title('Activation Time/Current density relation')
         plt.plot(self.t_vec, self.i_vec, c='black')
         # save as PGN file
-        plt.savefig(os.path.join(os.path.split(__file__)[0], "Activation Time Current density relation"))
+        plt.savefig(os.path.join(os.path.split(__file__)[0], "Activation Time Current Density Relation"))
 
 ##################
 # Inactivation
@@ -328,7 +332,7 @@ class Inactivation:  # TODO doc
         plt.title('Inactivation Time/Current density relation')
         plt.plot(self.t_vec, self.i_vec, c='black')
         # save as PGN file
-        plt.savefig(os.path.join(os.path.split(__file__)[0], "Inactivation Time Current density relation"))
+        plt.savefig(os.path.join(os.path.split(__file__)[0], "Inactivation Time Current Density Relation"))
 
 
 ##################
@@ -499,6 +503,7 @@ class Ramp:  # TODO doc
         self.soma.Ra = soma_Ra  # ohm-cm
         self.soma.insert(channel_name)  # insert mechanism
         self.soma.ena = soma_ena
+        
         # clamping parameters
         def make_ramp():
             time_steps_arr = np.array([t_init,t_first_step,t_ramp,t_plateau,t_last_step])
@@ -512,23 +517,31 @@ class Ramp:  # TODO doc
             ramp_v[time_steps_arr[2]:time_steps_arr[3]] = v_ramp_end
             ramp_v[time_steps_arr[3]:time_steps_arr[4]] = v_last_step
             return ramp_v
+        
         self.ntrials = 1  #
         h.celsius = h_celsius  # temperature in celsius
-        self.stim_ramp= make_ramp()  # the voltage of the whole protocol
+        self.stim_ramp = make_ramp()  # the voltage of the whole protocol
         h.dt = h_dt  # ms - value of the fundamental integration time step, dt, used by fadvance().
+        self.v_init = v_init  # holding potential
+        self.t_start_persist = (t_init + t_first_step + t_ramp) / h_dt #time that plateau starts
+        self.t_end_persist = (t_init + t_first_step + t_ramp + t_plateau) / h_dt #time that plateau ends
+        self.t_total = t_init + t_first_step + t_ramp + t_plateau + t_last_step
+
         # a two-electrodes voltage clamp
         self.f3cl = h.VClamp(self.soma(0.5))
         self.f3cl.dur[0] = 1e9
         self.f3cl.amp[0] = self.stim_ramp[0]
+        
         # vectors for data handling
         self.t_vec = np.ones(len(self.stim_ramp))*h_dt
         self.t_vec = np.cumsum(self.t_vec)
         self.v_vec = self.stim_ramp
         self.v_vec_t = []  # vector for voltage as function of time
         self.i_vec = []  # vector for current
-        self.all_is = []  # all currents
+
+    
     def clamp(self, v_cl):
-        """ Runs a trace and calculates peak currents.
+        """ Runs a trace and calculates currents.
         Args:
             v_cl (int): voltage to run
         """
@@ -536,27 +549,54 @@ class Ramp:  # TODO doc
         h.finitialize(self.v_init)  # calling the INITIAL block of the mechanism inserted in the section.
         # parameters initialization
         stim_counter = 0
+        
         dtsave = h.dt
-        for _ in self.ntrials:
-            while h.t < h.tstop:  # runs a single trace, calculates peak current
-                self.f3cl.amp[0] = self.stim_ramp[stim_counter]
-                dens = self.f3cl.i / self.soma(0.5).area() * 100.0 - self.soma(
-                    0.5).i_cap  # clamping current in mA/cm2, for each dt
-                self.t_vec.append(h.t)  # code for store the current
-                self.v_vec_t.append(self.soma.v)  # trace to be plotted
-                self.i_vec.append(dens)  # trace to be plotted
-                stim_counter += 1
-                h.fadvance()
-        # updates the vectors at the end of the run
+        while round(h.t, 3) < h.tstop:  # runs a single trace, calculates current
+            self.f3cl.amp[0] = self.stim_ramp[stim_counter]
+            dens = self.f3cl.i / self.soma(0.5).area() * 100.0 - self.soma(
+                0.5).i_cap  # clamping current in mA/cm2, for each dt
+                
+            self.v_vec_t.append(self.soma.v)  # trace to be plotted
+            self.i_vec.append(dens)  # trace to be plotted
+            
+            stim_counter += 1
+            h.fadvance()
+    
+    def genRamp(self):
+        h.tstop = self.t_total
+        self.clamp(self.v_vec[0])
+    
     def plotRamp_TimeVRelation(self):
         # TODO fix
-        print(self.t_vec)
-        print(self.v_ramp)
-        plot_figure(self, self.t_vec, self.v_ramp, 'Time $(ms)$', 'Voltage $(mV)$',
+
+        plot_figure(self, self.t_vec, self.v_vec, 'Time $(ms)$', 'Voltage $(mV)$',
                     'Inactivation Time/Voltage relation', 'Inactivation Time Voltage relation')
 
-
-
+    def areaUnderCurve(self):
+        """ Calculates and returns normalized area (to activation IV) under IV curve of Ramp
+        """
+        area = trapz(self.i_vec, x = self.v_vec_t) #find area
+        act = Activation()
+        act.genActivation()
+        print(self.i_vec)
+        area = area / min(act.ipeak_vec) #normalize to peak currents from activation
+        return area
+    
+    def persistentCurrent(self):
+        """ Calculates persistent current (avg current of last 100 ms at 0 mV)
+        """
+        persistent = self.i_vec[int(self.t_start_persist):int(self.t_end_persist)]
+        return sum(persistent)/len(persistent)
+    
+    def plotRamp_TimeCurrentRelation(self):
+        plt.figure()
+        plt.xlabel('Time $(ms)$')
+        plt.ylabel('Current')
+        plt.title("Ramp: Time Current Density Relation")
+        plt.plot(self.t_vec[1:], self.i_vec[1:], 'o', c='black', markersize = 0.1)
+        
+        # save as PGN file
+        plt.savefig(os.path.join(os.path.split(__file__)[0], "Ramp Time Current Density Relation"))
 
 #######################################################################################################################
 
@@ -1587,3 +1627,4 @@ if __name__ == "__main__":
     elif args.function == 4:
         genRamp = Ramp()
         genRamp.plotRamp_TimeVRelation()
+        genRamp.plotRamp_TimeCurrentRelation()
