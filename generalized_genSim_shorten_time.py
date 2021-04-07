@@ -278,7 +278,7 @@ class Inactivation:
         self.ipeak_vec = []  # vector for peak current
         self.inorm_vec = []  # vector for normalized current
         self.all_is = []  # all currents
-        self.all_v_vec_t = []
+        self.all_v_vec_t = []  # all voltages
 
         self.L = len(self.v_vec)
 
@@ -376,7 +376,6 @@ class Inactivation:
 # Recovery from Inactivation (RFI)
 # &  RFI Tau
 ##################
-
 class RFI:
     def __init__(self, soma_diam=50, soma_L=63.66198, soma_nseg=1, soma_cm=1, soma_Ra=70,
                  channel_name='na12mut', soma_ena=55, h_celsius=33, v_init=-90, h_dt=0.1, ntrials=30,
@@ -439,6 +438,11 @@ class RFI:
         self.v_vec_t = []  # vector for voltage as function of time
         self.i_vec_t = []  # vector for current
         self.rec_inact_tau_vec = []  # RFI taus
+        self.all_is = []  # all currents
+        self.all_v_vec_t = []  # all voltages
+        self.all_t_vec = [] # all h.t
+
+        self.L = len(self.vec_pts)
 
     def clampRecInactTau(self, dur):
         """ Runs a trace and calculates peak currents.
@@ -483,49 +487,77 @@ class RFI:
         self.rec_vec.append(peak_curr2 / peak_curr1)
 
         # calc tau using RF and tstop
-        # append values to vector # TODO cite/doc
+        # append values to vector
         RF_t = peak_curr2 / peak_curr1
         tau = -h.tstop / np.log(-RF_t + 1)
         self.rec_inact_tau_vec.append(tau)
 
     def genRecInactTau(self):
         recov = []  # RFI tau curve
-        for dur in self.vec_pts:  # TODO change v variable name
+        for dur in self.vec_pts:
+            # resizing the vectors
+            self.t_vec = []
+            self.i_vec_t = []
+            self.v_vec_t = []
 
             self.clampRecInactTau(dur)
-            recov.append(self.rec_vec)  # TODO can simplify to self.recvec?
+            recov.append(self.rec_vec)
+            self.all_is.append(self.i_vec_t)
+            self.all_v_vec_t.append(self.v_vec_t)
+            self.all_t_vec.append(self.t_vec)
 
-        return self.rec_inact_tau_vec, recov, self.vec_pts  # TODO note vec_pts is actually times not mV...
+        return self.rec_inact_tau_vec, recov, self.vec_pts
 
-    def plotRFI_VInormRelation(self):
+    def plotRFI_LogVInormRelation(self):
         plt.figure()
         plt.xlabel('Log(Time)')
         plt.ylabel('Fractional recovery (P2/P1)')
         plt.title('Log(Time)/Fractional recovery (P2/P1)')
         plt.plot(self.log_time_vec, self.rec_vec, 'o', c='black')
         # save as PGN file
-        plt.savefig(os.path.join(os.path.split(__file__)[0], 'RFI Time Fractional recovery Relation'))
+        plt.savefig(os.path.join(os.path.split(__file__)[0], 'Plots_Folder/RFI Log Time Fractional recovery Relation'))
+
+    def plotRFI_VInormRelation(self):
+        plt.figure()
+        plt.xlabel('Time $(ms)$')
+        plt.ylabel('Fractional recovery (P2/P1)')
+        plt.title('Time/Fractional recovery (P2/P1)')
+        plt.plot(self.time_vec, self.rec_vec, 'o', c='black')
+        # save as PGN file
+        plt.savefig(os.path.join(os.path.split(__file__)[0], 'Plots_Folder/RFI Time Fractional recovery Relation'))
 
     def plotRFI_TimeVRelation(self):
-        plot_figure(self, self.t_vec, self.v_vec_t, 'Time $(ms)$', 'Voltage $(mV)$',
-                    'RFI Time/Voltage relation', 'RFI Time Voltage Relation')
+        plt.figure()
+        plt.xlabel('Time $(ms)$')
+        plt.ylabel('Voltage $(mV)$')
+        plt.title('RFI Time/Voltage relation')
+        [plt.plot(self.all_t_vec[i], self.all_v_vec_t[i], c='black') for i in np.arange(self.L)]
+        # save as PGN file
+        plt.savefig(os.path.join(os.path.split(__file__)[0], 'Plots_Folder/RFI Time Voltage Relation'))
 
     def plotRFI_TCurrDensityRelation(self):
-        # TODO fix
         plt.figure()
         plt.xlabel('Time $(ms)$')
         plt.ylabel('Current density $(mA/cm^2)$')
         plt.title('RFI Time/Current density relation')
-        plt.plot(self.t_vec, self.i_vec_t, c='black')
+        [plt.plot(self.all_t_vec[i], self.all_is[i], c='black') for i in np.arange(self.L)]
         # save as PGN file
-        plt.savefig(os.path.join(os.path.split(__file__)[0], "RFI Time Current density relation"))
+        plt.savefig(os.path.join(os.path.split(__file__)[0], "Plots_Folder/RFI Time Current Density Relation"))
 
+    def plotAllRFI(self):
+        """
+        Saves all plots to CWD/Plots_Folder.
+        """
+        self.plotRFI_VInormRelation()
+        self.plotRFI_LogVInormRelation()
+        self.plotRFI_TimeVRelation()
+        self.plotRFI_TCurrDensityRelation()
 
 
 ##################
 # Ramp Protocol
 ##################
-class Ramp:  # TODO doc
+class Ramp:
     def __init__(self, soma_diam=50, soma_L=63.66198, soma_nseg=1, soma_cm=1, soma_Ra=70,
                  channel_name='na12mut', soma_ena=55, h_celsius=33, v_init=-120, t_init = 30,
                  v_first_step = -60, t_first_step = 30, v_ramp_end = 0, t_ramp = 300, t_plateau = 100, 
@@ -1660,10 +1692,7 @@ if __name__ == "__main__":
     elif args.function == 3:
         genRFI = RFI()
         genRFI.genRecInactTau()
-
-        genRFI.plotRFI_TimeVRelation()
-        genRFI.plotRFI_VInormRelation()
-        genRFI.plotRFI_TCurrDensityRelation()
+        genRFI.plotAllRFI()
 
     elif args.function == 4:
         genRamp = Ramp()
