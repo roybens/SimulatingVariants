@@ -205,7 +205,8 @@ class Activation:
         plt.xlabel('Time $(ms)$')
         plt.ylabel('Current density $(mA/cm^2)$')
         plt.title('Activation Time/Current density relation')
-        plt.plot(self.t_vec, self.i_vec, c='black')
+        for _ in self.v_vec:
+            plt.plot(self.t_vec, self.i_vec, c='black')
         # save as PGN file
         plt.savefig(os.path.join(os.path.split(__file__)[0], "Activation Time Current Density Relation"))
 
@@ -326,6 +327,7 @@ class Inactivation:  # TODO doc
 
     def plotInactivation_TCurrDensityRelation(self):
         # TODO fix
+        print(self.t_vec)
         plt.figure()
         plt.xlabel('Time $(ms)$')
         plt.ylabel('Current density $(mA/cm^2)$')
@@ -566,12 +568,6 @@ class Ramp:  # TODO doc
         h.tstop = self.t_total
         self.clamp(self.v_vec[0])
     
-    def plotRamp_TimeVRelation(self):
-        # TODO fix
-
-        plot_figure(self, self.t_vec, self.v_vec, 'Time $(ms)$', 'Voltage $(mV)$',
-                    'Inactivation Time/Voltage relation', 'Inactivation Time Voltage relation')
-
     def areaUnderCurve(self):
         """ Calculates and returns normalized area (to activation IV) under IV curve of Ramp
         """
@@ -587,6 +583,10 @@ class Ramp:  # TODO doc
         """
         persistent = self.i_vec[int(self.t_start_persist):int(self.t_end_persist)]
         return sum(persistent)/len(persistent)
+    
+    def plotRamp_TimeVRelation(self):
+        plot_figure(self, self.t_vec, self.v_vec, 'Time $(ms)$', 'Voltage $(mV)$',
+                    'Inactivation Time/Voltage relation', 'Inactivation Time Voltage relation')
     
     def plotRamp_TimeCurrentRelation(self):
         plt.figure()
@@ -1600,7 +1600,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.function == 1:
-        genAct = Activation(end_cl=40)
+        genAct = Activation()
         genAct.genActivation()
 
         genAct.plotActivation_VGnorm()
@@ -1609,7 +1609,7 @@ if __name__ == "__main__":
         genAct.plotActivation_TCurrDensityRelation()
 
     elif args.function == 2:
-        genInact = Inactivation(end_cl=40)
+        genInact = Inactivation()
         genInact.genInactivation()
 
         genInact.plotInactivation_VInormRelation()
