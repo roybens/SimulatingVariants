@@ -78,8 +78,11 @@ class Curve_Fitter:
         even_xs = np.linspace(times[0], times[len(times)-1], 100)
         y0, plateau, percent_fast, k_fast, k_slow, tau0  = self.calc_recov_obj()
         curve = two_phase(even_xs, y0, plateau, percent_fast, k_fast, k_slow)
-        axs[2].plot(np.log(even_xs), curve, c='red',label="Recovery Fit")
-        axs[2].scatter(np.log(times), data_pts, label='Recovery', color='black')
+        #axs[2].plot(np.log(even_xs), curve, c='red',label="Recovery Fit")
+        #axs[2].scatter(np.log(times), data_pts, label='Recovery', color='black')
+        axs[2].plot(even_xs, curve, c='red',label="Recovery Fit")
+        axs[2].scatter(times, data_pts, label='Recovery', color='black')
+
         plt.show()
 
     def calc_act_obj(self):

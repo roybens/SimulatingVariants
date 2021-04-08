@@ -2,6 +2,7 @@ import eval_helper as eh
 #import mutant_protocols as mp
 import curve_fitting as cf
 from scipy.stats import linregress
+import math
 '''
 This file contains various scoring functions that can be used in the evaluator's
 calc_rmse function. These functions tend follow the "relative" format where one 
@@ -45,9 +46,8 @@ class Score_Function:
             y0, plateau, percent_fast, k_fast, k_slow, tau0 = curve_fitter.calc_recov_obj()
         except ZeroDivisionError:
             print('Zero Division Error')
-            return 10000
-
-        
+            return (1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000)
+ 
         v_half_act_err = self.dv_half_act(self.dv_half_act_diff, v_half_act)
 
         gv_slope_err = self.gv_slope(self.gv_slope_diff, gv_slope)
@@ -62,48 +62,106 @@ class Score_Function:
 
         percent_fast_err = self.percent_fast(self.percent_fast_diff, percent_fast)
 
+        udb20_err = 0
+
         tau0_err = self.tau0(self.tau0_diff, tau0)
 
-        sum_squares = v_half_act_err**2 + gv_slope_err**2 + v_half_ssi_err**2 + ssi_slope_err**2 + tau_fast_err**2 + tau_slow_err**2 + percent_fast_err**2 + tau0_err**2
-
-        return sum_squares**(1/2)
+        ramp_err = 0
+        
+        persistent_err = 0
+        return (v_half_act_err, gv_slope_err, v_half_ssi_err, ssi_slope_err, tau_fast_err, tau_slow_err, percent_fast_err, udb20_err, tau0_err, ramp_err, persistent_err)
 
 
 
     def dv_half_act(self, plus_minus_wild, v_half):
-        v_half_baseline = self.v_half_act_wild + plus_minus_wild
-        return ((v_half - v_half_baseline)/v_half_baseline)**2
+        try:
+            v_half_baseline = float(self.v_half_act_wild) + float(plus_minus_wild)
+            result = ((float(v_half) - v_half_baseline)/v_half_baseline)**2
+            if math.isnan(result):
+                return 1000
+            return result
+        except: 
+            print('v_half_act_error')
+            return 1000
 
     def gv_slope(self, percent_wild, gv_slope):
-        gv_slope_baseline = self.gv_slope_wild * percent_wild
-        return ((gv_slope - gv_slope_baseline)/gv_slope_baseline)**2
-
+        try:
+            gv_slope_baseline = float(self.gv_slope_wild) * float(percent_wild)
+            result = ((float(gv_slope) - gv_slope_baseline)/gv_slope_baseline)**2
+            if math.isnan(result):
+                return 1000
+            return result
+        except:
+            print('gv_slope_error')
+            return 1000
 
     def dv_half_ssi(self, plus_minus_wild, v_half_ssi):
-        v_half_baseline = self.v_half_ssi_wild + plus_minus_wild
-        return ((v_half_ssi - v_half_baseline)/v_half_baseline)**2
+        try:
+            v_half_baseline = float(self.v_half_ssi_wild) + float(plus_minus_wild)
+            result = ((float(v_half_ssi) - v_half_baseline)/v_half_baseline)**2
+            if math.isnan(result):
+                return 1000
+            return result
+        except:
+            print('v_half_ssi_error')
+            return 1000
 
     def ssi_slope(self, percent_wild, ssi_slope_exp):
-        ssi_slope_baseline = self.ssi_slope_wild * percent_wild
-        return ((ssi_slope_exp - ssi_slope_baseline)/ssi_slope_baseline)**2
+        try:
+            ssi_slope_baseline = float(self.ssi_slope_wild) * float(percent_wild)
+            result = ((float(ssi_slope_exp) - ssi_slope_baseline)/ssi_slope_baseline)**2
+            if math.isnan(result):
+                return 1000
+            return result
+        except:
+            print('ssi_slope_error')
+            return 1000
 
     def tau_fast(self, percent_wild, tau_fast_exp):
-        tau_fast_baseline = self.tau_fast_wild*percent_wild
-        return ((tau_fast_exp - tau_fast_baseline)/tau_fast_baseline)**2
+        try:
+            tau_fast_baseline = float(self.tau_fast_wild)*float(percent_wild)
+            result = ((float(tau_fast_exp) - tau_fast_baseline)/tau_fast_baseline)**2
+            if math.isnan(result):
+                return 1000
+            return result
+        except:
+            print('tau_fast_error')
+            return 1000
 
     def tau_slow(self, percent_wild, tau_slow_exp):
-        tau_slow_baseline = self.tau_slow_wild*percent_wild
-        return ((tau_slow_exp - tau_slow_baseline)/tau_slow_baseline)**2
+        try:
+            tau_slow_baseline = float(self.tau_slow_wild)*float(percent_wild)
+            result = ((float(tau_slow_exp) - tau_slow_baseline)/tau_slow_baseline)**2
+            if math.isnan(result):
+                return 1000
+            return result
+        except:
+            print('tau_slow_error')
+            return 1000
 
     def percent_fast(self, percent_wild, percent_fast_exp):
-        percent_fast_baseline = self.percent_fast_wild*percent_wild
-        return ((percent_fast_exp - percent_fast_baseline)/percent_fast_baseline)**2
+        try:
+            percent_fast_baseline = float(self.percent_fast_wild)*float(percent_wild)
+            result = ((float(percent_fast_exp) - percent_fast_baseline)/percent_fast_baseline)**2
+            if math.isnan(result):
+                return 1000
+            return result
+        except:
+            print('percent_fast_error')
+            return 1000
 
     #def udb20(self, percent_wild):
 
     def tau0(self, percent_wild, tau0_exp):
-        tau0_baseline = self.tau0_wild*percent_wild
-        return ((tau0_exp - tau0_baseline)/tau0_baseline)**2
+        try:
+            tau0_baseline = float(self.tau0_wild)*float(percent_wild)
+            result = ((float(tau0_exp) - tau0_baseline)/tau0_baseline)**2
+            if math.isnan(result):
+                return 1000
+            return result
+        except:
+            print('tau0_error')
+            return 1000
 
 
     #def ramp(self, percent_wild):
