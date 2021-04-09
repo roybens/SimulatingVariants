@@ -83,7 +83,11 @@ class Curve_Fitter:
         plt.show()
 
     def calc_act_obj(self):
-        gnorm_vec, v_vec, all_is = ggsd.Activation().genActivation()
+        try:
+            gnorm_vec, v_vec, all_is = ggsd.Activation().genActivation()
+        except:
+            print('Couldn\'t generate activation data')
+            return (1000, 1000, 1000, 1000)
         try:
             popt, pcov = optimize.curve_fit(boltzmann, v_vec, gnorm_vec)
         except:
@@ -94,7 +98,11 @@ class Curve_Fitter:
 
 
     def calc_inact_obj(self):
-        inorm_vec, v_vec, all_is = ggsd.Inactivation().genInactivation()
+        try:
+            inorm_vec, v_vec, all_is = ggsd.Inactivation().genInactivation()
+        except:
+            print('Couldn\'t generate inactivation data')
+            return (1000, 1000, 1000, 1000)
         try:
             popt, pcov = optimize.curve_fit(boltzmann, v_vec, inorm_vec)
         except:
@@ -104,7 +112,11 @@ class Curve_Fitter:
         return ssi_slope, v_half, top, bottom
 
     def calc_recov_obj(self):
-        rec_inact_tau_vec, recov_curves, times = ggsd.RFI().genRecInactTau()
+        try:
+            rec_inact_tau_vec, recov_curves, times = ggsd.RFI().genRecInactTau()
+        except:
+            print('Couldn\'t generate recovery data')
+            return (1000, 1000, 1000, 1000, 1000, 1000)
         recov_curve = recov_curves[0]
         try:
             popt, pcov = optimize.curve_fit(two_phase, times, recov_curve)
@@ -113,9 +125,7 @@ class Curve_Fitter:
             return (1000, 1000, 1000, 1000, 1000, 1000)
 
         y0, plateau, percent_fast, k_fast, k_slow = popt
-        #print(popt)
         tau0 = rec_inact_tau_vec[0]
-        #print(tau0)
         return y0, plateau, percent_fast, k_fast, k_slow, tau0 
 
 
