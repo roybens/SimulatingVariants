@@ -18,6 +18,8 @@ import matplotlib.cm as cmx
 from scipy import optimize, stats
 import argparse
 import os
+
+import curve_fitting as cf
 #from sys import api_version
 #from test.pythoninfo import collect_platform
 
@@ -187,8 +189,14 @@ class Activation:
         plt.ylabel('Normalized conductance')
         plt.title('Activation: Voltage/Normalized conductance')
         plt.plot(self.v_vec, self.gnorm_vec, 'o', c='black')
+        gv_slope, v_half, top, bottom = cf.Curve_Fitter().calc_act_obj()
+        formatted_gv_slope = str(np.round(gv_slope, decimals=2))
+        formatted_v_half = str(np.round(v_half, decimals=2))
+        plt.text(-10, 0.5, f'Slope: {formatted_gv_slope}')
+        plt.text(-10, 0.3, f'V50: {formatted_v_half}')
         x_values_v = np.arange(self.st_cl, self.end_cl, 1)
-        plt.plot(x_values_v, (1 / (1 + np.exp(-(x_values_v - self.v_half) / self.s))), c='red')
+        curve = cf.boltzmann(x_values_v, gv_slope, v_half, top, bottom)
+        plt.plot(x_values_v, curve, c='red')
         # save as PGN file
         plt.savefig(os.path.join(os.path.split(__file__)[0], 'Plots_Folder/Activation Voltage-Normalized Conductance Relation'))
 
@@ -343,6 +351,14 @@ class Inactivation:
         plt.ylabel('Normalized current')
         plt.title('Inactivation: Voltage/Normalized Current Relation')
         plt.plot(self.v_vec, self.inorm_vec, 'o', c='black')
+        ssi_slope, v_half, top, bottom = cf.Curve_Fitter().calc_inact_obj()
+        formatted_ssi_slope = str(np.round(ssi_slope, decimals=2))
+        formatted_v_half = str(np.round(v_half, decimals=2))
+        plt.text(-10, 0.5, f'Slope: {formatted_ssi_slope}')
+        plt.text(-10, 0.3, f'V50: {formatted_v_half}')
+        x_values_v = np.arange(self.st_cl, self.end_cl, 1)
+        curve = cf.boltzmann(x_values_v, ssi_slope, v_half, top, bottom)
+        plt.plot(x_values_v, curve, c='red')
         # save as PGN file
         plt.savefig(os.path.join(os.path.split(__file__)[0], 'Plots_Folder/Inactivation Voltage Normalized Current Relation'))
 
