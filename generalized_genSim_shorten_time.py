@@ -37,7 +37,6 @@ if not os.path.exists(final_directory):
 ##################
 # Activation
 ##################
-
 class Activation:
     def __init__(self, soma_diam=50, soma_L=63.66198, soma_nseg=1, soma_cm=1, soma_Ra=70,
                  channel_name='na12mut', soma_ena=55, h_celsius=33, v_init=-120, h_dt=0.025, ntrials=range(30),
@@ -417,10 +416,6 @@ class RFI:
         self.v_init = v_init  # holding potential
         h.dt = h_dt  # ms - value of the fundamental integration time step, dt, used by fadvance().
         self.dur = dur  # clamp duration, ms
-        # self.step = step  # voltage clamp increment, the user can
-        # self.st_cl = st_cl  # clamp start, mV
-        # self.end_cl = end_cl  # clamp end, mV
-        # self.v_cl = v_cl  # actual voltage clamp, mV
         self.min_inter = min_inter  # pre-stimulus starting interval # TODO use?
         self.max_inter = max_inter  # pre-stimulus endinging interval
         self.num_pts = num_pts  # number of points in logaritmic scale
@@ -430,7 +425,7 @@ class RFI:
 
         # vector containing 'num_pts' values equispaced between log10(min_inter) and log10(max_inter)
         # for RecInactTau
-        self.vec_pts = vec_pts  # TODO ?
+        self.vec_pts = vec_pts
         # vec_pts = np.logspace(np.log10(min_inter), np.log10(max_inter), num=num_pts)
 
         # voltage clamp with "five" levels for RecInactTau
@@ -705,80 +700,81 @@ class Ramp:
         self.plotRamp_TimeVRelation()
         self.plotRamp_TimeCurrentRelation()
 
-def recInact_dv_TauNa12(command, \
-                        ntrials=30, recordTime=500, \
-                        soma_diam=50, soma_L=63.66198, soma_nseg=1, soma_cm=1, soma_Ra=70, \
-                        channel_name='na12mut', soma_ena=55, h_celsius=33, v_init=-120, h_dt=0.01, \
-                        min_inter=0.1, max_inter=5000, num_pts=50, cond_st_dur=1, res_pot=-120, dur=0.1, \
-                        vec_pts=np.linspace(-120, 0, num=13), \
-                        f3cl_dur0=50, f3cl_amp0=-120, f3cl_dur1=5, f3cl_amp1=0, f3cl_dur2=1, \
-                        f3cl_dur3=5, f3cl_amp3=0, f3cl_dur4=5, f3cl_amp4=-120):
-    dtype = np.float64
+##################
+# RFI dv tau
+##################
+class RFI_dv:
+    def __init__(self, ntrials=30, recordTime=500,
+                 soma_diam=50, soma_L=63.66198, soma_nseg=1, soma_cm=1, soma_Ra=70,
+                 channel_name='na12mut', soma_ena=55, h_celsius=33, v_init=-120, h_dt=0.01,
+                 min_inter=0.1, max_inter=5000, num_pts=50, cond_st_dur=1, res_pot=-120, dur=0.1,
+                 vec_pts=np.linspace(-120, 0, num=13),
+                 f3cl_dur0=50, f3cl_amp0=-120, f3cl_dur1=5, f3cl_amp1=0, f3cl_dur2=1,
+                 f3cl_dur3=5, f3cl_amp3=0, f3cl_dur4=5, f3cl_amp4=-120):
+        self.ntrials = ntrials
+        self.recordTime = recordTime
 
-    ntrials = ntrials
-    recordTime = recordTime
+        # one-compartment cell (soma)
+        self.soma = h.Section(name='soma2')
+        self.soma.diam = soma_diam  # micron
+        self.soma.L = soma_L  # micron, so that area = 10000 micron2
+        self.soma.nseg = soma_nseg  # dimensionless
+        self.soma.cm = soma_cm  # uF/cm2
+        self.soma.Ra = soma_Ra  # ohm-cm
+        self.soma.insert(channel_name)  # insert mechanism
+        self.soma.ena = soma_ena
 
-    # one-compartment cell (soma)
-    soma = h.Section(name='soma2')
-    soma.diam = soma_diam  # micron
-    soma.L = soma_L  # micron, so that area = 10000 micron2
-    soma.nseg = soma_nseg  # dimensionless
-    soma.cm = soma_cm  # uF/cm2
-    soma.Ra = soma_Ra  # ohm-cm
+        self.h = h
+        self.h.celsius = h_celsius  # temperature in celsius
+        self.v_init = v_init  # holding potential
+        self.h.dt = h_dt  # ms - value of the fundamental integration time step, dt,
+        # used by fadvance() in RecInactTau.
+        # Increase value to speed up recInactTau().
 
-    soma.insert(channel_name)  # insert mechanism
-    soma.ena = soma_ena
-    h.celsius = h_celsius  # temperature in celsius
-    v_init = v_init  # holding potential
-    h.dt = h_dt  # ms - value of the fundamental integration time step, dt,
-    # used by fadvance() in RecInactTau.
-    # Increase value to speed up recInactTau().
+        # clamping parameters for RecInactTau
+        self.min_inter = min_inter  # pre-stimulus starting interval
+        self.max_inter = max_inter  # pre-stimulus endinging interval
+        self.num_pts = num_pts  # number of points in logaritmic scale
+        self.cond_st_dur = cond_st_dur  # conditioning stimulus duration
+        self.res_pot = res_pot  # resting potential
+        self.dur = dur
 
-    # clamping parameters for RecInactTau
-    min_inter = min_inter  # pre-stimulus starting interval
-    max_inter = max_inter  # pre-stimulus endinging interval
-    num_pts = num_pts  # number of points in logaritmic scale
-    cond_st_dur = cond_st_dur  # conditioning stimulus duration
-    res_pot = res_pot  # resting potential
-    dur = dur
+        # vector containing 'num_pts' values equispaced between log10(min_inter) and log10(max_inter)
+        # for RecInactTau
+        # vec_pts = [1,1.5,3,5.6,10,30,56,100,150,300,560,1000,2930,5000]
+        # vec_pts = np.logspace(np.log10(min_inter), np.log10(max_inter), num=num_pts)
+        self.vec_pts = vec_pts
+        self.L = len(vec_pts)
 
-    # vector containing 'num_pts' values equispaced between log10(min_inter) and log10(max_inter)
-    # for RecInactTau
-    # vec_pts = [1,1.5,3,5.6,10,30,56,100,150,300,560,1000,2930,5000]
-    # vec_pts = np.logspace(np.log10(min_inter), np.log10(max_inter), num=num_pts)
-    vec_pts = vec_pts
-    L = len(vec_pts)
+        # vectors for data handling RecInactTau
+        self.rec_vec = h.Vector()
+        self.time_vec = h.Vector()
+        self.log_time_vec = h.Vector()
+        self.t_vec = h.Vector()
+        self.v_vec_t = h.Vector()
+        self.i_vec_t = h.Vector()
+        self.rec_inact_tau_vec = h.Vector()
+        self.all_is = []
 
-    # vectors for data handling RecInactTau
-    rec_vec = h.Vector()
-    time_vec = h.Vector()
-    log_time_vec = h.Vector()
-    t_vec = h.Vector()
-    v_vec_t = h.Vector()
-    i_vec_t = h.Vector()
-    rec_inact_tau_vec = h.Vector()
-
-    # voltage clamp with "five" levels for RecInactTau
-    f3cl = h.VClamp_plus(soma(0.5))
-    f3cl.dur[0] = f3cl_dur0  # ms
-    f3cl.amp[0] = f3cl_amp0  # mV
-    f3cl.dur[1] = f3cl_dur1  # ms prev 1000
-    f3cl.amp[1] = f3cl_amp1  # mV
-    f3cl.dur[2] = f3cl_dur2  # ms
-    f3cl.amp[2] = res_pot  # mV -120
-    f3cl.dur[3] = f3cl_dur3  # ms
-    f3cl.amp[3] = f3cl_amp3  # mV
-    f3cl.dur[4] = f3cl_dur4  # ms
-    f3cl.amp[4] = f3cl_amp4  # mV
-
-    all_is = []
+        # voltage clamp with "five" levels for RecInactTau
+        self.f3cl = h.VClamp_plus(self.soma(0.5))
+        self.f3cl.dur[0] = f3cl_dur0  # ms
+        self.f3cl.amp[0] = f3cl_amp0  # mV
+        self.f3cl.dur[1] = f3cl_dur1  # ms prev 1000
+        self.f3cl.amp[1] = f3cl_amp1  # mV
+        self.f3cl.dur[2] = f3cl_dur2  # ms
+        self.f3cl.amp[2] = res_pot  # mV -120
+        self.f3cl.dur[3] = f3cl_dur3  # ms
+        self.f3cl.amp[3] = f3cl_amp3  # mV
+        self.f3cl.dur[4] = f3cl_dur4  # ms
+        self.f3cl.amp[4] = f3cl_amp4  # mV
 
     # clamping definition for RecInactTau
-    def clampRecInact_dv_Tau(curr_amp):
+    def clampRecInact_dv_Tau(self, curr_amp):
 
-        f3cl.amp[2] = curr_amp
+        self.f3cl.amp[2] = curr_amp
         h.tstop = 50 + 5 + 1 + 5 + 5
-        h.finitialize(v_init)
+        h.finitialize(self.v_init)
 
         # variables initialization
         pre_i1 = 0
@@ -790,17 +786,17 @@ def recInact_dv_TauNa12(command, \
 
         while (h.t < h.tstop):  # runs a single trace, calculates peak current
 
-            dens = f3cl.i / soma(0.5).area() * 100.0 - soma(0.5).i_cap  # clamping current in mA/cm2, for each dt
-            t_vec.append(h.t)
-            v_vec_t.append(soma.v)
-            i_vec_t.append(dens)
+            dens = self.f3cl.i / self.soma(0.5).area() * 100.0 - self.soma(0.5).i_cap  # clamping current in mA/cm2, for each dt
+            self.t_vec.append(h.t)
+            self.v_vec_t.append(self.soma.v)
+            self.i_vec_t.append(dens)
 
             if ((h.t > 5) and (h.t < 15)):  # evaluate the first peak
                 if (pre_i1 < abs(dens)):
                     peak_curr1 = abs(dens)
                 pre_i1 = abs(dens)
 
-            if ((h.t > (5 + cond_st_dur + dur)) and (h.t < (15 + cond_st_dur + dur))):  # evaluate the second peak
+            if ((h.t > (5 + self.cond_st_dur + self.dur)) and (h.t < (15 + self.cond_st_dur + self.dur))):  # evaluate the second peak
 
                 if (pre_i2 < abs(dens)):
                     peak_curr2 = abs(dens)
@@ -808,19 +804,19 @@ def recInact_dv_TauNa12(command, \
 
             h.fadvance()
 
-        # updates the vectors at the end of the run  
-        time_vec.append(dur)
-        log_time_vec.append(np.log10(dur))
-        rec_vec.append(peak_curr2 / peak_curr1)
+        # updates the vectors at the end of the run
+        self.time_vec.append(self.dur)
+        self.log_time_vec.append(np.log10(self.dur))
+        self.rec_vec.append(peak_curr2 / peak_curr1)
 
         # calc tau using RF and tstop
         # append values to vector
         RF_t = peak_curr2 / peak_curr1
         tau = -h.tstop / np.log(-RF_t + 1)
-        rec_inact_tau_vec.append(tau)
+        self.rec_inact_tau_vec.append(tau)
 
     # start RecInact program and plot
-    def plotRecInact_dv():
+    def plotRecInact_dv(self):
 
         # figure definition
         fig = plt.figure(figsize=(18, 16))
@@ -839,72 +835,72 @@ def recInact_dv_TauNa12(command, \
 
         k = 0  # counter
 
-        for amp in vec_pts:
+        for amp in self.vec_pts:
             # resizing the vectors
-            t_vec.resize(0)
-            i_vec_t.resize(0)
-            v_vec_t.resize(0)
-            rec_vec.resize(0)
-            time_vec.resize(0)
-            log_time_vec.resize(0)
-            rec_inact_tau_vec.resize(0)
+            self.t_vec.resize(0)
+            self.i_vec_t.resize(0)
+            self.v_vec_t.resize(0)
+            self.rec_vec.resize(0)
+            self.time_vec.resize(0)
+            self.log_time_vec.resize(0)
+            self.rec_inact_tau_vec.resize(0)
 
-            clampRecInact_dv_Tau(amp)
+            self.clampRecInact_dv_Tau(amp)
             k += 1
 
             # change log_time_vec to time_vec (ms) to see plot in not log time
-            ln5 = ax5.scatter(time_vec, rec_vec, c="black")
+            ln5 = ax5.scatter(self.time_vec, self.rec_vec, c="black")
             ax5.set_xscale('log')
 
         plt.show()
 
     # Generate RecInactTau
     # Returns rec_inact_tau_vec
-    def genRecInactTau_dv():
+    def genRecInactTau_dv(self):
         k = 0  # counter
 
-        for amp in vec_pts:
+        for amp in self.vec_pts:
             # resizing the vectors
-            t_vec.resize(0)
-            i_vec_t.resize(0)
-            v_vec_t.resize(0)
-            rec_vec.resize(0)
-            time_vec.resize(0)
-            log_time_vec.resize(0)
-            rec_inact_tau_vec.resize(0)
+            self.t_vec.resize(0)
+            self.i_vec_t.resize(0)
+            self.v_vec_t.resize(0)
+            self.rec_vec.resize(0)
+            self.time_vec.resize(0)
+            self.log_time_vec.resize(0)
+            self.rec_inact_tau_vec.resize(0)
 
-            clampRecInact_dv_Tau(amp)
+            self.clampRecInact_dv_Tau(amp)
             k += 1
-            aa = i_vec_t.to_python()
-            all_is.append(aa[1:])
-        return rec_inact_tau_vec, all_is
+            aa = self.i_vec_t.to_python()
+            self.all_is.append(aa[1:])
+        return self.rec_inact_tau_vec, self.all_is
 
-    def genRecInactTauCurve_dv():
+    def genRecInactTauCurve_dv(self):
         # figure definition
         recov = []
         times = []
 
         k = 0  # counter
 
-        for dur in vec_pts:
+        for dur in self.vec_pts:
             # resizing the vectors
-            t_vec.resize(0)
-            i_vec_t.resize(0)
-            v_vec_t.resize(0)
-            rec_vec.resize(0)
-            time_vec.resize(0)
-            log_time_vec.resize(0)
-            rec_inact_tau_vec.resize(0)
+            self.t_vec.resize(0)
+            self.i_vec_t.resize(0)
+            self.v_vec_t.resize(0)
+            self.rec_vec.resize(0)
+            self.time_vec.resize(0)
+            self.log_time_vec.resize(0)
+            self.rec_inact_tau_vec.resize(0)
 
-            clampRecInact_dv_Tau(dur)
+            self.clampRecInact_dv_Tau(dur)
             k += 1
 
-            recov.append(rec_vec.to_python()[0])
+            recov.append(self.rec_vec.to_python()[0])
 
-        return recov, vec_pts
+        return recov, self.vec_pts
 
     # Plot time/voltage relation (simulation) for RFI
-    def plotRecInactProcedure_dv():
+    def plotRecInactProcedure_dv(self):
 
         # figure definition
         fig = plt.figure(figsize=(18, 6))
@@ -913,7 +909,7 @@ def recInact_dv_TauNa12(command, \
         fig.subplots_adjust(wspace=0.5)
         fig.subplots_adjust(hspace=0.5)
 
-        ax0.set_xlim(-150, 5 + max_inter + 20 + 100)
+        ax0.set_xlim(-150, 5 + self.max_inter + 20 + 100)
         ax0.set_ylim(-121, 20)
         ax0.set_xlabel('Time $(ms)$')
         ax0.set_ylabel('Voltage $(mV)$')
@@ -921,60 +917,45 @@ def recInact_dv_TauNa12(command, \
 
         k = 0  # counter
 
-        for dur in vec_pts:
+        for dur in self.vec_pts:
             # resizing the vectors
-            t_vec.resize(0)
-            i_vec_t.resize(0)
-            v_vec_t.resize(0)
-            rec_vec.resize(0)
-            time_vec.resize(0)
-            log_time_vec.resize(0)
-            rec_inact_tau_vec.resize(0)
+            self.t_vec.resize(0)
+            self.i_vec_t.resize(0)
+            self.v_vec_t.resize(0)
+            self.rec_vec.resize(0)
+            self.time_vec.resize(0)
+            self.log_time_vec.resize(0)
+            self.rec_inact_tau_vec.resize(0)
 
-            clampRecInact_dv_Tau(dur)
+            self.clampRecInact_dv_Tau(dur)
             k += 1
 
-            ln5 = ax0.plot(t_vec, v_vec_t, c="black")
+            ln5 = ax0.plot(self.t_vec, self.v_vec_t, c="black")
 
         plt.show()
 
     # Generate RFI data
     # Returns rec_vec
-    def genRecInact_dv():
+    def genRecInact_dv(self):
         k = 0  # counter
 
         rec_return = []
-        for dur in vec_pts:
+        for dur in self.vec_pts:
             # resizing the vectors
-            t_vec.resize(0)
-            i_vec_t.resize(0)
-            v_vec_t.resize(0)
-            rec_vec.resize(0)
-            time_vec.resize(0)
-            log_time_vec.resize(0)
-            rec_inact_tau_vec.resize(0)
+            self.t_vec.resize(0)
+            self.i_vec_t.resize(0)
+            self.v_vec_t.resize(0)
+            self.rec_vec.resize(0)
+            self.time_vec.resize(0)
+            self.log_time_vec.resize(0)
+            self.rec_inact_tau_vec.resize(0)
 
-            clampRecInact_dv_Tau(dur)
+            self.clampRecInact_dv_Tau(dur)
 
-            rec_return.append(rec_vec.to_python()[0])
+            rec_return.append(self.rec_vec.to_python()[0])
             k += 1
 
-        return rec_return, vec_pts
-
-    # Command Processor
-    if command == "plotRecInactdv":
-        return plotRecInact_dv()
-    elif command == "genRecInactTaudv":
-        return genRecInactTau_dv()
-    elif command == "genRecInactTauCurvedv":
-        return genRecInactTauCurve_dv()
-    elif command == "plotRecInactProceduredv":
-        return plotRecInactProcedure_dv()
-    elif command == "genRecInact":
-        return genRecInact_dv()
-    else:
-        print("Invalid command. Function does not exist.")
-
+        return rec_return, self.vec_pts
 
 def fit_sigmoid(x, a, b):
     """
@@ -1162,4 +1143,12 @@ if __name__ == "__main__":
         genRamp.plotAllRamp()
 
     elif args.function == 5:
+        genRFIdv = RFI_dv()
+        genRFIdv.genRecInact_dv()
+        genRFIdv.genRecInactTau_dv()
+        genRFIdv.genRecInactTauCurve_dv()
+        genRFIdv.plotRecInact_dv()
+        genRFIdv.plotRecInactProcedure_dv()
+
+    elif args.function == 6:
         pass
