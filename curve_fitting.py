@@ -110,7 +110,7 @@ class Curve_Fitter:
             popt, pcov = optimize.curve_fit(two_phase, times, recov_curve)
         except:
             print("Very bad voltages in Recovery.")
-            return (1000, 1000, 1000, 1000, 1000)
+            return (1000, 1000, 1000, 1000, 1000, 1000)
 
         y0, plateau, percent_fast, k_fast, k_slow = popt
         #print(popt)
