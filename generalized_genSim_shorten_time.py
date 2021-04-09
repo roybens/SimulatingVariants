@@ -164,14 +164,14 @@ class Activation:
             h.tstop = time_padding + self.dur + time_padding  # time stop
 
             # iterates across voltages (mV)
-            for v_cl in np.arange(self.st_cl, self.end_cl, self.step):  # self.v_vec:
+            for v_cl in np.arange(self.st_cl, self.end_cl, self.step):  # self.vec # TODO change stim 1:?
                 # resizing the vectors
                 self.t_vec = []
                 self.i_vec = []
                 self.v_vec_t = []
 
                 self.clamp(v_cl)
-                self.all_is.append(self.i_vec)  # TODO why self.i_vec[1:]
+                self.all_is.append(self.i_vec[1:])
                 self.all_v_vec_t.append(self.v_vec_t)
 
             # calculate normalized peak conductance
@@ -223,7 +223,7 @@ class Activation:
         plt.xlabel('Time $(ms)$')
         plt.ylabel('Current density $(mA/cm^2)$')
         plt.title('Activation Time/Current density relation')
-        [plt.plot(self.t_vec, self.all_is[i], c='black') for i in np.arange(self.L)]
+        [plt.plot(self.t_vec[1:], self.all_is[i], c='black') for i in np.arange(self.L)]
         # save as PGN file
         plt.savefig(os.path.join(os.path.split(__file__)[0], "Plots_Folder/Activation Time Current Density Relation"))
 
@@ -335,7 +335,7 @@ class Inactivation:
                 self.v_vec_t = []
 
                 self.clamp(v_cl)
-                self.all_is.append(self.i_vec)  # TODO why self.i_vec[1:]
+                self.all_is.append(self.i_vec[1:])
                 self.all_v_vec_t.append(self.v_vec_t)
 
             # normalization of peak current with respect to the min since the values are negative
@@ -375,7 +375,7 @@ class Inactivation:
         plt.xlabel('Time $(ms)$')
         plt.ylabel('Current density $(mA/cm^2)$')
         plt.title('Inactivation Time/Current density relation')
-        [plt.plot(self.t_vec, self.all_is[i], c='black') for i in np.arange(self.L)]
+        [plt.plot(self.t_vec[1:], self.all_is[i], c='black') for i in np.arange(self.L)]
         # save as PGN file
         plt.savefig(os.path.join(os.path.split(__file__)[0], "Plots_Folder/Inactivation Time Current Density Relation"))
 
