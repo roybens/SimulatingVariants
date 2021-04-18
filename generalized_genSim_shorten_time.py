@@ -11,7 +11,7 @@ Modified from Emilio Andreozzi "Phenomenological models of NaV1.5.
 
 from neuron import h, gui
 import numpy as np
-from numpy import trapz, round
+from numpy import trapz
 import matplotlib.pyplot as plt
 import matplotlib.colors as colors
 import matplotlib.cm as cmx
@@ -189,8 +189,8 @@ class Activation:
         plt.title('Activation: Voltage/Normalized conductance')
         plt.plot(self.v_vec, self.gnorm_vec, 'o', c='black')
         gv_slope, v_half, top, bottom = cf.Curve_Fitter().calc_act_obj()
-        formatted_gv_slope = str(np.round(gv_slope, decimals=2))
-        formatted_v_half = str(np.round(v_half, decimals=2))
+        formatted_gv_slope = np.round(gv_slope, decimals=2)
+        formatted_v_half = np.round(v_half, decimals=2)
         plt.text(-10, 0.5, f'Slope: {formatted_gv_slope}')
         plt.text(-10, 0.3, f'V50: {formatted_v_half}')
         x_values_v = np.arange(self.st_cl, self.end_cl, 1)
@@ -205,7 +205,9 @@ class Activation:
         plt.ylabel('Peak Current')
         plt.title("Activation: IV Curve")
         plt.plot(self.v_vec, self.ipeak_vec, 'o', c='black')
-        plt.text(0, -0.005, 'Vrev at ' + str(round(self.vrev, 1)) + 'mV', fontsize=10, c='blue')
+        plt.text(-110, -0.05, 'Vrev at ' + str(round(self.vrev, 1)) + 'mV', fontsize=10, c='blue')
+        formatted_peak_i = np.round(min(self.ipeak_vec), decimals=2)
+        plt.text(-110, -0.1, f'Peak Current from IV: {formatted_peak_i} mV', fontsize=10, c='blue')
         # save as PGN file
         plt.savefig(os.path.join(os.path.split(__file__)[0], "Plots_Folder/Activation IV Curve"))
 
@@ -223,7 +225,10 @@ class Activation:
         plt.xlabel('Time $(ms)$')
         plt.ylabel('Current density $(mA/cm^2)$')
         plt.title('Activation Time/Current density relation')
-        [plt.plot(self.t_vec[1:], self.all_is[i], c='black') for i in np.arange(self.L)]
+        mask = np.where(self.v_vec < 20)  # current densities up to 20 mV
+        curr = np.array(self.all_is)[mask]
+        t = np.array(self.t_vec[1:])[mask]
+        [plt.plot(t[i], curr[i], c='black') for i in mask]
         # save as PGN file
         plt.savefig(os.path.join(os.path.split(__file__)[0], "Plots_Folder/Activation Time Current Density Relation"))
 
@@ -351,8 +356,8 @@ class Inactivation:
         plt.title('Inactivation: Voltage/Normalized Current Relation')
         plt.plot(self.v_vec, self.inorm_vec, 'o', c='black')
         ssi_slope, v_half, top, bottom = cf.Curve_Fitter().calc_inact_obj()
-        formatted_ssi_slope = str(np.round(ssi_slope, decimals=2))
-        formatted_v_half = str(np.round(v_half, decimals=2))
+        formatted_ssi_slope = np.round(ssi_slope, decimals=2)
+        formatted_v_half = np.round(v_half, decimals=2)
         plt.text(-10, 0.5, f'Slope: {formatted_ssi_slope}')
         plt.text(-10, 0.3, f'V50: {formatted_v_half}')
         x_values_v = np.arange(self.st_cl, self.end_cl, 1)
@@ -651,6 +656,7 @@ class Ramp:
         area = trapz(self.i_vec, x=self.v_vec_t)  # find area
         act = Activation()
         act.genActivation()
+        print(self.i_vec)
         area = area / min(act.ipeak_vec)  # normalize to peak currents from activation
         return area
     
@@ -667,15 +673,12 @@ class Ramp:
         plt.title('Ramp Time/Voltage relation')
         plt.plot(self.t_vec, self.v_vec, color='black')
         # save as PGN file
-        plt.savefig(os.path.join(os.path.split(__file__)[0], 'Plots_Folder/Ramp Time Voltage Relation'))
+        plt.savefig(os.path.join(os.path.split(__file__)[0], 'Plots_Folder/Ramp Time Voltage relation'))
     
     def plotRamp_TimeCurrentRelation(self):
-        area = round(self.areaUnderCurve(), 2)
-        persistCurr = "{:.2e}".format(round(self.persistentCurrent(), 4))
-        
         f, (ax1, ax2) = plt.subplots(1, 2, sharey=True)
         
-        f.add_subplot(111, frameon=False) #for shared axes labels and big title
+        f.add_subplot(111, frameon=False) #for shared axes labels big title
         # hide tick and tick label of the big axes
         plt.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
         plt.grid(False)
@@ -686,16 +689,14 @@ class Ramp:
         # starting + first step + ramp section
         ax1.set_title("Ramp")
         ax1.plot(self.t_vec[1:self.t_start_persist], self.i_vec[1:self.t_start_persist], 'o', c='black', markersize = 0.1)
-        plt.text(0.05, 0.2, f'Normalized \narea under \ncurve: {area}', c = 'blue', fontsize=10)
         
         # persistent current + last step section
         ax2.set_title("Persistent Current")
         ax2.plot(self.t_vec[self.t_start_persist:], self.i_vec[self.t_start_persist:], 'o', c='black', markersize = 0.1)
-        plt.text(0.75, 0.5, f'Persistent Current:\n{persistCurr} mV', c = 'blue', fontsize=10, ha='center')
         
         # save as PGN file
         plt.tight_layout()
-        plt.savefig(os.path.join(os.path.split(__file__)[0], 'Plots_Folder/Ramp Time Current Density Relation'))
+        plt.savefig(os.path.join(os.path.split(__file__)[0], "Plots_Folder/Ramp Time Current Density Relation"))
 
     def plotAllRamp(self):
         """
