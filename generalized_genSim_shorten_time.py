@@ -225,6 +225,7 @@ class Activation:
         plt.xlabel('Time $(ms)$')
         plt.ylabel('Current density $(mA/cm^2)$')
         plt.title('Activation Time/Current density relation')
+        # TODO extend x-axis by 1.00
         mask = np.where(self.v_vec < 20)  # current densities up to 20 mV
         curr = np.array(self.all_is)[mask]
         t = np.array(self.t_vec[1:])[mask]
@@ -541,8 +542,11 @@ class RFI:
         y0, plateau, percent_fast, k_fast, k_slow, tau0 = cf.Curve_Fitter().calc_recov_obj()
         formatted_tauSlow = np.round(1 / k_slow, decimals=2)
         formatted_tauFast = np.round(1 / k_fast, decimals=2)
+        formatted_percentFast = np.round(percent_fast, decimals=2)
+        # TODO move text to RHS
         plt.text(-10, 0.75, f'Tau Slow: {formatted_tauSlow}')
         plt.text(-10, 0.8, f'Tau Fast: {formatted_tauFast}')
+        plt.text(-10, 0.85, f'% Fast Component: {formatted_percentFast}')  # why is it 0?
         plt.plot(self.time_vec, self.rec_vec, 'o', c='black')
         # save as PGN file
         plt.savefig(os.path.join(os.path.split(__file__)[0], 'Plots_Folder/RFI Time Fractional recovery Relation'))
