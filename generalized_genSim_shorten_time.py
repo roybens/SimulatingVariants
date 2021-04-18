@@ -526,6 +526,7 @@ class RFI:
         return self.rec_inact_tau_vec, recov, self.vec_pts
 
     def plotRFI_LogVInormRelation(self):
+        # TODO plot tau fast..etc
         plt.figure()
         plt.xlabel('Log(Time)')
         plt.ylabel('Fractional recovery (P2/P1)')
@@ -542,11 +543,11 @@ class RFI:
         y0, plateau, percent_fast, k_fast, k_slow, tau0 = cf.Curve_Fitter().calc_recov_obj()
         formatted_tauSlow = np.round(1 / k_slow, decimals=2)
         formatted_tauFast = np.round(1 / k_fast, decimals=2)
-        formatted_percentFast = np.round(percent_fast, decimals=2)
+        formatted_percentFast = np.round(percent_fast, decimals=4)
         # TODO move text to RHS
         plt.text(-10, 0.75, f'Tau Slow: {formatted_tauSlow}')
         plt.text(-10, 0.8, f'Tau Fast: {formatted_tauFast}')
-        plt.text(-10, 0.85, f'% Fast Component: {formatted_percentFast}')  # why is it 0?
+        plt.text(-10, 0.85, f'% Fast Component: {formatted_percentFast}')
         plt.plot(self.time_vec, self.rec_vec, 'o', c='black')
         # save as PGN file
         plt.savefig(os.path.join(os.path.split(__file__)[0], 'Plots_Folder/RFI Time Fractional recovery Relation'))
