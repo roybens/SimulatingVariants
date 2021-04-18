@@ -538,6 +538,11 @@ class RFI:
         plt.xlabel('Time $(ms)$')
         plt.ylabel('Fractional recovery (P2/P1)')
         plt.title('Time/Fractional recovery (P2/P1)')
+        y0, plateau, percent_fast, k_fast, k_slow, tau0 = cf.Curve_Fitter().calc_recov_obj()
+        formatted_tauSlow = np.round(1 / k_slow, decimals=2)
+        formatted_tauFast = np.round(1 / k_fast, decimals=2)
+        plt.text(-10, 0.75, f'Tau Slow: {formatted_tauSlow}')
+        plt.text(-10, 0.8, f'Tau Fast: {formatted_tauFast}')
         plt.plot(self.time_vec, self.rec_vec, 'o', c='black')
         # save as PGN file
         plt.savefig(os.path.join(os.path.split(__file__)[0], 'Plots_Folder/RFI Time Fractional recovery Relation'))
@@ -565,9 +570,9 @@ class RFI:
         Saves all plots to CWD/Plots_Folder.
         """
         self.plotRFI_VInormRelation()
-        self.plotRFI_LogVInormRelation()
-        self.plotRFI_TimeVRelation()
-        self.plotRFI_TCurrDensityRelation()
+        #self.plotRFI_LogVInormRelation()
+        #self.plotRFI_TimeVRelation()
+        #elf.plotRFI_TCurrDensityRelation()
 
 
 ##################
