@@ -225,11 +225,10 @@ class Activation:
         plt.xlabel('Time $(ms)$')
         plt.ylabel('Current density $(mA/cm^2)$')
         plt.title('Activation Time/Current density relation')
-        # TODO extend x-axis by 1.00
-        mask = np.where(self.v_vec < 20)  # current densities up to 20 mV
+        volt = 20  # current densities up to 20 mV
+        mask = np.where(self.v_vec < volt)[0]
         curr = np.array(self.all_is)[mask]
-        t = np.array(self.t_vec[1:])[mask]
-        [plt.plot(t[i], curr[i], c='black') for i in mask]
+        [plt.plot(self.t_vec[1:], curr[i], c='black') for i in np.arange(len(curr))]
         # save as PGN file
         plt.savefig(os.path.join(os.path.split(__file__)[0], "Plots_Folder/Activation Time Current Density Relation"))
 
