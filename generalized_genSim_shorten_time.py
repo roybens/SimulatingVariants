@@ -225,11 +225,10 @@ class Activation:
         plt.xlabel('Time $(ms)$')
         plt.ylabel('Current density $(mA/cm^2)$')
         plt.title('Activation Time/Current density relation')
-        # TODO extend x-axis by 1.00
-        mask = np.where(self.v_vec < 20)  # current densities up to 20 mV
+        volt = 20  # current densities up to 20 mV
+        mask = np.where(self.v_vec < volt)[0]
         curr = np.array(self.all_is)[mask]
-        t = np.array(self.t_vec[1:])[mask]
-        [plt.plot(t[i], curr[i], c='black') for i in mask]
+        [plt.plot(self.t_vec[1:], curr[i], c='black') for i in np.arange(len(curr))]
         # save as PGN file
         plt.savefig(os.path.join(os.path.split(__file__)[0], "Plots_Folder/Activation Time Current Density Relation"))
 
@@ -526,7 +525,6 @@ class RFI:
         return self.rec_inact_tau_vec, recov, self.vec_pts
 
     def plotRFI_LogVInormRelation(self):
-        # TODO plot tau fast..etc
         plt.figure()
         plt.xlabel('Log(Time)')
         plt.ylabel('Fractional recovery (P2/P1)')
@@ -544,7 +542,6 @@ class RFI:
         formatted_tauSlow = np.round(1 / k_slow, decimals=2)
         formatted_tauFast = np.round(1 / k_fast, decimals=2)
         formatted_percentFast = np.round(percent_fast, decimals=4)
-        # TODO move text to RHS
         plt.text(-10, 0.75, f'Tau Slow: {formatted_tauSlow}')
         plt.text(-10, 0.8, f'Tau Fast: {formatted_tauFast}')
         plt.text(-10, 0.85, f'% Fast Component: {formatted_percentFast}')
@@ -575,9 +572,9 @@ class RFI:
         Saves all plots to CWD/Plots_Folder.
         """
         self.plotRFI_VInormRelation()
-        #self.plotRFI_LogVInormRelation()
-        #self.plotRFI_TimeVRelation()
-        #elf.plotRFI_TCurrDensityRelation()
+        self.plotRFI_LogVInormRelation()
+        self.plotRFI_TimeVRelation()
+        self.plotRFI_TCurrDensityRelation()
 
 
 ##################
