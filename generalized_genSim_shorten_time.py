@@ -684,9 +684,12 @@ class Ramp:
         plt.savefig(os.path.join(os.path.split(__file__)[0], 'Plots_Folder/Ramp Time Voltage relation'))
     
     def plotRamp_TimeCurrentRelation(self):
+        area = round(self.areaUnderCurve(), 2)
+        persistCurr = "{:.2e}".format(round(self.persistentCurrent(), 4))
+        
         f, (ax1, ax2) = plt.subplots(1, 2, sharey=True)
         
-        f.add_subplot(111, frameon=False) #for shared axes labels big title
+        f.add_subplot(111, frameon=False) #for shared axes labels and big title
         # hide tick and tick label of the big axes
         plt.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
         plt.grid(False)
@@ -697,14 +700,16 @@ class Ramp:
         # starting + first step + ramp section
         ax1.set_title("Ramp")
         ax1.plot(self.t_vec[1:self.t_start_persist], self.i_vec[1:self.t_start_persist], 'o', c='black', markersize = 0.1)
+        plt.text(0.05, 0.2, f'Normalized \narea under \ncurve: {area}', c = 'blue', fontsize=10)
         
         # persistent current + last step section
         ax2.set_title("Persistent Current")
         ax2.plot(self.t_vec[self.t_start_persist:], self.i_vec[self.t_start_persist:], 'o', c='black', markersize = 0.1)
+        plt.text(0.75, 0.5, f'Persistent Current:\n{persistCurr} mV', c = 'blue', fontsize=10, ha='center')
         
         # save as PGN file
         plt.tight_layout()
-        plt.savefig(os.path.join(os.path.split(__file__)[0], "Plots_Folder/Ramp Time Current Density Relation"))
+        plt.savefig(os.path.join(os.path.split(__file__)[0], 'Plots_Folder/Ramp Time Current Density Relation'))
 
     def plotAllRamp(self):
         """
