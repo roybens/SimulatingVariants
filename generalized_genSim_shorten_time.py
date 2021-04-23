@@ -40,7 +40,7 @@ if not os.path.exists(final_directory):
 class Activation:
     def __init__(self, soma_diam=50, soma_L=63.66198, soma_nseg=1, soma_cm=1, soma_Ra=70,
                  channel_name='na12mut', soma_ena=55, h_celsius=33, v_init=-120, h_dt=0.025, ntrials=range(30),
-                 dur=100, step=10, st_cl=-120, end_cl=40, v_cl=-120,
+                 dur=20, step=10, st_cl=-120, end_cl=40, v_cl=-120,
                  f3cl_dur0=5, f3cl_amp0=-120, f3cl_dur2=5, f3cl_amp2=-120,
                  ):
 
@@ -164,7 +164,7 @@ class Activation:
             h.tstop = time_padding + self.dur + time_padding  # time stop
 
             # iterates across voltages (mV)
-            for v_cl in np.arange(self.st_cl, self.end_cl, self.step):  # self.vec # TODO change stim 1:?
+            for v_cl in np.arange(self.st_cl, self.end_cl, self.step):  # self.vec
                 # resizing the vectors
                 self.t_vec = []
                 self.i_vec = []
@@ -225,9 +225,10 @@ class Activation:
         plt.xlabel('Time $(ms)$')
         plt.ylabel('Current density $(mA/cm^2)$')
         plt.title('Activation Time/Current density relation')
-        volt = 20  # current densities up to 20 mV
-        mask = np.where(self.v_vec < volt)[0]
-        curr = np.array(self.all_is)[mask]
+        print(max(self.t_vec))
+        #volt = 20  # current densities up to 20 mV
+        #mask = np.where(self.v_vec < volt)[0]
+        curr = np.array(self.all_is)#[mask]
         [plt.plot(self.t_vec[1:], curr[i], c='black') for i in np.arange(len(curr))]
         # save as PGN file
         plt.savefig(os.path.join(os.path.split(__file__)[0], "Plots_Folder/Activation Time Current Density Relation"))
