@@ -225,10 +225,7 @@ class Activation:
         plt.xlabel('Time $(ms)$')
         plt.ylabel('Current density $(mA/cm^2)$')
         plt.title('Activation Time/Current density relation')
-        print(max(self.t_vec))
-        #volt = 20  # current densities up to 20 mV
-        #mask = np.where(self.v_vec < volt)[0]
-        curr = np.array(self.all_is)#[mask]
+        curr = np.array(self.all_is)
         [plt.plot(self.t_vec[1:], curr[i], c='black') for i in np.arange(len(curr))]
         # save as PGN file
         plt.savefig(os.path.join(os.path.split(__file__)[0], "Plots_Folder/Activation Time Current Density Relation"))
@@ -385,6 +382,50 @@ class Inactivation:
         # save as PGN file
         plt.savefig(os.path.join(os.path.split(__file__)[0], "Plots_Folder/Inactivation Time Current Density Relation"))
 
+    def plotInactivation_Tau_0mV(self):
+        plt.figure()
+        plt.xlabel('Time $(ms)$')
+        plt.ylabel('Current density $(mA/cm^2)$')
+        plt.title('Inactivation Tau at 0 mV')
+        # select 0 mV
+        volt = 0  # mV
+        mask = np.where(self.v_vec == volt)[0]
+        curr = np.array(self.all_is)[mask][0]
+        time = np.array(self.t_vec)[1:]
+        # fit exp: IFit(t) = A * exp (-t/τ) + C
+        ts, data, xs, ys, tau = self.find_tau0_inact(curr)
+        # plot
+        plt.plot(ts, data, color="black")
+        plt.plot(xs, ys, color="red")
+        formatted_tau = np.round(tau, decimals=3)
+        plt.text(0.2, -0.01, f"Tau at 0 mV: {formatted_tau}", color="blue")
+        # save as PGN file
+        plt.savefig(os.path.join(os.path.split(__file__)[0], "Plots_Folder/Inactivation Tau at 0 mV"))
+
+    def fit_exp(self, x, a, b, c):
+        """
+        IFit(t) = A * exp (-t/τ) + C
+        """
+        return a * np.exp(-x/b) + c
+
+    def find_tau0_inact(self, raw_data):
+        # take peak curr and onwards
+        min_val, mindex = min((val, idx) for (idx, val) in enumerate(raw_data[:int(0.7 * len(raw_data))]))
+        padding = 15   # after peak
+        data = raw_data[mindex:mindex + padding]
+        ts = [0.1 * i for i in range(len(data))]  # make x values which match sample times
+
+        # calc tau and fit exp
+        popt, pcov = optimize.curve_fit(fit_exp, ts, data)  # fit exponential curve
+        perr = np.sqrt(np.diag(pcov))
+        # print('in ' + str(all_tau_sweeps[i]) + ' the error was ' + str(perr))
+        xs = np.linspace(ts[0], ts[len(ts) - 1], 1000)  # create uniform x values to graph curve
+        ys = fit_exp(xs, *popt)  # get y values
+        vmax = max(ys) - min(ys)  # get diff of max and min voltage
+        vt = min(ys) + .37 * vmax  # get vmax*1/e
+        tau = (np.log([(vt - popt[2]) / popt[0]]) / (-popt[1]))[0]  # find time at which curve = vt
+        return ts, data, xs, ys, tau
+
     def plotAllInactivation(self):
         """
         Saves all plots to CWD/Plots_Folder.
@@ -392,6 +433,7 @@ class Inactivation:
         self.plotInactivation_VInormRelation()
         self.plotInactivation_TimeVRelation()
         self.plotInactivation_TCurrDensityRelation()
+        self.plotInactivation_Tau_0mV()
 
 ##################
 # Recovery from Inactivation (RFI)
@@ -664,7 +706,7 @@ class Ramp:
         area = trapz(self.i_vec, x=self.v_vec_t)  # find area
         act = Activation()
         act.genActivation()
-        print(self.i_vec)
+        #print(self.i_vec)
         area = area / min(act.ipeak_vec)  # normalize to peak currents from activation
         return area
     
@@ -1019,15 +1061,17 @@ def find_tau_inact(inact_i, ax=None):
                 ts = [0.1 * i for i in range(len(raw_data))]
                 xs = xs + ts[mindex]
                 ax.plot(ts, raw_data, color="red")
-                # tau_actual = tau+0.1*mindex #adjust for slicing by adding time sliced off
+                tau_actual = tau+0.1*mindex #adjust for slicing by adding time sliced off
+                #ax.plot(xs, ys, color="blue")
+                #plt.vlines(tau, min(ys)-.02, max(ys)+.02)
+        # uncomment to plot
+        #plt.vlines(tau, min(ys)-.02, max(ys)+.02)
+        plt.figure()
+        plt.plot(ts, data, color="black")
+        plt.plot(xs, ys, color="red")
+        plt.text(0, 0, i)
+        #plt.show()
 
-                ax.plot(xs, ys, color="blue")
-                # plt.vlines(tau, min(ys)-.02, max(ys)+.02)
-        # 
-        # plt.plot(ts, data, color="red")
-        # plt.plot(xs, ys, color="orange")
-        # plt.vlines(tau, min(ys)-.02, max(ys)+.02)
-        # plt.show()
         all_taus.append(tau)
 
     tau_sweeps = []
