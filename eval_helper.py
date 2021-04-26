@@ -202,6 +202,24 @@ def read_all_raw_data(raw_data):
     for key in [key for key in real_data if real_data[key] == {}]: del real_data[key] 
     return real_data
 
+def read_HMM_parameters(csv_data_path = './HMM_params.csv'):
+    '''
+    Reads data for a csv file of HMM parameters.
+    Returns a dictionary with all the relevant parameters. Each mapped
+        value in the dictionary is a list with 3 elements, each being the 
+        value, half value, and double value
+    '''
+    lines = []
+    with open(csv_data_path, 'r') as csv_file:
+        lines = [line.split(",") for line in csv_file]
+
+    #Each line[0] except the first should contain the name of the param.
+    params_dict = {}
+    for line in lines:
+        params_dict[line[0]] = line[1:4]
+
+    return params_dict
+
 def change_params(new_params, scaled=True):
     '''
     Change params on Na12mut channel in NEURON.
@@ -216,7 +234,7 @@ def change_params(new_params, scaled=True):
     change_params_dict(new_param_dict)
     return
 
-def make_params_dict(params_list):
+def make_params_dict(params_list, is_HMM = False):
     '''
     Make a dictionary of 24 parameters out of the raw values
     in PARAMS_LIST.
@@ -249,6 +267,47 @@ def make_params_dict(params_list):
         'vhalfs_na12mut': params_list[22],
         'zetas_na12mut': params_list[23]
         }
+
+    if is_HMM:
+        params_dict['C1C2b2'] = param_list[24]
+        params_dict['C1C2v2'] = param_list[25]
+        params_dict['C1C2k2'] = param_list[26]
+        params_dict['C2C1b1'] = param_list[27]
+        params_dict['C2C1v1'] = param_list[28]
+        params_dict['C2C1k1'] = param_list[29]
+        params_dict['C2C1b2'] = param_list[30]
+        params_dict['C2C1v2'] = param_list[31]
+        params_dict['C2C1k2'] = param_list[32]
+        params_dict['C2O1b2'] = param_list[33]
+        params_dict['C2O1v2'] = param_list[34]
+        params_dict['C2O1k2'] = param_list[35]
+        params_dict['O1C2b1'] = param_list[36]
+        params_dict['O1C2v1'] = param_list[37]
+        params_dict['O1C2k1'] = param_list[38]
+        params_dict['O1C2b2'] = param_list[39]
+        params_dict['O1C2v2'] = param_list[40]
+        params_dict['O1C2k2'] = param_list[41]
+        params_dict['O1I1b1'] = param_list[42]
+        params_dict['O1I1v1'] = param_list[43]
+        params_dict['O1I1k1'] = param_list[44]
+        params_dict['O1I1b2'] = param_list[45]
+        params_dict['O1I1v2'] = param_list[46]
+        params_dict['O1I1k2'] = param_list[47]
+        params_dict['I1O1b1'] = param_list[48]
+        params_dict['I1O1v1'] = param_list[49]
+        params_dict['I1O1k1'] = param_list[50]
+        params_dict['I1C1b1'] = param_list[51]
+        params_dict['I1C1v1'] = param_list[52]
+        params_dict['I1C1k1'] = param_list[53]
+        params_dict['C1I1b2'] = param_list[54]
+        params_dict['C1I1v2'] = param_list[55]
+        params_dict['C1I1k2'] = param_list[56]
+        params_dict['I1I2b2'] = param_list[57]
+        params_dict['I1I2v2'] = param_list[58]
+        params_dict['I1I2k2'] = param_list[59]
+        params_dict['I2I1b1'] = param_list[60]
+        params_dict['I2I1v1'] = param_list[61]
+        params_dict['I2I1k1'] = param_list[62]
     return params_dict
 
 def scale_params_dict(down, params_arr):

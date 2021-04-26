@@ -1,6 +1,7 @@
 from generalized_genSim_shorten_time import *
+from eval_helper import *
 
-def exec_plot_choice(plot_choice):
+def exec_plot_choice(plot_choice, new_params = False):
     """Renders the plot of choice
     
     args:
@@ -8,6 +9,9 @@ def exec_plot_choice(plot_choice):
     returns:
         None
     """
+
+    if new_params:
+        change_params_dict(new_params)
 
     if plot_choice == "Activation":
         genAct = Activation()
@@ -32,3 +36,5 @@ def exec_plot_choice(plot_choice):
         genRFIdv.genRecInactTauCurve_dv()
         genRFIdv.plotRecInact_dv()
         genRFIdv.plotRecInactProcedure_dv()
+
+    
