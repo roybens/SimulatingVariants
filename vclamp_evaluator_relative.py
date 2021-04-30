@@ -3,6 +3,8 @@ import bluepyopt as bpop
 import eval_helper as eh
 import scoring_functions_relative as sf
 import curve_fitting as cf
+import matplotlib.pyplot as plt
+import generalized_genSim_shorten_time as ggsd
 
 class Vclamp_evaluator_relative(bpop.evaluators.Evaluator):
     '''
@@ -67,10 +69,9 @@ class Vclamp_evaluator_relative(bpop.evaluators.Evaluator):
 
     def initialize_wild_data(self):
         wild_data = {}
-        curve_fitter = cf.Curve_Fitter()
-        gv_slope, v_half_act, top, bottom = curve_fitter.calc_act_obj()
-        ssi_slope, v_half_inact, top, bottom = curve_fitter.calc_inact_obj()
-        y0, plateau, percent_fast, k_fast, k_slow, tau0 = curve_fitter.calc_recov_obj()
+        gv_slope, v_half_act, top, bottom = cf.calc_act_obj()
+        ssi_slope, v_half_inact, top, bottom = cf.calc_inact_obj()
+        y0, plateau, percent_fast, k_fast, k_slow, tau0 = cf.calc_recov_obj()
 
         wild_data['v_half_act'] = v_half_act
         wild_data['gv_slope'] = gv_slope
@@ -118,7 +119,9 @@ class Vclamp_evaluator_relative(bpop.evaluators.Evaluator):
         eh.change_params(param_values, scaled=False)
         return score_calculator.total_rmse()
 
-    def plot_data(params):
+
+
+    def plot_data(self, param_values, mutant):
         eh.change_params(param_values, scaled=False)
         plt.close()
         fig, axs = plt.subplots(3, figsize=(10,10))
@@ -126,15 +129,16 @@ class Vclamp_evaluator_relative(bpop.evaluators.Evaluator):
     
         # Calculate wild baseline values
         param_dict_rel = eh.read_mutant_protocols('mutant_protocols.csv', mutant)
-        v_half_act_exp = self.wild_data['v_half_act'] + float(self.protocols['v_half_act'])
-        gv_slope_exp = self.wild_data['gv_slope'] * float(self.protocols['gv_slope'])
-        v_half_ssi_exp = self.wild_data['v_half_ssi'] + float(self.protocols['v_half_ssi'])
-        ssi_slope_exp = self.wild_data['ssi_slope'] * float(self.protocols['ssi_slope'])
-        tau_fast_exp = self.wild_data['tau_fast'] * float(self.protocols['tau_fast'])
-        tau_slow_exp = self.wild_data['tau_slow'] * float(self.protocols['tau_slow'])
-        percent_fast_exp = self.wild_data['percent_fast'] * float(self.protocols['percent_fast'])
+        v_half_act_exp = self.wild_data['v_half_act'] + float(self.protocols['dv_half_act']) /100
+        gv_slope_exp = self.wild_data['gv_slope'] * float(self.protocols['gv_slope']) / 100
+        v_half_ssi_exp = self.wild_data['v_half_ssi'] + float(self.protocols['dv_half_ssi'])
+        ssi_slope_exp = self.wild_data['ssi_slope'] * float(self.protocols['ssi_slope']) / 100
+        tau_fast_exp = self.wild_data['tau_fast'] * float(self.protocols['tau_fast']) / 100
+        tau_slow_exp = self.wild_data['tau_slow'] * float(self.protocols['tau_slow']) / 100
+        percent_fast_exp = self.wild_data['percent_fast'] * float(self.protocols['percent_fast']) / 100
         udb20_exp = 0
-        tau0_exp = self.wild_data['tau0'] * float(self.protocols['tau0'])
+        tau0_exp = self.wild_data['tau0'] * float(self.protocols['tau0']) / 100
+
         ramp_exp = 0
         persistent_exp = 0
 
@@ -143,36 +147,58 @@ class Vclamp_evaluator_relative(bpop.evaluators.Evaluator):
         inorm_vec, v_vec, all_is = ggsd.Inactivation().genInactivation()
         inorm_array = np.array(inorm_vec)
         v_array = np.array(v_vec)
-        ssi_slope, v_half, top, bottom = self.calc_inact_obj()
+
+        ssi_slope, v_half, top, bottom = cf.calc_inact_obj()
+        '''
+        try:
+            popt, pcov = optimize.curve_fit(cf.boltzmann, v_vec, inorm_vec)
+
+        except:
+            print('Couldn\'t fit Inactivation')
+            ssi_slope, v_half, top, bottom = (1000, 1000, 1000, 1000)
+        '''
+        
         even_xs = np.linspace(v_array[0], v_array[len(v_array)-1], 100)
-        curve = boltzmann(even_xs, ssi_slope, v_half, top, bottom)
+        curve = cf.boltzmann(even_xs, ssi_slope, v_half, top, bottom)
         axs[0].set_xlabel('Voltage (mV)')
         axs[0].set_ylabel('Fraction Inactivated')
         axs[0].set_title("Inactivation Curve")
         axs[0].scatter(v_array, inorm_array, color='black',marker='s')
-        axs[0].plot(even_xs, curve, color='red', label="Inactivation")
-        curve_exp = boltzmann(even_xs, ssi_slope_exp, v_half_act_exp, top, bottom)
+        axs[0].plot(even_xs, curve, color='red', label="Fitted Inactivation")
+        #curve_exp = cf.boltzmann(even_xs, ssi_slope_exp, v_half_act_exp, top, bottom)
+        curve_exp = cf.boltzmann(even_xs, ssi_slope_exp, v_half_ssi_exp, 0, 1)
         axs[0].plot(even_xs, curve_exp, color='black', label='Inactivation experimental')
-        axs[0].text(-10, 0.5, 'Slope: ' + str(ssi_slope) + ' /mV')
-        axs[0].text(-10, 0.3, 'V50: ' + str(v_half) + ' mV')
+        #axs[0].text(-10, 0.5, 'Slope: ' + str(ssi_slope) + ' /mV')
+        #axs[0].text(-10, 0.3, 'V50: ' + str(v_half) + ' mV')
         axs[0].legend()
 
         # Activation curve
         gnorm_vec, v_vec, all_is = ggsd.Activation().genActivation()
         gnorm_array = np.array(gnorm_vec)
         v_array = np.array(v_vec)
-        gv_slope, v_half, top, bottom = self.calc_act_obj()
+        gv_slope, v_half, top, bottom = cf.calc_act_obj()
+        '''
+        try:
+            popt, pcov = optimize.curve_fit(cf.boltzmann, v_vec, gnorm_vec)
+            gv_slope, v_half, top, bottom = popt
+        except:
+            print('Couldn\'t fit activation')
+            gv_slope, v_half, top, bottom = (1000, 1000, 1000, 1000)
+        '''
+
+        #gv_slope, v_half, top, bottom = self.calc_act_obj()
         even_xs = np.linspace(v_array[0], v_array[len(v_array)-1], 100)
-        curve = boltzmann(even_xs, gv_slope, v_half, top, bottom)
+        curve = cf.boltzmann(even_xs, gv_slope, v_half, top, bottom)
         axs[1].set_xlabel('Voltage (mV)')
         axs[1].set_ylabel('Fraction Activated')
         axs[1].set_title("Activation Curve")
         axs[1].scatter(v_array, gnorm_array, color='black',marker='s')
-        axs[1].plot(even_xs, curve, color='red', label="Activation")
-        curve_exp = boltzmann(even_xs, gv_slope_exp, v_half_ssi_exp, top, bottom)
+        axs[1].plot(even_xs, curve, color='red', label="Fitted Activation")
+        #curve_exp = cf.boltzmann(even_xs, gv_slope_exp, v_half_ssi_exp, top, bottom)
+        curve_exp = cf.boltzmann(even_xs, gv_slope_exp, v_half_act_exp, 1, 0)
         axs[1].plot(even_xs, curve_exp, color='black', label='Activation Experimental')
-        axs[1].text(-10, 0.5, 'Slope: ' + str(gv_slope) + ' /mV')
-        axs[1].text(-10, 0.3, 'V50: ' + str(v_half) + ' mV')
+        #axs[1].text(-10, 0.5, 'Slope: ' + str(gv_slope) + ' /mV')
+        #axs[1].text(-10, 0.3, 'V50: ' + str(v_half) + ' mV')
         axs[1].legend()
 
         # Recovery Curve
@@ -183,11 +209,20 @@ class Vclamp_evaluator_relative(bpop.evaluators.Evaluator):
         axs[2].set_ylabel('Fractional Recovery')
         axs[2].set_title("Recovery from Inactivation")
         even_xs = np.linspace(times[0], times[len(times)-1], 100)
-        y0, plateau, percent_fast, k_fast, k_slow, tau0  = self.calc_recov_obj()
-        curve = two_phase(even_xs, y0, plateau, percent_fast, k_fast, k_slow)
+        y0, plateau, percent_fast, k_fast, k_slow, tau0 = cf.calc_recov_obj()
+        '''
+        try:
+            y0, plateau, percent_fast, k_fast, k_slow, tau0  = optimize.curve_fit(cf.two_phase, times, data_pts)
+        except:
+            print('Couldn\'t fit recovery')
+            y0, plateau, percent_fast, k_fast, k_slow, tau0 = (1000, 1000, 1000, 1000, 1000, 1000)
+        '''
+        curve = cf.two_phase(even_xs, y0, plateau, percent_fast, k_fast, k_slow)
         axs[2].plot(np.log(even_xs), curve, c='red',label="Recovery Fit")
-        curve_exp = two_phase(even_xs, y0, plateau, percent_fast_exp, 1/tau_fast_exp, 1/tau_slow_exp)
+        curve_exp = cf.two_phase(even_xs, y0, plateau, percent_fast_exp, 1/tau_fast_exp, 1/tau_slow_exp)
         axs[2].plot(np.log(even_xs), curve_exp, c='black', label='Recovery Experimental')
         axs[2].scatter(np.log(times), data_pts, label='Recovery', color='black')
+        axs[2].legend()
         plt.show()
+
 

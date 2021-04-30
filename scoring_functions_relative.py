@@ -39,11 +39,10 @@ class Score_Function:
 
 
     def total_rmse(self):
-        curve_fitter = cf.Curve_Fitter()
         try:
-            gv_slope, v_half_act, top, bottom = curve_fitter.calc_act_obj()
-            ssi_slope, v_half_inact, top, bottom = curve_fitter.calc_inact_obj()
-            y0, plateau, percent_fast, k_fast, k_slow, tau0 = curve_fitter.calc_recov_obj()
+            gv_slope, v_half_act, top, bottom = cf.calc_act_obj()
+            ssi_slope, v_half_inact, top, bottom = cf.calc_inact_obj()
+            y0, plateau, percent_fast, k_fast, k_slow, tau0 = cf.calc_recov_obj()
         except ZeroDivisionError:
             print('Zero Division Error')
             return (1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000)
@@ -86,7 +85,7 @@ class Score_Function:
 
     def gv_slope(self, percent_wild, gv_slope):
         try:
-            gv_slope_baseline = float(self.gv_slope_wild) * float(percent_wild)
+            gv_slope_baseline = float(self.gv_slope_wild) * float(percent_wild) / 100
             result = ((float(gv_slope) - gv_slope_baseline)/gv_slope_baseline)**2
             if math.isnan(result):
                 return 1000
@@ -108,7 +107,7 @@ class Score_Function:
 
     def ssi_slope(self, percent_wild, ssi_slope_exp):
         try:
-            ssi_slope_baseline = float(self.ssi_slope_wild) * float(percent_wild)
+            ssi_slope_baseline = float(self.ssi_slope_wild) * float(percent_wild) / 100
             result = ((float(ssi_slope_exp) - ssi_slope_baseline)/ssi_slope_baseline)**2
             if math.isnan(result):
                 return 1000
@@ -119,7 +118,7 @@ class Score_Function:
 
     def tau_fast(self, percent_wild, tau_fast_exp):
         try:
-            tau_fast_baseline = float(self.tau_fast_wild)*float(percent_wild)
+            tau_fast_baseline = float(self.tau_fast_wild)*float(percent_wild) / 100
             result = ((float(tau_fast_exp) - tau_fast_baseline)/tau_fast_baseline)**2
             if math.isnan(result):
                 return 1000
@@ -130,7 +129,7 @@ class Score_Function:
 
     def tau_slow(self, percent_wild, tau_slow_exp):
         try:
-            tau_slow_baseline = float(self.tau_slow_wild)*float(percent_wild)
+            tau_slow_baseline = float(self.tau_slow_wild)*float(percent_wild) / 100
             result = ((float(tau_slow_exp) - tau_slow_baseline)/tau_slow_baseline)**2
             if math.isnan(result):
                 return 1000
@@ -141,7 +140,7 @@ class Score_Function:
 
     def percent_fast(self, percent_wild, percent_fast_exp):
         try:
-            percent_fast_baseline = float(self.percent_fast_wild)*float(percent_wild)
+            percent_fast_baseline = float(self.percent_fast_wild)*float(percent_wild) / 100
             result = ((float(percent_fast_exp) - percent_fast_baseline)/percent_fast_baseline)**2
             if math.isnan(result):
                 return 1000
@@ -154,7 +153,7 @@ class Score_Function:
 
     def tau0(self, percent_wild, tau0_exp):
         try:
-            tau0_baseline = float(self.tau0_wild)*float(percent_wild)
+            tau0_baseline = float(self.tau0_wild)*float(percent_wild) / 100
             result = ((float(tau0_exp) - tau0_baseline)/tau0_baseline)**2
             if math.isnan(result):
                 return 1000
