@@ -121,7 +121,7 @@ def plot_model(line_color,fig=None):
     sweep_len = 450
     stim_dur = 300
     amp = 0.5
-    dt = 0.1
+    dt = 0.01
     init_stim(sweep_len = sweep_len, stim_start = 100,stim_dur = stim_dur, amp = amp, dt = dt)
     Vm, I, t = run_model()
     dvdt = np.gradient(Vm)/h.dt
@@ -199,12 +199,11 @@ def add_ttx():
 def plot_na16_muts():
     wt_fn = '../SCN8A_WT_opt_params.yaml'
     mut_fn = '../SCN8A_MUT_opt_params.yaml'
-    update_16(wt_fn, 'na16')
-    update_16(wt_fn, 'na16mut')
+   # update_16(wt_fn, 'na16')
+   # update_16(wt_fn, 'na16mut')
     run_model()
     fig_wt = plot_model('black')
-    plt.save('withena.pdf')
-    
+    plt.savefig('withena.pdf')
     
 init_neuron()
 init_settings()

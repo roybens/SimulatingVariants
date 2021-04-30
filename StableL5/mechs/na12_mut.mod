@@ -11,7 +11,7 @@ NEURON {
 }
 
 PARAMETER {
-sh   = 8	(mV)
+	sh   = 8	(mV)
 	gbar = 0.010   	(mho/cm2)	
 								
 	tha  =  -28.76	(mV)		: v 1/2 for act	
@@ -26,20 +26,20 @@ sh   = 8	(mV)
 	mmin=0.02	
 	hmin=0.01			
 	q10=2
-	Rg   = 0.000092 	(/ms)		: inact recov (v) prev 0.01 s A alpha
+	Rg   = 0.01 	(/ms)		: inact recov (v) 	
 	Rd   = .02657 	(/ms)		: inact (v)	
-	qq   = -65        (mV)    : prev 10 = v 1/2 alpha
-	tq   = -55      (mV)    : keep same k alpha
+	qq   = 10        (mV)
+	tq   = -55      (mV)
 
 	thinf  = -48.4785 	(mV)		: inact inf slope	
 	qinf  = 7.69	(mV)		: inact inf slope 
 
-        vhalfs=-20	(mV)		: slow inact. prev -60 s v 1/2 beta
-        a0s=0.00011	(ms)		: a0s=b0s prev 0.0003
+        vhalfs=-60	(mV)		: slow inact.
+        a0s=0.0003	(ms)		: a0s=b0s
         zetas=12	(1)
         gms=0.2		(1)
         smax=10		(ms)
-        vvh=-10		(mV) : prev -58 k beta
+        vvh=-58		(mV) 
         vvs=2		(mV)
         ar2=1		(1)		: 1=no inact., 0=max inact.
 	ena		(mV)	
