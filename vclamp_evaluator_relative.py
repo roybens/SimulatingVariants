@@ -54,14 +54,14 @@ class Vclamp_evaluator_relative(bpop.evaluators.Evaluator):
         self.wild_data = self.initialize_wild_data()
         self.params = init_params(params_file)
         self.objectives = [bpop.objectives.Objective('dv_half_act'),\
-                           #bpop.objectives.Objective('gv_slope'),\
-                           #bpop.objectives.Objective('dv_half_ssi'),\
-                           #bpop.objectives.Objective('ssi_slope'),\
-                           #bpop.objectives.Objective('tau_fast'),\
-                           #bpop.objectives.Objective('tau_slow'),\
-                           #bpop.objectives.Objective('percent_fast'),\
+                           bpop.objectives.Objective('gv_slope'),\
+                           bpop.objectives.Objective('dv_half_ssi'),\
+                           bpop.objectives.Objective('ssi_slope'),\
+                           bpop.objectives.Objective('tau_fast'),\
+                           bpop.objectives.Objective('tau_slow'),\
+                           bpop.objectives.Objective('percent_fast'),\
                            #bpop.objectives.Objective('udb20'),\
-                           #bpop.objectives.Objective('tau0'),\
+                           bpop.objectives.Objective('tau0'),\
                            #bpop.objectives.Objective('ramp'),\
                            #bpop.objectives.Objective('persistent')
                            ] 
