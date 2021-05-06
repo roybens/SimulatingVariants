@@ -238,6 +238,22 @@ class Activation:
         self.plotActivation_IVCurve()
         self.plotActivation_TimeVRelation()
         self.plotActivation_TCurrDensityRelation()
+        
+        
+    def plotAllActivation_with_ax(self, ax_list, is_variant, channel_name = 'WT'):
+        color = 'red' if is_variant else 'black'
+        
+        ax_list[0].set_xlabel('Voltage $(mV)$')
+        ax_list[0].set_ylabel('Normalized conductance')
+        ax_list[0].set_title(channel_name + ' Activation: Voltage/Normalized conductance')
+        ax_list[0].plot(self.v_vec, self.gnorm_vec, 'o', c=color)
+        
+        ax_list[1].set_xlabel('Voltage $(mV)$')
+        ax_list[1].set_ylabel('Peak Current')
+        ax_list[1].set_title(channel_name + " Activation: IV Curve")
+        ax_list[1].plot(self.v_vec, self.ipeak_vec, 'o', c=color)
+        
+        
 
 ##################
 # Inactivation
@@ -434,6 +450,28 @@ class Inactivation:
         self.plotInactivation_TimeVRelation()
         self.plotInactivation_TCurrDensityRelation()
         self.plotInactivation_Tau_0mV()
+        
+    def plotAllInactivation_with_ax(self, ax_list, is_variant, channel_name = 'WT'):
+        color = 'red' if is_variant else 'black'
+        
+        ax_list[0].set_xlabel('Voltage $(mV)$')
+        ax_list[0].set_ylabel('Normalized current')
+        ax_list[0].set_title(channel_name + ' Inactivation: Voltage/Normalized Current Relation')
+        ax_list[0].plot(self.v_vec, self.inorm_vec, 'o', c=color)
+        
+        ax_list[1].set_xlabel('Time $(ms)$')
+        ax_list[1].set_ylabel('Current density $(mA/cm^2)$')
+        ax_list[1].set_title(channel_name + ' Inactivation Tau at 0 mV')
+        # select 0 mV
+        volt = 0  # mV
+        mask = np.where(self.v_vec == volt)[0]
+        curr = np.array(self.all_is)[mask][0]
+        time = np.array(self.t_vec)[1:]
+        # fit exp: IFit(t) = A * exp (-t/τ) + C
+        ts, data, xs, ys, tau = self.find_tau0_inact(curr)
+        # plot
+        ax_list[1].plot(ts, data, color="black")
+        ax_list[1].plot(xs, ys, color="red")
 
 ##################
 # Recovery from Inactivation (RFI)
@@ -618,7 +656,8 @@ class RFI:
         self.plotRFI_LogVInormRelation()
         self.plotRFI_TimeVRelation()
         self.plotRFI_TCurrDensityRelation()
-
+        
+        
 
 ##################
 # Ramp Protocol
@@ -759,7 +798,9 @@ class Ramp:
         """
         self.plotRamp_TimeVRelation()
         self.plotRamp_TimeCurrentRelation()
-
+        
+        
+        
 ##################
 # RFI dv tau
 ##################
