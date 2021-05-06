@@ -2,9 +2,10 @@ from generalized_genSim_shorten_time import *
 from eval_helper import *
 from fpdf import FPDF
 import os
+import yaml
 
-def exec_plot_choice(plot_choice, new_params = False, save_plots_as_pdf = False, 
-                     WT_channel_name = 'na12mut', variant_channel_name = None):
+def exec_plot_choice(plot_choice, WT_params_path, variant_params_path = None, 
+                     save_plots_as_pdf = False, MT_name = "WT", mutant_name = None):
     """Renders the plot of choice
     
     args:
@@ -14,91 +15,72 @@ def exec_plot_choice(plot_choice, new_params = False, save_plots_as_pdf = False,
     """
     
     
-
-    #updates parameters if given any
-    if new_params:
-        change_params_dict(new_params)
+    with open(WT_params_path) as f:
+        # use safe_load instead load
+        WT_params = yaml.safe_load(f)
         
-      
+    if variant_params_path:
+        with open(variant_params_path) as f:
+            # use safe_load instead load
+            variant_params = yaml.safe_load(f)
+    else:
+        variant_params = None
+    
     #makes subplots
-    fig, axs = plt.subplots(4, 2, figsize=(10,20))
+    fig, axs = plt.subplots(4, 1, figsize=(5,20))
     fig.subplots_adjust(hspace=.5, wspace=.5)
-    first_col = [ax[0] for ax in axs]
-    second_col = [ax[1] for ax in axs]
-
-    #plots each function
-    if plot_choice == "Activation":
-        genAct = Activation(channel_name = WT_channel_name)
-        genAct.genActivation()
-        genAct.plotAllActivation_with_ax(first_col, is_variant = False)
+    
+    
+    for cur_params in ["WT_params", "variant_params"]: 
+        #updates parameters
+        if cur_params == "WT_params":
+            change_params_dict_gen(WT_params)
+        if cur_params == "variant_params":
+            if variant_params:
+                change_params_dict_gen(variant_params)
+            else: 
+                break
         
-        if variant_channel_name:
-            genAct = Activation(channel_name = variant_channel_name)
+
+        #plots each function
+        if plot_choice == "Activation":
+            genAct = Activation()
             genAct.genActivation()
-            genAct.plotAllActivation_with_ax(second_col, is_variant = True, channel_name = variant_channel_name)
-        
-    elif plot_choice == "Inactivation":
-        genInact = Inactivation(channel_name = WT_channel_name)
-        genInact.genInactivation()
-        genInact.plotAllInactivation_with_ax(first_col, is_variant = False)
-        
-        if variant_channel_name:
-            genInact = Inactivation(channel_name = variant_channel_name)
-            genInact.genInactivation()
-            genInact.plotAllInactivation_with_ax(second_col, is_variant = True, channel_name = variant_channel_name)
-        
-        
-    elif plot_choice == "RFI":  
-        genRFI = RFI(channel_name = WT_channel_name)
-        genRFI.genRecInactTau()
-        genRFI.plotAllRFI_with_ax(first_col, is_variant = False)
-        
-        if variant_channel_name:
-            genRFI = RFI(channel_name = variant_channel_name)
-            genRFI.genRecInactTau()
-            genRFI.plotAllRFI_with_ax(second_col, is_variant = True)
-        
-        
-    elif plot_choice == "Ramp":   
-        genRamp = Ramp(channel_name = WT_channel_name)
-        genRamp.genRamp()
-        f, (first_col[1], first_col[2]) = plt.subplots(1, 2, sharey=True, figsize=(10,5))
-        f.add_subplot(111, frameon=False) #for shared axes labels and big title
-        # hide tick and tick label of the big axes
-        plt.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
-        plt.grid(False)
-        plt.title("WT" + " Ramp: Time Current Density Relation", x=0.4, y=1.1)
-        plt.xlabel('Time $(ms)$')
-        plt.ylabel('Current', labelpad= 25)
-        genRamp.plotAllRamp_with_ax(first_col, False, f)
-        
-        if variant_channel_name:
-            genRamp = Ramp(channel_name = variant_channel_name)
-            genRamp.genRamp()
-            f, (second_col[1], second_col[2]) = plt.subplots(1, 2, sharey=True, figsize=(10,5))
-            f.add_subplot(111, frameon=False) #for shared axes labels and big title
-            # hide tick and tick label of the big axes
-            plt.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
-            plt.grid(False)
-            plt.title(variant_channel_name + " Ramp: Time Current Density Relation", x=0.4, y=1.1)
-            plt.xlabel('Time $(ms)$')
-            plt.ylabel('Current', labelpad= 25)
-            genRamp.plotAllRamp_with_ax(second_col, True, f, channel_name = variant_channel_name)
-            
+            genAct.plotAllActivation_with_ax(axs, cur_params)
 
-    elif plot_choice == "RecInact":      
-        genRFIdv = RFI_dv(channel_name = WT_channel_name)
-        genRFIdv.genRecInact_dv()
-        genRFIdv.genRecInactTau_dv()
-        genRFIdv.genRecInactTauCurve_dv()
-        genRFIdv.plotAllRecInact_with_ax(first_col, is_variant = False)
-        
-        if variant_channel_name:
-            genRFIdv = RFI_dv(channel_name = variant_channel_name)
+        elif plot_choice == "Inactivation":
+            genInact = Inactivation()
+            genInact.genInactivation()
+            genInact.plotAllInactivation_with_ax(axs, cur_params)
+
+        elif plot_choice == "RFI":  
+            genRFI = RFI()
+            genRFI.genRecInactTau()
+            genRFI.plotAllRFI_with_ax(axs, cur_params)
+
+
+        elif plot_choice == "Ramp":   
+            genRamp = Ramp()
+            genRamp.genRamp()
+            genRamp.plotAllRamp_with_ax(axs, cur_params)
+
+
+
+        elif plot_choice == "RecInact":      
+            genRFIdv = RFI_dv()
             genRFIdv.genRecInact_dv()
             genRFIdv.genRecInactTau_dv()
             genRFIdv.genRecInactTauCurve_dv()
-            genRFIdv.plotAllRecInact_with_ax(second_col, is_variant = True, channel_name = variant_channel_name)
+            genRFIdv.plotAllRecInact_with_ax(axs, cur_params)
+            
+        elif plot_choice == "test": 
+            genRFIdv = RFI_dv()
+            genRFIdv.genRecInact_dv()
+            genRFIdv.genRecInactTau_dv()
+            genRFIdv.genRecInactTauCurve_dv()
+            genRFIdv.plotRecInact_dv()
+            genRFIdv.plotRecInactProcedure_dv()
+
 
         
     #saves the plot
