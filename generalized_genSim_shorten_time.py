@@ -745,7 +745,8 @@ class Ramp:
         self.soma.Ra = soma_Ra  # ohm-cm
         self.soma.insert(channel_name)  # insert mechanism
         self.soma.ena = soma_ena
-        
+
+        self.time_steps_arr = []
         # clamping parameters
         def make_ramp():
             time_steps_arr = np.array([t_init,t_first_step,t_ramp,t_plateau,t_last_step])
@@ -758,6 +759,7 @@ class Ramp:
             ramp_v[time_steps_arr[1]:time_steps_arr[2]] = np.linspace(v_first_step,v_ramp_end,time_steps_arr[2]-time_steps_arr[1])
             ramp_v[time_steps_arr[2]:time_steps_arr[3]] = v_ramp_end
             ramp_v[time_steps_arr[3]:time_steps_arr[4]] = v_last_step
+            self.time_steps_arr = time_steps_arr
             return ramp_v
         
         self.ntrials = 1  #
@@ -810,10 +812,13 @@ class Ramp:
     def areaUnderCurve(self):
         """ Calculates and returns normalized area (to activation IV) under IV curve of Ramp
         """
-        area = trapz(self.i_vec, x=self.v_vec_t)  # find area
+        maskStart, maskEnd = self.time_steps_arr[1], self.time_steps_arr[2]  # selects ramp (incline) portion only
+        i_vec_ramp = self.i_vec[maskStart:maskEnd]
+        v_vec_t_ramp = self.v_vec_t[maskStart:maskEnd]
+        #plt.plot(self.t_vec[maskStart:maskEnd], self.v_vec[maskStart:maskEnd], color= 'b') # uncomment to view area taken
+        area = trapz(i_vec_ramp, x=v_vec_t_ramp)  # find area
         act = Activation()
         act.genActivation()
-        #print(self.i_vec)
         area = area / min(act.ipeak_vec)  # normalize to peak currents from activation
         return area
     
