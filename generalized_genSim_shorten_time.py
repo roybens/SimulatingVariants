@@ -19,6 +19,7 @@ from scipy import optimize, stats
 import argparse
 import os
 
+import optimize_na_ga_v2 as opt
 import curve_fitting as cf
 #from sys import api_version
 #from test.pythoninfo import collect_platform
@@ -202,12 +203,12 @@ class Activation:
     def plotActivation_IVCurve(self):
         plt.figure()
         plt.xlabel('Voltage $(mV)$')
-        plt.ylabel('Peak Current')
+        plt.ylabel('Peak Current $(pA)$')
         plt.title("Activation: IV Curve")
         plt.plot(self.v_vec, self.ipeak_vec, 'o', c='black')
-        plt.text(-110, -0.05, 'Vrev at ' + str(round(self.vrev, 1)) + 'mV', fontsize=10, c='blue')
+        plt.text(-110, -0.05, 'Vrev at ' + str(round(self.vrev, 1)) + ' mV', fontsize=10, c='blue')
         formatted_peak_i = np.round(min(self.ipeak_vec), decimals=2)
-        plt.text(-110, -0.1, f'Peak Current from IV: {formatted_peak_i} mV', fontsize=10, c='blue')
+        plt.text(-110, -0.1, f'Peak Current from IV: {formatted_peak_i} pA', fontsize=10, c='blue')  # pico Amps
         # save as PGN file
         plt.savefig(os.path.join(os.path.split(__file__)[0], "Plots_Folder/Activation IV Curve"))
 
@@ -818,9 +819,13 @@ class Ramp:
     
     def persistentCurrent(self):
         """ Calculates persistent current (avg current of last 100 ms at 0 mV)
+        Normalized by peak from IV (same number as areaUnderCurve).
         """
         persistent = self.i_vec[self.t_start_persist:self.t_end_persist]
-        return sum(persistent)/len(persistent)
+        act = Activation()
+        act.genActivation()
+        IVPeak = min(act.ipeak_vec)
+        return (sum(persistent)/len(persistent)) / IVPeak
     
     def plotRamp_TimeVRelation(self):
         plt.figure()
@@ -1402,4 +1407,19 @@ if __name__ == "__main__":
         genRFIdv.plotRecInactProcedure_dv()
 
     elif args.function == 6:
-        pass
+        # run all
+        genAct = Activation()
+        genAct.genActivation()
+        genAct.plotAllActivation()
+
+        genInact = Inactivation()
+        genInact.genInactivation()
+        genInact.plotAllInactivation()
+
+        genRFI = RFI()
+        genRFI.genRecInactTau()
+        genRFI.plotAllRFI()
+
+        genRamp = Ramp()
+        genRamp.genRamp()
+        genRamp.plotAllRamp()
