@@ -1,0 +1,44 @@
+Warning: Python module not loaded, you already have Python loaded via conda init
+dlopen failed - 
+x86_64/.libs/libnrnmech.so: invalid ELF header
+Couldn't generate activation data
+Couldn't generate inactivation data
+Couldn't generate recovery data
+multiprocessing.pool.RemoteTraceback: 
+"""
+Traceback (most recent call last):
+  File "/usr/common/software/python/3.7-anaconda-2019.07/lib/python3.7/multiprocessing/pool.py", line 121, in worker
+    result = (True, func(*args, **kwds))
+  File "/usr/common/software/python/3.7-anaconda-2019.07/lib/python3.7/multiprocessing/pool.py", line 44, in mapstar
+    return list(map(*args))
+  File "/global/u1/m/mikelam/vclamp/vclamp_evaluator_relative.py", line 102, in evaluate_with_lists
+    return self.calc_all_rmse(param_values)
+  File "/global/u1/m/mikelam/vclamp/vclamp_evaluator_relative.py", line 119, in calc_all_rmse
+    eh.change_params(param_values, scaled=False)
+  File "/global/u1/m/mikelam/vclamp/eval_helper.py", line 234, in change_params
+    change_params_dict(new_param_dict)
+  File "/global/u1/m/mikelam/vclamp/eval_helper.py", line 433, in change_params_dict
+    currh = ggsd.Activation().h
+  File "/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time.py", line 56, in __init__
+    self.soma.insert(channel_name)  # insert mechanism
+ValueError: argument not a density mechanism name.
+"""
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/global/u1/m/mikelam/vclamp/Optimization with New Protocol.py", line 31, in <module>
+    pop, hof, log, hst = deap_opt.run(max_ngen=10, cp_filename=None)
+  File "/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/bluepyopt/deapext/optimisations.py", line 317, in run
+    cp_filename=cp_filename)
+  File "/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/bluepyopt/deapext/algorithms.py", line 158, in eaAlphaMuPlusLambdaCheckpoint
+    invalid_count = _evaluate_invalid_fitness(toolbox, population)
+  File "/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/bluepyopt/deapext/algorithms.py", line 59, in _evaluate_invalid_fitness
+    fitnesses = toolbox.map(toolbox.evaluate, invalid_ind)
+  File "/usr/common/software/python/3.7-anaconda-2019.07/lib/python3.7/multiprocessing/pool.py", line 268, in map
+    return self._map_async(func, iterable, mapstar, chunksize).get()
+  File "/usr/common/software/python/3.7-anaconda-2019.07/lib/python3.7/multiprocessing/pool.py", line 657, in get
+    raise self._value
+ValueError: argument not a density mechanism name.
+srun: error: nid01385: task 0: Exited with exit code 1
+srun: Terminating job step 42194602.0

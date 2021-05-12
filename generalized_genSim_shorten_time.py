@@ -19,6 +19,7 @@ from scipy import optimize, stats
 import argparse
 import os
 
+import optimize_na_ga_v2 as opt
 import curve_fitting as cf
 #from sys import api_version
 #from test.pythoninfo import collect_platform
@@ -202,12 +203,12 @@ class Activation:
     def plotActivation_IVCurve(self):
         plt.figure()
         plt.xlabel('Voltage $(mV)$')
-        plt.ylabel('Peak Current')
+        plt.ylabel('Peak Current $(pA)$')
         plt.title("Activation: IV Curve")
         plt.plot(self.v_vec, self.ipeak_vec, 'o', c='black')
-        plt.text(-110, -0.05, 'Vrev at ' + str(round(self.vrev, 1)) + 'mV', fontsize=10, c='blue')
+        plt.text(-110, -0.05, 'Vrev at ' + str(round(self.vrev, 1)) + ' mV', fontsize=10, c='blue')
         formatted_peak_i = np.round(min(self.ipeak_vec), decimals=2)
-        plt.text(-110, -0.1, f'Peak Current from IV: {formatted_peak_i} mV', fontsize=10, c='blue')
+        plt.text(-110, -0.1, f'Peak Current from IV: {formatted_peak_i} pA', fontsize=10, c='blue')  # pico Amps
         # save as PGN file
         plt.savefig(os.path.join(os.path.split(__file__)[0], "Plots_Folder/Activation IV Curve"))
 
@@ -238,6 +239,35 @@ class Activation:
         self.plotActivation_IVCurve()
         self.plotActivation_TimeVRelation()
         self.plotActivation_TCurrDensityRelation()
+        
+        
+    def plotAllActivation_with_ax(self, ax_list, cur_params):
+        color = 'red' if cur_params == "variant_params" else 'black'
+        y_offset = -0.2 if cur_params == "variant_params" else 0
+        x_offset = 0
+        
+        ax_list[0].set_xlabel('Voltage $(mV)$')
+        ax_list[0].set_ylabel('Normalized conductance')
+        ax_list[0].set_title('Activation: Voltage/Normalized conductance')
+        ax_list[0].plot(self.v_vec, self.gnorm_vec, 'o', c=color)
+        gv_slope, v_half, top, bottom = cf.calc_act_obj()
+        formatted_gv_slope = np.round(gv_slope, decimals=2)
+        formatted_v_half = np.round(v_half, decimals=2)
+        ax_list[0].text(-10 + x_offset, 0.5 + y_offset, f'Slope: {formatted_gv_slope}', color = color)
+        ax_list[0].text(-10 + x_offset, 0.4 + y_offset, f'V50: {formatted_v_half}', color = color)
+        x_values_v = np.arange(self.st_cl, self.end_cl, 1)
+        curve = cf.boltzmann(x_values_v, gv_slope, v_half, top, bottom)
+        ax_list[0].plot(x_values_v, curve, c=color)
+        
+        ax_list[1].set_xlabel('Voltage $(mV)$')
+        ax_list[1].set_ylabel('Peak Current')
+        ax_list[1].set_title("Activation: IV Curve")
+        ax_list[1].plot(self.v_vec, self.ipeak_vec, 'o', c=color)
+        ax_list[1].text(-110 + x_offset, -0.05 + y_offset, 'Vrev at ' + str(round(self.vrev, 1)) + 'mV', c=color)
+        formatted_peak_i = np.round(min(self.ipeak_vec), decimals=2)
+        ax_list[1].text(-110 + x_offset, -0.1 + y_offset, f'Peak Current from IV: {formatted_peak_i} mV', c=color)
+        
+        
 
 ##################
 # Inactivation
@@ -434,6 +464,50 @@ class Inactivation:
         self.plotInactivation_TimeVRelation()
         self.plotInactivation_TCurrDensityRelation()
         self.plotInactivation_Tau_0mV()
+        
+    def plotAllInactivation_with_ax(self, ax_list, cur_params):
+        color = 'red' if cur_params == "variant_params" else 'black'
+        y_offset = -0.2 if cur_params == "variant_params" else 0
+        x_offset = 0
+        
+        ax_list[0].set_xlabel('Voltage $(mV)$')
+        ax_list[0].set_ylabel('Normalized current')
+        ax_list[0].set_title('Inactivation: Voltage/Normalized Current Relation')
+        ax_list[0].plot(self.v_vec, self.inorm_vec, 'o', c=color)
+        ssi_slope, v_half, top, bottom = cf.calc_inact_obj()
+        formatted_ssi_slope = np.round(ssi_slope, decimals=2)
+        formatted_v_half = np.round(v_half, decimals=2)
+        ax_list[0].text(-10, 0.5 + y_offset, f'Slope: {formatted_ssi_slope}', c=color)
+        ax_list[0].text(-10, 0.4 + y_offset, f'V50: {formatted_v_half}', c=color)
+        x_values_v = np.arange(self.st_cl, self.end_cl, 1)
+        curve = cf.boltzmann(x_values_v, ssi_slope, v_half, top, bottom)
+        ax_list[0].plot(x_values_v, curve, c=color)
+        
+        ax_list[1].set_xlabel('Time $(ms)$')
+        ax_list[1].set_ylabel('Current density $(mA/cm^2)$')
+        ax_list[1].set_title('Inactivation Tau at 0 mV')
+        # select 0 mV
+        volt = 0  # mV
+        mask = np.where(self.v_vec == volt)[0]
+        curr = np.array(self.all_is)[mask][0]
+        time = np.array(self.t_vec)[1:]
+        # fit exp: IFit(t) = A * exp (-t/τ) + C
+        ts, data, xs, ys, tau = self.find_tau0_inact(curr)
+        # plot
+        ax_list[1].plot(ts, data, color=color)
+        ax_list[1].plot(xs, ys, color=color)
+        
+        ax_list[2].set_xlabel('Time $(ms)$')
+        ax_list[2].set_ylabel('Current density $(mA/cm^2)$')
+        ax_list[2].set_title('Inactivation Time/Current density relation')
+        [ax_list[2].plot(self.t_vec[1:], self.all_is[i], c=color) for i in np.arange(self.L)]
+        
+        
+        ax_list[3].set_xlabel('Time $(ms)$')
+        ax_list[3].set_ylabel('Voltage $(mV)$')
+        ax_list[3].set_title('Inactivation Time/Voltage relation')
+        [ax_list[3].plot(self.t_vec, self.all_v_vec_t[i], c=color) for i in np.arange(self.L)]
+        
 
 ##################
 # Recovery from Inactivation (RFI)
@@ -618,7 +692,40 @@ class RFI:
         self.plotRFI_LogVInormRelation()
         self.plotRFI_TimeVRelation()
         self.plotRFI_TCurrDensityRelation()
+        
+    def plotAllRFI_with_ax(self, ax_list, cur_params):
+        color = 'red' if cur_params == "variant_params" else 'black'
+        y_offset = -0.35 if cur_params == "variant_params" else 0
+        x_offset = 0
+        
+        ax_list[0].set_xlabel('Time $(ms)$')
+        ax_list[0].set_ylabel('Fractional recovery (P2/P1)')
+        ax_list[0].set_title('Time/Fractional recovery (P2/P1)')
+        y0, plateau, percent_fast, k_fast, k_slow, tau0 = cf.calc_recov_obj()
+        formatted_tauSlow = np.round(1 / k_slow, decimals=2)
+        formatted_tauFast = np.round(1 / k_fast, decimals=2)
+        formatted_percentFast = np.round(percent_fast, decimals=4)
+        plt.text(-10, 0.65 + y_offset, f'Tau Slow: {formatted_tauSlow}',c=color)
+        plt.text(-10, 0.75 + y_offset, f'Tau Fast: {formatted_tauFast}',c=color)
+        plt.text(-10, 0.85 + y_offset, f'% Fast Component: {formatted_percentFast}',c=color)
+        ax_list[0].plot(self.time_vec, self.rec_vec, 'o', c=color)
+        
+        ax_list[1].set_xlabel('Log(Time)')
+        ax_list[1].set_ylabel('Fractional recovery (P2/P1)')
+        ax_list[1].set_title('Log(Time)/Fractional recovery (P2/P1)')
+        ax_list[1].plot(self.log_time_vec, self.rec_vec, 'o', c=color)
+        
+        ax_list[2].set_xlabel('Time $(ms)$')
+        ax_list[2].set_ylabel('Voltage $(mV)$')
+        ax_list[2].set_title('RFI Time/Voltage relation')
+        [ax_list[2].plot(self.all_t_vec[i], self.all_v_vec_t[i], c=color) for i in np.arange(self.L)]
 
+        ax_list[3].set_xlabel('Time $(ms)$')
+        ax_list[3].set_ylabel('Current density $(mA/cm^2)$')
+        ax_list[3].set_title('RFI Time/Current density relation')
+        [ax_list[3].plot(self.all_t_vec[i], self.all_is[i], c=color) for i in np.arange(self.L)]
+        
+        
 
 ##################
 # Ramp Protocol
@@ -638,7 +745,8 @@ class Ramp:
         self.soma.Ra = soma_Ra  # ohm-cm
         self.soma.insert(channel_name)  # insert mechanism
         self.soma.ena = soma_ena
-        
+
+        self.time_steps_arr = []
         # clamping parameters
         def make_ramp():
             time_steps_arr = np.array([t_init,t_first_step,t_ramp,t_plateau,t_last_step])
@@ -651,6 +759,7 @@ class Ramp:
             ramp_v[time_steps_arr[1]:time_steps_arr[2]] = np.linspace(v_first_step,v_ramp_end,time_steps_arr[2]-time_steps_arr[1])
             ramp_v[time_steps_arr[2]:time_steps_arr[3]] = v_ramp_end
             ramp_v[time_steps_arr[3]:time_steps_arr[4]] = v_last_step
+            self.time_steps_arr = time_steps_arr
             return ramp_v
         
         self.ntrials = 1  #
@@ -703,18 +812,25 @@ class Ramp:
     def areaUnderCurve(self):
         """ Calculates and returns normalized area (to activation IV) under IV curve of Ramp
         """
-        area = trapz(self.i_vec, x=self.v_vec_t)  # find area
+        maskStart, maskEnd = self.time_steps_arr[1], self.time_steps_arr[2]  # selects ramp (incline) portion only
+        i_vec_ramp = self.i_vec[maskStart:maskEnd]
+        v_vec_t_ramp = self.v_vec_t[maskStart:maskEnd]
+        #plt.plot(self.t_vec[maskStart:maskEnd], self.v_vec[maskStart:maskEnd], color= 'b') # uncomment to view area taken
+        area = trapz(i_vec_ramp, x=v_vec_t_ramp)  # find area
         act = Activation()
         act.genActivation()
-        #print(self.i_vec)
         area = area / min(act.ipeak_vec)  # normalize to peak currents from activation
         return area
     
     def persistentCurrent(self):
         """ Calculates persistent current (avg current of last 100 ms at 0 mV)
+        Normalized by peak from IV (same number as areaUnderCurve).
         """
         persistent = self.i_vec[self.t_start_persist:self.t_end_persist]
-        return sum(persistent)/len(persistent)
+        act = Activation()
+        act.genActivation()
+        IVPeak = min(act.ipeak_vec)
+        return (sum(persistent)/len(persistent)) / IVPeak
     
     def plotRamp_TimeVRelation(self):
         plt.figure()
@@ -759,7 +875,39 @@ class Ramp:
         """
         self.plotRamp_TimeVRelation()
         self.plotRamp_TimeCurrentRelation()
+        
+    def plotAllRamp_with_ax(self, ax_list, cur_params):
+        color = 'red' if cur_params == "variant_params" else 'black'
+        y_offset = -0.02 if cur_params == "variant_params" else 0
+        x_offset = 0
+                            
+        ax_list[0].set_xlabel('Time $(ms)$')
+        ax_list[0].set_ylabel('Voltage $(mV)$')
+        ax_list[0].set_title('Ramp Time/Voltage relation')
+        ax_list[0].plot(self.t_vec, self.v_vec, color=color)
 
+                            
+        area = round(self.areaUnderCurve(), 2)
+        persistCurr = "{:.2e}".format(round(self.persistentCurrent(), 4))
+
+        # starting + first step + ramp section
+        ax_list[1].set_xlabel('Time $(ms)$')
+        ax_list[1].set_ylabel('Current', labelpad= 25)
+        ax_list[1].set_title("Ramp")
+        ax_list[1].plot(self.t_vec[1:self.t_start_persist], self.i_vec[1:self.t_start_persist], 'o', c=color, markersize = 0.1)
+        ax_list[1].text(0 + x_offset, -0.08 + y_offset, f'Normalized \narea under \ncurve: {area}', color=color, fontsize=10)
+        
+        # persistent current + last step section
+        ax_list[2].set_xlabel('Time $(ms)$')
+        ax_list[2].set_ylabel('Current', labelpad= 25)
+        ax_list[2].set_title("Persistent Current")
+        ax_list[2].plot(self.t_vec[self.t_start_persist:], self.i_vec[self.t_start_persist:], 'o', c=color, markersize = 0.1)
+        ax_list[2].text(420 + x_offset, -0.04 + y_offset, f'Persistent Current:\n{persistCurr} mV', color=color, fontsize=10, ha='center')
+                            
+                            
+        
+        
+        
 ##################
 # RFI dv tau
 ##################
@@ -1016,6 +1164,57 @@ class RFI_dv:
             k += 1
 
         return rec_return, self.vec_pts
+    
+    def plotAllRecInact_with_ax(self, ax_list, cur_params):
+        color = 'red' if cur_params == "variant_params" else 'black'
+        y_offset = -0.2 if cur_params == "variant_params" else 0
+        x_offset = 0
+
+        # if time_vec is changed to see plot in not log time
+        # then change xlim to (-150, 5 + cond_st_dur + max_inter + 20 + 5)
+        # ax5.set_xlim(-1.1,1.1)
+        # ax5.set_ylim(-0.1, 1.1)
+        ax_list[0].set_xlabel('Log(Time)')
+        ax_list[0].set_ylabel('Fractional recovery (P2/P1)')
+        ax_list[0].set_title('Log(Time)/Fractional recovery (P2/P1)')
+        k = 0  # counter
+        for amp in self.vec_pts:
+            # resizing the vectors
+            self.t_vec.resize(0)
+            self.i_vec_t.resize(0)
+            self.v_vec_t.resize(0)
+            self.rec_vec.resize(0)
+            self.time_vec.resize(0)
+            self.log_time_vec.resize(0)
+            self.rec_inact_tau_vec.resize(0)
+
+            self.clampRecInact_dv_Tau(amp)
+            k += 1
+
+            # change log_time_vec to time_vec (ms) to see plot in not log time
+            ln5 = ax_list[0].scatter(self.time_vec, self.rec_vec, c=color)
+            ax_list[0].set_xscale('log')
+
+            
+        ax_list[1].set_xlim(-150, 5 + self.max_inter + 20 + 100)
+        ax_list[1].set_ylim(-121, 20)
+        ax_list[1].set_xlabel('Time $(ms)$')
+        ax_list[1].set_ylabel('Voltage $(mV)$')
+        ax_list[1].set_title('Time/Voltage Reltation')
+        k = 0  # counter
+        for dur in self.vec_pts:
+            # resizing the vectors
+            self.t_vec.resize(0)
+            self.i_vec_t.resize(0)
+            self.v_vec_t.resize(0)
+            self.rec_vec.resize(0)
+            self.time_vec.resize(0)
+            self.log_time_vec.resize(0)
+            self.rec_inact_tau_vec.resize(0)
+            self.clampRecInact_dv_Tau(dur)
+            k += 1
+            ln5 = ax_list[1].plot(self.t_vec, self.v_vec_t, c=color)
+
 
 def fit_sigmoid(x, a, b):
     """
@@ -1213,4 +1412,19 @@ if __name__ == "__main__":
         genRFIdv.plotRecInactProcedure_dv()
 
     elif args.function == 6:
-        pass
+        # run all
+        genAct = Activation()
+        genAct.genActivation()
+        genAct.plotAllActivation()
+
+        genInact = Inactivation()
+        genInact.genInactivation()
+        genInact.plotAllInactivation()
+
+        genRFI = RFI()
+        genRFI.genRecInactTau()
+        genRFI.plotAllRFI()
+
+        genRamp = Ramp()
+        genRamp.genRamp()
+        genRamp.plotAllRamp()

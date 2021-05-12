@@ -1,0 +1,4 @@
+Warning: Python module not loaded, you already have Python loaded via conda init
+/usr/common/software/python/3.7-anaconda-2019.07/bin/python3: can't open file '/global/u1/m/mikelam/vclamp/Simulations/Optimization with New Protocol.py': [Errno 2] No such file or directory
+srun: error: nid12781: task 0: Exited with exit code 2
+srun: Terminating job step 42194230.0
