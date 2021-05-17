@@ -1,3 +1,8 @@
+#################################
+## Code for relative evaluator ##
+## Author: Michael Lam ##########
+#################################
+
 import numpy as np
 import bluepyopt as bpop
 import eval_helper as eh
@@ -59,9 +64,9 @@ class Vclamp_evaluator_relative(bpop.evaluators.Evaluator):
                            bpop.objectives.Objective('ssi_slope'),\
                            bpop.objectives.Objective('tau_fast'),\
                            bpop.objectives.Objective('tau_slow'),\
-                           bpop.objectives.Objective('percent_fast'),\
+                           #bpop.objectives.Objective('percent_fast'),\
                            #bpop.objectives.Objective('udb20'),\
-                           bpop.objectives.Objective('tau0'),\
+                           #bpop.objectives.Objective('tau0'),\
                            #bpop.objectives.Objective('ramp'),\
                            #bpop.objectives.Objective('persistent')
                            ] 
@@ -70,8 +75,8 @@ class Vclamp_evaluator_relative(bpop.evaluators.Evaluator):
     def initialize_wild_data(self):
         wild_data = {}
         gv_slope, v_half_act, top, bottom = cf.calc_act_obj()
-        ssi_slope, v_half_inact, top, bottom = cf.calc_inact_obj()
-        y0, plateau, percent_fast, k_fast, k_slow, tau0 = cf.calc_recov_obj()
+        ssi_slope, v_half_inact, top, bottom, tau0 = cf.calc_inact_obj()
+        y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj()
 
         wild_data['v_half_act'] = v_half_act
         wild_data['gv_slope'] = gv_slope
@@ -148,7 +153,7 @@ class Vclamp_evaluator_relative(bpop.evaluators.Evaluator):
         inorm_array = np.array(inorm_vec)
         v_array = np.array(v_vec)
 
-        ssi_slope, v_half, top, bottom = cf.calc_inact_obj()
+        ssi_slope, v_half, top, bottom, tau0 = cf.calc_inact_obj()
         '''
         try:
             popt, pcov = optimize.curve_fit(cf.boltzmann, v_vec, inorm_vec)
@@ -209,7 +214,7 @@ class Vclamp_evaluator_relative(bpop.evaluators.Evaluator):
         axs[2].set_ylabel('Fractional Recovery')
         axs[2].set_title("Recovery from Inactivation")
         even_xs = np.linspace(times[0], times[len(times)-1], 100)
-        y0, plateau, percent_fast, k_fast, k_slow, tau0 = cf.calc_recov_obj()
+        y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj()
         '''
         try:
             y0, plateau, percent_fast, k_fast, k_slow, tau0  = optimize.curve_fit(cf.two_phase, times, data_pts)

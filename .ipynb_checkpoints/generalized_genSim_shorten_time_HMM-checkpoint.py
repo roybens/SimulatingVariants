@@ -1,13 +1,11 @@
-"""
-Written by Emily Nguyen, UC Berkeley
-           Chastin Chung, UC Berkeley
-           Isabella Boyle, UC Berkeley
-           Roy Ben-Shalom, UCSF
-    
-Generates simulated data.
-Modified from Emilio Andreozzi "Phenomenological models of NaV1.5.
-    A side by side, procedural, hands-on comparison between Hodgkin-Huxley and kinetic formalisms." 2019
-"""
+# VClamp SCN2A Variants
+# Generates simulated data for Na1.2 channel
+# Hidden Markov Model
+
+# Modified from Emilio Andreozzi "Phenomenological models of NaV1.5.
+    # A side by side, procedural, hands-on comparison between
+    # Hodgkin-Huxley and kinetic formalisms." 2019
+# Contributors: Emily Nguyen UC Berkeley, Roy Ben-Shalom UCSF
 
 from neuron import h, gui
 import numpy as np
@@ -18,11 +16,12 @@ import matplotlib.cm as cmx
 from scipy import optimize, stats
 import argparse
 import os
+from state_variables import finding_state_variables
 
-import optimize_na_ga_v2 as opt
 import curve_fitting as cf
-#from sys import api_version
-#from test.pythoninfo import collect_platform
+
+# from sys import api_version
+# from test.pythoninfo import collect_platform
 
 
 ##################
@@ -32,7 +31,7 @@ import curve_fitting as cf
 current_directory = os.getcwd()
 final_directory = os.path.join(current_directory, r'Plots_Folder')
 if not os.path.exists(final_directory):
-   os.makedirs(final_directory)
+    os.makedirs(final_directory)
 
 
 ##################
@@ -40,7 +39,7 @@ if not os.path.exists(final_directory):
 ##################
 class Activation:
     def __init__(self, soma_diam=50, soma_L=63.66198, soma_nseg=1, soma_cm=1, soma_Ra=70,
-                 channel_name='na12mut', soma_ena=55, h_celsius=33, v_init=-120, h_dt=0.025, ntrials=range(30),
+                 channel_name='na15', soma_ena=55, h_celsius=33, v_init=-120, h_dt=0.025, ntrials=range(30),
                  dur=20, step=10, st_cl=-120, end_cl=40, v_cl=-120,
                  f3cl_dur0=5, f3cl_amp0=-120, f3cl_dur2=5, f3cl_amp2=-120,
                  ):
@@ -93,6 +92,16 @@ class Activation:
         self.vrev = 0
         self.v_half = 0
         self.s = 0
+
+        # finding the "initial state variables values" # HMM
+        initial_values = [x for x in finding_state_variables(v_init, h.celsius)]
+        # print('Initial values [C1, C2, O1, I1, I2]=  ', initial_values)
+        for seg in self.soma:
+            seg.na15.iC1 = initial_values[0]
+            seg.na15.iC2 = initial_values[1]
+            seg.na15.iO1 = initial_values[2]
+            seg.na15.iI1 = initial_values[3]
+            seg.na15.iI2 = initial_values[4]
 
     def clamp(self, v_cl):
         """ Runs a trace and calculates peak currents.
@@ -198,19 +207,20 @@ class Activation:
         curve = cf.boltzmann(x_values_v, gv_slope, v_half, top, bottom)
         plt.plot(x_values_v, curve, c='red')
         # save as PGN file
-        plt.savefig(os.path.join(os.path.split(__file__)[0], 'Plots_Folder/Activation Voltage-Normalized Conductance Relation'))
+        plt.savefig(
+            os.path.join(os.path.split(__file__)[0], 'Plots_Folder/HMM Activation Voltage-Normalized Conductance Relation'))
 
     def plotActivation_IVCurve(self):
         plt.figure()
         plt.xlabel('Voltage $(mV)$')
-        plt.ylabel('Peak Current $(pA)$')
+        plt.ylabel('Peak Current')
         plt.title("Activation: IV Curve")
         plt.plot(self.v_vec, self.ipeak_vec, 'o', c='black')
-        plt.text(-110, -0.05, 'Vrev at ' + str(round(self.vrev, 1)) + ' mV', fontsize=10, c='blue')
+        plt.text(-110, -0.05, 'Vrev at ' + str(round(self.vrev, 1)) + 'mV', fontsize=10, c='blue')
         formatted_peak_i = np.round(min(self.ipeak_vec), decimals=2)
-        plt.text(-110, -0.1, f'Peak Current from IV: {formatted_peak_i} pA', fontsize=10, c='blue')  # pico Amps
+        plt.text(-110, -0.1, f'Peak Current from IV: {formatted_peak_i} mV', fontsize=10, c='blue')
         # save as PGN file
-        plt.savefig(os.path.join(os.path.split(__file__)[0], "Plots_Folder/Activation IV Curve"))
+        plt.savefig(os.path.join(os.path.split(__file__)[0], "Plots_Folder/HMM Activation IV Curve"))
 
     def plotActivation_TimeVRelation(self):
         plt.figure()
@@ -219,17 +229,19 @@ class Activation:
         plt.title('Activation Time/Voltage relation')
         [plt.plot(self.t_vec, self.all_v_vec_t[i], c='black') for i in np.arange(self.L)]
         # save as PGN file
-        plt.savefig(os.path.join(os.path.split(__file__)[0], 'Plots_Folder/Activation Time Voltage Relation'))
+        plt.savefig(os.path.join(os.path.split(__file__)[0], 'Plots_Folder/HMM Activation Time Voltage Relation'))
 
     def plotActivation_TCurrDensityRelation(self):
         plt.figure()
         plt.xlabel('Time $(ms)$')
         plt.ylabel('Current density $(mA/cm^2)$')
         plt.title('Activation Time/Current density relation')
-        curr = np.array(self.all_is)
+        # volt = 20  # current densities up to 20 mV
+        # mask = np.where(self.v_vec < volt)[0]
+        curr = np.array(self.all_is)  # [mask]
         [plt.plot(self.t_vec[1:], curr[i], c='black') for i in np.arange(len(curr))]
         # save as PGN file
-        plt.savefig(os.path.join(os.path.split(__file__)[0], "Plots_Folder/Activation Time Current Density Relation"))
+        plt.savefig(os.path.join(os.path.split(__file__)[0], "Plots_Folder/HMM Activation Time Current Density Relation"))
 
     def plotAllActivation(self):
         """
@@ -239,42 +251,14 @@ class Activation:
         self.plotActivation_IVCurve()
         self.plotActivation_TimeVRelation()
         self.plotActivation_TCurrDensityRelation()
-        
-        
-    def plotAllActivation_with_ax(self, ax_list, cur_params):
-        color = 'red' if cur_params == "variant_params" else 'black'
-        y_offset = -0.2 if cur_params == "variant_params" else 0
-        x_offset = 0
-        
-        ax_list[0].set_xlabel('Voltage $(mV)$')
-        ax_list[0].set_ylabel('Normalized conductance')
-        ax_list[0].set_title('Activation: Voltage/Normalized conductance')
-        ax_list[0].plot(self.v_vec, self.gnorm_vec, 'o', c=color)
-        gv_slope, v_half, top, bottom = cf.calc_act_obj()
-        formatted_gv_slope = np.round(gv_slope, decimals=2)
-        formatted_v_half = np.round(v_half, decimals=2)
-        ax_list[0].text(-10 + x_offset, 0.5 + y_offset, f'Slope: {formatted_gv_slope}', color = color)
-        ax_list[0].text(-10 + x_offset, 0.4 + y_offset, f'V50: {formatted_v_half}', color = color)
-        x_values_v = np.arange(self.st_cl, self.end_cl, 1)
-        curve = cf.boltzmann(x_values_v, gv_slope, v_half, top, bottom)
-        ax_list[0].plot(x_values_v, curve, c=color)
-        
-        ax_list[1].set_xlabel('Voltage $(mV)$')
-        ax_list[1].set_ylabel('Peak Current')
-        ax_list[1].set_title("Activation: IV Curve")
-        ax_list[1].plot(self.v_vec, self.ipeak_vec, 'o', c=color)
-        ax_list[1].text(-110 + x_offset, -0.05 + y_offset, 'Vrev at ' + str(round(self.vrev, 1)) + 'mV', c=color)
-        formatted_peak_i = np.round(min(self.ipeak_vec), decimals=2)
-        ax_list[1].text(-110 + x_offset, -0.1 + y_offset, f'Peak Current from IV: {formatted_peak_i} mV', c=color)
-        
-        
+
 
 ##################
 # Inactivation
 ##################
 class Inactivation:
     def __init__(self, soma_diam=50, soma_L=63.66198, soma_nseg=1, soma_cm=1, soma_Ra=70,
-                 channel_name='na12mut', soma_ena=55, h_celsius=33, v_init=-120, h_dt=0.025, ntrials=range(30),
+                 channel_name='na15', soma_ena=55, h_celsius=33, v_init=-120, h_dt=0.025, ntrials=range(30),
                  dur=500, step=10, st_cl=-120, end_cl=40, v_cl=-120,
                  f3cl_dur0=40, f3cl_amp0=-120, f3cl_dur2=20, f3cl_amp2=-10):
 
@@ -322,6 +306,16 @@ class Inactivation:
 
         self.L = len(self.v_vec)
 
+        # finding the "initial state variables values" # HMM
+        initial_values = [x for x in finding_state_variables(v_init, h.celsius)]
+        # print('Initial values [C1, C2, O1, I1, I2]=  ', initial_values)
+        for seg in self.soma:
+            seg.na15.iC1 = initial_values[0]
+            seg.na15.iC2 = initial_values[1]
+            seg.na15.iO1 = initial_values[2]
+            seg.na15.iI1 = initial_values[3]
+            seg.na15.iI2 = initial_values[4]
+
     def clamp(self, v_cl):
         """ Runs a trace and calculates peak currents.
         Args:
@@ -359,7 +353,7 @@ class Inactivation:
 
     def genInactivation(self):
         if self.inorm_vec == []:
-            h.tstop = 40 + self.dur + 20  # TODO fix padding
+            h.tstop = 40 + self.dur + 20  # TODO fix padding?
 
             for v_cl in self.v_vec:  # iterates across voltages
                 # resizing the vectors
@@ -392,7 +386,8 @@ class Inactivation:
         curve = cf.boltzmann(x_values_v, ssi_slope, v_half, top, bottom)
         plt.plot(x_values_v, curve, c='red')
         # save as PGN file
-        plt.savefig(os.path.join(os.path.split(__file__)[0], 'Plots_Folder/Inactivation Voltage Normalized Current Relation'))
+        plt.savefig(
+            os.path.join(os.path.split(__file__)[0], 'Plots_Folder/HMM Inactivation Voltage Normalized Current Relation'))
 
     def plotInactivation_TimeVRelation(self):
         plt.figure()
@@ -401,7 +396,7 @@ class Inactivation:
         plt.title('Inactivation Time/Voltage relation')
         [plt.plot(self.t_vec, self.all_v_vec_t[i], c='black') for i in np.arange(self.L)]
         # save as PGN file
-        plt.savefig(os.path.join(os.path.split(__file__)[0], 'Plots_Folder/Inactivation Time Voltage Relation'))
+        plt.savefig(os.path.join(os.path.split(__file__)[0], 'Plots_Folder/HMM Inactivation Time Voltage Relation'))
 
     def plotInactivation_TCurrDensityRelation(self):
         plt.figure()
@@ -410,51 +405,7 @@ class Inactivation:
         plt.title('Inactivation Time/Current density relation')
         [plt.plot(self.t_vec[1:], self.all_is[i], c='black') for i in np.arange(self.L)]
         # save as PGN file
-        plt.savefig(os.path.join(os.path.split(__file__)[0], "Plots_Folder/Inactivation Time Current Density Relation"))
-
-    def plotInactivation_Tau_0mV(self):
-        plt.figure()
-        plt.xlabel('Time $(ms)$')
-        plt.ylabel('Current density $(mA/cm^2)$')
-        plt.title('Inactivation Tau at 0 mV')
-        # select 0 mV
-        volt = 0  # mV
-        mask = np.where(self.v_vec == volt)[0]
-        curr = np.array(self.all_is)[mask][0]
-        time = np.array(self.t_vec)[1:]
-        # fit exp: IFit(t) = A * exp (-t/τ) + C
-        ts, data, xs, ys, tau = self.find_tau0_inact(curr)
-        # plot
-        plt.plot(ts, data, color="black")
-        plt.plot(xs, ys, color="red")
-        formatted_tau = np.round(tau, decimals=3)
-        plt.text(0.2, -0.01, f"Tau at 0 mV: {formatted_tau}", color="blue")
-        # save as PGN file
-        plt.savefig(os.path.join(os.path.split(__file__)[0], "Plots_Folder/Inactivation Tau at 0 mV"))
-
-    def fit_exp(self, x, a, b, c):
-        """
-        IFit(t) = A * exp (-t/τ) + C
-        """
-        return a * np.exp(-x/b) + c
-
-    def find_tau0_inact(self, raw_data):
-        # take peak curr and onwards
-        min_val, mindex = min((val, idx) for (idx, val) in enumerate(raw_data[:int(0.7 * len(raw_data))]))
-        padding = 15   # after peak
-        data = raw_data[mindex:mindex + padding]
-        ts = [0.1 * i for i in range(len(data))]  # make x values which match sample times
-
-        # calc tau and fit exp
-        popt, pcov = optimize.curve_fit(fit_exp, ts, data)  # fit exponential curve
-        perr = np.sqrt(np.diag(pcov))
-        # print('in ' + str(all_tau_sweeps[i]) + ' the error was ' + str(perr))
-        xs = np.linspace(ts[0], ts[len(ts) - 1], 1000)  # create uniform x values to graph curve
-        ys = fit_exp(xs, *popt)  # get y values
-        vmax = max(ys) - min(ys)  # get diff of max and min voltage
-        vt = min(ys) + .37 * vmax  # get vmax*1/e
-        tau = (np.log([(vt - popt[2]) / popt[0]]) / (-popt[1]))[0]  # find time at which curve = vt
-        return ts, data, xs, ys, tau
+        plt.savefig(os.path.join(os.path.split(__file__)[0], "Plots_Folder/HMM Inactivation Time Current Density Relation"))
 
     def plotAllInactivation(self):
         """
@@ -463,51 +414,7 @@ class Inactivation:
         self.plotInactivation_VInormRelation()
         self.plotInactivation_TimeVRelation()
         self.plotInactivation_TCurrDensityRelation()
-        self.plotInactivation_Tau_0mV()
-        
-    def plotAllInactivation_with_ax(self, ax_list, cur_params):
-        color = 'red' if cur_params == "variant_params" else 'black'
-        y_offset = -0.2 if cur_params == "variant_params" else 0
-        x_offset = 0
-        
-        ax_list[0].set_xlabel('Voltage $(mV)$')
-        ax_list[0].set_ylabel('Normalized current')
-        ax_list[0].set_title('Inactivation: Voltage/Normalized Current Relation')
-        ax_list[0].plot(self.v_vec, self.inorm_vec, 'o', c=color)
-        ssi_slope, v_half, top, bottom = cf.calc_inact_obj()
-        formatted_ssi_slope = np.round(ssi_slope, decimals=2)
-        formatted_v_half = np.round(v_half, decimals=2)
-        ax_list[0].text(-10, 0.5 + y_offset, f'Slope: {formatted_ssi_slope}', c=color)
-        ax_list[0].text(-10, 0.4 + y_offset, f'V50: {formatted_v_half}', c=color)
-        x_values_v = np.arange(self.st_cl, self.end_cl, 1)
-        curve = cf.boltzmann(x_values_v, ssi_slope, v_half, top, bottom)
-        ax_list[0].plot(x_values_v, curve, c=color)
-        
-        ax_list[1].set_xlabel('Time $(ms)$')
-        ax_list[1].set_ylabel('Current density $(mA/cm^2)$')
-        ax_list[1].set_title('Inactivation Tau at 0 mV')
-        # select 0 mV
-        volt = 0  # mV
-        mask = np.where(self.v_vec == volt)[0]
-        curr = np.array(self.all_is)[mask][0]
-        time = np.array(self.t_vec)[1:]
-        # fit exp: IFit(t) = A * exp (-t/τ) + C
-        ts, data, xs, ys, tau = self.find_tau0_inact(curr)
-        # plot
-        ax_list[1].plot(ts, data, color=color)
-        ax_list[1].plot(xs, ys, color=color)
-        
-        ax_list[2].set_xlabel('Time $(ms)$')
-        ax_list[2].set_ylabel('Current density $(mA/cm^2)$')
-        ax_list[2].set_title('Inactivation Time/Current density relation')
-        [ax_list[2].plot(self.t_vec[1:], self.all_is[i], c=color) for i in np.arange(self.L)]
-        
-        
-        ax_list[3].set_xlabel('Time $(ms)$')
-        ax_list[3].set_ylabel('Voltage $(mV)$')
-        ax_list[3].set_title('Inactivation Time/Voltage relation')
-        [ax_list[3].plot(self.t_vec, self.all_v_vec_t[i], c=color) for i in np.arange(self.L)]
-        
+
 
 ##################
 # Recovery from Inactivation (RFI)
@@ -515,7 +422,7 @@ class Inactivation:
 ##################
 class RFI:
     def __init__(self, soma_diam=50, soma_L=63.66198, soma_nseg=1, soma_cm=1, soma_Ra=70,
-                 channel_name='na12mut', soma_ena=55, h_celsius=33, v_init=-90, h_dt=0.1, ntrials=30,
+                 channel_name='na15', soma_ena=55, h_celsius=33, v_init=-90, h_dt=0.1, ntrials=30,
                  min_inter=0.1, max_inter=5000, num_pts=50, cond_st_dur=1000, res_pot=-90, dur=0.1,
                  vec_pts=[1, 1.5, 3, 5.6, 10, 30, 56, 100, 150, 300, 560, 1000, 2930, 5000],
                  f3cl_dur0=5, f3cl_amp0=-90, f3cl_amp1=0, f3cl_dur3=20, f3cl_amp3=0, f3cl_dur4=5, f3cl_amp4=-90):
@@ -565,17 +472,27 @@ class RFI:
 
         # vectors for data handling RecInactTau
         self.rec_vec = []  # RFI (peak2/peak1)
-        self.time_vec = [] # same as time in vec_pts
-        self.log_time_vec = [] # same as time in vec_ptsm but logged
+        self.time_vec = []  # same as time in vec_pts
+        self.log_time_vec = []  # same as time in vec_ptsm but logged
         self.t_vec = []  # vector for time steps (h.dt)
         self.v_vec_t = []  # vector for voltage as function of time
         self.i_vec_t = []  # vector for current
         self.rec_inact_tau_vec = []  # RFI taus
         self.all_is = []  # all currents
         self.all_v_vec_t = []  # all voltages
-        self.all_t_vec = [] # all h.t
+        self.all_t_vec = []  # all h.t
 
         self.L = len(self.vec_pts)
+
+        # finding the "initial state variables values" # HMM
+        initial_values = [x for x in finding_state_variables(v_init, h.celsius)]
+        # print('Initial values [C1, C2, O1, I1, I2]=  ', initial_values)
+        for seg in self.soma:
+            seg.na15.iC1 = initial_values[0]
+            seg.na15.iC2 = initial_values[1]
+            seg.na15.iO1 = initial_values[2]
+            seg.na15.iI1 = initial_values[3]
+            seg.na15.iI2 = initial_values[4]
 
     def clampRecInactTau(self, dur):
         """ Runs a trace and calculates peak currents.
@@ -648,7 +565,7 @@ class RFI:
         plt.title('Log(Time)/Fractional recovery (P2/P1)')
         plt.plot(self.log_time_vec, self.rec_vec, 'o', c='black')
         # save as PGN file
-        plt.savefig(os.path.join(os.path.split(__file__)[0], 'Plots_Folder/RFI Log Time Fractional recovery Relation'))
+        plt.savefig(os.path.join(os.path.split(__file__)[0], 'Plots_Folder/HMM RFI Log Time Fractional recovery Relation'))
 
     def plotRFI_VInormRelation(self):
         plt.figure()
@@ -664,7 +581,7 @@ class RFI:
         plt.text(-10, 0.85, f'% Fast Component: {formatted_percentFast}')
         plt.plot(self.time_vec, self.rec_vec, 'o', c='black')
         # save as PGN file
-        plt.savefig(os.path.join(os.path.split(__file__)[0], 'Plots_Folder/RFI Time Fractional recovery Relation'))
+        plt.savefig(os.path.join(os.path.split(__file__)[0], 'Plots_Folder/HMM RFI Time Fractional recovery Relation'))
 
     def plotRFI_TimeVRelation(self):
         plt.figure()
@@ -673,7 +590,7 @@ class RFI:
         plt.title('RFI Time/Voltage relation')
         [plt.plot(self.all_t_vec[i], self.all_v_vec_t[i], c='black') for i in np.arange(self.L)]
         # save as PGN file
-        plt.savefig(os.path.join(os.path.split(__file__)[0], 'Plots_Folder/RFI Time Voltage Relation'))
+        plt.savefig(os.path.join(os.path.split(__file__)[0], 'Plots_Folder/HMM RFI Time Voltage Relation'))
 
     def plotRFI_TCurrDensityRelation(self):
         plt.figure()
@@ -682,7 +599,7 @@ class RFI:
         plt.title('RFI Time/Current density relation')
         [plt.plot(self.all_t_vec[i], self.all_is[i], c='black') for i in np.arange(self.L)]
         # save as PGN file
-        plt.savefig(os.path.join(os.path.split(__file__)[0], "Plots_Folder/RFI Time Current Density Relation"))
+        plt.savefig(os.path.join(os.path.split(__file__)[0], "Plots_Folder/HMM RFI Time Current Density Relation"))
 
     def plotAllRFI(self):
         """
@@ -692,49 +609,16 @@ class RFI:
         self.plotRFI_LogVInormRelation()
         self.plotRFI_TimeVRelation()
         self.plotRFI_TCurrDensityRelation()
-        
-    def plotAllRFI_with_ax(self, ax_list, cur_params):
-        color = 'red' if cur_params == "variant_params" else 'black'
-        y_offset = -0.35 if cur_params == "variant_params" else 0
-        x_offset = 0
-        
-        ax_list[0].set_xlabel('Time $(ms)$')
-        ax_list[0].set_ylabel('Fractional recovery (P2/P1)')
-        ax_list[0].set_title('Time/Fractional recovery (P2/P1)')
-        y0, plateau, percent_fast, k_fast, k_slow, tau0 = cf.calc_recov_obj()
-        formatted_tauSlow = np.round(1 / k_slow, decimals=2)
-        formatted_tauFast = np.round(1 / k_fast, decimals=2)
-        formatted_percentFast = np.round(percent_fast, decimals=4)
-        plt.text(-10, 0.65 + y_offset, f'Tau Slow: {formatted_tauSlow}',c=color)
-        plt.text(-10, 0.75 + y_offset, f'Tau Fast: {formatted_tauFast}',c=color)
-        plt.text(-10, 0.85 + y_offset, f'% Fast Component: {formatted_percentFast}',c=color)
-        ax_list[0].plot(self.time_vec, self.rec_vec, 'o', c=color)
-        
-        ax_list[1].set_xlabel('Log(Time)')
-        ax_list[1].set_ylabel('Fractional recovery (P2/P1)')
-        ax_list[1].set_title('Log(Time)/Fractional recovery (P2/P1)')
-        ax_list[1].plot(self.log_time_vec, self.rec_vec, 'o', c=color)
-        
-        ax_list[2].set_xlabel('Time $(ms)$')
-        ax_list[2].set_ylabel('Voltage $(mV)$')
-        ax_list[2].set_title('RFI Time/Voltage relation')
-        [ax_list[2].plot(self.all_t_vec[i], self.all_v_vec_t[i], c=color) for i in np.arange(self.L)]
 
-        ax_list[3].set_xlabel('Time $(ms)$')
-        ax_list[3].set_ylabel('Current density $(mA/cm^2)$')
-        ax_list[3].set_title('RFI Time/Current density relation')
-        [ax_list[3].plot(self.all_t_vec[i], self.all_is[i], c=color) for i in np.arange(self.L)]
-        
-        
 
 ##################
 # Ramp Protocol
 ##################
 class Ramp:
     def __init__(self, soma_diam=50, soma_L=63.66198, soma_nseg=1, soma_cm=1, soma_Ra=70,
-                 channel_name='na12mut', soma_ena=55, h_celsius=33, v_init=-120, t_init = 30,
-                 v_first_step = -60, t_first_step = 30, v_ramp_end = 0, t_ramp = 300, t_plateau = 100, 
-                 v_last_step = -120, t_last_step = 30 ,h_dt=0.025):
+                 channel_name='na12mut', soma_ena=55, h_celsius=33, v_init=-120, t_init=30,
+                 v_first_step=-60, t_first_step=30, v_ramp_end=0, t_ramp=300, t_plateau=100,
+                 v_last_step=-120, t_last_step=30, h_dt=0.025):
         self.h = h  # NEURON h
         # one-compartment cell (soma)
         self.soma = h.Section(name='soma2')
@@ -746,38 +630,37 @@ class Ramp:
         self.soma.insert(channel_name)  # insert mechanism
         self.soma.ena = soma_ena
 
-        self.time_steps_arr = []
         # clamping parameters
         def make_ramp():
-            time_steps_arr = np.array([t_init,t_first_step,t_ramp,t_plateau,t_last_step])
-            time_steps_arr = (time_steps_arr/h_dt).astype(int)
+            time_steps_arr = np.array([t_init, t_first_step, t_ramp, t_plateau, t_last_step])
+            time_steps_arr = (time_steps_arr / h_dt).astype(int)
             time_steps_arr = np.cumsum(time_steps_arr)
             ntimesteps = time_steps_arr[-1]
             ramp_v = np.zeros(ntimesteps)
             ramp_v[0:time_steps_arr[0]] = v_init
             ramp_v[time_steps_arr[0]:time_steps_arr[1]] = v_first_step
-            ramp_v[time_steps_arr[1]:time_steps_arr[2]] = np.linspace(v_first_step,v_ramp_end,time_steps_arr[2]-time_steps_arr[1])
+            ramp_v[time_steps_arr[1]:time_steps_arr[2]] = np.linspace(v_first_step, v_ramp_end,
+                                                                      time_steps_arr[2] - time_steps_arr[1])
             ramp_v[time_steps_arr[2]:time_steps_arr[3]] = v_ramp_end
             ramp_v[time_steps_arr[3]:time_steps_arr[4]] = v_last_step
-            self.time_steps_arr = time_steps_arr
             return ramp_v
-        
+
         self.ntrials = 1  #
         h.celsius = h_celsius  # temperature in celsius
         self.stim_ramp = make_ramp()  # the voltage of the whole protocol
         h.dt = h_dt  # ms - value of the fundamental integration time step, dt, used by fadvance().
         self.v_init = v_init  # holding potential
-        self.t_start_persist = int((t_init + t_first_step + t_ramp) / h_dt) #time that plateau starts
-        self.t_end_persist = int((t_init + t_first_step + t_ramp + t_plateau) / h_dt) #time that plateau ends
+        self.t_start_persist = int((t_init + t_first_step + t_ramp) / h_dt)  # time that plateau starts
+        self.t_end_persist = int((t_init + t_first_step + t_ramp + t_plateau) / h_dt)  # time that plateau ends
         self.t_total = t_init + t_first_step + t_ramp + t_plateau + t_last_step
 
         # a two-electrodes voltage clamp
         self.f3cl = h.VClamp(self.soma(0.5))
         self.f3cl.dur[0] = 1e9
         self.f3cl.amp[0] = self.stim_ramp[0]
-        
+
         # vectors for data handling
-        self.t_vec = np.ones(len(self.stim_ramp))*h_dt
+        self.t_vec = np.ones(len(self.stim_ramp)) * h_dt
         self.t_vec = np.cumsum(self.t_vec)
         self.v_vec = self.stim_ramp
         self.v_vec_t = []  # vector for voltage as function of time
@@ -792,46 +675,39 @@ class Ramp:
         h.finitialize(self.v_init)  # calling the INITIAL block of the mechanism inserted in the section.
         # parameters initialization
         stim_counter = 0
-        
+
         dtsave = h.dt
         while round(h.t, 3) < h.tstop:  # runs a single trace, calculates current
             self.f3cl.amp[0] = self.stim_ramp[stim_counter]
             dens = self.f3cl.i / self.soma(0.5).area() * 100.0 - self.soma(
                 0.5).i_cap  # clamping current in mA/cm2, for each dt
-                
+
             self.v_vec_t.append(self.soma.v)  # trace to be plotted
             self.i_vec.append(dens)  # trace to be plotted
-            
+
             stim_counter += 1
             h.fadvance()
-    
+
     def genRamp(self):
         h.tstop = self.t_total
         self.clamp(self.v_vec[0])
-    
+
     def areaUnderCurve(self):
         """ Calculates and returns normalized area (to activation IV) under IV curve of Ramp
         """
-        maskStart, maskEnd = self.time_steps_arr[1], self.time_steps_arr[2]  # selects ramp (incline) portion only
-        i_vec_ramp = self.i_vec[maskStart:maskEnd]
-        v_vec_t_ramp = self.v_vec_t[maskStart:maskEnd]
-        #plt.plot(self.t_vec[maskStart:maskEnd], self.v_vec[maskStart:maskEnd], color= 'b') # uncomment to view area taken
-        area = trapz(i_vec_ramp, x=v_vec_t_ramp)  # find area
+        area = trapz(self.i_vec, x=self.v_vec_t)  # find area
         act = Activation()
         act.genActivation()
+        #print(self.i_vec)
         area = area / min(act.ipeak_vec)  # normalize to peak currents from activation
         return area
-    
+
     def persistentCurrent(self):
         """ Calculates persistent current (avg current of last 100 ms at 0 mV)
-        Normalized by peak from IV (same number as areaUnderCurve).
         """
         persistent = self.i_vec[self.t_start_persist:self.t_end_persist]
-        act = Activation()
-        act.genActivation()
-        IVPeak = min(act.ipeak_vec)
-        return (sum(persistent)/len(persistent)) / IVPeak
-    
+        return sum(persistent) / len(persistent)
+
     def plotRamp_TimeVRelation(self):
         plt.figure()
         plt.xlabel('Time $(ms)$')
@@ -839,35 +715,35 @@ class Ramp:
         plt.title('Ramp Time/Voltage relation')
         plt.plot(self.t_vec, self.v_vec, color='black')
         # save as PGN file
-        plt.savefig(os.path.join(os.path.split(__file__)[0], 'Plots_Folder/Ramp Time Voltage relation'))
-    
+        plt.savefig(os.path.join(os.path.split(__file__)[0], 'Plots_Folder/HMM Ramp Time Voltage relation'))
+
     def plotRamp_TimeCurrentRelation(self):
         area = round(self.areaUnderCurve(), 2)
         persistCurr = "{:.2e}".format(round(self.persistentCurrent(), 4))
-        
+
         f, (ax1, ax2) = plt.subplots(1, 2, sharey=True)
-        
-        f.add_subplot(111, frameon=False) #for shared axes labels and big title
+
+        f.add_subplot(111, frameon=False)  # for shared axes labels and big title
         # hide tick and tick label of the big axes
         plt.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
         plt.grid(False)
         plt.title("Ramp: Time Current Density Relation", x=0.4, y=1.1)
         plt.xlabel('Time $(ms)$')
-        plt.ylabel('Current', labelpad= 25)
-        
+        plt.ylabel('Current', labelpad=25)
+
         # starting + first step + ramp section
         ax1.set_title("Ramp")
-        ax1.plot(self.t_vec[1:self.t_start_persist], self.i_vec[1:self.t_start_persist], 'o', c='black', markersize = 0.1)
-        plt.text(0.05, 0.2, f'Normalized \narea under \ncurve: {area}', c = 'blue', fontsize=10)
-        
+        ax1.plot(self.t_vec[1:self.t_start_persist], self.i_vec[1:self.t_start_persist], 'o', c='black', markersize=0.1)
+        plt.text(0.05, 0.2, f'Normalized \narea under \ncurve: {area}', c='blue', fontsize=10)
+
         # persistent current + last step section
         ax2.set_title("Persistent Current")
-        ax2.plot(self.t_vec[self.t_start_persist:], self.i_vec[self.t_start_persist:], 'o', c='black', markersize = 0.1)
-        plt.text(0.75, 0.5, f'Persistent Current:\n{persistCurr} mV', c = 'blue', fontsize=10, ha='center')
-        
+        ax2.plot(self.t_vec[self.t_start_persist:], self.i_vec[self.t_start_persist:], 'o', c='black', markersize=0.1)
+        plt.text(0.75, 0.5, f'Persistent Current:\n{persistCurr} mV', c='blue', fontsize=10, ha='center')
+
         # save as PGN file
         plt.tight_layout()
-        plt.savefig(os.path.join(os.path.split(__file__)[0], 'Plots_Folder/Ramp Time Current Density Relation'))
+        plt.savefig(os.path.join(os.path.split(__file__)[0], 'Plots_Folder/HMM Ramp Time Current Density Relation'))
 
     def plotAllRamp(self):
         """
@@ -875,39 +751,7 @@ class Ramp:
         """
         self.plotRamp_TimeVRelation()
         self.plotRamp_TimeCurrentRelation()
-        
-    def plotAllRamp_with_ax(self, ax_list, cur_params):
-        color = 'red' if cur_params == "variant_params" else 'black'
-        y_offset = -0.02 if cur_params == "variant_params" else 0
-        x_offset = 0
-                            
-        ax_list[0].set_xlabel('Time $(ms)$')
-        ax_list[0].set_ylabel('Voltage $(mV)$')
-        ax_list[0].set_title('Ramp Time/Voltage relation')
-        ax_list[0].plot(self.t_vec, self.v_vec, color=color)
 
-                            
-        area = round(self.areaUnderCurve(), 2)
-        persistCurr = "{:.2e}".format(round(self.persistentCurrent(), 4))
-
-        # starting + first step + ramp section
-        ax_list[1].set_xlabel('Time $(ms)$')
-        ax_list[1].set_ylabel('Current', labelpad= 25)
-        ax_list[1].set_title("Ramp")
-        ax_list[1].plot(self.t_vec[1:self.t_start_persist], self.i_vec[1:self.t_start_persist], 'o', c=color, markersize = 0.1)
-        ax_list[1].text(0 + x_offset, -0.08 + y_offset, f'Normalized \narea under \ncurve: {area}', color=color, fontsize=10)
-        
-        # persistent current + last step section
-        ax_list[2].set_xlabel('Time $(ms)$')
-        ax_list[2].set_ylabel('Current', labelpad= 25)
-        ax_list[2].set_title("Persistent Current")
-        ax_list[2].plot(self.t_vec[self.t_start_persist:], self.i_vec[self.t_start_persist:], 'o', c=color, markersize = 0.1)
-        ax_list[2].text(420 + x_offset, -0.04 + y_offset, f'Persistent Current:\n{persistCurr} mV', color=color, fontsize=10, ha='center')
-                            
-                            
-        
-        
-        
 ##################
 # RFI dv tau
 ##################
@@ -994,7 +838,8 @@ class RFI_dv:
 
         while (h.t < h.tstop):  # runs a single trace, calculates peak current
 
-            dens = self.f3cl.i / self.soma(0.5).area() * 100.0 - self.soma(0.5).i_cap  # clamping current in mA/cm2, for each dt
+            dens = self.f3cl.i / self.soma(0.5).area() * 100.0 - self.soma(
+                0.5).i_cap  # clamping current in mA/cm2, for each dt
             self.t_vec.append(h.t)
             self.v_vec_t.append(self.soma.v)
             self.i_vec_t.append(dens)
@@ -1004,7 +849,8 @@ class RFI_dv:
                     peak_curr1 = abs(dens)
                 pre_i1 = abs(dens)
 
-            if ((h.t > (5 + self.cond_st_dur + self.dur)) and (h.t < (15 + self.cond_st_dur + self.dur))):  # evaluate the second peak
+            if ((h.t > (5 + self.cond_st_dur + self.dur)) and (
+                    h.t < (15 + self.cond_st_dur + self.dur))):  # evaluate the second peak
 
                 if (pre_i2 < abs(dens)):
                     peak_curr2 = abs(dens)
@@ -1164,215 +1010,6 @@ class RFI_dv:
             k += 1
 
         return rec_return, self.vec_pts
-    
-    def plotAllRecInact_with_ax(self, ax_list, cur_params):
-        color = 'red' if cur_params == "variant_params" else 'black'
-        y_offset = -0.2 if cur_params == "variant_params" else 0
-        x_offset = 0
-
-        # if time_vec is changed to see plot in not log time
-        # then change xlim to (-150, 5 + cond_st_dur + max_inter + 20 + 5)
-        # ax5.set_xlim(-1.1,1.1)
-        # ax5.set_ylim(-0.1, 1.1)
-        ax_list[0].set_xlabel('Log(Time)')
-        ax_list[0].set_ylabel('Fractional recovery (P2/P1)')
-        ax_list[0].set_title('Log(Time)/Fractional recovery (P2/P1)')
-        k = 0  # counter
-        for amp in self.vec_pts:
-            # resizing the vectors
-            self.t_vec.resize(0)
-            self.i_vec_t.resize(0)
-            self.v_vec_t.resize(0)
-            self.rec_vec.resize(0)
-            self.time_vec.resize(0)
-            self.log_time_vec.resize(0)
-            self.rec_inact_tau_vec.resize(0)
-
-            self.clampRecInact_dv_Tau(amp)
-            k += 1
-
-            # change log_time_vec to time_vec (ms) to see plot in not log time
-            ln5 = ax_list[0].scatter(self.time_vec, self.rec_vec, c=color)
-            ax_list[0].set_xscale('log')
-
-            
-        ax_list[1].set_xlim(-150, 5 + self.max_inter + 20 + 100)
-        ax_list[1].set_ylim(-121, 20)
-        ax_list[1].set_xlabel('Time $(ms)$')
-        ax_list[1].set_ylabel('Voltage $(mV)$')
-        ax_list[1].set_title('Time/Voltage Reltation')
-        k = 0  # counter
-        for dur in self.vec_pts:
-            # resizing the vectors
-            self.t_vec.resize(0)
-            self.i_vec_t.resize(0)
-            self.v_vec_t.resize(0)
-            self.rec_vec.resize(0)
-            self.time_vec.resize(0)
-            self.log_time_vec.resize(0)
-            self.rec_inact_tau_vec.resize(0)
-            self.clampRecInact_dv_Tau(dur)
-            k += 1
-            ln5 = ax_list[1].plot(self.t_vec, self.v_vec_t, c=color)
-
-
-def fit_sigmoid(x, a, b):
-    """
-    Fit a sigmoid curve to the array of datapoints. 
-    """
-    return 1.0 / (1.0 + np.exp(-a * (x - b)))
-
-
-def update_params(vc_params):
-    nrn_h = activationNa12("geth")
-    params = list(vc_params.keys())
-    for p in params:
-        nrn_h(p + '_na12mut =' + str(vc_params[p]))
-
-
-def fit_exp(x, a, b, c):
-    return a * np.exp(-b * x) + c
-
-
-def find_tau_inact(inact_i, ax=None):
-    all_tau_sweeps = [-130 + i * 10 for i in
-                      range(len(inact_i))]  # Need to change the constant every time. Need to fix.
-    all_taus = []
-    for i in range(len(inact_i)):
-        raw_data = inact_i[i][1:]
-
-        min_val, mindex = min((val, idx) for (idx, val) in enumerate(raw_data[:int(0.7 * len(raw_data))]))
-        data = raw_data[mindex:mindex + 100]
-        ts = [0.1 * i for i in range(len(data))]  # make x values which match sample times
-        try:
-            popt, pcov = optimize.curve_fit(fit_exp, ts, data)  # fit exponential curve
-            perr = np.sqrt(np.diag(pcov))
-            # print('in ' + str(all_tau_sweeps[i]) + ' the error was ' + str(perr))
-            xs = np.linspace(ts[0], ts[len(ts) - 1], 1000)  # create uniform x values to graph curve
-            ys = fit_exp(xs, *popt)  # get y values
-            vmax = max(ys) - min(ys)  # get diff of max and min voltage
-            vt = min(ys) + .37 * vmax  # get vmax*1/e
-            tau = (np.log([(vt - popt[2]) / popt[0]]) / (-popt[1]))[0]  # find time at which curve = vt
-        except:
-            tau = 0
-        if ax is not None:
-            if all_tau_sweeps[i] == 0:
-                ts = [0.1 * i for i in range(len(raw_data))]
-                xs = xs + ts[mindex]
-                ax.plot(ts, raw_data, color="red")
-                tau_actual = tau+0.1*mindex #adjust for slicing by adding time sliced off
-                #ax.plot(xs, ys, color="blue")
-                #plt.vlines(tau, min(ys)-.02, max(ys)+.02)
-        # uncomment to plot
-        #plt.vlines(tau, min(ys)-.02, max(ys)+.02)
-        #plt.figure()
-        #plt.plot(ts, data, color="black")
-        #plt.plot(xs, ys, color="red")
-        #plt.text(0, 0, i)
-        #plt.show()
-
-        all_taus.append(tau)
-
-    tau_sweeps = []
-    taus = []
-    for i in range(len(all_tau_sweeps)):
-        if all_tau_sweeps[i] >= -30:
-            if all_tau_sweeps[i] == 0:
-                tau0 = all_taus[i]
-            tau_sweeps.append(all_tau_sweeps[i])
-            taus.append(all_taus[i])
-    return taus, tau_sweeps, tau0
-
-
-def plot_act_inact_mut(new_params, wt_data):
-    update_params(new_params)
-    act, act_x, act_i = activationNa12("genActivation")
-    act = list(act.to_python())
-    act_x = list(act_x)
-    inact, inact_x, inact_i = inactivationNa12("genInactivation")
-    inact = list(inact.to_python())
-    inact_x = list(inact_x)
-
-    popt_act, pcov = optimize.curve_fit(fit_sigmoid, act_x, act, p0=[-.120, act[0]], maxfev=5000)
-    popt_inact, pcov = optimize.curve_fit(fit_sigmoid, inact_x, inact, p0=[-.120, inact[0]], maxfev=5000)
-    act_even_xs = np.linspace(act_x[0], act_x[len(act_x) - 1], 100)
-    inact_even_xs = np.linspace(inact_x[0], inact_x[len(act_x) - 1], 100)
-    act_curve = fit_sigmoid(act_even_xs, *popt_act)
-    inact_curve = fit_sigmoid(inact_even_xs, *popt_inact)
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))
-    ax1.plot(wt_data['act_x'], wt_data['act'], 'black')
-    ax1.plot(wt_data['inact_x'], wt_data['inact'], 'black')
-    ax1.plot(act_even_xs, act_curve, color='red')
-    ax1.plot(inact_even_xs, inact_curve, color='red')
-    ax1.set_xlabel('Volts[mV]')
-    ax1.set_ylabel('Fraction Activated')
-    # act_x = list(range(-120,40,10))
-    # inact_x = list(range(-120,40,10))
-    ax1.plot(act_x, act, 'o', color='red')
-    ax1.plot(inact_x, inact, 'o', color='red')
-
-    taus, tau_sweeps, tau0 = find_tau_inact(inact_i)
-    popt, pcov = optimize.curve_fit(fit_exp, tau_sweeps, taus, maxfev=5000)
-    tau_xs = np.linspace(tau_sweeps[0], tau_sweeps[len(tau_sweeps) - 1], 1000)
-    tau_ys = fit_exp(tau_xs, *popt)
-    ax2.plot(wt_data['tau_x'], wt_data['tau_y'], 'black')
-    ax2.scatter(tau_sweeps, taus, color='red')
-    ax2.plot(tau_xs, tau_ys, 'red')
-    ax2.set_xlabel('Volts[mV]')
-    ax2.set_ylabel('Inact tau[mS]')
-    plt.show();
-    fig.savefig('vclamp_mut.pdf')
-
-
-def plot_act_inact_wt():
-    plot_act = True
-    act, act_x, act_i = activationNa12("genActivation")
-    act = list(act.to_python())
-    act_x = list(act_x)
-    inact, inact_x, inact_i = inactivationNa12("genInactivation")
-    inact = list(inact.to_python())
-    inact_x = list(inact_x)
-    popt_act, pcov = optimize.curve_fit(fit_sigmoid, act_x, act, p0=[-.120, act[0]], maxfev=5000)
-    popt_inact, pcov = optimize.curve_fit(fit_sigmoid, inact_x, inact, p0=[-.120, inact[0]], maxfev=5000)
-    act_even_xs = np.linspace(act_x[0], act_x[len(act_x) - 1], 100)
-    inact_even_xs = np.linspace(inact_x[0], inact_x[len(act_x) - 1], 100)
-    act_curve = fit_sigmoid(act_even_xs, *popt_act)
-    inact_curve = fit_sigmoid(inact_even_xs, *popt_inact)
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))
-
-    # taus, tau_sweeps, tau0 = find_tau_inact(inact_i) #this is when using inactivation protocol
-    taus, tau_sweeps, tau0 = find_tau_inact(act_i)  # this is when using inactivation protocol
-
-    popt, pcov = optimize.curve_fit(fit_exp, tau_sweeps, taus, maxfev=5000)
-    tau_xs = np.linspace(tau_sweeps[0], tau_sweeps[len(tau_sweeps) - 1], 1000)
-    tau_ys = fit_exp(tau_xs, *popt)
-
-    ax1.plot(act_even_xs, act_curve, color='black')
-    ax1.plot(inact_even_xs, inact_curve, color='black')
-    # act_x = list(range(-120,40,10))
-    # inact_x = list(range(-120,40,10))
-    ax1.plot(act_x, act, 'o', color='black')
-    ax1.plot(inact_x, inact, 'o', color='black')
-
-    ax2.scatter(tau_sweeps, taus, color='black')
-    ax2.plot(tau_xs, tau_ys, 'black')
-    plt.show();
-    ans = {}
-    ans['act_x'] = act_even_xs
-    ans['inact_x'] = inact_even_xs
-    ans['act'] = act_curve
-    ans['inact'] = inact_curve
-    ans['tau_x'] = tau_xs
-    ans['tau_y'] = tau_ys
-
-    return ans
-
-
-# wt_act_inact = plot_act_inact_wt()
-# vclamp_params = {'tha_na12mut':-15,'qa_na12mut':7.2,'thinf_na12mut':-45,'qinf_na12mut':7}
-# plot_act_inact_mut(vclamp_params,wt_act_inact)
-# plot_act_inact_wt()
-# recInactTauNa12("plotRecInact")
 
 
 #######################
@@ -1412,19 +1049,4 @@ if __name__ == "__main__":
         genRFIdv.plotRecInactProcedure_dv()
 
     elif args.function == 6:
-        # run all
-        genAct = Activation()
-        genAct.genActivation()
-        genAct.plotAllActivation()
-
-        genInact = Inactivation()
-        genInact.genInactivation()
-        genInact.plotAllInactivation()
-
-        genRFI = RFI()
-        genRFI.genRecInactTau()
-        genRFI.plotAllRFI()
-
-        genRamp = Ramp()
-        genRamp.genRamp()
-        genRamp.plotAllRamp()
+        pass

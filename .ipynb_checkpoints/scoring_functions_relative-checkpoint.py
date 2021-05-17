@@ -41,8 +41,8 @@ class Score_Function:
     def total_rmse(self):
         try:
             gv_slope, v_half_act, top, bottom = cf.calc_act_obj()
-            ssi_slope, v_half_inact, top, bottom = cf.calc_inact_obj()
-            y0, plateau, percent_fast, k_fast, k_slow, tau0 = cf.calc_recov_obj()
+            ssi_slope, v_half_inact, top, bottom, tau0 = cf.calc_inact_obj()
+            y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj()
         except ZeroDivisionError:
             print('Zero Division Error')
             return (1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000)
@@ -69,8 +69,8 @@ class Score_Function:
         
         persistent_err = 0
         #return (v_half_act_err, gv_slope_err, v_half_ssi_err, ssi_slope_err, tau_fast_err, tau_slow_err, percent_fast_err, udb20_err, tau0_err, ramp_err, persistent_err)
-        return (v_half_act_err, gv_slope_err, v_half_ssi_err, ssi_slope_err, tau_fast_err, tau_slow_err, percent_fast_err, tau0_err)
-
+        return (v_half_act_err, gv_slope_err, v_half_ssi_err, ssi_slope_err, tau_fast_err, tau_slow_err)
+        #return (tau0,)
 
     def dv_half_act(self, plus_minus_wild, v_half):
         try:

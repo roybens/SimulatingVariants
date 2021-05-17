@@ -1,0 +1,5 @@
+Warning: Python module not loaded, you already have Python loaded via conda init
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+slurmstepd: error: *** STEP 42654295.0 ON nid00604 CANCELLED AT 2021-05-15T14:41:05 ***
+srun: got SIGCONT
+srun: forcing job termination
