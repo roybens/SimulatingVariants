@@ -154,27 +154,25 @@ class Vclamp_evaluator_relative(bpop.evaluators.Evaluator):
         v_array = np.array(v_vec)
 
         ssi_slope, v_half, top, bottom, tau0 = cf.calc_inact_obj()
-        '''
-        try:
-            popt, pcov = optimize.curve_fit(cf.boltzmann, v_vec, inorm_vec)
 
-        except:
-            print('Couldn\'t fit Inactivation')
-            ssi_slope, v_half, top, bottom = (1000, 1000, 1000, 1000)
-        '''
         
         even_xs = np.linspace(v_array[0], v_array[len(v_array)-1], 100)
         curve = cf.boltzmann(even_xs, ssi_slope, v_half, top, bottom)
         axs[0].set_xlabel('Voltage (mV)')
         axs[0].set_ylabel('Fraction Inactivated')
         axs[0].set_title("Inactivation Curve")
-        axs[0].scatter(v_array, inorm_array, color='black',marker='s')
+        axs[0].scatter(v_array, inorm_array, color='black', marker='s')
         axs[0].plot(even_xs, curve, color='red', label="Fitted Inactivation")
-        #curve_exp = cf.boltzmann(even_xs, ssi_slope_exp, v_half_act_exp, top, bottom)
+
+        
         curve_exp = cf.boltzmann(even_xs, ssi_slope_exp, v_half_ssi_exp, 0, 1)
         axs[0].plot(even_xs, curve_exp, color='black', label='Inactivation experimental')
-        #axs[0].text(-10, 0.5, 'Slope: ' + str(ssi_slope) + ' /mV')
-        #axs[0].text(-10, 0.3, 'V50: ' + str(v_half) + ' mV')
+        axs[0].text(-120, 0.7, 'Slope (Optimized): ' + str(ssi_slope) + ' /mV')
+        axs[0].text(-120, 0.6, 'Slope (Experimental): ' + str(ssi_slope_exp) + ' /mV')
+        axs[0].text(-120, 0.5, 'V50 (Optimized): ' + str(v_half) + ' mV')
+        axs[0].text(-120, 0.4, 'V50 (Experimental): ' + str(v_half_ssi_exp) + ' mV')
+        axs[0].text(-120, 0.3, 'Tau 0 (Optimized): ' + str(tau0))
+        axs[0].text(-120, 0.2, 'Tau 0 (Experimental): ' + str(tau0_exp))
         axs[0].legend()
 
         # Activation curve
@@ -182,16 +180,7 @@ class Vclamp_evaluator_relative(bpop.evaluators.Evaluator):
         gnorm_array = np.array(gnorm_vec)
         v_array = np.array(v_vec)
         gv_slope, v_half, top, bottom = cf.calc_act_obj()
-        '''
-        try:
-            popt, pcov = optimize.curve_fit(cf.boltzmann, v_vec, gnorm_vec)
-            gv_slope, v_half, top, bottom = popt
-        except:
-            print('Couldn\'t fit activation')
-            gv_slope, v_half, top, bottom = (1000, 1000, 1000, 1000)
-        '''
 
-        #gv_slope, v_half, top, bottom = self.calc_act_obj()
         even_xs = np.linspace(v_array[0], v_array[len(v_array)-1], 100)
         curve = cf.boltzmann(even_xs, gv_slope, v_half, top, bottom)
         axs[1].set_xlabel('Voltage (mV)')
@@ -204,6 +193,10 @@ class Vclamp_evaluator_relative(bpop.evaluators.Evaluator):
         axs[1].plot(even_xs, curve_exp, color='black', label='Activation Experimental')
         #axs[1].text(-10, 0.5, 'Slope: ' + str(gv_slope) + ' /mV')
         #axs[1].text(-10, 0.3, 'V50: ' + str(v_half) + ' mV')
+        axs[1].text(-120, 0.7, 'Slope (Optimized): ' + str(gv_slope) + ' /mV')
+        axs[1].text(-120, 0.6, 'Slope (Experimental): ' + str(gv_slope_exp) + ' /mV')
+        axs[1].text(-120, 0.5, 'V50 (Optimized): ' + str(v_half) + ' mV')
+        axs[1].text(-120, 0.4, 'V50 (Experimental): ' + str(v_half_act_exp) + ' mV')
         axs[1].legend()
 
         # Recovery Curve
@@ -215,18 +208,18 @@ class Vclamp_evaluator_relative(bpop.evaluators.Evaluator):
         axs[2].set_title("Recovery from Inactivation")
         even_xs = np.linspace(times[0], times[len(times)-1], 100)
         y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj()
-        '''
-        try:
-            y0, plateau, percent_fast, k_fast, k_slow, tau0  = optimize.curve_fit(cf.two_phase, times, data_pts)
-        except:
-            print('Couldn\'t fit recovery')
-            y0, plateau, percent_fast, k_fast, k_slow, tau0 = (1000, 1000, 1000, 1000, 1000, 1000)
-        '''
         curve = cf.two_phase(even_xs, y0, plateau, percent_fast, k_fast, k_slow)
         axs[2].plot(np.log(even_xs), curve, c='red',label="Recovery Fit")
         curve_exp = cf.two_phase(even_xs, y0, plateau, percent_fast_exp, 1/tau_fast_exp, 1/tau_slow_exp)
-        axs[2].plot(np.log(even_xs), curve_exp, c='black', label='Recovery Experimental')
-        axs[2].scatter(np.log(times), data_pts, label='Recovery', color='black')
+        axs[2].plot(np.log(even_xs), curve_exp, c='black')
+        axs[2].scatter(np.log(times), data_pts, label='Optimized Recovery', color='black')
+        
+        axs[2].text(4, 0.9, 'Tau Fast (Optimized): ' + str(1/k_fast))
+        axs[2].text(4, 0.85, 'Tau Fast (Experimental): ' + str(tau_fast_exp))
+        axs[2].text(4, 0.8, 'Tau Slow (Optimized): ' + str(1/k_slow))
+        axs[2].text(4, 0.75, 'Tau Slow (Experimental): ' + str(tau_slow_exp))
+        axs[2].text(4, 0.7, 'Percent Fast (Optimized): ' + str(percent_fast))
+        axs[2].text(4, 0.65, 'Percent Fast (Experimental): ' + str(percent_fast_exp))
         axs[2].legend()
         plt.show()
 
