@@ -189,7 +189,7 @@ class Activation:
         plt.ylabel('Normalized conductance')
         plt.title('Activation: Voltage/Normalized conductance')
         plt.plot(self.v_vec, self.gnorm_vec, 'o', c='black')
-        gv_slope, v_half, top, bottom = cf.Curve_Fitter().calc_act_obj()
+        gv_slope, v_half, top, bottom = cf.calc_act_obj()
         formatted_gv_slope = np.round(gv_slope, decimals=2)
         formatted_v_half = np.round(v_half, decimals=2)
         plt.text(-10, 0.5, f'Slope: {formatted_gv_slope}')
