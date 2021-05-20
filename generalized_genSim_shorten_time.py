@@ -189,7 +189,7 @@ class Activation:
         plt.ylabel('Normalized conductance')
         plt.title('Activation: Voltage/Normalized conductance')
         plt.plot(self.v_vec, self.gnorm_vec, 'o', c='black')
-        gv_slope, v_half, top, bottom = cf.Curve_Fitter().calc_act_obj()
+        gv_slope, v_half, top, bottom = cf.calc_act_obj()
         formatted_gv_slope = np.round(gv_slope, decimals=2)
         formatted_v_half = np.round(v_half, decimals=2)
         plt.text(-10, 0.5, f'Slope: {formatted_gv_slope}')
@@ -383,7 +383,7 @@ class Inactivation:
         plt.ylabel('Normalized current')
         plt.title('Inactivation: Voltage/Normalized Current Relation')
         plt.plot(self.v_vec, self.inorm_vec, 'o', c='black')
-        ssi_slope, v_half, top, bottom = cf.Curve_Fitter().calc_inact_obj()
+        ssi_slope, v_half, top, bottom, tau0 = cf.calc_inact_obj()
         formatted_ssi_slope = np.round(ssi_slope, decimals=2)
         formatted_v_half = np.round(v_half, decimals=2)
         plt.text(-10, 0.5, f'Slope: {formatted_ssi_slope}')
@@ -474,7 +474,7 @@ class Inactivation:
         ax_list[0].set_ylabel('Normalized current')
         ax_list[0].set_title('Inactivation: Voltage/Normalized Current Relation')
         ax_list[0].plot(self.v_vec, self.inorm_vec, 'o', c=color)
-        ssi_slope, v_half, top, bottom = cf.calc_inact_obj()
+        ssi_slope, v_half, top, bottom, tau0 = cf.calc_inact_obj()
         formatted_ssi_slope = np.round(ssi_slope, decimals=2)
         formatted_v_half = np.round(v_half, decimals=2)
         ax_list[0].text(-10, 0.5 + y_offset, f'Slope: {formatted_ssi_slope}', c=color)
@@ -655,7 +655,7 @@ class RFI:
         plt.xlabel('Time $(ms)$')
         plt.ylabel('Fractional recovery (P2/P1)')
         plt.title('Time/Fractional recovery (P2/P1)')
-        y0, plateau, percent_fast, k_fast, k_slow, tau0 = cf.Curve_Fitter().calc_recov_obj()
+        y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj()
         formatted_tauSlow = np.round(1 / k_slow, decimals=2)
         formatted_tauFast = np.round(1 / k_fast, decimals=2)
         formatted_percentFast = np.round(percent_fast, decimals=4)
@@ -701,7 +701,7 @@ class RFI:
         ax_list[0].set_xlabel('Time $(ms)$')
         ax_list[0].set_ylabel('Fractional recovery (P2/P1)')
         ax_list[0].set_title('Time/Fractional recovery (P2/P1)')
-        y0, plateau, percent_fast, k_fast, k_slow, tau0 = cf.calc_recov_obj()
+        y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj()
         formatted_tauSlow = np.round(1 / k_slow, decimals=2)
         formatted_tauFast = np.round(1 / k_fast, decimals=2)
         formatted_percentFast = np.round(percent_fast, decimals=4)
@@ -734,7 +734,7 @@ class Ramp:
     def __init__(self, soma_diam=50, soma_L=63.66198, soma_nseg=1, soma_cm=1, soma_Ra=70,
                  channel_name='na12mut', soma_ena=55, h_celsius=33, v_init=-120, t_init = 30,
                  v_first_step = -60, t_first_step = 30, v_ramp_end = 0, t_ramp = 300, t_plateau = 100, 
-                 v_last_step = -120, t_last_step = 30 ,h_dt=0.025):
+                 v_last_step = -120, t_last_step = 30, h_dt=0.025):
         self.h = h  # NEURON h
         # one-compartment cell (soma)
         self.soma = h.Section(name='soma2')
@@ -905,9 +905,133 @@ class Ramp:
         ax_list[2].text(420 + x_offset, -0.04 + y_offset, f'Persistent Current:\n{persistCurr} mV', color=color, fontsize=10, ha='center')
                             
                             
+##################
+# UDB20 Protocol
+##################
+class UDB20:
+    def __init__(self, soma_diam=50, soma_L=63.66198, soma_nseg=1, soma_cm=1, soma_Ra=70,
+                 channel_name='na12mut', soma_ena=55, h_celsius=33, v_init=-120, v_held=-70, 
+                 v_peak=-10, t_peakdur=100, t_init=200, num_repeats=9, h_dt=0.025):
+        self.h = h  # NEURON h
+        # one-compartment cell (soma)
+        self.soma = h.Section(name='soma2')
+        self.soma.diam = soma_diam  # micron
+        self.soma.L = soma_L  # micron, so that area = 10000 micron2
+        self.soma.nseg = soma_nseg  # adimensional
+        self.soma.cm = soma_cm  # uF/cm2
+        self.soma.Ra = soma_Ra  # ohm-cm
+        self.soma.insert(channel_name)  # insert mechanism
+        self.soma.ena = soma_ena
+
+         # clamping parameters
+        self.num_repeats = num_repeats  # number of iterations
+        h.celsius = h_celsius  # temperature in celsius
+        h.dt = h_dt # ms - value of the fundamental integration time step, dt, used by fadvance()
+        self.v_init = v_init
+        self.t_init = t_init
+        self.v_held = v_held # held potential between peaks (mV)
+        self.v_peak = v_peak # membrane potential of peak (mV)
+        self.t_peakdur = t_peakdur  # duration of each peak (ms)
+        self.t_total = t_init + (t_peakdur * num_repeats * 2) #total time of protocol
         
+        # a two-electrodes voltage clamp
+        self.f3cl = h.VClamp(self.soma(0.5))
+        self.f3cl.dur[0] = 1e9
+        self.f3cl.amp[0] = v_init
+
+
+        def make_UDB():
+            #creates time and voltage vectors for UDB20 protocol
+            time_steps = np.arange(0, self.t_total, h.dt)
+            UDB_v = np.zeros(len(time_steps))
+            UDB_v[0:int(t_init/h.dt)] = self.v_init
+            
+            stim_len = int(t_peakdur / h.dt)
+            stim_begin = int((t_init / h.dt))
+            stim_end = stim_begin + stim_len
+            
+            while stim_end < len(time_steps):
+                UDB_v[stim_begin:stim_end] = self.v_peak
+                stim_begin = stim_end
+                stim_end += stim_len
+                
+                UDB_v[stim_begin:stim_end] = self.v_held
+                stim_begin += stim_len 
+                stim_end += stim_len
+            
+            return time_steps, UDB_v
         
+        #vectors for data handling
+        self.t_vec, self.v_vec = make_UDB()
+        self.i_vec = []
+        self.ipeak_vec = []
+        self.peak_times = []
+        self.norm_peak = [] #peak currents normalized to first current
         
+    def clamp(self, v_cl):
+        """Runs a trace and calculates currents.
+        Args:
+            v_cl (int): voltage to run
+        """
+
+        self.f3cl.amp[0] = v_cl
+        h.finitialize(self.v_init)  # calling the INITIAL block of the mechanism inserted in the section.
+        
+        # parameters initialization
+        stim_counter = 0
+        dtsave = h.dt
+        
+        while h.t < h.tstop:  # runs a single trace, calculates current
+            self.f3cl.amp[0] = self.v_vec[stim_counter]
+            dens = self.f3cl.i / self.soma(0.5).area() * 100.0 - self.soma(
+                0.5).i_cap  # clamping voltage in mA/cm2, for each dt
+                
+            self.i_vec.append(dens)  # trace to be plotted
+            
+            stim_counter += 1
+            h.fadvance()
+            
+    def genUDB20(self):
+        h.tstop = self.t_total
+        self.clamp(self.v_vec[0])
+    
+    """ Currently not working: pulses 2-9 have the same peak current  
+    def getPeakCurrs(self):
+        for iter in range(self.num_repeats):
+            peak_starts = int((self.t_init + (2 * self.t_peakdur * iter)) / h.dt)
+            peak_ends = int(peak_starts + (2 * self.t_peakdur) / h.dt)
+
+            self.ipeak_vec.append(max(self.i_vec[peak_starts: peak_ends - 1]))
+            self.peak_times.append(self.t_vec[self.i_vec.index(self.ipeak_vec[iter])])
+            self.norm_peak.append(self.ipeak_vec[iter] / self.ipeak_vec[0])
+    """                
+                    
+    def plotUDB20_TimeVRelation(self):
+        plt.figure()
+        plt.xlabel('Time $(ms)$')
+        plt.ylabel('Voltage $(mV)$')
+        plt.title("UBD20: Time Voltage Relation")
+        plt.plot(self.t_vec, self.v_vec, c='black')
+        plt.yticks(np.arange(self.v_init, self.v_peak + 10, 10))
+        # save as PGN file
+        plt.savefig(os.path.join(os.path.split(__file__)[0], 'Plots_Folder/UDB20 Time Voltage relation'))
+    
+    def plotUDB20_TimeCurrentRelation(self):
+        plt.figure()
+        plt.xlabel('Time $(ms)$')
+        plt.ylabel('Current $(pA)$')
+        plt.title("UDB20: Current of Pulses")
+        plt.plot(self.t_vec[1:], self.i_vec[1:], c='black')
+        # save as PGN file
+        plt.savefig(os.path.join(os.path.split(__file__)[0], 'Plots_Folder/UDB20 Current of Pulses'))
+        
+    def plotAllUDB20(self):
+        """
+        Saves all plots to CWD/Plots_Folder.
+        """
+        self.plotUDB20_TimeVRelation()
+        self.plotUDB20_TimeCurrentRelation()
+
 ##################
 # RFI dv tau
 ##################
@@ -1410,8 +1534,13 @@ if __name__ == "__main__":
         genRFIdv.genRecInactTauCurve_dv()
         genRFIdv.plotRecInact_dv()
         genRFIdv.plotRecInactProcedure_dv()
-
+        
     elif args.function == 6:
+        genUDB20 = UDB20()
+        genUDB20.genUDB20()
+        genUDB20.plotAllUDB20()
+
+    elif args.function == 7:
         # run all
         genAct = Activation()
         genAct.genActivation()
@@ -1428,3 +1557,7 @@ if __name__ == "__main__":
         genRamp = Ramp()
         genRamp.genRamp()
         genRamp.plotAllRamp()
+        
+        genUDB20 = UDB20()
+        genUDB20.genUDB20()
+        genUDB20.plotAllUDB20()
