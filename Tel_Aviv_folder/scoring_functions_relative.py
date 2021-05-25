@@ -9,6 +9,8 @@ calc_rmse function. These functions tend follow the "relative" format where one
 specifies the how to score a value "relative" to its different from the wild type
 according to some mod file specifications. At the time of writing, these models 
 are being specified for na12_mut.mod.
+
+Author: Michael Lam
 '''
 
 class Score_Function:

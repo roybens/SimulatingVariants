@@ -1,3 +1,7 @@
+########################################################
+#### Important helper functions for the evaluators. ####
+#### Authors: Michael Lam, Jinan Jiang #################
+########################################################
 import generalized_genSim_shorten_time as ggsd
 
 scale_voltage = 30

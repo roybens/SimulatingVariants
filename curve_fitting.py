@@ -107,11 +107,7 @@ def calc_inact_obj():
         print("Very bad voltages in inactivation.")
         return (1000, 1000, 1000, 1000, 1000)
     ssi_slope, v_half, top, bottom = popt
-    #try:
     taus, tau_sweeps, tau0 = ggsd.find_tau_inact(all_is)
-    #except:
-        #print("Can\'t find tau0")
-        #return (1000, 1000, 1000, 1000)
     return ssi_slope, v_half, top, bottom, tau0
 
 def calc_recov_obj():
@@ -119,7 +115,6 @@ def calc_recov_obj():
         rec_inact_tau_vec, recov_curves, times = ggsd.RFI().genRecInactTau()
     except:
         print('Couldn\'t generate recovery data')
-        #return (1000, 1000, 1000, 1000, 1000, 1000)
         return (1000, 1000, 1000, 1000, 1000)
     recov_curve = recov_curves[0]
     try:
