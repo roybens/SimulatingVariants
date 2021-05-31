@@ -3,6 +3,7 @@
 #### Authors: Michael Lam, Jinan Jiang #################
 ########################################################
 import generalized_genSim_shorten_time as ggsd
+import generalized_genSim_shorten_time_HMM as ggsdHMM
 
 scale_voltage = 30
 scale_fact = 7.5
@@ -224,55 +225,65 @@ def read_HMM_parameters(csv_data_path = './HMM_params.csv'):
 
     return params_dict
 
-def change_params(new_params, scaled=True):
+def change_params(new_params, scaled=True, is_HMM=False):
     '''
     Change params on Na12mut channel in NEURON.
     ---
     Param new_params_scaled: list of param values
         scaled: whether the parameters are scaled to be between 0 and 1
     '''
-    if scaled:
-        new_param_dict = scale_params_dict(False, new_params)
-    else:
-        new_param_dict = make_params_dict(new_params)
-    change_params_dict(new_param_dict)
+    if not is_HMM:
+        if scaled:
+            new_param_dict = scale_params_dict(False, new_params)
+        else:
+            new_param_dict = make_params_dict(new_params)
+        change_params_dict(new_param_dict)
+    elif is_HMM:
+        if scaled:
+            new_param_dict = scale_params_dict(False, new_params, is_HMM=True)
+        else:
+            new_param_dict = make_params_dict(new_params, is_HMM=True)
+        change_params_dict(new_param_dict, is_HMM=True)
+
     return
 
-def make_params_dict(params_list, is_HMM = False):
+def make_params_dict(params_list, is_HMM=False):
     '''
     Make a dictionary of 24 parameters out of the raw values
     in PARAMS_LIST.
     ---
     params_list: list of raw parameter values, unscaled to be between 0 and 1
     '''
-    params_dict = {
-        'Ena_na12mut': params_list[0],
-        'Rd_na12mut': params_list[1],
-        'Rg_na12mut': params_list[2],
-        'Rb_na12mut': params_list[3],
-        'Ra_na12mut': params_list[4],
-        'a0s_na12mut': params_list[5],
-        'gms_na12mut': params_list[6],
-        'hmin_na12mut': params_list[7],
-        'mmin_na12mut': params_list[8],
-        'qinf_na12mut': params_list[9],
-        'q10_na12mut': params_list[10],
-        'qg_na12mut': params_list[11],
-        'qd_na12mut': params_list[12],
-        'qa_na12mut': params_list[13],
-        'smax_na12mut': params_list[14],
-        'sh_na12mut': params_list[15],
-        'thinf_na12mut': params_list[16],
-        'thi2_na12mut': params_list[17],
-        'thi1_na12mut': params_list[18],
-        'tha_na12mut': params_list[19],
-        'vvs_na12mut': params_list[20],
-        'vvh_na12mut': params_list[21],
-        'vhalfs_na12mut': params_list[22],
-        'zetas_na12mut': params_list[23]
-        }
+    if not is_HMM:
+        params_dict = {
+            'Ena_na12mut': params_list[0],
+            'Rd_na12mut': params_list[1],
+            'Rg_na12mut': params_list[2],
+            'Rb_na12mut': params_list[3],
+            'Ra_na12mut': params_list[4],
+            'a0s_na12mut': params_list[5],
+            'gms_na12mut': params_list[6],
+            'hmin_na12mut': params_list[7],
+            'mmin_na12mut': params_list[8],
+            'qinf_na12mut': params_list[9],
+            'q10_na12mut': params_list[10],
+            'qg_na12mut': params_list[11],
+            'qd_na12mut': params_list[12],
+            'qa_na12mut': params_list[13],
+            'smax_na12mut': params_list[14],
+            'sh_na12mut': params_list[15],
+            'thinf_na12mut': params_list[16],
+            'thi2_na12mut': params_list[17],
+            'thi1_na12mut': params_list[18],
+            'tha_na12mut': params_list[19],
+            'vvs_na12mut': params_list[20],
+            'vvh_na12mut': params_list[21],
+            'vhalfs_na12mut': params_list[22],
+            'zetas_na12mut': params_list[23]
+            }
 
     if is_HMM:
+        '''
         params_dict['C1C2b2'] = param_list[24]
         params_dict['C1C2v2'] = param_list[25]
         params_dict['C1C2k2'] = param_list[26]
@@ -312,9 +323,33 @@ def make_params_dict(params_list, is_HMM = False):
         params_dict['I2I1b1'] = param_list[60]
         params_dict['I2I1v1'] = param_list[61]
         params_dict['I2I1k1'] = param_list[62]
+        '''
+        params_dict = {
+            'a1_0_na12mut8st' : params_list[0],
+            'a1_1_na12mut8st' : params_list[1],
+            'b1_0_na12mut8st' : params_list[2],
+            'b1_1_na12mut8st' : params_list[3],
+            'a2_0_na12mut8st' : params_list[4],
+            'a2_1_na12mut8st' : params_list[5],
+            'b2_0_na12mut8st' : params_list[6],
+            'b2_1_na12mut8st' : params_list[7],
+            'a3_0_na12mut8st' : params_list[8],
+            'a3_1_na12mut8st' : params_list[9],
+            'b3_0_na12mut8st' : params_list[10],
+            'b3_1_na12mut8st' : params_list[11],
+            'bh_0_na12mut8st' : params_list[12],
+            'bh_1_na12mut8st' : params_list[13], 
+            'bh_2_na12mut8st' : params_list[14],
+            'ah_0_na12mut8st' : params_list[15],
+            'ah_1_na12mut8st' : params_list[16],
+            'ah_2_na12mut8st' : params_list[17],
+            'vShift_na12mut8st' : params_list[18],
+            'vShift_inact_na12mut8st' : params_list[19], 
+            'vShift_inact_local_na12mut8st' : params_list[20]
+            }
     return params_dict
 
-def scale_params_dict(down, params_arr):
+def scale_params_dict(down, params_arr, is_HMM=False):
     '''
     Scale parameters between 0 and 1.
     ---
@@ -322,89 +357,162 @@ def scale_params_dict(down, params_arr):
     Param params: list of param values to scale
     Return: list of scaled param values
     '''
-    #original values of the paramter
-    bsae_value = {
-    'Ena_na12mut': 55,
-    'Rd_na12mut': .03,
-    'Rg_na12mut': .01,
-    'Rb_na12mut': .124,
-    'Ra_na12mut': 0.4,
-    'a0s_na12mut': 0.0003,
-    'gms_na12mut': .02,
-    'hmin_na12mut': .01,
-    'mmin_na12mut': .02,
-    'qinf_na12mut': 7,
-    'q10_na12mut': 2,
-    'qg_na12mut': 1.5,
-    'qd_na12mut': .5,
-    'qa_na12mut': 7.2,
-    'smax_na12mut': 10,
-    'sh_na12mut': 8,
-    'thinf_na12mut': -45,
-    'thi2_na12mut': -45,
-    'thi1_na12mut': -45,
-    'tha_na12mut': -30,
-    'vvs_na12mut': 2,
-    'vvh_na12mut': -58,
-    'vhalfs_na12mut': -60,
-    'zetas_na12mut': 12
-    }
+    if not is_HMM:
+        #original values of the paramter
+        base_value = {
+        'Ena_na12mut': 55,
+        'Rd_na12mut': .03,
+        'Rg_na12mut': .01,
+        'Rb_na12mut': .124,
+        'Ra_na12mut': 0.4,
+        'a0s_na12mut': 0.0003,
+        'gms_na12mut': .02,
+        'hmin_na12mut': .01,
+        'mmin_na12mut': .02,
+        'qinf_na12mut': 7,
+        'q10_na12mut': 2,
+        'qg_na12mut': 1.5,
+        'qd_na12mut': .5,
+        'qa_na12mut': 7.2,
+        'smax_na12mut': 10,
+        'sh_na12mut': 8,
+        'thinf_na12mut': -45,
+        'thi2_na12mut': -45,
+        'thi1_na12mut': -45,
+        'tha_na12mut': -30,
+        'vvs_na12mut': 2,
+        'vvh_na12mut': -58,
+        'vhalfs_na12mut': -60,
+        'zetas_na12mut': 12
+        }
+        types = {
+        'Ena_na12mut': 'p',
+        'Rd_na12mut': 'p',
+        'Rg_na12mut': 'p',
+        'Rb_na12mut': 'p',
+        'Ra_na12mut': 'p',
+        'a0s_na12mut': 'md',
+        'gms_na12mut': 'p',
+        'hmin_na12mut': 'p',
+        'mmin_na12mut': 'p',
+        'qinf_na12mut': 'md',
+        'q10_na12mut': 'p',
+        'qg_na12mut': 'md',
+        'qd_na12mut': 'md',
+        'qa_na12mut': 'md',
+        'smax_na12mut': 'p',
+        'sh_na12mut': 'p',
+        'thinf_na12mut': 'p',
+        'thi2_na12mut': 'p',
+        'thi1_na12mut': 'p',
+        'tha_na12mut': 'p',
+        'vvs_na12mut': 'p',
+        'vvh_na12mut': 'p',
+        'vhalfs_na12mut': 'p',
+        'zetas_na12mut': 'p'
+        }
+        inds = {
+        'Ena_na12mut': 0,
+        'Rd_na12mut': 1,
+        'Rg_na12mut': 2,
+        'Rb_na12mut': 3,
+        'Ra_na12mut': 4,
+        'a0s_na12mut': 5,
+        'gms_na12mut': 6,
+        'hmin_na12mut': 7,
+        'mmin_na12mut': 8,
+        'qinf_na12mut': 9,
+        'q10_na12mut': 10,
+        'qg_na12mut': 11,
+        'qd_na12mut': 12,
+        'qa_na12mut': 13,
+        'smax_na12mut': 14,
+        'sh_na12mut': 15,
+        'thinf_na12mut': 16,
+        'thi2_na12mut': 17,
+        'thi1_na12mut': 18,
+        'tha_na12mut': 19,
+        'vvs_na12mut': 20,
+        'vvh_na12mut': 21,
+        'vhalfs_na12mut': 22,
+        'zetas_na12mut': 23
+        }
+    elif is_HMM:
+        base_value = {
+        'a1_0_na12mut8st' : 4.584982656184167e+01,
+        'a1_1_na12mut8st' : 2.393541665657613e-02,
+        'b1_0_na12mut8st' : 1.440952344322651e-02,
+        'b1_1_na12mut8st' : 8.847609128769419e-02,
+        'a2_0_na12mut8st' : 1.980838207143563e+01,
+        'a2_1_na12mut8st' : 2.217709530008501e-02,
+        'b2_0_na12mut8st' : 5.650174488683913e-01,
+        'b2_1_na12mut8st' : 6.108403283302217e-02,
+        'a3_0_na12mut8st' : 7.181189201089192e+01,
+        'a3_1_na12mut8st' : 6.593790601261940e-02,
+        'b3_0_na12mut8st' : 7.531178253431512e-01,
+        'b3_1_na12mut8st' : 3.647978133116471e-02,
+        'bh_0_na12mut8st' : 2.830146966213825e+00,
+        'bh_1_na12mut8st' : 2.890045633775495e-01,
+        'bh_2_na12mut8st' : 6.960300544163878e-02,
+        'ah_0_na12mut8st' : 5.757824421450554e-01,
+        'ah_1_na12mut8st' : 1.628407420157048e+02,
+        'ah_2_na12mut8st' : 2.680107016756367e-02,
+        'vShift_na12mut8st' : 10,
+        'vShift_inact_na12mut8st' : 10,
+        'vShift_inact_local_na12mut8st' : 0
+        }
+        types = {
+        'a1_0_na12mut8st' : 'md',
+        'a1_1_na12mut8st' : 'md',
+        'b1_0_na12mut8st' : 'md',
+        'b1_1_na12mut8st' : 'md',
+        'a2_0_na12mut8st' : 'md',
+        'a2_1_na12mut8st' : 'md',
+        'b2_0_na12mut8st' : 'md',
+        'b2_1_na12mut8st' : 'md',
+        'a3_0_na12mut8st' : 'md',
+        'a3_1_na12mut8st' : 'md',
+        'b3_0_na12mut8st' : 'md',
+        'b3_1_na12mut8st' : 'md',
+        'bh_0_na12mut8st' : 'md',
+        'bh_1_na12mut8st' : 'md',
+        'bh_2_na12mut8st' : 'md',
+        'ah_0_na12mut8st' : 'md',
+        'ah_1_na12mut8st' : 'md',
+        'ah_2_na12mut8st' : 'md',
+        'vShift_na12mut8st' : 'p',
+        'vShift_inact_na12mut8st' : 'p', 
+        'vShift_inact_local_na12mut8st' : 'p' 
+        }
 
-    types = {
-    'Ena_na12mut': 'p',
-    'Rd_na12mut': 'p',
-    'Rg_na12mut': 'p',
-    'Rb_na12mut': 'p',
-    'Ra_na12mut': 'p',
-    'a0s_na12mut': 'md',
-    'gms_na12mut': 'p',
-    'hmin_na12mut': 'p',
-    'mmin_na12mut': 'p',
-    'qinf_na12mut': 'md',
-    'q10_na12mut': 'p',
-    'qg_na12mut': 'md',
-    'qd_na12mut': 'md',
-    'qa_na12mut': 'md',
-    'smax_na12mut': 'p',
-    'sh_na12mut': 'p',
-    'thinf_na12mut': 'p',
-    'thi2_na12mut': 'p',
-    'thi1_na12mut': 'p',
-    'tha_na12mut': 'p',
-    'vvs_na12mut': 'p',
-    'vvh_na12mut': 'p',
-    'vhalfs_na12mut': 'p',
-    'zetas_na12mut': 'p'
-    }
-    inds = {
-    'Ena_na12mut': 0,
-    'Rd_na12mut': 1,
-    'Rg_na12mut': 2,
-    'Rb_na12mut': 3,
-    'Ra_na12mut': 4,
-    'a0s_na12mut': 5,
-    'gms_na12mut': 6,
-    'hmin_na12mut': 7,
-    'mmin_na12mut': 8,
-    'qinf_na12mut': 9,
-    'q10_na12mut': 10,
-    'qg_na12mut': 11,
-    'qd_na12mut': 12,
-    'qa_na12mut': 13,
-    'smax_na12mut': 14,
-    'sh_na12mut': 15,
-    'thinf_na12mut': 16,
-    'thi2_na12mut': 17,
-    'thi1_na12mut': 18,
-    'tha_na12mut': 19,
-    'vvs_na12mut': 20,
-    'vvh_na12mut': 21,
-    'vhalfs_na12mut': 22,
-    'zetas_na12mut': 23
-    }
+        inds = {
+        'a1_0_na12mut8st' : 0,
+        'a1_1_na12mut8st' : 1,
+        'b1_0_na12mut8st' : 2,
+        'b1_1_na12mut8st' : 3,
+        'a2_0_na12mut8st' : 4,
+        'a2_1_na12mut8st' : 5,
+        'b2_0_na12mut8st' : 6,
+        'b2_1_na12mut8st' : 7,
+        'a3_0_na12mut8st' : 8,
+        'a3_1_na12mut8st' : 9,
+        'b3_0_na12mut8st' : 10,
+        'b3_1_na12mut8st' : 11,
+        'bh_0_na12mut8st' : 12,
+        'bh_1_na12mut8st' : 13,
+        'bh_2_na12mut8st' : 14,
+        'ah_0_na12mut8st' : 15,
+        'ah_1_na12mut8st' : 16,
+        'ah_2_na12mut8st' : 17,
+        'vShift_na12mut8st' : 18,
+        'vShift_inact_na12mut8st' : 19, 
+        'vShift_inact_local_na12mut8st' : 20 
+        }
+
+
     params_dict = {}
     bounds = {}
-    for k, v in bsae_value.items():
+    for k, v in base_value.items():
         #print(f'k is {k} inds[k] is {inds[k]}')
         params_dict[k] = params_arr[inds[k]]
         val_type = types[k]
@@ -424,72 +532,65 @@ def scale_params_dict(down, params_arr):
     #print(new_params)
     return new_params
 
-def change_params_dict(new_params):
+def change_params_dict(new_params, is_HMM=False):
     '''
     Change params on Na12mut channel in NEURON.
     ---
     Param new_params_scaled: list of scaled param values
     '''
-    # params_orig = [0.02,7.2,7,0.4,0.124,0.03,-30,-45,-45,-45,0.01,2]
-    #scale params up
-    #new_params = scale_params_dict(False, new_params_dict)
-    #get NEURON h
-    currh = ggsd.Activation().h
-    #change values of params
-    #print(new_params)
-    currh.Rd_na12mut= new_params['Rd_na12mut']
-    currh.Rg_na12mut= new_params['Rg_na12mut']
-    currh.Rb_na12mut= new_params['Rb_na12mut']
-    currh.Ra_na12mut= new_params['Ra_na12mut']
-    currh.a0s_na12mut= new_params['a0s_na12mut']
-    currh.gms_na12mut= new_params['gms_na12mut']
-    currh.hmin_na12mut= new_params['hmin_na12mut']
-    currh.mmin_na12mut= new_params['mmin_na12mut']
-    currh.qinf_na12mut= new_params['qinf_na12mut']
-    currh.q10_na12mut= new_params['q10_na12mut']
-    currh.qg_na12mut= new_params['qg_na12mut']
-    currh.qd_na12mut= new_params['qd_na12mut']
-    currh.qa_na12mut= new_params['qa_na12mut']
-    currh.smax_na12mut= new_params['smax_na12mut']
-    currh.sh_na12mut= new_params['sh_na12mut']
-    currh.thinf_na12mut= new_params['thinf_na12mut']
-    currh.thi2_na12mut= new_params['thi2_na12mut']
-    currh.thi1_na12mut= new_params['thi1_na12mut']
-    currh.tha_na12mut= new_params['tha_na12mut']
-    currh.vvs_na12mut= new_params['vvs_na12mut']
-    currh.vvh_na12mut= new_params['vvh_na12mut']
-    currh.vhalfs_na12mut= new_params['vhalfs_na12mut']
-    currh.zetas_na12mut= new_params['zetas_na12mut']
+    if not is_HMM:
+        #get NEURON h
+        currh = ggsd.Activation().h
+        #change values of params
+        currh.Rd_na12mut= new_params['Rd_na12mut']
+        currh.Rg_na12mut= new_params['Rg_na12mut']
+        currh.Rb_na12mut= new_params['Rb_na12mut']
+        currh.Ra_na12mut= new_params['Ra_na12mut']
+        currh.a0s_na12mut= new_params['a0s_na12mut']
+        currh.gms_na12mut= new_params['gms_na12mut']
+        currh.hmin_na12mut= new_params['hmin_na12mut']
+        currh.mmin_na12mut= new_params['mmin_na12mut']
+        currh.qinf_na12mut= new_params['qinf_na12mut']
+        currh.q10_na12mut= new_params['q10_na12mut']
+        currh.qg_na12mut= new_params['qg_na12mut']
+        currh.qd_na12mut= new_params['qd_na12mut']
+        currh.qa_na12mut= new_params['qa_na12mut']
+        currh.smax_na12mut= new_params['smax_na12mut']
+        currh.sh_na12mut= new_params['sh_na12mut']
+        currh.thinf_na12mut= new_params['thinf_na12mut']
+        currh.thi2_na12mut= new_params['thi2_na12mut']
+        currh.thi1_na12mut= new_params['thi1_na12mut']
+        currh.tha_na12mut= new_params['tha_na12mut']
+        currh.vvs_na12mut= new_params['vvs_na12mut']
+        currh.vvh_na12mut= new_params['vvh_na12mut']
+        currh.vhalfs_na12mut= new_params['vhalfs_na12mut']
+        currh.zetas_na12mut= new_params['zetas_na12mut']
+    elif is_HMM:
+        act_object = ggsdHMM.Activation(channel_name='na12mut8st')
+        currh = act_object.h
+        soma = act_object.soma
+        for seg in soma:
+            seg.a1_0_na12mut8st = new_params['a1_0_na12mut8st']
+            seg.a1_1_na12mut8st = new_params['a1_1_na12mut8st']
+            seg.b1_0_na12mut8st = new_params['b1_0_na12mut8st']
+            seg.b1_1_na12mut8st = new_params['b1_1_na12mut8st']
+            seg.a2_0_na12mut8st = new_params['a2_0_na12mut8st']
+            seg.a2_1_na12mut8st = new_params['a2_1_na12mut8st']
+            seg.b2_0_na12mut8st = new_params['b2_0_na12mut8st']
+            seg.b2_1_na12mut8st = new_params['b2_1_na12mut8st']
+            seg.a3_0_na12mut8st = new_params['a3_0_na12mut8st']
+            seg.a3_1_na12mut8st = new_params['a3_1_na12mut8st']
+            seg.b3_0_na12mut8st = new_params['b3_0_na12mut8st']
+            seg.b3_1_na12mut8st = new_params['b3_1_na12mut8st']
+            seg.bh_0_na12mut8st = new_params['bh_0_na12mut8st']
+            seg.bh_1_na12mut8st = new_params['bh_1_na12mut8st']
+            seg.bh_2_na12mut8st = new_params['bh_2_na12mut8st']
+            seg.ah_0_na12mut8st = new_params['ah_0_na12mut8st']
+            seg.ah_1_na12mut8st = new_params['ah_1_na12mut8st']
+            seg.ah_2_na12mut8st = new_params['ah_2_na12mut8st']
+            seg.vShift_inact_local_na12mut8st = new_params['vShift_inact_local_na12mut8st'] 
+        currh.vShift_na12mut8st = new_params['vShift_na12mut8st']
+        currh.vShift_inact_na12mut8st = new_params['vShift_inact_na12mut8st'] 
+
     return
-
-def gen_sim_data():
-    '''
-    Generate simulated data using the current NEURON state. Returns dictionary
-    with activation, inactivation, tau, and recovery data.
-    ---
-    Return sim_data: dictionary of simulated data
-    '''
-    sim_data = {}
-
-    #simulate activation
-    act, act_sweeps, act_i = ggsd.activationNa12("genActivation")
-    sim_data["act"] = act.to_python()
-    sim_data["act sweeps"] = act_sweeps.tolist()
-
-    #simulate inactivation
-    inact, inact_sweeps,inact_i = ggsd.inactivationNa12("genInactivation")
-    sim_data["inact"] = inact.to_python()
-    sim_data["inact sweeps"] = inact_sweeps.tolist()
-
-    #calculate taus from inactivation
-    taus, tau_sweeps, tau0 = ggsd.find_tau_inact(inact_i)
-    sim_data["taus"] = taus
-    sim_data["tau sweeps"] = tau_sweeps
-    sim_data["tau0"] = tau0
-
-    #simulate recovery
-    recov, recov_times = ggsd.recInactTauNa12("genRecInact")
-    sim_data["recov"] = recov
-    sim_data["recov times"] = recov_times
-    return sim_data
 

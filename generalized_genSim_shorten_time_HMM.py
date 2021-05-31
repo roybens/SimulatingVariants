@@ -96,12 +96,14 @@ class Activation:
         # finding the "initial state variables values" # HMM
         initial_values = [x for x in finding_state_variables(v_init, h.celsius)]
         # print('Initial values [C1, C2, O1, I1, I2]=  ', initial_values)
-        for seg in self.soma:
-            seg.na15.iC1 = initial_values[0]
-            seg.na15.iC2 = initial_values[1]
-            seg.na15.iO1 = initial_values[2]
-            seg.na15.iI1 = initial_values[3]
-            seg.na15.iI2 = initial_values[4]
+
+        if channel_name == 'na15':
+            for seg in self.soma:
+                seg.na15.iC1 = initial_values[0]
+                seg.na15.iC2 = initial_values[1]
+                seg.na15.iO1 = initial_values[2]
+                seg.na15.iI1 = initial_values[3]
+                seg.na15.iI2 = initial_values[4]
 
     def clamp(self, v_cl):
         """ Runs a trace and calculates peak currents.
@@ -309,12 +311,14 @@ class Inactivation:
         # finding the "initial state variables values" # HMM
         initial_values = [x for x in finding_state_variables(v_init, h.celsius)]
         # print('Initial values [C1, C2, O1, I1, I2]=  ', initial_values)
-        for seg in self.soma:
-            seg.na15.iC1 = initial_values[0]
-            seg.na15.iC2 = initial_values[1]
-            seg.na15.iO1 = initial_values[2]
-            seg.na15.iI1 = initial_values[3]
-            seg.na15.iI2 = initial_values[4]
+        
+        if channel_name == 'na15':
+            for seg in self.soma:
+                seg.na15.iC1 = initial_values[0]
+                seg.na15.iC2 = initial_values[1]
+                seg.na15.iO1 = initial_values[2]
+                seg.na15.iI1 = initial_values[3]
+                seg.na15.iI2 = initial_values[4]
 
     def clamp(self, v_cl):
         """ Runs a trace and calculates peak currents.
@@ -436,6 +440,8 @@ class RFI:
         self.soma.nseg = soma_nseg  # adimensional
         self.soma.cm = soma_cm  # uF/cm2
         self.soma.Ra = soma_Ra  # ohm-cm
+
+
         self.soma.insert(channel_name)  # insert mechanism
         self.soma.ena = soma_ena
 
@@ -487,12 +493,13 @@ class RFI:
         # finding the "initial state variables values" # HMM
         initial_values = [x for x in finding_state_variables(v_init, h.celsius)]
         # print('Initial values [C1, C2, O1, I1, I2]=  ', initial_values)
-        for seg in self.soma:
-            seg.na15.iC1 = initial_values[0]
-            seg.na15.iC2 = initial_values[1]
-            seg.na15.iO1 = initial_values[2]
-            seg.na15.iI1 = initial_values[3]
-            seg.na15.iI2 = initial_values[4]
+        if channel_name == 'na15':
+            for seg in self.soma:
+                seg.na15.iC1 = initial_values[0]
+                seg.na15.iC2 = initial_values[1]
+                seg.na15.iO1 = initial_values[2]
+                seg.na15.iI1 = initial_values[3]
+                seg.na15.iI2 = initial_values[4]
 
     def clampRecInactTau(self, dur):
         """ Runs a trace and calculates peak currents.
@@ -544,6 +551,7 @@ class RFI:
 
     def genRecInactTau(self):
         recov = []  # RFI tau curve
+
         for dur in self.vec_pts:
             # resizing the vectors
             self.t_vec = []

@@ -1,1 +1,1 @@
-../na12_mut.mod
+../mechs/na12_mut.mod
