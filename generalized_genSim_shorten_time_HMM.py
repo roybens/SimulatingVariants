@@ -433,6 +433,9 @@ class RFI:
 
         self.h = h  # NEURON h
 
+        #import ipdb
+        #ipdb.set_trace()
+
         # one-compartment cell (soma)
         self.soma = h.Section(name='soma2')
         self.soma.diam = soma_diam  # micron
