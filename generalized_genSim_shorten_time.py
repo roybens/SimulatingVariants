@@ -18,11 +18,13 @@ import matplotlib.cm as cmx
 from scipy import optimize, stats
 import argparse
 import os
+import pickle
 
 import optimize_na_ga_v2 as opt
 import curve_fitting as cf
-#from sys import api_version
-#from test.pythoninfo import collect_platform
+
+# from sys import api_version
+# from test.pythoninfo import collect_platform
 
 
 ##################
@@ -32,7 +34,7 @@ import curve_fitting as cf
 current_directory = os.getcwd()
 final_directory = os.path.join(current_directory, r'Plots_Folder')
 if not os.path.exists(final_directory):
-   os.makedirs(final_directory)
+    os.makedirs(final_directory)
 
 
 ##################
@@ -198,7 +200,8 @@ class Activation:
         curve = cf.boltzmann(x_values_v, gv_slope, v_half, top, bottom)
         plt.plot(x_values_v, curve, c='red')
         # save as PGN file
-        plt.savefig(os.path.join(os.path.split(__file__)[0], 'Plots_Folder/Activation Voltage-Normalized Conductance Relation'))
+        plt.savefig(
+            os.path.join(os.path.split(__file__)[0], 'Plots_Folder/Activation Voltage-Normalized Conductance Relation'))
 
     def plotActivation_IVCurve(self):
         plt.figure()
@@ -239,35 +242,73 @@ class Activation:
         self.plotActivation_IVCurve()
         self.plotActivation_TimeVRelation()
         self.plotActivation_TCurrDensityRelation()
-        
-        
-    def plotAllActivation_with_ax(self, ax_list, cur_params):
+
+    def plotAllActivation_with_ax(self, fig_title,
+                                  figsize=(18, 9), color='black',
+                                  saveAsFileName=None, loadFileName=None, saveAsPNGFileName=None):
+        """
+        Creates new ax if loadFileName is not a valid string. Plots all.
+
         color = 'red' if cur_params == "variant_params" else 'black'
-        y_offset = -0.2 if cur_params == "variant_params" else 0
+        color = red if HMM else black
+        """
+        if loadFileName:
+            # read pkl file
+            with open(loadFileName, 'rb') as fid:
+                ax = pickle.load(fid)
+        else:
+            fig, ax = plt.subplots(nrows=2, ncols=2, figsize=figsize)
+            fig.suptitle(fig_title, fontsize=15, fontweight='bold')
+            fig.subplots_adjust(wspace=0.5)
+            fig.subplots_adjust(hspace=0.5)
+
+        y_offset = -0.2 if color == "red" else 0
         x_offset = 0
-        
-        ax_list[0].set_xlabel('Voltage $(mV)$')
-        ax_list[0].set_ylabel('Normalized conductance')
-        ax_list[0].set_title('Activation: Voltage/Normalized conductance')
-        ax_list[0].plot(self.v_vec, self.gnorm_vec, 'o', c=color)
+
+        # upper left
+        ax[0, 0].set_xlabel('Voltage $(mV)$')
+        ax[0, 0].set_ylabel('Normalized conductance')
+        ax[0, 0].set_title('Activation: Voltage/Normalized conductance')
+        ax[0, 0].plot(self.v_vec, self.gnorm_vec, 'o', c=color)
         gv_slope, v_half, top, bottom = cf.calc_act_obj()
         formatted_gv_slope = np.round(gv_slope, decimals=2)
         formatted_v_half = np.round(v_half, decimals=2)
-        ax_list[0].text(-10 + x_offset, 0.5 + y_offset, f'Slope: {formatted_gv_slope}', color = color)
-        ax_list[0].text(-10 + x_offset, 0.4 + y_offset, f'V50: {formatted_v_half}', color = color)
+        ax[0, 0].text(-10 + x_offset, 0.5 + y_offset, f'Slope: {formatted_gv_slope}', color=color)
+        ax[0, 0].text(-10 + x_offset, 0.4 + y_offset, f'V50: {formatted_v_half}', color=color)
         x_values_v = np.arange(self.st_cl, self.end_cl, 1)
         curve = cf.boltzmann(x_values_v, gv_slope, v_half, top, bottom)
-        ax_list[0].plot(x_values_v, curve, c=color)
-        
-        ax_list[1].set_xlabel('Voltage $(mV)$')
-        ax_list[1].set_ylabel('Peak Current')
-        ax_list[1].set_title("Activation: IV Curve")
-        ax_list[1].plot(self.v_vec, self.ipeak_vec, 'o', c=color)
-        ax_list[1].text(-110 + x_offset, -0.05 + y_offset, 'Vrev at ' + str(round(self.vrev, 1)) + 'mV', c=color)
+        ax[0, 0].plot(x_values_v, curve, c=color, label='HH')
+        ax[0, 0].legend(loc='upper left')
+
+        # lower left
+        ax[1, 0].set_xlabel('Voltage $(mV)$')
+        ax[1, 0].set_ylabel('Peak Current')
+        ax[1, 0].set_title("Activation: IV Curve")
+        ax[1, 0].plot(self.v_vec, self.ipeak_vec, 'o', c=color)
+        ax[1, 0].text(-110 + x_offset, -0.05 + y_offset, 'Vrev at ' + str(round(self.vrev, 1)) + 'mV', c=color)
         formatted_peak_i = np.round(min(self.ipeak_vec), decimals=2)
-        ax_list[1].text(-110 + x_offset, -0.1 + y_offset, f'Peak Current from IV: {formatted_peak_i} mV', c=color)
-        
-        
+        ax[1, 0].text(-110 + x_offset, -0.1 + y_offset, f'Peak Current from IV: {formatted_peak_i} mV', c=color)
+
+        # upper right
+        ax[0, 1].set_xlabel('Time $(ms)$')
+        ax[0, 1].set_ylabel('Voltage $(mV)$')
+        ax[0, 1].set_title('Activation Time/Voltage relation')
+        [ax[0, 1].plot(self.t_vec, self.all_v_vec_t[i], c=color) for i in np.arange(self.L)]
+
+        # lower right
+        ax[1, 1].set_xlabel('Time $(ms)$')
+        ax[1, 1].set_ylabel('Current density $(mA/cm^2)$')
+        ax[1, 1].set_title('Activation Time/Current density relation')
+        curr = np.array(self.all_is)
+        [ax[1, 1].plot(self.t_vec[1:], curr[i], c=color) for i in np.arange(len(curr))]
+
+        if saveAsFileName:
+            with open(saveAsFileName, 'wb') as fid:
+                pickle.dump(ax, fid)
+        if saveAsPNGFileName:
+            plt.savefig(
+                os.path.join(os.path.split(__file__)[0], saveAsPNGFileName))
+
 
 ##################
 # Inactivation
@@ -392,7 +433,8 @@ class Inactivation:
         curve = cf.boltzmann(x_values_v, ssi_slope, v_half, top, bottom)
         plt.plot(x_values_v, curve, c='red')
         # save as PGN file
-        plt.savefig(os.path.join(os.path.split(__file__)[0], 'Plots_Folder/Inactivation Voltage Normalized Current Relation'))
+        plt.savefig(
+            os.path.join(os.path.split(__file__)[0], 'Plots_Folder/Inactivation Voltage Normalized Current Relation'))
 
     def plotInactivation_TimeVRelation(self):
         plt.figure()
@@ -436,12 +478,12 @@ class Inactivation:
         """
         IFit(t) = A * exp (-t/τ) + C
         """
-        return a * np.exp(-x/b) + c
+        return a * np.exp(-x / b) + c
 
     def find_tau0_inact(self, raw_data):
         # take peak curr and onwards
         min_val, mindex = min((val, idx) for (idx, val) in enumerate(raw_data[:int(0.7 * len(raw_data))]))
-        padding = 15   # after peak
+        padding = 15  # after peak
         data = raw_data[mindex:mindex + padding]
         ts = [0.1 * i for i in range(len(data))]  # make x values which match sample times
 
@@ -464,28 +506,46 @@ class Inactivation:
         self.plotInactivation_TimeVRelation()
         self.plotInactivation_TCurrDensityRelation()
         self.plotInactivation_Tau_0mV()
-        
-    def plotAllInactivation_with_ax(self, ax_list, cur_params):
-        color = 'red' if cur_params == "variant_params" else 'black'
-        y_offset = -0.2 if cur_params == "variant_params" else 0
-        x_offset = 0
-        
-        ax_list[0].set_xlabel('Voltage $(mV)$')
-        ax_list[0].set_ylabel('Normalized current')
-        ax_list[0].set_title('Inactivation: Voltage/Normalized Current Relation')
-        ax_list[0].plot(self.v_vec, self.inorm_vec, 'o', c=color)
+
+    def plotAllInactivation_with_ax(self, fig_title,
+                                  figsize=(18, 9), color='black',
+                                  saveAsFileName=None, loadFileName=None, saveAsPNGFileName=None):
+        """
+        Creates new ax if loadFileName is not a valid string. Plots all.
+
+        color = red if HMM else black
+        """
+        if loadFileName:
+            # read pkl file
+            with open(loadFileName, 'rb') as fid:
+                ax = pickle.load(fid)
+        else:
+            fig, ax = plt.subplots(nrows=2, ncols=2, figsize=figsize)
+            fig.suptitle(fig_title, fontsize=15, fontweight='bold')
+            fig.subplots_adjust(wspace=0.5)
+            fig.subplots_adjust(hspace=0.5)
+
+        y_offset = -0.2 if color == "red" else 0
+
+        # upper left
+        ax[0, 0].set_xlabel('Voltage $(mV)$')
+        ax[0, 0].set_ylabel('Normalized current')
+        ax[0, 0].set_title('Inactivation: Voltage/Normalized Current Relation')
+        ax[0, 0].plot(self.v_vec, self.inorm_vec, 'o', c=color)
         ssi_slope, v_half, top, bottom, tau0 = cf.calc_inact_obj()
         formatted_ssi_slope = np.round(ssi_slope, decimals=2)
         formatted_v_half = np.round(v_half, decimals=2)
-        ax_list[0].text(-10, 0.5 + y_offset, f'Slope: {formatted_ssi_slope}', c=color)
-        ax_list[0].text(-10, 0.4 + y_offset, f'V50: {formatted_v_half}', c=color)
+        ax[0, 0].text(-10, 0.5 + y_offset, f'Slope: {formatted_ssi_slope}', c=color)
+        ax[0, 0].text(-10, 0.4 + y_offset, f'V50: {formatted_v_half}', c=color)
         x_values_v = np.arange(self.st_cl, self.end_cl, 1)
         curve = cf.boltzmann(x_values_v, ssi_slope, v_half, top, bottom)
-        ax_list[0].plot(x_values_v, curve, c=color)
-        
-        ax_list[1].set_xlabel('Time $(ms)$')
-        ax_list[1].set_ylabel('Current density $(mA/cm^2)$')
-        ax_list[1].set_title('Inactivation Tau at 0 mV')
+        ax[0, 0].plot(x_values_v, curve, c=color, label="HH")
+        ax[0, 0].legend(loc='lower left')  # add legend
+
+        # lower left
+        ax[1, 0].set_xlabel('Time $(ms)$')
+        ax[1, 0].set_ylabel('Current density $(mA/cm^2)$')
+        ax[1, 0].set_title('Inactivation Tau at 0 mV')
         # select 0 mV
         volt = 0  # mV
         mask = np.where(self.v_vec == volt)[0]
@@ -494,20 +554,30 @@ class Inactivation:
         # fit exp: IFit(t) = A * exp (-t/τ) + C
         ts, data, xs, ys, tau = self.find_tau0_inact(curr)
         # plot
-        ax_list[1].plot(ts, data, color=color)
-        ax_list[1].plot(xs, ys, color=color)
-        
-        ax_list[2].set_xlabel('Time $(ms)$')
-        ax_list[2].set_ylabel('Current density $(mA/cm^2)$')
-        ax_list[2].set_title('Inactivation Time/Current density relation')
-        [ax_list[2].plot(self.t_vec[1:], self.all_is[i], c=color) for i in np.arange(self.L)]
-        
-        
-        ax_list[3].set_xlabel('Time $(ms)$')
-        ax_list[3].set_ylabel('Voltage $(mV)$')
-        ax_list[3].set_title('Inactivation Time/Voltage relation')
-        [ax_list[3].plot(self.t_vec, self.all_v_vec_t[i], c=color) for i in np.arange(self.L)]
-        
+        ax[1, 0].plot(ts, data, color=color)
+        ax[1, 0].plot(xs, ys, color=color)
+        formatted_tau = np.round(tau, decimals=3)
+        ax[1, 0].text(0.2, -0.01 + y_offset, f"Tau at 0 mV: {formatted_tau}", color=color)
+
+
+        # upper right
+        ax[0, 1].set_xlabel('Time $(ms)$')
+        ax[0, 1].set_ylabel('Current density $(mA/cm^2)$')
+        ax[0, 1].set_title('Inactivation Time/Current density relation')
+        [ax[0, 1].plot(self.t_vec[1:], self.all_is[i], c=color) for i in np.arange(self.L)]
+
+        # lower right
+        ax[1, 1].set_xlabel('Time $(ms)$')
+        ax[1, 1].set_ylabel('Voltage $(mV)$')
+        ax[1, 1].set_title('Inactivation Time/Voltage relation')
+        [ax[1, 1].plot(self.t_vec, self.all_v_vec_t[i], c=color) for i in np.arange(self.L)]
+
+        if saveAsFileName:
+            with open(saveAsFileName, 'wb') as fid:
+                pickle.dump(ax, fid)
+        if saveAsPNGFileName:
+            plt.savefig(
+                os.path.join(os.path.split(__file__)[0], saveAsPNGFileName))
 
 ##################
 # Recovery from Inactivation (RFI)
@@ -565,15 +635,15 @@ class RFI:
 
         # vectors for data handling RecInactTau
         self.rec_vec = []  # RFI (peak2/peak1)
-        self.time_vec = [] # same as time in vec_pts
-        self.log_time_vec = [] # same as time in vec_ptsm but logged
+        self.time_vec = []  # same as time in vec_pts
+        self.log_time_vec = []  # same as time in vec_ptsm but logged
         self.t_vec = []  # vector for time steps (h.dt)
         self.v_vec_t = []  # vector for voltage as function of time
         self.i_vec_t = []  # vector for current
         self.rec_inact_tau_vec = []  # RFI taus
         self.all_is = []  # all currents
         self.all_v_vec_t = []  # all voltages
-        self.all_t_vec = [] # all h.t
+        self.all_t_vec = []  # all h.t
 
         self.L = len(self.vec_pts)
 
@@ -692,49 +762,74 @@ class RFI:
         self.plotRFI_LogVInormRelation()
         self.plotRFI_TimeVRelation()
         self.plotRFI_TCurrDensityRelation()
-        
-    def plotAllRFI_with_ax(self, ax_list, cur_params):
+
+    def plotAllRFI_with_ax(self, fig_title,
+                           figsize=(18, 9), color='black',
+                           saveAsFileName=None, loadFileName=None, saveAsPNGFileName=None):
+        """
+        Creates new ax if loadFileName is not a valid string. Plots all.
         color = 'red' if cur_params == "variant_params" else 'black'
-        y_offset = -0.35 if cur_params == "variant_params" else 0
-        x_offset = 0
-        
-        ax_list[0].set_xlabel('Time $(ms)$')
-        ax_list[0].set_ylabel('Fractional recovery (P2/P1)')
-        ax_list[0].set_title('Time/Fractional recovery (P2/P1)')
+        color = red if HMM else black
+        """
+        if loadFileName:
+            # read pkl file
+            with open(loadFileName, 'rb') as fid:
+                ax = pickle.load(fid)
+        else:
+            fig, ax = plt.subplots(nrows=2, ncols=2, figsize=figsize)
+            fig.suptitle(fig_title, fontsize=15, fontweight='bold')
+            fig.subplots_adjust(wspace=0.5)
+            fig.subplots_adjust(hspace=0.5)
+
+        y_offset = -0.2 if color == "red" else 0
+
+        # upper left
+        ax[0, 0].set_xlabel('Time $(ms)$')
+        ax[0, 0].set_ylabel('Fractional recovery (P2/P1)')
+        ax[0, 0].set_title('Time/Fractional recovery (P2/P1)')
         y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj()
         formatted_tauSlow = np.round(1 / k_slow, decimals=2)
         formatted_tauFast = np.round(1 / k_fast, decimals=2)
         formatted_percentFast = np.round(percent_fast, decimals=4)
-        plt.text(-10, 0.65 + y_offset, f'Tau Slow: {formatted_tauSlow}',c=color)
-        plt.text(-10, 0.75 + y_offset, f'Tau Fast: {formatted_tauFast}',c=color)
-        plt.text(-10, 0.85 + y_offset, f'% Fast Component: {formatted_percentFast}',c=color)
-        ax_list[0].plot(self.time_vec, self.rec_vec, 'o', c=color)
-        
-        ax_list[1].set_xlabel('Log(Time)')
-        ax_list[1].set_ylabel('Fractional recovery (P2/P1)')
-        ax_list[1].set_title('Log(Time)/Fractional recovery (P2/P1)')
-        ax_list[1].plot(self.log_time_vec, self.rec_vec, 'o', c=color)
-        
-        ax_list[2].set_xlabel('Time $(ms)$')
-        ax_list[2].set_ylabel('Voltage $(mV)$')
-        ax_list[2].set_title('RFI Time/Voltage relation')
-        [ax_list[2].plot(self.all_t_vec[i], self.all_v_vec_t[i], c=color) for i in np.arange(self.L)]
+        ax[0, 0].text(-8, 0.65 + y_offset, f'Tau Slow: {formatted_tauSlow}', c=color)
+        ax[0, 0].text(-8, 0.68 + y_offset, f'Tau Fast: {formatted_tauFast}', c=color)
+        ax[0, 0].text(-8, 0.71 + y_offset, f'% Fast Component: {formatted_percentFast}', c=color)
+        ax[0, 0].plot(self.time_vec, self.rec_vec, 'o', c=color, label="HH")
+        ax[0, 0].legend(loc='lower right')  # add legend
 
-        ax_list[3].set_xlabel('Time $(ms)$')
-        ax_list[3].set_ylabel('Current density $(mA/cm^2)$')
-        ax_list[3].set_title('RFI Time/Current density relation')
-        [ax_list[3].plot(self.all_t_vec[i], self.all_is[i], c=color) for i in np.arange(self.L)]
-        
-        
+        # lower left
+        ax[1, 0].set_xlabel('Log(Time)')
+        ax[1, 0].set_ylabel('Fractional recovery (P2/P1)')
+        ax[1, 0].set_title('Log(Time)/Fractional recovery (P2/P1)')
+        ax[1, 0].plot(self.log_time_vec, self.rec_vec, 'o', c=color)
+
+        # upper right
+        ax[0, 1].set_xlabel('Time $(ms)$')
+        ax[0, 1].set_ylabel('Voltage $(mV)$')
+        ax[0, 1].set_title('RFI Time/Voltage relation')
+        [ax[0, 1].plot(self.all_t_vec[i], self.all_v_vec_t[i], c=color) for i in np.arange(self.L)]
+
+        # lower right
+        ax[1, 1].set_xlabel('Time $(ms)$')
+        ax[1, 1].set_ylabel('Current density $(mA/cm^2)$')
+        ax[1, 1].set_title('RFI Time/Current density relation')
+        [ax[1, 1].plot(self.all_t_vec[i], self.all_is[i], c=color) for i in np.arange(self.L)]
+
+        if saveAsFileName:
+            with open(saveAsFileName, 'wb') as fid:
+                pickle.dump(ax, fid)
+        if saveAsPNGFileName:
+            plt.savefig(os.path.join(os.path.split(__file__)[0], saveAsPNGFileName))
+
 
 ##################
 # Ramp Protocol
 ##################
 class Ramp:
     def __init__(self, soma_diam=50, soma_L=63.66198, soma_nseg=1, soma_cm=1, soma_Ra=70,
-                 channel_name='na12mut', soma_ena=55, h_celsius=33, v_init=-120, t_init = 30,
-                 v_first_step = -60, t_first_step = 30, v_ramp_end = 0, t_ramp = 300, t_plateau = 100, 
-                 v_last_step = -120, t_last_step = 30, h_dt=0.025):
+                 channel_name='na12mut', soma_ena=55, h_celsius=33, v_init=-120, t_init=30,
+                 v_first_step=-60, t_first_step=30, v_ramp_end=0, t_ramp=300, t_plateau=100,
+                 v_last_step=-120, t_last_step=30, h_dt=0.025):
         self.h = h  # NEURON h
         # one-compartment cell (soma)
         self.soma = h.Section(name='soma2')
@@ -747,37 +842,39 @@ class Ramp:
         self.soma.ena = soma_ena
 
         self.time_steps_arr = []
+
         # clamping parameters
         def make_ramp():
-            time_steps_arr = np.array([t_init,t_first_step,t_ramp,t_plateau,t_last_step])
-            time_steps_arr = (time_steps_arr/h_dt).astype(int)
+            time_steps_arr = np.array([t_init, t_first_step, t_ramp, t_plateau, t_last_step])
+            time_steps_arr = (time_steps_arr / h_dt).astype(int)
             time_steps_arr = np.cumsum(time_steps_arr)
             ntimesteps = time_steps_arr[-1]
             ramp_v = np.zeros(ntimesteps)
             ramp_v[0:time_steps_arr[0]] = v_init
             ramp_v[time_steps_arr[0]:time_steps_arr[1]] = v_first_step
-            ramp_v[time_steps_arr[1]:time_steps_arr[2]] = np.linspace(v_first_step,v_ramp_end,time_steps_arr[2]-time_steps_arr[1])
+            ramp_v[time_steps_arr[1]:time_steps_arr[2]] = np.linspace(v_first_step, v_ramp_end,
+                                                                      time_steps_arr[2] - time_steps_arr[1])
             ramp_v[time_steps_arr[2]:time_steps_arr[3]] = v_ramp_end
             ramp_v[time_steps_arr[3]:time_steps_arr[4]] = v_last_step
             self.time_steps_arr = time_steps_arr
             return ramp_v
-        
+
         self.ntrials = 1  #
         h.celsius = h_celsius  # temperature in celsius
         self.stim_ramp = make_ramp()  # the voltage of the whole protocol
         h.dt = h_dt  # ms - value of the fundamental integration time step, dt, used by fadvance().
         self.v_init = v_init  # holding potential
-        self.t_start_persist = int((t_init + t_first_step + t_ramp) / h_dt) #time that plateau starts
-        self.t_end_persist = int((t_init + t_first_step + t_ramp + t_plateau) / h_dt) #time that plateau ends
+        self.t_start_persist = int((t_init + t_first_step + t_ramp) / h_dt)  # time that plateau starts
+        self.t_end_persist = int((t_init + t_first_step + t_ramp + t_plateau) / h_dt)  # time that plateau ends
         self.t_total = t_init + t_first_step + t_ramp + t_plateau + t_last_step
 
         # a two-electrodes voltage clamp
         self.f3cl = h.VClamp(self.soma(0.5))
         self.f3cl.dur[0] = 1e9
         self.f3cl.amp[0] = self.stim_ramp[0]
-        
+
         # vectors for data handling
-        self.t_vec = np.ones(len(self.stim_ramp))*h_dt
+        self.t_vec = np.ones(len(self.stim_ramp)) * h_dt
         self.t_vec = np.cumsum(self.t_vec)
         self.v_vec = self.stim_ramp
         self.v_vec_t = []  # vector for voltage as function of time
@@ -792,36 +889,36 @@ class Ramp:
         h.finitialize(self.v_init)  # calling the INITIAL block of the mechanism inserted in the section.
         # parameters initialization
         stim_counter = 0
-        
+
         dtsave = h.dt
         while round(h.t, 3) < h.tstop:  # runs a single trace, calculates current
             self.f3cl.amp[0] = self.stim_ramp[stim_counter]
             dens = self.f3cl.i / self.soma(0.5).area() * 100.0 - self.soma(
                 0.5).i_cap  # clamping current in mA/cm2, for each dt
-                
+
             self.v_vec_t.append(self.soma.v)  # trace to be plotted
             self.i_vec.append(dens)  # trace to be plotted
-            
+
             stim_counter += 1
             h.fadvance()
-    
+
     def genRamp(self):
         h.tstop = self.t_total
         self.clamp(self.v_vec[0])
-    
+
     def areaUnderCurve(self):
         """ Calculates and returns normalized area (to activation IV) under IV curve of Ramp
         """
         maskStart, maskEnd = self.time_steps_arr[1], self.time_steps_arr[2]  # selects ramp (incline) portion only
         i_vec_ramp = self.i_vec[maskStart:maskEnd]
         v_vec_t_ramp = self.v_vec_t[maskStart:maskEnd]
-        #plt.plot(self.t_vec[maskStart:maskEnd], self.v_vec[maskStart:maskEnd], color= 'b') # uncomment to view area taken
+        # plt.plot(self.t_vec[maskStart:maskEnd], self.v_vec[maskStart:maskEnd], color= 'b') # uncomment to view area taken
         area = trapz(i_vec_ramp, x=v_vec_t_ramp)  # find area
         act = Activation()
         act.genActivation()
         area = area / min(act.ipeak_vec)  # normalize to peak currents from activation
         return area
-    
+
     def persistentCurrent(self):
         """ Calculates persistent current (avg current of last 100 ms at 0 mV)
         Normalized by peak from IV (same number as areaUnderCurve).
@@ -830,8 +927,8 @@ class Ramp:
         act = Activation()
         act.genActivation()
         IVPeak = min(act.ipeak_vec)
-        return (sum(persistent)/len(persistent)) / IVPeak
-    
+        return (sum(persistent) / len(persistent)) / IVPeak
+
     def plotRamp_TimeVRelation(self):
         plt.figure()
         plt.xlabel('Time $(ms)$')
@@ -840,31 +937,31 @@ class Ramp:
         plt.plot(self.t_vec, self.v_vec, color='black')
         # save as PGN file
         plt.savefig(os.path.join(os.path.split(__file__)[0], 'Plots_Folder/Ramp Time Voltage relation'))
-    
+
     def plotRamp_TimeCurrentRelation(self):
         area = round(self.areaUnderCurve(), 2)
         persistCurr = "{:.2e}".format(round(self.persistentCurrent(), 4))
-        
+
         f, (ax1, ax2) = plt.subplots(1, 2, sharey=True)
-        
-        f.add_subplot(111, frameon=False) #for shared axes labels and big title
+
+        f.add_subplot(111, frameon=False)  # for shared axes labels and big title
         # hide tick and tick label of the big axes
         plt.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
         plt.grid(False)
         plt.title("Ramp: Time Current Density Relation", x=0.4, y=1.1)
         plt.xlabel('Time $(ms)$')
-        plt.ylabel('Current', labelpad= 25)
-        
+        plt.ylabel('Current', labelpad=25)
+
         # starting + first step + ramp section
         ax1.set_title("Ramp")
-        ax1.plot(self.t_vec[1:self.t_start_persist], self.i_vec[1:self.t_start_persist], 'o', c='black', markersize = 0.1)
-        plt.text(0.05, 0.2, f'Normalized \narea under \ncurve: {area}', c = 'blue', fontsize=10)
-        
+        ax1.plot(self.t_vec[1:self.t_start_persist], self.i_vec[1:self.t_start_persist], 'o', c='black', markersize=0.1)
+        plt.text(0.05, 0.2, f'Normalized \narea under \ncurve: {area}', c='blue', fontsize=10)
+
         # persistent current + last step section
         ax2.set_title("Persistent Current")
-        ax2.plot(self.t_vec[self.t_start_persist:], self.i_vec[self.t_start_persist:], 'o', c='black', markersize = 0.1)
-        plt.text(0.75, 0.5, f'Persistent Current:\n{persistCurr} mV', c = 'blue', fontsize=10, ha='center')
-        
+        ax2.plot(self.t_vec[self.t_start_persist:], self.i_vec[self.t_start_persist:], 'o', c='black', markersize=0.1)
+        plt.text(0.75, 0.5, f'Persistent Current:\n{persistCurr} mV', c='blue', fontsize=10, ha='center')
+
         # save as PGN file
         plt.tight_layout()
         plt.savefig(os.path.join(os.path.split(__file__)[0], 'Plots_Folder/Ramp Time Current Density Relation'))
@@ -875,42 +972,45 @@ class Ramp:
         """
         self.plotRamp_TimeVRelation()
         self.plotRamp_TimeCurrentRelation()
-        
+
     def plotAllRamp_with_ax(self, ax_list, cur_params):
         color = 'red' if cur_params == "variant_params" else 'black'
         y_offset = -0.02 if cur_params == "variant_params" else 0
         x_offset = 0
-                            
+
         ax_list[0].set_xlabel('Time $(ms)$')
         ax_list[0].set_ylabel('Voltage $(mV)$')
         ax_list[0].set_title('Ramp Time/Voltage relation')
         ax_list[0].plot(self.t_vec, self.v_vec, color=color)
 
-                            
         area = round(self.areaUnderCurve(), 2)
         persistCurr = "{:.2e}".format(round(self.persistentCurrent(), 4))
 
         # starting + first step + ramp section
         ax_list[1].set_xlabel('Time $(ms)$')
-        ax_list[1].set_ylabel('Current', labelpad= 25)
+        ax_list[1].set_ylabel('Current', labelpad=25)
         ax_list[1].set_title("Ramp")
-        ax_list[1].plot(self.t_vec[1:self.t_start_persist], self.i_vec[1:self.t_start_persist], 'o', c=color, markersize = 0.1)
-        ax_list[1].text(0 + x_offset, -0.08 + y_offset, f'Normalized \narea under \ncurve: {area}', color=color, fontsize=10)
-        
+        ax_list[1].plot(self.t_vec[1:self.t_start_persist], self.i_vec[1:self.t_start_persist], 'o', c=color,
+                        markersize=0.1)
+        ax_list[1].text(0 + x_offset, -0.08 + y_offset, f'Normalized \narea under \ncurve: {area}', color=color,
+                        fontsize=10)
+
         # persistent current + last step section
         ax_list[2].set_xlabel('Time $(ms)$')
-        ax_list[2].set_ylabel('Current', labelpad= 25)
+        ax_list[2].set_ylabel('Current', labelpad=25)
         ax_list[2].set_title("Persistent Current")
-        ax_list[2].plot(self.t_vec[self.t_start_persist:], self.i_vec[self.t_start_persist:], 'o', c=color, markersize = 0.1)
-        ax_list[2].text(420 + x_offset, -0.04 + y_offset, f'Persistent Current:\n{persistCurr} mV', color=color, fontsize=10, ha='center')
-                            
-                            
+        ax_list[2].plot(self.t_vec[self.t_start_persist:], self.i_vec[self.t_start_persist:], 'o', c=color,
+                        markersize=0.1)
+        ax_list[2].text(420 + x_offset, -0.04 + y_offset, f'Persistent Current:\n{persistCurr} mV', color=color,
+                        fontsize=10, ha='center')
+
+
 ##################
 # UDB20 Protocol
 ##################
 class UDB20:
     def __init__(self, soma_diam=50, soma_L=63.66198, soma_nseg=1, soma_cm=1, soma_Ra=70,
-                 channel_name='na12mut', soma_ena=55, h_celsius=33, v_init=-120, v_held=-70, 
+                 channel_name='na12mut', soma_ena=55, h_celsius=33, v_init=-120, v_held=-70,
                  v_peak=-10, t_peakdur=100, t_init=200, num_repeats=9, h_dt=0.025):
         self.h = h  # NEURON h
         # one-compartment cell (soma)
@@ -923,51 +1023,50 @@ class UDB20:
         self.soma.insert(channel_name)  # insert mechanism
         self.soma.ena = soma_ena
 
-         # clamping parameters
+        # clamping parameters
         self.num_repeats = num_repeats  # number of iterations
         h.celsius = h_celsius  # temperature in celsius
-        h.dt = h_dt # ms - value of the fundamental integration time step, dt, used by fadvance()
+        h.dt = h_dt  # ms - value of the fundamental integration time step, dt, used by fadvance()
         self.v_init = v_init
         self.t_init = t_init
-        self.v_held = v_held # held potential between peaks (mV)
-        self.v_peak = v_peak # membrane potential of peak (mV)
+        self.v_held = v_held  # held potential between peaks (mV)
+        self.v_peak = v_peak  # membrane potential of peak (mV)
         self.t_peakdur = t_peakdur  # duration of each peak (ms)
-        self.t_total = t_init + (t_peakdur * num_repeats * 2) #total time of protocol
-        
+        self.t_total = t_init + (t_peakdur * num_repeats * 2)  # total time of protocol
+
         # a two-electrodes voltage clamp
         self.f3cl = h.VClamp(self.soma(0.5))
         self.f3cl.dur[0] = 1e9
         self.f3cl.amp[0] = v_init
 
-
         def make_UDB():
-            #creates time and voltage vectors for UDB20 protocol
+            # creates time and voltage vectors for UDB20 protocol
             time_steps = np.arange(0, self.t_total, h.dt)
             UDB_v = np.zeros(len(time_steps))
-            UDB_v[0:int(t_init/h.dt)] = self.v_init
-            
+            UDB_v[0:int(t_init / h.dt)] = self.v_init
+
             stim_len = int(t_peakdur / h.dt)
             stim_begin = int((t_init / h.dt))
             stim_end = stim_begin + stim_len
-            
+
             while stim_end < len(time_steps):
                 UDB_v[stim_begin:stim_end] = self.v_peak
                 stim_begin = stim_end
                 stim_end += stim_len
-                
+
                 UDB_v[stim_begin:stim_end] = self.v_held
-                stim_begin += stim_len 
+                stim_begin += stim_len
                 stim_end += stim_len
-            
+
             return time_steps, UDB_v
-        
-        #vectors for data handling
+
+        # vectors for data handling
         self.t_vec, self.v_vec = make_UDB()
         self.i_vec = []
         self.ipeak_vec = []
         self.peak_times = []
-        self.norm_peak = [] #peak currents normalized to first current
-        
+        self.norm_peak = []  # peak currents normalized to first current
+
     def clamp(self, v_cl):
         """Runs a trace and calculates currents.
         Args:
@@ -976,25 +1075,25 @@ class UDB20:
 
         self.f3cl.amp[0] = v_cl
         h.finitialize(self.v_init)  # calling the INITIAL block of the mechanism inserted in the section.
-        
+
         # parameters initialization
         stim_counter = 0
         dtsave = h.dt
-        
+
         while h.t < h.tstop:  # runs a single trace, calculates current
             self.f3cl.amp[0] = self.v_vec[stim_counter]
             dens = self.f3cl.i / self.soma(0.5).area() * 100.0 - self.soma(
                 0.5).i_cap  # clamping voltage in mA/cm2, for each dt
-                
+
             self.i_vec.append(dens)  # trace to be plotted
-            
+
             stim_counter += 1
             h.fadvance()
-            
+
     def genUDB20(self):
         h.tstop = self.t_total
         self.clamp(self.v_vec[0])
-    
+
     """ Currently not working: pulses 2-9 have the same peak current  
     def getPeakCurrs(self):
         for iter in range(self.num_repeats):
@@ -1004,8 +1103,8 @@ class UDB20:
             self.ipeak_vec.append(max(self.i_vec[peak_starts: peak_ends - 1]))
             self.peak_times.append(self.t_vec[self.i_vec.index(self.ipeak_vec[iter])])
             self.norm_peak.append(self.ipeak_vec[iter] / self.ipeak_vec[0])
-    """                
-                    
+    """
+
     def plotUDB20_TimeVRelation(self):
         plt.figure()
         plt.xlabel('Time $(ms)$')
@@ -1015,7 +1114,7 @@ class UDB20:
         plt.yticks(np.arange(self.v_init, self.v_peak + 10, 10))
         # save as PGN file
         plt.savefig(os.path.join(os.path.split(__file__)[0], 'Plots_Folder/UDB20 Time Voltage relation'))
-    
+
     def plotUDB20_TimeCurrentRelation(self):
         plt.figure()
         plt.xlabel('Time $(ms)$')
@@ -1024,13 +1123,14 @@ class UDB20:
         plt.plot(self.t_vec[1:], self.i_vec[1:], c='black')
         # save as PGN file
         plt.savefig(os.path.join(os.path.split(__file__)[0], 'Plots_Folder/UDB20 Current of Pulses'))
-        
+
     def plotAllUDB20(self):
         """
         Saves all plots to CWD/Plots_Folder.
         """
         self.plotUDB20_TimeVRelation()
         self.plotUDB20_TimeCurrentRelation()
+
 
 ##################
 # RFI dv tau
@@ -1118,7 +1218,8 @@ class RFI_dv:
 
         while (h.t < h.tstop):  # runs a single trace, calculates peak current
 
-            dens = self.f3cl.i / self.soma(0.5).area() * 100.0 - self.soma(0.5).i_cap  # clamping current in mA/cm2, for each dt
+            dens = self.f3cl.i / self.soma(0.5).area() * 100.0 - self.soma(
+                0.5).i_cap  # clamping current in mA/cm2, for each dt
             self.t_vec.append(h.t)
             self.v_vec_t.append(self.soma.v)
             self.i_vec_t.append(dens)
@@ -1128,7 +1229,8 @@ class RFI_dv:
                     peak_curr1 = abs(dens)
                 pre_i1 = abs(dens)
 
-            if ((h.t > (5 + self.cond_st_dur + self.dur)) and (h.t < (15 + self.cond_st_dur + self.dur))):  # evaluate the second peak
+            if ((h.t > (5 + self.cond_st_dur + self.dur)) and (
+                    h.t < (15 + self.cond_st_dur + self.dur))):  # evaluate the second peak
 
                 if (pre_i2 < abs(dens)):
                     peak_curr2 = abs(dens)
@@ -1288,7 +1390,7 @@ class RFI_dv:
             k += 1
 
         return rec_return, self.vec_pts
-    
+
     def plotAllRecInact_with_ax(self, ax_list, cur_params):
         color = 'red' if cur_params == "variant_params" else 'black'
         y_offset = -0.2 if cur_params == "variant_params" else 0
@@ -1319,7 +1421,6 @@ class RFI_dv:
             ln5 = ax_list[0].scatter(self.time_vec, self.rec_vec, c=color)
             ax_list[0].set_xscale('log')
 
-            
         ax_list[1].set_xlim(-150, 5 + self.max_inter + 20 + 100)
         ax_list[1].set_ylim(-121, 20)
         ax_list[1].set_xlabel('Time $(ms)$')
@@ -1384,16 +1485,16 @@ def find_tau_inact(inact_i, ax=None):
                 ts = [0.1 * i for i in range(len(raw_data))]
                 xs = xs + ts[mindex]
                 ax.plot(ts, raw_data, color="red")
-                tau_actual = tau+0.1*mindex #adjust for slicing by adding time sliced off
-                #ax.plot(xs, ys, color="blue")
-                #plt.vlines(tau, min(ys)-.02, max(ys)+.02)
+                tau_actual = tau + 0.1 * mindex  # adjust for slicing by adding time sliced off
+                # ax.plot(xs, ys, color="blue")
+                # plt.vlines(tau, min(ys)-.02, max(ys)+.02)
         # uncomment to plot
-        #plt.vlines(tau, min(ys)-.02, max(ys)+.02)
-        #plt.figure()
-        #plt.plot(ts, data, color="black")
-        #plt.plot(xs, ys, color="red")
-        #plt.text(0, 0, i)
-        #plt.show()
+        # plt.vlines(tau, min(ys)-.02, max(ys)+.02)
+        # plt.figure()
+        # plt.plot(ts, data, color="black")
+        # plt.plot(xs, ys, color="red")
+        # plt.text(0, 0, i)
+        # plt.show()
 
         all_taus.append(tau)
 
@@ -1517,10 +1618,17 @@ if __name__ == "__main__":
         genInact.genInactivation()
         genInact.plotAllInactivation()
 
+
     elif args.function == 3:
         genRFI = RFI()
         genRFI.genRecInactTau()
         genRFI.plotAllRFI()
+
+        genRFI = RFI()
+        genRFI.genRecInactTau()
+        genRFI.plotAllRFI_with_ax(fig_title="RFI HH vs HMM", color='black',
+                                             saveAsFileName="Plots_Folder/RFI HHvHMM", loadFileName=None,
+                                             saveAsPNGFileName="Plots_Folder/RFI HHvHMM")
 
     elif args.function == 4:
         genRamp = Ramp()
@@ -1534,7 +1642,7 @@ if __name__ == "__main__":
         genRFIdv.genRecInactTauCurve_dv()
         genRFIdv.plotRecInact_dv()
         genRFIdv.plotRecInactProcedure_dv()
-        
+
     elif args.function == 6:
         genUDB20 = UDB20()
         genUDB20.genUDB20()
@@ -1557,7 +1665,27 @@ if __name__ == "__main__":
         genRamp = Ramp()
         genRamp.genRamp()
         genRamp.plotAllRamp()
-        
+
         genUDB20 = UDB20()
         genUDB20.genUDB20()
         genUDB20.plotAllUDB20()
+
+    elif args.function == 8:
+        # run all with saving ax
+        genAct = Activation()
+        genAct.genActivation()
+        genAct.plotAllActivation_with_ax(fig_title="Activation HH vs HMM", color='black',
+                                         saveAsFileName="Plots_Folder/Act HHvHMM", loadFileName=None,
+                                         saveAsPNGFileName="Plots_Folder/Act HHvHMM")
+
+        genInact = Inactivation()
+        genInact.genInactivation()
+        genInact.plotAllInactivation_with_ax(fig_title="Inactivation HH vs HMM", color='black',
+                                             saveAsFileName="Plots_Folder/Inact HHvHMM", loadFileName=None,
+                                             saveAsPNGFileName="Plots_Folder/Inact HHvHMM")
+
+        genRFI = RFI()
+        genRFI.genRecInactTau()
+        genRFI.plotAllRFI_with_ax(fig_title="RFI HH vs HMM", color='black',
+                                             saveAsFileName="Plots_Folder/RFI HHvHMM", loadFileName=None,
+                                             saveAsPNGFileName="Plots_Folder/RFI HHvHMM")
