@@ -283,47 +283,7 @@ def make_params_dict(params_list, is_HMM=False):
             }
 
     if is_HMM:
-        '''
-        params_dict['C1C2b2'] = param_list[24]
-        params_dict['C1C2v2'] = param_list[25]
-        params_dict['C1C2k2'] = param_list[26]
-        params_dict['C2C1b1'] = param_list[27]
-        params_dict['C2C1v1'] = param_list[28]
-        params_dict['C2C1k1'] = param_list[29]
-        params_dict['C2C1b2'] = param_list[30]
-        params_dict['C2C1v2'] = param_list[31]
-        params_dict['C2C1k2'] = param_list[32]
-        params_dict['C2O1b2'] = param_list[33]
-        params_dict['C2O1v2'] = param_list[34]
-        params_dict['C2O1k2'] = param_list[35]
-        params_dict['O1C2b1'] = param_list[36]
-        params_dict['O1C2v1'] = param_list[37]
-        params_dict['O1C2k1'] = param_list[38]
-        params_dict['O1C2b2'] = param_list[39]
-        params_dict['O1C2v2'] = param_list[40]
-        params_dict['O1C2k2'] = param_list[41]
-        params_dict['O1I1b1'] = param_list[42]
-        params_dict['O1I1v1'] = param_list[43]
-        params_dict['O1I1k1'] = param_list[44]
-        params_dict['O1I1b2'] = param_list[45]
-        params_dict['O1I1v2'] = param_list[46]
-        params_dict['O1I1k2'] = param_list[47]
-        params_dict['I1O1b1'] = param_list[48]
-        params_dict['I1O1v1'] = param_list[49]
-        params_dict['I1O1k1'] = param_list[50]
-        params_dict['I1C1b1'] = param_list[51]
-        params_dict['I1C1v1'] = param_list[52]
-        params_dict['I1C1k1'] = param_list[53]
-        params_dict['C1I1b2'] = param_list[54]
-        params_dict['C1I1v2'] = param_list[55]
-        params_dict['C1I1k2'] = param_list[56]
-        params_dict['I1I2b2'] = param_list[57]
-        params_dict['I1I2v2'] = param_list[58]
-        params_dict['I1I2k2'] = param_list[59]
-        params_dict['I2I1b1'] = param_list[60]
-        params_dict['I2I1v1'] = param_list[61]
-        params_dict['I2I1k1'] = param_list[62]
-        '''
+ 
         params_dict = {
             'a1_0_na12mut8st' : params_list[0],
             'a1_1_na12mut8st' : params_list[1],
@@ -345,7 +305,6 @@ def make_params_dict(params_list, is_HMM=False):
             'ah_2_na12mut8st' : params_list[17],
             'vShift_na12mut8st' : params_list[18],
             'vShift_inact_na12mut8st' : params_list[19], 
-            'vShift_inact_local_na12mut8st' : params_list[20]
             }
     return params_dict
 
@@ -459,7 +418,6 @@ def scale_params_dict(down, params_arr, is_HMM=False):
         'ah_2_na12mut8st' : 2.680107016756367e-02,
         'vShift_na12mut8st' : 10,
         'vShift_inact_na12mut8st' : 10,
-        'vShift_inact_local_na12mut8st' : 0
         }
         types = {
         'a1_0_na12mut8st' : 'md',
@@ -482,7 +440,6 @@ def scale_params_dict(down, params_arr, is_HMM=False):
         'ah_2_na12mut8st' : 'md',
         'vShift_na12mut8st' : 'p',
         'vShift_inact_na12mut8st' : 'p', 
-        'vShift_inact_local_na12mut8st' : 'p' 
         }
 
         inds = {
@@ -506,7 +463,6 @@ def scale_params_dict(down, params_arr, is_HMM=False):
         'ah_2_na12mut8st' : 17,
         'vShift_na12mut8st' : 18,
         'vShift_inact_na12mut8st' : 19, 
-        'vShift_inact_local_na12mut8st' : 20 
         }
 
 
@@ -590,7 +546,5 @@ def change_params_dict(new_params, is_HMM=False):
             seg.ah_2_na12mut8st = new_params['ah_2_na12mut8st']
             seg.vShift_inact_local_na12mut8st = new_params['vShift_inact_local_na12mut8st'] 
         currh.vShift_na12mut8st = new_params['vShift_na12mut8st']
-        currh.vShift_inact_na12mut8st = new_params['vShift_inact_na12mut8st'] 
-
     return
 
