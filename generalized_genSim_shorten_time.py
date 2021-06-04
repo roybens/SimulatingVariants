@@ -264,6 +264,7 @@ class Activation:
 
         y_offset = -0.2 if color == "red" else 0
         x_offset = 0
+        label = 'HH' if color == 'black' else 'HMM'
 
         # upper left
         ax[0, 0].set_xlabel('Voltage $(mV)$')
@@ -277,7 +278,7 @@ class Activation:
         ax[0, 0].text(-10 + x_offset, 0.4 + y_offset, f'V50: {formatted_v_half}', color=color)
         x_values_v = np.arange(self.st_cl, self.end_cl, 1)
         curve = cf.boltzmann(x_values_v, gv_slope, v_half, top, bottom)
-        ax[0, 0].plot(x_values_v, curve, c=color, label='HH')
+        ax[0, 0].plot(x_values_v, curve, c=color, label=label)
         ax[0, 0].legend(loc='upper left')
 
         # lower left
@@ -526,6 +527,7 @@ class Inactivation:
             fig.subplots_adjust(hspace=0.5)
 
         y_offset = -0.2 if color == "red" else 0
+        label = 'HH' if color == 'black' else 'HMM'
 
         # upper left
         ax[0, 0].set_xlabel('Voltage $(mV)$')
@@ -539,7 +541,7 @@ class Inactivation:
         ax[0, 0].text(-10, 0.4 + y_offset, f'V50: {formatted_v_half}', c=color)
         x_values_v = np.arange(self.st_cl, self.end_cl, 1)
         curve = cf.boltzmann(x_values_v, ssi_slope, v_half, top, bottom)
-        ax[0, 0].plot(x_values_v, curve, c=color, label="HH")
+        ax[0, 0].plot(x_values_v, curve, c=color, label=label)
         ax[0, 0].legend(loc='lower left')  # add legend
 
         # lower left
@@ -782,6 +784,7 @@ class RFI:
             fig.subplots_adjust(hspace=0.5)
 
         y_offset = -0.2 if color == "red" else 0
+        label = 'HH' if color == 'black' else 'HMM'
 
         # upper left
         ax[0, 0].set_xlabel('Time $(ms)$')
@@ -794,7 +797,7 @@ class RFI:
         ax[0, 0].text(-8, 0.65 + y_offset, f'Tau Slow: {formatted_tauSlow}', c=color)
         ax[0, 0].text(-8, 0.68 + y_offset, f'Tau Fast: {formatted_tauFast}', c=color)
         ax[0, 0].text(-8, 0.71 + y_offset, f'% Fast Component: {formatted_percentFast}', c=color)
-        ax[0, 0].plot(self.time_vec, self.rec_vec, 'o', c=color, label="HH")
+        ax[0, 0].plot(self.time_vec, self.rec_vec, 'o', c=color, label=label)
         ax[0, 0].legend(loc='lower right')  # add legend
 
         # lower left
@@ -1624,12 +1627,6 @@ if __name__ == "__main__":
         genRFI.genRecInactTau()
         genRFI.plotAllRFI()
 
-        genRFI = RFI()
-        genRFI.genRecInactTau()
-        genRFI.plotAllRFI_with_ax(fig_title="RFI HH vs HMM", color='black',
-                                             saveAsFileName="Plots_Folder/RFI HHvHMM", loadFileName=None,
-                                             saveAsPNGFileName="Plots_Folder/RFI HHvHMM")
-
     elif args.function == 4:
         genRamp = Ramp()
         genRamp.genRamp()
@@ -1672,20 +1669,48 @@ if __name__ == "__main__":
 
     elif args.function == 8:
         # run all with saving ax
-        genAct = Activation()
+        # change channel name accordingly
+        # na12 (na12.mod)
+        # na16 (na16.mod)
+        genAct = Activation(channel_name='na16')
         genAct.genActivation()
         genAct.plotAllActivation_with_ax(fig_title="Activation HH vs HMM", color='black',
                                          saveAsFileName="Plots_Folder/Act HHvHMM", loadFileName=None,
                                          saveAsPNGFileName="Plots_Folder/Act HHvHMM")
 
-        genInact = Inactivation()
+        genInact = Inactivation(channel_name='na16')
         genInact.genInactivation()
         genInact.plotAllInactivation_with_ax(fig_title="Inactivation HH vs HMM", color='black',
                                              saveAsFileName="Plots_Folder/Inact HHvHMM", loadFileName=None,
                                              saveAsPNGFileName="Plots_Folder/Inact HHvHMM")
 
-        genRFI = RFI()
+        genRFI = RFI(channel_name='na16')
         genRFI.genRecInactTau()
         genRFI.plotAllRFI_with_ax(fig_title="RFI HH vs HMM", color='black',
                                              saveAsFileName="Plots_Folder/RFI HHvHMM", loadFileName=None,
                                              saveAsPNGFileName="Plots_Folder/RFI HHvHMM")
+    elif args.function == 9:
+        # run all with saving ax
+        # change channel name accordingly
+        # na (na8st.mod)
+        # nax (na8xst.mod)
+        genAct = Activation(channel_name='nax')
+        genAct.genActivation()
+        genAct.plotAllActivation_with_ax(fig_title="Activation HH vs HMM", color='red',
+                                         saveAsFileName="Plots_Folder/Act HHvHMM",
+                                         loadFileName="Plots_Folder/Act HHvHMM",
+                                         saveAsPNGFileName="Plots_Folder/Act HHvHMM")
+
+        genInact = Inactivation(channel_name='nax')
+        genInact.genInactivation()
+        genInact.plotAllInactivation_with_ax(fig_title="Inactivation HH vs HMM", color='red',
+                                             saveAsFileName="Plots_Folder/Inact HHvHMM",
+                                             loadFileName="Plots_Folder/Inact HHvHMM",
+                                             saveAsPNGFileName="Plots_Folder/Inact HHvHMM")
+
+        genRFI = RFI(channel_name='nax')
+        genRFI.genRecInactTau()
+        genRFI.plotAllRFI_with_ax(fig_title="RFI HH vs HMM", color='red',
+                                  saveAsFileName="Plots_Folder/RFI HHvHMM",
+                                  loadFileName="Plots_Folder/RFI HHvHMM",
+                                  saveAsPNGFileName="Plots_Folder/RFI HHvHMM")

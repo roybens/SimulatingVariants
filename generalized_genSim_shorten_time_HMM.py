@@ -93,18 +93,6 @@ class Activation:
         self.v_half = 0
         self.s = 0
 
-        # finding the "initial state variables values" # HMM
-        initial_values = [x for x in finding_state_variables(v_init, h.celsius)]
-        # print('Initial values [C1, C2, O1, I1, I2]=  ', initial_values)
-
-        if channel_name == 'na15':
-            for seg in self.soma:
-                seg.na15.iC1 = initial_values[0]
-                seg.na15.iC2 = initial_values[1]
-                seg.na15.iO1 = initial_values[2]
-                seg.na15.iI1 = initial_values[3]
-                seg.na15.iI2 = initial_values[4]
-
     def clamp(self, v_cl):
         """ Runs a trace and calculates peak currents.
         Args:
@@ -210,7 +198,8 @@ class Activation:
         plt.plot(x_values_v, curve, c='red')
         # save as PGN file
         plt.savefig(
-            os.path.join(os.path.split(__file__)[0], 'Plots_Folder/HMM_Activation Voltage-Normalized Conductance Relation'))
+            os.path.join(os.path.split(__file__)[0],
+                         'Plots_Folder/HMM_Activation Voltage-Normalized Conductance Relation'))
 
     def plotActivation_IVCurve(self):
         plt.figure()
@@ -241,7 +230,8 @@ class Activation:
         curr = np.array(self.all_is)
         [plt.plot(self.t_vec[1:], curr[i], c='black') for i in np.arange(len(curr))]
         # save as PGN file
-        plt.savefig(os.path.join(os.path.split(__file__)[0], "Plots_Folder/HMM_Activation Time Current Density Relation"))
+        plt.savefig(
+            os.path.join(os.path.split(__file__)[0], "Plots_Folder/HMM_Activation Time Current Density Relation"))
 
     def plotAllActivation(self):
         """
@@ -319,7 +309,6 @@ class Activation:
                 os.path.join(os.path.split(__file__)[0], saveAsPNGFileName))
 
 
-
 ##################
 # Inactivation
 ##################
@@ -373,17 +362,6 @@ class Inactivation:
 
         self.L = len(self.v_vec)
 
-        # finding the "initial state variables values" # HMM
-        initial_values = [x for x in finding_state_variables(v_init, h.celsius)]
-        # print('Initial values [C1, C2, O1, I1, I2]=  ', initial_values)
-
-        if channel_name == 'na15':
-            for seg in self.soma:
-                seg.na15.iC1 = initial_values[0]
-                seg.na15.iC2 = initial_values[1]
-                seg.na15.iO1 = initial_values[2]
-                seg.na15.iI1 = initial_values[3]
-                seg.na15.iI2 = initial_values[4]
 
     def clamp(self, v_cl):
         """ Runs a trace and calculates peak currents.
@@ -456,7 +434,8 @@ class Inactivation:
         plt.plot(x_values_v, curve, c='red')
         # save as PGN file
         plt.savefig(
-            os.path.join(os.path.split(__file__)[0], 'Plots_Folder/HMM_Inactivation Voltage Normalized Current Relation'))
+            os.path.join(os.path.split(__file__)[0],
+                         'Plots_Folder/HMM_Inactivation Voltage Normalized Current Relation'))
 
     def plotInactivation_TimeVRelation(self):
         plt.figure()
@@ -474,7 +453,8 @@ class Inactivation:
         plt.title('Inactivation Time/Current density relation')
         [plt.plot(self.t_vec[1:], self.all_is[i], c='black') for i in np.arange(self.L)]
         # save as PGN file
-        plt.savefig(os.path.join(os.path.split(__file__)[0], "Plots_Folder/HMM_Inactivation Time Current Density Relation"))
+        plt.savefig(
+            os.path.join(os.path.split(__file__)[0], "Plots_Folder/HMM_Inactivation Time Current Density Relation"))
 
     def plotInactivation_Tau_0mV(self):
         plt.figure()
@@ -530,8 +510,8 @@ class Inactivation:
         self.plotInactivation_Tau_0mV()
 
     def plotAllInactivation_with_ax(self, fig_title,
-                                  figsize=(18, 9), color='black',
-                                  saveAsFileName=None, loadFileName=None, saveAsPNGFileName=None):
+                                    figsize=(18, 9), color='black',
+                                    saveAsFileName=None, loadFileName=None, saveAsPNGFileName=None):
         """
         Creates new ax if loadFileName is not a valid string. Plots all.
 
@@ -600,6 +580,7 @@ class Inactivation:
             plt.savefig(
                 os.path.join(os.path.split(__file__)[0], saveAsPNGFileName))
 
+
 ##################
 # Recovery from Inactivation (RFI)
 # &  RFI Tau
@@ -667,18 +648,6 @@ class RFI:
         self.all_t_vec = []  # all h.t
 
         self.L = len(self.vec_pts)
-
-        # finding the "initial state variables values" # HMM
-        initial_values = [x for x in finding_state_variables(v_init, h.celsius)]
-        # print('Initial values [C1, C2, O1, I1, I2]=  ', initial_values)
-
-        if channel_name == 'na15':
-            for seg in self.soma:
-                seg.na15.iC1 = initial_values[0]
-                seg.na15.iC2 = initial_values[1]
-                seg.na15.iO1 = initial_values[2]
-                seg.na15.iI1 = initial_values[3]
-                seg.na15.iI2 = initial_values[4]
 
     def clampRecInactTau(self, dur):
         """ Runs a trace and calculates peak currents.
@@ -751,7 +720,8 @@ class RFI:
         plt.title('Log(Time)/Fractional recovery (P2/P1)')
         plt.plot(self.log_time_vec, self.rec_vec, 'o', c='black')
         # save as PGN file
-        plt.savefig(os.path.join(os.path.split(__file__)[0], 'Plots_Folder/HMM_RFI Log Time Fractional recovery Relation'))
+        plt.savefig(
+            os.path.join(os.path.split(__file__)[0], 'Plots_Folder/HMM_RFI Log Time Fractional recovery Relation'))
 
     def plotRFI_VInormRelation(self):
         plt.figure()
@@ -796,10 +766,9 @@ class RFI:
         self.plotRFI_TimeVRelation()
         self.plotRFI_TCurrDensityRelation()
 
-
     def plotAllRFI_with_ax(self, fig_title,
-                                  figsize=(18, 9), color='black',
-                                  saveAsFileName=None, loadFileName=None, saveAsPNGFileName=None):
+                           figsize=(18, 9), color='black',
+                           saveAsFileName=None, loadFileName=None, saveAsPNGFileName=None):
         """
         Creates new ax if loadFileName is not a valid string. Plots all.
         color = 'red' if cur_params == "variant_params" else 'black'
@@ -855,6 +824,7 @@ class RFI:
         if saveAsPNGFileName:
             plt.savefig(os.path.join(os.path.split(__file__)[0], saveAsPNGFileName))
 
+
 ##################
 # Ramp Protocol
 ##################
@@ -875,18 +845,6 @@ class Ramp:
         self.soma.ena = soma_ena
 
         self.time_steps_arr = []
-
-        # finding the "initial state variables values" # HMM
-        initial_values = [x for x in finding_state_variables(v_init, h.celsius)]
-        # print('Initial values [C1, C2, O1, I1, I2]=  ', initial_values)
-
-        if channel_name == 'na15':
-            for seg in self.soma:
-                seg.na15.iC1 = initial_values[0]
-                seg.na15.iC2 = initial_values[1]
-                seg.na15.iO1 = initial_values[2]
-                seg.na15.iI1 = initial_values[3]
-                seg.na15.iI2 = initial_values[4]
 
         # clamping parameters
         def make_ramp():
@@ -1084,18 +1042,6 @@ class UDB20:
         self.f3cl.dur[0] = 1e9
         self.f3cl.amp[0] = v_init
 
-        # finding the "initial state variables values" # HMM
-        initial_values = [x for x in finding_state_variables(v_init, h.celsius)]
-        # print('Initial values [C1, C2, O1, I1, I2]=  ', initial_values)
-
-        if channel_name == 'na15':
-            for seg in self.soma:
-                seg.na15.iC1 = initial_values[0]
-                seg.na15.iC2 = initial_values[1]
-                seg.na15.iO1 = initial_values[2]
-                seg.na15.iI1 = initial_values[3]
-                seg.na15.iI2 = initial_values[4]
-
         def make_UDB():
             # creates time and voltage vectors for UDB20 protocol
             time_steps = np.arange(0, self.t_total, h.dt)
@@ -1257,18 +1203,6 @@ class RFI_dv:
         self.f3cl.amp[3] = f3cl_amp3  # mV
         self.f3cl.dur[4] = f3cl_dur4  # ms
         self.f3cl.amp[4] = f3cl_amp4  # mV
-
-        # finding the "initial state variables values" # HMM
-        initial_values = [x for x in finding_state_variables(v_init, h.celsius)]
-        # print('Initial values [C1, C2, O1, I1, I2]=  ', initial_values)
-
-        if channel_name == 'na15':
-            for seg in self.soma:
-                seg.na15.iC1 = initial_values[0]
-                seg.na15.iC2 = initial_values[1]
-                seg.na15.iO1 = initial_values[2]
-                seg.na15.iI1 = initial_values[3]
-                seg.na15.iI2 = initial_values[4]
 
     # clamping definition for RecInactTau
     def clampRecInact_dv_Tau(self, curr_amp):
@@ -1688,14 +1622,9 @@ if __name__ == "__main__":
         genInact.plotAllInactivation()
 
     elif args.function == 3:
-        genRFI = RFI(channel_name='na15')
+        genRFI = RFI()
         genRFI.genRecInactTau()
         genRFI.plotAllRFI()
-
-        genRFI.plotAllRFI_with_ax(fig_title="RFI HH vs HMM", color='red',
-                                  saveAsFileName="Plots_Folder/RFI HHvHMM",
-                                  loadFileName="Plots_Folder/RFI HHvHMM",
-                                  saveAsPNGFileName="Plots_Folder/RFI HHvHMM")
 
     elif args.function == 4:
         genRamp = Ramp()
@@ -1738,25 +1667,4 @@ if __name__ == "__main__":
         genUDB20.plotAllUDB20()
 
     elif args.function == 8:
-        # run all with saving ax
-        genAct = Activation(channel_name='na15')
-        genAct.genActivation()
-        genAct.plotAllActivation_with_ax(fig_title="Activation HH vs HMM", color='red',
-                                         saveAsFileName="Plots_Folder/Act HHvHMM",
-                                         loadFileName="Plots_Folder/Act HHvHMM",
-                                         saveAsPNGFileName="Plots_Folder/Act HHvHMM")
-
-        genInact = Inactivation(channel_name='na15')
-        genInact.genInactivation()
-        genInact.plotAllInactivation_with_ax(fig_title="Inactivation HH vs HMM", color='red',
-                                             saveAsFileName="Plots_Folder/Inact HHvHMM",
-                                             loadFileName="Plots_Folder/Inact HHvHMM",
-                                             saveAsPNGFileName="Plots_Folder/Inact HHvHMM")
-
-        genRFI = RFI(channel_name='na15')
-        genRFI.genRecInactTau()
-        genRFI.plotAllRFI_with_ax(fig_title="RFI HH vs HMM", color='red',
-                                  saveAsFileName="Plots_Folder/RFI HHvHMM",
-                                  loadFileName="Plots_Folder/RFI HHvHMM",
-                                  saveAsPNGFileName="Plots_Folder/RFI HHvHMM")
-
+        pass
