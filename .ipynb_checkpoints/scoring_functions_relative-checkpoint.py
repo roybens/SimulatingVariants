@@ -13,6 +13,8 @@ are being specified for na12_mut.mod.
 
 class Score_Function:
     def __init__(self, diff_dict, wild_data):
+        # Initiation of the scoring function is the same regardless of whether 
+        # we're using an HMM or HH model.
         self.dv_half_act_diff = diff_dict['dv_half_act']
         self.gv_slope_diff = diff_dict['gv_slope']
         self.dv_half_ssi_diff = diff_dict['dv_half_ssi']
@@ -38,11 +40,14 @@ class Score_Function:
         self.persistent_wild = wild_data['persistent']
 
 
-    def total_rmse(self):
+    def total_rmse(self, is_HMM=False):
+        # When using the HH model, leave is_HMM as false. Otherwise, set it to true.
         try:
-            gv_slope, v_half_act, top, bottom = cf.calc_act_obj()
-            ssi_slope, v_half_inact, top, bottom, tau0 = cf.calc_inact_obj()
-            y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj()
+            gv_slope, v_half_act, top, bottom = cf.calc_act_obj(is_HMM=is_HMM)
+            print('gv_slope: ' + str(gv_slope))
+            print('v_half_act: ' + str(v_half_act))
+            ssi_slope, v_half_inact, top, bottom, tau0 = cf.calc_inact_obj(is_HMM=is_HMM)
+            y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(is_HMM=is_HMM)
         except ZeroDivisionError:
             print('Zero Division Error')
             return (1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000)
