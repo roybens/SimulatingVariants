@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import eval_helper as eh
 import generalized_genSim_shorten_time as ggsd
+import generalized_genSim_shorten_time_HMM as ggsdHMM
 from scipy import optimize, stats
 
 def boltzmann(x, slope, v_half, top, bottom):
@@ -27,6 +28,7 @@ def two_phase(x, y0, plateau, percent_fast, k_fast, k_slow):
 
 
 def gen_figure_given_params(params, save=True, file_name=None,mutant='N_A', exp='N_A',rmse=None, plot=False):
+    #Not yet updated for HMM model
     #set-up figure
     eh.change_params(params, scaled=False)
     param_dict = {}
@@ -80,9 +82,12 @@ def gen_figure_given_params(params, save=True, file_name=None,mutant='N_A', exp=
     axs[2].scatter(np.log(times), data_pts, label='Recovery', color='black')
     plt.show()
 
-def calc_act_obj():
+def calc_act_obj(is_HMM=False):
     try:
-        gnorm_vec, v_vec, all_is = ggsd.Activation().genActivation()
+        if not is_HMM:
+            gnorm_vec, v_vec, all_is = ggsd.Activation().genActivation()
+        else:
+            gnorm_vec, v_vec, all_is = ggsdHMM.Activation().genActivation()
     except:
         print('Couldn\'t generate activation data')
         return (1000, 1000, 1000, 1000)
@@ -95,9 +100,12 @@ def calc_act_obj():
     return gv_slope, v_half, top, bottom
 
 
-def calc_inact_obj():
+def calc_inact_obj(is_HMM=False):
     try:
-        inorm_vec, v_vec, all_is = ggsd.Inactivation().genInactivation()
+        if not is_HMM:
+            inorm_vec, v_vec, all_is = ggsd.Inactivation().genInactivation()
+        else:
+            inorm_vec, v_vec, all_is = ggsdHMM.Inactivation().genInactivation()
     except:
         print('Couldn\'t generate inactivation data')
         return (1000, 1000, 1000, 1000, 1000)
@@ -110,9 +118,12 @@ def calc_inact_obj():
     taus, tau_sweeps, tau0 = ggsd.find_tau_inact(all_is)
     return ssi_slope, v_half, top, bottom, tau0
 
-def calc_recov_obj():
+def calc_recov_obj(is_HMM=False):
     try:
-        rec_inact_tau_vec, recov_curves, times = ggsd.RFI().genRecInactTau()
+        if not is_HMM:
+            rec_inact_tau_vec, recov_curves, times = ggsd.RFI().genRecInactTau()
+        else:
+            rec_inact_tau_vec, recov_curves, times = ggsdHMM.RFI().genRecInactTau()
     except:
         print('Couldn\'t generate recovery data')
         return (1000, 1000, 1000, 1000, 1000)
