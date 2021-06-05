@@ -271,7 +271,10 @@ class Activation:
         ax[0, 0].set_ylabel('Normalized conductance')
         ax[0, 0].set_title('Activation: Voltage/Normalized conductance')
         ax[0, 0].plot(self.v_vec, self.gnorm_vec, 'o', c=color)
-        gv_slope, v_half, top, bottom = cf.calc_act_obj()
+        if label == 'HH':
+            gv_slope, v_half, top, bottom = cf.calc_act_obj()
+        else:
+            gv_slope, v_half, top, bottom = cf.calc_act_obj(True)
         formatted_gv_slope = np.round(gv_slope, decimals=2)
         formatted_v_half = np.round(v_half, decimals=2)
         ax[0, 0].text(-10 + x_offset, 0.5 + y_offset, f'Slope: {formatted_gv_slope}', color=color)
@@ -534,7 +537,10 @@ class Inactivation:
         ax[0, 0].set_ylabel('Normalized current')
         ax[0, 0].set_title('Inactivation: Voltage/Normalized Current Relation')
         ax[0, 0].plot(self.v_vec, self.inorm_vec, 'o', c=color)
-        ssi_slope, v_half, top, bottom, tau0 = cf.calc_inact_obj()
+        if label == 'HH':
+            ssi_slope, v_half, top, bottom, tau0 = cf.calc_inact_obj()
+        else:
+            ssi_slope, v_half, top, bottom, tau0 = cf.calc_inact_obj(True)
         formatted_ssi_slope = np.round(ssi_slope, decimals=2)
         formatted_v_half = np.round(v_half, decimals=2)
         ax[0, 0].text(-10, 0.5 + y_offset, f'Slope: {formatted_ssi_slope}', c=color)
