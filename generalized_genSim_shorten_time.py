@@ -50,6 +50,7 @@ class Activation:
         self.h = h  # NEURON h
 
         # one-compartment cell (soma)
+        self.channel_name = channel_name
         self.soma = h.Section(name='soma2')
         self.soma.diam = soma_diam  # micron
         self.soma.L = soma_L  # micron, so that area = 10000 micron2
@@ -191,7 +192,7 @@ class Activation:
         plt.ylabel('Normalized conductance')
         plt.title('Activation: Voltage/Normalized conductance')
         plt.plot(self.v_vec, self.gnorm_vec, 'o', c='black')
-        gv_slope, v_half, top, bottom = cf.calc_act_obj()
+        gv_slope, v_half, top, bottom = cf.calc_act_obj(self.channel_name)
         formatted_gv_slope = np.round(gv_slope, decimals=2)
         formatted_v_half = np.round(v_half, decimals=2)
         plt.text(-10, 0.5, f'Slope: {formatted_gv_slope}')
@@ -271,10 +272,7 @@ class Activation:
         ax[0, 0].set_ylabel('Normalized conductance')
         ax[0, 0].set_title('Activation: Voltage/Normalized conductance')
         ax[0, 0].plot(self.v_vec, self.gnorm_vec, 'o', c=color)
-        if label == 'HH':
-            gv_slope, v_half, top, bottom = cf.calc_act_obj()
-        else:
-            gv_slope, v_half, top, bottom = cf.calc_act_obj(True)
+        gv_slope, v_half, top, bottom = cf.calc_act_obj(self.channel_name)
         formatted_gv_slope = np.round(gv_slope, decimals=2)
         formatted_v_half = np.round(v_half, decimals=2)
         ax[0, 0].text(-10 + x_offset, 0.5 + y_offset, f'Slope: {formatted_gv_slope}', color=color)
@@ -289,9 +287,10 @@ class Activation:
         ax[1, 0].set_ylabel('Peak Current')
         ax[1, 0].set_title("Activation: IV Curve")
         ax[1, 0].plot(self.v_vec, self.ipeak_vec, 'o', c=color)
-        ax[1, 0].text(-110 + x_offset, -0.05 + y_offset, 'Vrev at ' + str(round(self.vrev, 1)) + 'mV', c=color)
+        formatted_vRev = round(self.vrev, 1)
+        ax[1, 0].text(-110 + x_offset, -0.3 + y_offset, f'Vrev at {formatted_vRev} mV', c=color)  # TODO fix pos...
         formatted_peak_i = np.round(min(self.ipeak_vec), decimals=2)
-        ax[1, 0].text(-110 + x_offset, -0.1 + y_offset, f'Peak Current from IV: {formatted_peak_i} mV', c=color)
+        ax[1, 0].text(-110 + x_offset, -0.33 + y_offset, f'Peak Current from IV: {formatted_peak_i} mV', c=color)
 
         # upper right
         ax[0, 1].set_xlabel('Time $(ms)$')
@@ -326,6 +325,7 @@ class Inactivation:
         self.h = h  # NEURON h
 
         # one-compartment cell (soma)
+        self.channel_name = channel_name
         self.soma = h.Section(name='soma2')
         self.soma.diam = soma_diam  # micron
         self.soma.L = soma_L  # micron, so that area = 10000 micron2
@@ -428,7 +428,7 @@ class Inactivation:
         plt.ylabel('Normalized current')
         plt.title('Inactivation: Voltage/Normalized Current Relation')
         plt.plot(self.v_vec, self.inorm_vec, 'o', c='black')
-        ssi_slope, v_half, top, bottom, tau0 = cf.calc_inact_obj()
+        ssi_slope, v_half, top, bottom, tau0 = cf.calc_inact_obj(self.channel_name)
         formatted_ssi_slope = np.round(ssi_slope, decimals=2)
         formatted_v_half = np.round(v_half, decimals=2)
         plt.text(-10, 0.5, f'Slope: {formatted_ssi_slope}')
@@ -537,10 +537,7 @@ class Inactivation:
         ax[0, 0].set_ylabel('Normalized current')
         ax[0, 0].set_title('Inactivation: Voltage/Normalized Current Relation')
         ax[0, 0].plot(self.v_vec, self.inorm_vec, 'o', c=color)
-        if label == 'HH':
-            ssi_slope, v_half, top, bottom, tau0 = cf.calc_inact_obj()
-        else:
-            ssi_slope, v_half, top, bottom, tau0 = cf.calc_inact_obj(True)
+        ssi_slope, v_half, top, bottom, tau0 = cf.calc_inact_obj(self.channel_name)
         formatted_ssi_slope = np.round(ssi_slope, decimals=2)
         formatted_v_half = np.round(v_half, decimals=2)
         ax[0, 0].text(-10, 0.5 + y_offset, f'Slope: {formatted_ssi_slope}', c=color)
@@ -601,6 +598,7 @@ class RFI:
         self.h = h  # NEURON h
 
         # one-compartment cell (soma)
+        self.channel_name = channel_name
         self.soma = h.Section(name='soma2')
         self.soma.diam = soma_diam  # micron
         self.soma.L = soma_L  # micron, so that area = 10000 micron2
@@ -733,7 +731,7 @@ class RFI:
         plt.xlabel('Time $(ms)$')
         plt.ylabel('Fractional recovery (P2/P1)')
         plt.title('Time/Fractional recovery (P2/P1)')
-        y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj()
+        y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(self.channel_name)
         formatted_tauSlow = np.round(1 / k_slow, decimals=2)
         formatted_tauFast = np.round(1 / k_fast, decimals=2)
         formatted_percentFast = np.round(percent_fast, decimals=4)
@@ -796,13 +794,13 @@ class RFI:
         ax[0, 0].set_xlabel('Time $(ms)$')
         ax[0, 0].set_ylabel('Fractional recovery (P2/P1)')
         ax[0, 0].set_title('Time/Fractional recovery (P2/P1)')
-        y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj()
+        y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(self.channel_name)
         formatted_tauSlow = np.round(1 / k_slow, decimals=2)
         formatted_tauFast = np.round(1 / k_fast, decimals=2)
         formatted_percentFast = np.round(percent_fast, decimals=4)
         ax[0, 0].text(-8, 0.65 + y_offset, f'Tau Slow: {formatted_tauSlow}', c=color)
-        ax[0, 0].text(-8, 0.68 + y_offset, f'Tau Fast: {formatted_tauFast}', c=color)
-        ax[0, 0].text(-8, 0.71 + y_offset, f'% Fast Component: {formatted_percentFast}', c=color)
+        ax[0, 0].text(-8, 0.70 + y_offset, f'Tau Fast: {formatted_tauFast}', c=color)
+        ax[0, 0].text(-8, 0.75 + y_offset, f'% Fast Component: {formatted_percentFast}', c=color)
         ax[0, 0].plot(self.time_vec, self.rec_vec, 'o', c=color, label=label)
         ax[0, 0].legend(loc='lower right')  # add legend
 
