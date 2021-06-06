@@ -82,12 +82,12 @@ def gen_figure_given_params(params, save=True, file_name=None,mutant='N_A', exp=
     axs[2].scatter(np.log(times), data_pts, label='Recovery', color='black')
     plt.show()
 
-def calc_act_obj(is_HMM=False):
+def calc_act_obj(channel_name, is_HMM=False):
     try:
-        if not is_HMM:
-            gnorm_vec, v_vec, all_is = ggsd.Activation().genActivation()
-        else:
-            gnorm_vec, v_vec, all_is = ggsdHMM.Activation().genActivation()
+        #if not is_HMM:
+        gnorm_vec, v_vec, all_is = ggsd.Activation(channel_name=channel_name).genActivation()
+        #else:
+        #    gnorm_vec, v_vec, all_is = ggsdHMM.Activation(channel_name).genActivation()
     except:
         print('Couldn\'t generate activation data')
         return (1000, 1000, 1000, 1000)
@@ -101,12 +101,12 @@ def calc_act_obj(is_HMM=False):
     return gv_slope, v_half, top, bottom
 
 
-def calc_inact_obj(is_HMM=False):
+def calc_inact_obj(channel_name, is_HMM=False):
     try:
-        if not is_HMM:
-            inorm_vec, v_vec, all_is = ggsd.Inactivation().genInactivation()
-        else:
-            inorm_vec, v_vec, all_is = ggsdHMM.Inactivation().genInactivation()
+        #if not is_HMM:
+        inorm_vec, v_vec, all_is = ggsd.Inactivation(channel_name=channel_name).genInactivation()
+        #else:
+        #    inorm_vec, v_vec, all_is = ggsdHMM.Inactivation().genInactivation()
     except:
         print('Couldn\'t generate inactivation data')
         return (1000, 1000, 1000, 1000, 1000)
@@ -119,12 +119,12 @@ def calc_inact_obj(is_HMM=False):
     taus, tau_sweeps, tau0 = ggsd.find_tau_inact(all_is)
     return ssi_slope, v_half, top, bottom, tau0
 
-def calc_recov_obj(is_HMM=False):
+def calc_recov_obj(channel_name, is_HMM=False):
     try:
-        if not is_HMM:
-            rec_inact_tau_vec, recov_curves, times = ggsd.RFI().genRecInactTau()
-        else:
-            rec_inact_tau_vec, recov_curves, times = ggsdHMM.RFI().genRecInactTau()
+        #if not is_HMM:
+        rec_inact_tau_vec, recov_curves, times = ggsd.RFI(channel_name=channel_name).genRecInactTau()
+        #else:
+        #    rec_inact_tau_vec, recov_curves, times = ggsdHMM.RFI().genRecInactTau()
     except:
         print('Couldn\'t generate recovery data')
         return (1000, 1000, 1000, 1000, 1000)

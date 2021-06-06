@@ -50,6 +50,7 @@ class Activation:
         self.h = h  # NEURON h
 
         # one-compartment cell (soma)
+        self.channel_name = channel_name
         self.soma = h.Section(name='soma2')
         self.soma.diam = soma_diam  # micron
         self.soma.L = soma_L  # micron, so that area = 10000 micron2
@@ -191,7 +192,7 @@ class Activation:
         plt.ylabel('Normalized conductance')
         plt.title('Activation: Voltage/Normalized conductance')
         plt.plot(self.v_vec, self.gnorm_vec, 'o', c='black')
-        gv_slope, v_half, top, bottom = cf.calc_act_obj()
+        gv_slope, v_half, top, bottom = cf.calc_act_obj(self.channel_name)
         formatted_gv_slope = np.round(gv_slope, decimals=2)
         formatted_v_half = np.round(v_half, decimals=2)
         plt.text(-10, 0.5, f'Slope: {formatted_gv_slope}')
@@ -264,20 +265,21 @@ class Activation:
 
         y_offset = -0.2 if color == "red" else 0
         x_offset = 0
+        label = 'HH' if color == 'black' else 'HMM'
 
         # upper left
         ax[0, 0].set_xlabel('Voltage $(mV)$')
         ax[0, 0].set_ylabel('Normalized conductance')
         ax[0, 0].set_title('Activation: Voltage/Normalized conductance')
         ax[0, 0].plot(self.v_vec, self.gnorm_vec, 'o', c=color)
-        gv_slope, v_half, top, bottom = cf.calc_act_obj()
+        gv_slope, v_half, top, bottom = cf.calc_act_obj(self.channel_name)
         formatted_gv_slope = np.round(gv_slope, decimals=2)
         formatted_v_half = np.round(v_half, decimals=2)
         ax[0, 0].text(-10 + x_offset, 0.5 + y_offset, f'Slope: {formatted_gv_slope}', color=color)
         ax[0, 0].text(-10 + x_offset, 0.4 + y_offset, f'V50: {formatted_v_half}', color=color)
         x_values_v = np.arange(self.st_cl, self.end_cl, 1)
         curve = cf.boltzmann(x_values_v, gv_slope, v_half, top, bottom)
-        ax[0, 0].plot(x_values_v, curve, c=color, label='HH')
+        ax[0, 0].plot(x_values_v, curve, c=color, label=label)
         ax[0, 0].legend(loc='upper left')
 
         # lower left
@@ -285,9 +287,10 @@ class Activation:
         ax[1, 0].set_ylabel('Peak Current')
         ax[1, 0].set_title("Activation: IV Curve")
         ax[1, 0].plot(self.v_vec, self.ipeak_vec, 'o', c=color)
-        ax[1, 0].text(-110 + x_offset, -0.05 + y_offset, 'Vrev at ' + str(round(self.vrev, 1)) + 'mV', c=color)
+        formatted_vRev = round(self.vrev, 1)
+        ax[1, 0].text(-110 + x_offset, -0.3 + y_offset, f'Vrev at {formatted_vRev} mV', c=color)  # TODO fix pos...
         formatted_peak_i = np.round(min(self.ipeak_vec), decimals=2)
-        ax[1, 0].text(-110 + x_offset, -0.1 + y_offset, f'Peak Current from IV: {formatted_peak_i} mV', c=color)
+        ax[1, 0].text(-110 + x_offset, -0.33 + y_offset, f'Peak Current from IV: {formatted_peak_i} mV', c=color)
 
         # upper right
         ax[0, 1].set_xlabel('Time $(ms)$')
@@ -322,6 +325,7 @@ class Inactivation:
         self.h = h  # NEURON h
 
         # one-compartment cell (soma)
+        self.channel_name = channel_name
         self.soma = h.Section(name='soma2')
         self.soma.diam = soma_diam  # micron
         self.soma.L = soma_L  # micron, so that area = 10000 micron2
@@ -424,7 +428,7 @@ class Inactivation:
         plt.ylabel('Normalized current')
         plt.title('Inactivation: Voltage/Normalized Current Relation')
         plt.plot(self.v_vec, self.inorm_vec, 'o', c='black')
-        ssi_slope, v_half, top, bottom, tau0 = cf.calc_inact_obj()
+        ssi_slope, v_half, top, bottom, tau0 = cf.calc_inact_obj(self.channel_name)
         formatted_ssi_slope = np.round(ssi_slope, decimals=2)
         formatted_v_half = np.round(v_half, decimals=2)
         plt.text(-10, 0.5, f'Slope: {formatted_ssi_slope}')
@@ -526,20 +530,21 @@ class Inactivation:
             fig.subplots_adjust(hspace=0.5)
 
         y_offset = -0.2 if color == "red" else 0
+        label = 'HH' if color == 'black' else 'HMM'
 
         # upper left
         ax[0, 0].set_xlabel('Voltage $(mV)$')
         ax[0, 0].set_ylabel('Normalized current')
         ax[0, 0].set_title('Inactivation: Voltage/Normalized Current Relation')
         ax[0, 0].plot(self.v_vec, self.inorm_vec, 'o', c=color)
-        ssi_slope, v_half, top, bottom, tau0 = cf.calc_inact_obj()
+        ssi_slope, v_half, top, bottom, tau0 = cf.calc_inact_obj(self.channel_name)
         formatted_ssi_slope = np.round(ssi_slope, decimals=2)
         formatted_v_half = np.round(v_half, decimals=2)
         ax[0, 0].text(-10, 0.5 + y_offset, f'Slope: {formatted_ssi_slope}', c=color)
         ax[0, 0].text(-10, 0.4 + y_offset, f'V50: {formatted_v_half}', c=color)
         x_values_v = np.arange(self.st_cl, self.end_cl, 1)
         curve = cf.boltzmann(x_values_v, ssi_slope, v_half, top, bottom)
-        ax[0, 0].plot(x_values_v, curve, c=color, label="HH")
+        ax[0, 0].plot(x_values_v, curve, c=color, label=label)
         ax[0, 0].legend(loc='lower left')  # add legend
 
         # lower left
@@ -593,6 +598,7 @@ class RFI:
         self.h = h  # NEURON h
 
         # one-compartment cell (soma)
+        self.channel_name = channel_name
         self.soma = h.Section(name='soma2')
         self.soma.diam = soma_diam  # micron
         self.soma.L = soma_L  # micron, so that area = 10000 micron2
@@ -725,7 +731,7 @@ class RFI:
         plt.xlabel('Time $(ms)$')
         plt.ylabel('Fractional recovery (P2/P1)')
         plt.title('Time/Fractional recovery (P2/P1)')
-        y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj()
+        y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(self.channel_name)
         formatted_tauSlow = np.round(1 / k_slow, decimals=2)
         formatted_tauFast = np.round(1 / k_fast, decimals=2)
         formatted_percentFast = np.round(percent_fast, decimals=4)
@@ -782,19 +788,20 @@ class RFI:
             fig.subplots_adjust(hspace=0.5)
 
         y_offset = -0.2 if color == "red" else 0
+        label = 'HH' if color == 'black' else 'HMM'
 
         # upper left
         ax[0, 0].set_xlabel('Time $(ms)$')
         ax[0, 0].set_ylabel('Fractional recovery (P2/P1)')
         ax[0, 0].set_title('Time/Fractional recovery (P2/P1)')
-        y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj()
+        y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(self.channel_name)
         formatted_tauSlow = np.round(1 / k_slow, decimals=2)
         formatted_tauFast = np.round(1 / k_fast, decimals=2)
         formatted_percentFast = np.round(percent_fast, decimals=4)
         ax[0, 0].text(-8, 0.65 + y_offset, f'Tau Slow: {formatted_tauSlow}', c=color)
-        ax[0, 0].text(-8, 0.68 + y_offset, f'Tau Fast: {formatted_tauFast}', c=color)
-        ax[0, 0].text(-8, 0.71 + y_offset, f'% Fast Component: {formatted_percentFast}', c=color)
-        ax[0, 0].plot(self.time_vec, self.rec_vec, 'o', c=color, label="HH")
+        ax[0, 0].text(-8, 0.70 + y_offset, f'Tau Fast: {formatted_tauFast}', c=color)
+        ax[0, 0].text(-8, 0.75 + y_offset, f'% Fast Component: {formatted_percentFast}', c=color)
+        ax[0, 0].plot(self.time_vec, self.rec_vec, 'o', c=color, label=label)
         ax[0, 0].legend(loc='lower right')  # add legend
 
         # lower left
@@ -1624,12 +1631,6 @@ if __name__ == "__main__":
         genRFI.genRecInactTau()
         genRFI.plotAllRFI()
 
-        genRFI = RFI()
-        genRFI.genRecInactTau()
-        genRFI.plotAllRFI_with_ax(fig_title="RFI HH vs HMM", color='black',
-                                             saveAsFileName="Plots_Folder/RFI HHvHMM", loadFileName=None,
-                                             saveAsPNGFileName="Plots_Folder/RFI HHvHMM")
-
     elif args.function == 4:
         genRamp = Ramp()
         genRamp.genRamp()
@@ -1672,20 +1673,48 @@ if __name__ == "__main__":
 
     elif args.function == 8:
         # run all with saving ax
-        genAct = Activation()
+        # change channel name accordingly
+        # na12 (na12.mod)
+        # na16 (na16.mod)
+        genAct = Activation(channel_name='na16')
         genAct.genActivation()
         genAct.plotAllActivation_with_ax(fig_title="Activation HH vs HMM", color='black',
                                          saveAsFileName="Plots_Folder/Act HHvHMM", loadFileName=None,
                                          saveAsPNGFileName="Plots_Folder/Act HHvHMM")
 
-        genInact = Inactivation()
+        genInact = Inactivation(channel_name='na16')
         genInact.genInactivation()
         genInact.plotAllInactivation_with_ax(fig_title="Inactivation HH vs HMM", color='black',
                                              saveAsFileName="Plots_Folder/Inact HHvHMM", loadFileName=None,
                                              saveAsPNGFileName="Plots_Folder/Inact HHvHMM")
 
-        genRFI = RFI()
+        genRFI = RFI(channel_name='na16')
         genRFI.genRecInactTau()
         genRFI.plotAllRFI_with_ax(fig_title="RFI HH vs HMM", color='black',
                                              saveAsFileName="Plots_Folder/RFI HHvHMM", loadFileName=None,
                                              saveAsPNGFileName="Plots_Folder/RFI HHvHMM")
+    elif args.function == 9:
+        # run all with saving ax
+        # change channel name accordingly
+        # na (na8st.mod)
+        # nax (na8xst.mod)
+        genAct = Activation(channel_name='nax')
+        genAct.genActivation()
+        genAct.plotAllActivation_with_ax(fig_title="Activation HH vs HMM", color='red',
+                                         saveAsFileName="Plots_Folder/Act HHvHMM",
+                                         loadFileName="Plots_Folder/Act HHvHMM",
+                                         saveAsPNGFileName="Plots_Folder/Act HHvHMM")
+
+        genInact = Inactivation(channel_name='nax')
+        genInact.genInactivation()
+        genInact.plotAllInactivation_with_ax(fig_title="Inactivation HH vs HMM", color='red',
+                                             saveAsFileName="Plots_Folder/Inact HHvHMM",
+                                             loadFileName="Plots_Folder/Inact HHvHMM",
+                                             saveAsPNGFileName="Plots_Folder/Inact HHvHMM")
+
+        genRFI = RFI(channel_name='nax')
+        genRFI.genRecInactTau()
+        genRFI.plotAllRFI_with_ax(fig_title="RFI HH vs HMM", color='red',
+                                  saveAsFileName="Plots_Folder/RFI HHvHMM",
+                                  loadFileName="Plots_Folder/RFI HHvHMM",
+                                  saveAsPNGFileName="Plots_Folder/RFI HHvHMM")
