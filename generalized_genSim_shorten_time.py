@@ -499,7 +499,9 @@ class Inactivation:
         ys = fit_exp(xs, *popt)  # get y values
         vmax = max(ys) - min(ys)  # get diff of max and min voltage
         vt = min(ys) + .37 * vmax  # get vmax*1/e
-        tau = (np.log([(vt - popt[2]) / popt[0]]) / (-popt[1]))[0]  # find time at which curve = vt
+        #tau = (np.log([(vt - popt[2]) / popt[0]]) / (-popt[1]))[0]  # find time at which curve = vt
+        #Roy said tau should just be the parameter b from fit_exp
+        tau = popt[1]
         return ts, data, xs, ys, tau
 
     def plotAllInactivation(self):
