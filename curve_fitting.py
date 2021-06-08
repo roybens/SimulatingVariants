@@ -92,7 +92,6 @@ def calc_act_obj(channel_name, is_HMM=False):
         print('Couldn\'t generate activation data')
         return (1000, 1000, 1000, 1000)
     try:
-        print(list(gnorm_vec))
         popt, pcov = optimize.curve_fit(boltzmann, v_vec, gnorm_vec)
     except:
         print("Very bad voltages in activation.")

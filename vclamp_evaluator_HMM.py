@@ -22,7 +22,7 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
     through the evaluate_with_lists function
     '''
 
-    def __init__(self, params_file, mutant):
+    def __init__(self, params_file, mutant, channel_name):
         '''
         Constructor
 
@@ -38,7 +38,7 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         mutant: name of the mutant
 
         '''
-
+        self.channel_name = channel_name
         def init_params(filepath):
             '''
             Helper to initialize self.params with the parameter file from filepath
@@ -71,13 +71,14 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
                            #bpop.objectives.Objective('persistent')
                            ] 
         self.protocols = eh.read_mutant_protocols('mutant_protocols.csv', mutant)
+        
 
     def initialize_wild_data(self):
         wild_data = {}
         is_HMM = True   # This is an HMM model
-        gv_slope, v_half_act, top, bottom = cf.calc_act_obj(is_HMM=is_HMM)
-        ssi_slope, v_half_inact, top, bottom, tau0 = cf.calc_inact_obj(is_HMM=is_HMM)
-        y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(is_HMM=is_HMM)
+        gv_slope, v_half_act, top, bottom = cf.calc_act_obj(self.channel_name, is_HMM=is_HMM)
+        ssi_slope, v_half_inact, top, bottom, tau0 = cf.calc_inact_obj(self.channel_name, is_HMM=is_HMM)
+        y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(self.channel_name, is_HMM=is_HMM)
 
         wild_data['v_half_act'] = v_half_act
         wild_data['gv_slope'] = gv_slope
@@ -123,8 +124,8 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         '''
         assert len(param_values) == len(self.params), 'Parameter value list is not same length number of parameters' 
         #print(self.protocols)
-        score_calculator = sf.Score_Function(self.protocols, self.wild_data)
         eh.change_params(param_values, scaled=False, is_HMM=True)
+        score_calculator = sf.Score_Function(self.protocols, self.wild_data, self.channel_name)
         return score_calculator.total_rmse(is_HMM=True)
 
 

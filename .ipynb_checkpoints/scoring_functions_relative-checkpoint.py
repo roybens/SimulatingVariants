@@ -12,7 +12,7 @@ are being specified for na12_mut.mod.
 '''
 
 class Score_Function:
-    def __init__(self, diff_dict, wild_data):
+    def __init__(self, diff_dict, wild_data, channel_name):
         # Initiation of the scoring function is the same regardless of whether 
         # we're using an HMM or HH model.
         self.dv_half_act_diff = diff_dict['dv_half_act']
@@ -38,16 +38,22 @@ class Score_Function:
         self.tau0_wild = wild_data['tau0']
         self.ramp_wild = wild_data['ramp']
         self.persistent_wild = wild_data['persistent']
+        
+        self.channel_name = channel_name
 
 
     def total_rmse(self, is_HMM=False):
         # When using the HH model, leave is_HMM as false. Otherwise, set it to true.
         try:
-            gv_slope, v_half_act, top, bottom = cf.calc_act_obj(is_HMM=is_HMM)
-            print('gv_slope: ' + str(gv_slope))
-            print('v_half_act: ' + str(v_half_act))
-            ssi_slope, v_half_inact, top, bottom, tau0 = cf.calc_inact_obj(is_HMM=is_HMM)
-            y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(is_HMM=is_HMM)
+            if not is_HMM:
+                gv_slope, v_half_act, top, bottom = cf.calc_act_obj(self.channel_name, is_HMM=False)
+                ssi_slope, v_half_inact, top, bottom, tau0 = cf.calc_inact_obj(self.channel_name, is_HMM=False)
+                y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(self.channel_name, is_HMM=False)
+            else:
+                gv_slope, v_half_act, top, bottom = cf.calc_act_obj(self.channel_name, is_HMM=True)
+                ssi_slope, v_half_inact, top, bottom, tau0 = cf.calc_inact_obj(self.channel_name, is_HMM=True)
+                y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(self.channel_name, is_HMM=True)
+                
         except ZeroDivisionError:
             print('Zero Division Error')
             return (1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000)
