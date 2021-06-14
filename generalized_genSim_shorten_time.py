@@ -22,6 +22,7 @@ import pickle
 
 import optimize_na_ga_v2 as opt
 import curve_fitting as cf
+import eval_helper as eh
 
 # from sys import api_version
 # from test.pythoninfo import collect_platform
@@ -492,7 +493,9 @@ class Inactivation:
         ts = [0.1 * i for i in range(len(data))]  # make x values which match sample times
 
         # calc tau and fit exp
-        popt, pcov = optimize.curve_fit(fit_exp, ts, data)  # fit exponential curve
+        # cuts data points in half
+        length = len(ts) // 2
+        popt, pcov = optimize.curve_fit(fit_exp, ts[0:length], data[0:length])  # fit exponential curve
         perr = np.sqrt(np.diag(pcov))
         # print('in ' + str(all_tau_sweeps[i]) + ' the error was ' + str(perr))
         xs = np.linspace(ts[0], ts[len(ts) - 1], 1000)  # create uniform x values to graph curve
@@ -535,20 +538,34 @@ class Inactivation:
         label = 'HH' if color == 'black' else 'HMM'
 
         # upper left
-        ax[0, 0].set_xlabel('Voltage $(mV)$')
-        ax[0, 0].set_ylabel('Normalized current')
-        ax[0, 0].set_title('Inactivation: Voltage/Normalized Current Relation')
-        ax[0, 0].plot(self.v_vec, self.inorm_vec, 'o', c=color)
-        ssi_slope, v_half, top, bottom, tau0 = cf.calc_inact_obj(self.channel_name)
-        formatted_ssi_slope = np.round(ssi_slope, decimals=2)
-        formatted_v_half = np.round(v_half, decimals=2)
-        ax[0, 0].text(-10, 0.5 + y_offset, f'Slope: {formatted_ssi_slope}', c=color)
-        ax[0, 0].text(-10, 0.4 + y_offset, f'V50: {formatted_v_half}', c=color)
-        x_values_v = np.arange(self.st_cl, self.end_cl, 1)
-        curve = cf.boltzmann(x_values_v, ssi_slope, v_half, top, bottom)
-        ax[0, 0].plot(x_values_v, curve, c=color, label=label)
-        ax[0, 0].legend(loc='lower left')  # add legend
+        if color == 'red': #only plot the red curve. Use it to extrapolate the black curve
+            ax[0, 0].set_xlabel('Voltage $(mV)$')
+            ax[0, 0].set_ylabel('Normalized current')
+            ax[0, 0].set_title('Inactivation: Voltage/Normalized Current Relation')
+            
+            inorm_array = np.array(self.inorm_vec)
+            v_array = np.array(self.v_vec)
+            ssi_slope, v_half, top, bottom, tau0 = cf.calc_inact_obj(self.channel_name)
+            even_xs = np.linspace(v_array[0], v_array[len(v_array)-1], 100)
+            curve = cf.boltzmann(even_xs, ssi_slope, v_half, top, bottom)
 
+            ax[0, 0].scatter(v_array, inorm_array, color='red', marker='s')
+            ax[0, 0].plot(even_xs, curve, color='red', label="Fitted Inactivation")
+            
+            #TODO: mutant is a dummy value now. need a csv file for the specific name of the mutant
+            mutant = 'Y816F'
+            protocols = eh.read_mutant_protocols('mutant_protocols.csv', mutant)
+            ssi_slope_exp = ssi_slope * float(protocols['ssi_slope']) / 100
+            v_half_ssi_exp = v_half + float(protocols['dv_half_ssi'])
+            curve_exp = cf.boltzmann(even_xs, ssi_slope_exp, v_half_ssi_exp, 0, 1)
+
+            formatted_ssi_slope = np.round(ssi_slope, decimals=2)
+            formatted_ssi_slope_exp = np.round(ssi_slope_exp, decimals=2)
+            ax[0, 0].plot(even_xs, curve_exp, color='black', label='Inactivation experimental')
+            ax[0, 0].text(-25, 0.5, 'Slope (Optimized): ' + str(formatted_ssi_slope) + ' /mV', c= 'red')
+            ax[0, 0].text(-25, 0.4, 'Slope (Experimental): ' + str(formatted_ssi_slope_exp) + ' /mV', c = 'black')
+            
+        
         # lower left
         ax[1, 0].set_xlabel('Time $(ms)$')
         ax[1, 0].set_ylabel('Current density $(mA/cm^2)$')
