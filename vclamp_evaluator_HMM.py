@@ -175,8 +175,8 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         axs[0].text(-120, 0.6, 'Slope (Experimental): ' + str(ssi_slope_exp) + ' /mV')
         axs[0].text(-120, 0.5, 'V50 (Optimized): ' + str(v_half) + ' mV')
         axs[0].text(-120, 0.4, 'V50 (Experimental): ' + str(v_half_ssi_exp) + ' mV')
-        axs[0].text(-120, 0.3, 'Tau 0 (Optimized): ' + str(tau0))
-        axs[0].text(-120, 0.2, 'Tau 0 (Experimental): ' + str(tau0_exp))
+        #axs[0].text(-120, 0.3, 'Tau 0 (Optimized): ' + str(tau0))
+        #axs[0].text(-120, 0.2, 'Tau 0 (Experimental): ' + str(tau0_exp))
         axs[0].legend()
 
         # Activation curve
@@ -215,7 +215,7 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         curve = cf.two_phase(even_xs, y0, plateau, percent_fast, k_fast, k_slow)
         axs[2].plot(np.log(even_xs), curve, c='red',label="Recovery Fit")
         curve_exp = cf.two_phase(even_xs, y0, plateau, percent_fast_exp, 1/tau_fast_exp, 1/tau_slow_exp)
-        axs[2].plot(np.log(even_xs), curve_exp, c='black')
+        axs[2].plot(np.log   (even_xs), curve_exp, c='black')
         axs[2].scatter(np.log(times), data_pts, label='Optimized Recovery', color='black')
         
         axs[2].text(4, 0.9, 'Tau Fast (Optimized): ' + str(1/k_fast))

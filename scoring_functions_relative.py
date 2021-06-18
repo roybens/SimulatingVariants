@@ -80,8 +80,7 @@ class Score_Function:
         
         persistent_err = 0
         #return (v_half_act_err, gv_slope_err, v_half_ssi_err, ssi_slope_err, tau_fast_err, tau_slow_err, percent_fast_err, udb20_err, tau0_err, ramp_err, persistent_err)
-        return (v_half_act_err, gv_slope_err, v_half_ssi_err, ssi_slope_err, tau_fast_err, tau_slow_err)
-        #return (tau0,)
+        return (v_half_act_err, gv_slope_err, v_half_ssi_err, ssi_slope_err)
 
     def dv_half_act(self, plus_minus_wild, v_half):
         try:
