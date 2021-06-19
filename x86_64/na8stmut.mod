@@ -1,1 +1,1 @@
-../mechs/na8stmut.mod
+../mechs//na8stmut.mod

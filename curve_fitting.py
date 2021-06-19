@@ -84,17 +84,19 @@ def gen_figure_given_params(params, save=True, file_name=None,mutant='N_A', exp=
 
 def calc_act_obj(channel_name, is_HMM=False):
     try:
-        #if not is_HMM:
-        gnorm_vec, v_vec, all_is = ggsd.Activation(channel_name=channel_name).genActivation()
-        #else:
-        #    gnorm_vec, v_vec, all_is = ggsdHMM.Activation(channel_name).genActivation()
+        if not is_HMM:
+            gnorm_vec, v_vec, all_is = ggsd.Activation(channel_name=channel_name).genActivation()
+        else:
+            gnorm_vec, v_vec, all_is = ggsdHMM.Activation(channel_name=channel_name).genActivation()
     except:
         print('Couldn\'t generate activation data')
         return (1000, 1000, 1000, 1000)
     try:
+        print(list(v_vec))
+        print(list(gnorm_vec))
         popt, pcov = optimize.curve_fit(boltzmann, v_vec, gnorm_vec)
     except:
-        print("Very bad voltages in activation.")
+        print("Couldn't fit curve to activation.")
         return (1000, 1000, 1000, 1000)
     gv_slope, v_half, top, bottom = popt
     return gv_slope, v_half, top, bottom
@@ -102,17 +104,19 @@ def calc_act_obj(channel_name, is_HMM=False):
 
 def calc_inact_obj(channel_name, is_HMM=False):
     try:
-        #if not is_HMM:
-        inorm_vec, v_vec, all_is = ggsd.Inactivation(channel_name=channel_name).genInactivation()
-        #else:
-        #    inorm_vec, v_vec, all_is = ggsdHMM.Inactivation().genInactivation()
+        if not is_HMM:
+            inorm_vec, v_vec, all_is = ggsd.Inactivation(channel_name=channel_name).genInactivation()
+        else:
+            inorm_vec, v_vec, all_is = ggsdHMM.Inactivation(channel_name=channel_name).genInactivation()
     except:
         print('Couldn\'t generate inactivation data')
         return (1000, 1000, 1000, 1000, 1000)
     try:
+        print(list(v_vec))
+        print(list(inorm_vec))
         popt, pcov = optimize.curve_fit(boltzmann, v_vec, inorm_vec)
     except:
-        print("Very bad voltages in inactivation.")
+        print("Couldn't fit curve to inactivation.")
         return (1000, 1000, 1000, 1000, 1000)
     ssi_slope, v_half, top, bottom = popt
     taus, tau_sweeps, tau0 = ggsd.find_tau_inact(all_is)
@@ -120,10 +124,10 @@ def calc_inact_obj(channel_name, is_HMM=False):
 
 def calc_recov_obj(channel_name, is_HMM=False):
     try:
-        #if not is_HMM:
-        rec_inact_tau_vec, recov_curves, times = ggsd.RFI(channel_name=channel_name).genRecInactTau()
-        #else:
-        #    rec_inact_tau_vec, recov_curves, times = ggsdHMM.RFI().genRecInactTau()
+        if not is_HMM:
+            rec_inact_tau_vec, recov_curves, times = ggsd.RFI(channel_name=channel_name).genRecInactTau()
+        else:
+            rec_inact_tau_vec, recov_curves, times = ggsdHMM.RFI(channel_name=channel_name).genRecInactTau()
     except:
         print('Couldn\'t generate recovery data')
         return (1000, 1000, 1000, 1000, 1000)
@@ -131,7 +135,7 @@ def calc_recov_obj(channel_name, is_HMM=False):
     try:
         popt, pcov = optimize.curve_fit(two_phase, times, recov_curve)
     except:
-        print("Very bad voltages in Recovery.")
+        print("Couldn't fit curve to recovery.")
         #return (1000, 1000, 1000, 1000, 1000, 1000)
         return (1000, 1000, 1000, 1000, 1000)
 
