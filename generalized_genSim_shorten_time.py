@@ -8,7 +8,7 @@ Generates simulated data.
 Modified from Emilio Andreozzi "Phenomenological models of NaV1.5.
     A side by side, procedural, hands-on comparison between Hodgkin-Huxley and kinetic formalisms." 2019
 """
-
+import scipy
 from neuron import h, gui
 import numpy as np
 from numpy import trapz
@@ -16,6 +16,7 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as colors
 import matplotlib.cm as cmx
 from scipy import optimize, stats
+from scipy.signal import find_peaks
 import argparse
 import os
 import pickle
@@ -118,14 +119,28 @@ class Activation:
                 self.v_vec_t.append(self.soma.v)
                 self.i_vec.append(dens)
 
-                if (h.t > 5) and (h.t <= 10):  # evaluate the peak
-                    if abs(dens) > abs(pre_i):
-                        curr_tr = dens  # updates the peak current
+                #if (h.t > 5) and (h.t <= 10):  # evaluate the peak
+                #    if abs(dens) > abs(pre_i):
+                #        curr_tr = dens  # updates the peak current
 
                 h.fadvance()
-                pre_i = dens
-
+                #pre_i = dens
+        self.i_vec = np.array(self.i_vec)
+        self.t_vec = np.array(self.t_vec)
+        mask = np.where(np.logical_and(self.t_vec>=4, self.t_vec<=10))
+        i_slice = self.i_vec[mask]
+        peak_indices, properties_dict = find_peaks(i_slice * -1, height=0.1)
+        if len(peak_indices) == 0:
+            curr_tr = 0
+        else:
+            curr_tr = i_slice[peak_indices][0]  # first peak
+        #    print(curr_tr)
         # updates the vectors at the end of the run
+        # print(curr_tr)
+        #print(self.i_vec)
+        #print(self.t_vec)
+        #print("XXXXXXXXXX")
+
         self.ipeak_vec.append(curr_tr)
 
     def findG(self, v_vec, ipeak_vec):
@@ -241,8 +256,8 @@ class Activation:
         Saves all plots to CWD/Plots_Folder.
         """
         self.plotActivation_VGnorm()
-        self.plotActivation_IVCurve()
-        self.plotActivation_TimeVRelation()
+        # self.plotActivation_IVCurve()
+        # self.plotActivation_TimeVRelation()
         self.plotActivation_TCurrDensityRelation()
 
     def plotAllActivation_with_ax(self, fig_title,
@@ -502,8 +517,8 @@ class Inactivation:
         ys = fit_exp(xs, *popt)  # get y values
         vmax = max(ys) - min(ys)  # get diff of max and min voltage
         vt = min(ys) + .37 * vmax  # get vmax*1/e
-        #tau = (np.log([(vt - popt[2]) / popt[0]]) / (-popt[1]))[0]  # find time at which curve = vt
-        #Roy said tau should just be the parameter b from fit_exp
+        # tau = (np.log([(vt - popt[2]) / popt[0]]) / (-popt[1]))[0]  # find time at which curve = vt
+        # Roy said tau should just be the parameter b from fit_exp
         tau = popt[1]
         return ts, data, xs, ys, tau
 
@@ -517,8 +532,8 @@ class Inactivation:
         self.plotInactivation_Tau_0mV()
 
     def plotAllInactivation_with_ax(self, fig_title,
-                                  figsize=(18, 9), color='black',
-                                  saveAsFileName=None, loadFileName=None, saveAsPNGFileName=None):
+                                    figsize=(18, 9), color='black',
+                                    saveAsFileName=None, loadFileName=None, saveAsPNGFileName=None):
         """
         Creates new ax if loadFileName is not a valid string. Plots all.
 
@@ -538,21 +553,21 @@ class Inactivation:
         label = 'HH' if color == 'black' else 'HMM'
 
         # upper left
-        if color == 'red': #only plot the red curve. Use it to extrapolate the black curve
+        if color == 'red':  # only plot the red curve. Use it to extrapolate the black curve
             ax[0, 0].set_xlabel('Voltage $(mV)$')
             ax[0, 0].set_ylabel('Normalized current')
             ax[0, 0].set_title('Inactivation: Voltage/Normalized Current Relation')
-            
+
             inorm_array = np.array(self.inorm_vec)
             v_array = np.array(self.v_vec)
             ssi_slope, v_half, top, bottom, tau0 = cf.calc_inact_obj(self.channel_name)
-            even_xs = np.linspace(v_array[0], v_array[len(v_array)-1], 100)
+            even_xs = np.linspace(v_array[0], v_array[len(v_array) - 1], 100)
             curve = cf.boltzmann(even_xs, ssi_slope, v_half, top, bottom)
 
             ax[0, 0].scatter(v_array, inorm_array, color='red', marker='s')
             ax[0, 0].plot(even_xs, curve, color='red', label="Fitted Inactivation")
-            
-            #TODO: mutant is a dummy value now. need a csv file for the specific name of the mutant
+
+            # TODO: mutant is a dummy value now. need a csv file for the specific name of the mutant
             mutant = 'Y816F'
             protocols = eh.read_mutant_protocols('mutant_protocols.csv', mutant)
             ssi_slope_exp = ssi_slope * float(protocols['ssi_slope']) / 100
@@ -562,10 +577,9 @@ class Inactivation:
             formatted_ssi_slope = np.round(ssi_slope, decimals=2)
             formatted_ssi_slope_exp = np.round(ssi_slope_exp, decimals=2)
             ax[0, 0].plot(even_xs, curve_exp, color='black', label='Inactivation experimental')
-            ax[0, 0].text(-25, 0.5, 'Slope (Optimized): ' + str(formatted_ssi_slope) + ' /mV', c= 'red')
-            ax[0, 0].text(-25, 0.4, 'Slope (Experimental): ' + str(formatted_ssi_slope_exp) + ' /mV', c = 'black')
-            
-        
+            ax[0, 0].text(-25, 0.5, 'Slope (Optimized): ' + str(formatted_ssi_slope) + ' /mV', c='red')
+            ax[0, 0].text(-25, 0.4, 'Slope (Experimental): ' + str(formatted_ssi_slope_exp) + ' /mV', c='black')
+
         # lower left
         ax[1, 0].set_xlabel('Time $(ms)$')
         ax[1, 0].set_ylabel('Current density $(mA/cm^2)$')
@@ -582,7 +596,6 @@ class Inactivation:
         ax[1, 0].plot(xs, ys, color=color)
         formatted_tau = np.round(tau, decimals=3)
         ax[1, 0].text(0.2, -0.01 + y_offset, f"Tau at 0 mV: {formatted_tau}", color=color)
-
 
         # upper right
         ax[0, 1].set_xlabel('Time $(ms)$')
@@ -602,6 +615,7 @@ class Inactivation:
         if saveAsPNGFileName:
             plt.savefig(
                 os.path.join(os.path.split(__file__)[0], saveAsPNGFileName))
+
 
 ##################
 # Recovery from Inactivation (RFI)
@@ -1635,7 +1649,8 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.function == 1:
-        genAct = Activation()
+        genAct = Activation(channel_name='na12mut8st')
+        #genAct = Activation(channel_name='na')
         genAct.genActivation()
         genAct.plotAllActivation()
 
@@ -1710,8 +1725,8 @@ if __name__ == "__main__":
         genRFI = RFI(channel_name='na16')
         genRFI.genRecInactTau()
         genRFI.plotAllRFI_with_ax(fig_title="RFI HH vs HMM", color='black',
-                                             saveAsFileName="Plots_Folder/RFI HHvHMM", loadFileName=None,
-                                             saveAsPNGFileName="Plots_Folder/RFI HHvHMM")
+                                  saveAsFileName="Plots_Folder/RFI HHvHMM", loadFileName=None,
+                                  saveAsPNGFileName="Plots_Folder/RFI HHvHMM")
     elif args.function == 9:
         # run all with saving ax
         # change channel name accordingly
