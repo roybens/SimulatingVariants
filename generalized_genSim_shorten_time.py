@@ -125,22 +125,26 @@ class Activation:
 
                 h.fadvance()
                 #pre_i = dens
+        # find peaks
         self.i_vec = np.array(self.i_vec)
         self.t_vec = np.array(self.t_vec)
         mask = np.where(np.logical_and(self.t_vec>=4, self.t_vec<=10))
         i_slice = self.i_vec[mask]
-        peak_indices, properties_dict = find_peaks(i_slice * -1, height=0.1)
+        peak_indices, properties_dict = find_peaks(i_slice * -1, height=0.1)  # find minima
         if len(peak_indices) == 0:
             curr_tr = 0
         else:
             curr_tr = i_slice[peak_indices][0]  # first peak
+
+        #debugging
         #    print(curr_tr)
-        # updates the vectors at the end of the run
         # print(curr_tr)
-        #print(self.i_vec)
-        #print(self.t_vec)
+        #if v_cl == -70:
+        #    print(self.i_vec.tolist())
+        #    print(self.t_vec.tolist())
         #print("XXXXXXXXXX")
 
+        # updates the vectors at the end of the run
         self.ipeak_vec.append(curr_tr)
 
     def findG(self, v_vec, ipeak_vec):
@@ -225,7 +229,7 @@ class Activation:
         plt.xlabel('Voltage $(mV)$')
         plt.ylabel('Peak Current $(pA)$')
         plt.title("Activation: IV Curve")
-        plt.plot(self.v_vec, self.ipeak_vec, 'o', c='black')
+        plt.plot(np.array(self.v_vec), np.array(self.ipeak_vec), 'o', c='black')
         plt.text(-110, -0.05, 'Vrev at ' + str(round(self.vrev, 1)) + ' mV', fontsize=10, c='blue')
         formatted_peak_i = np.round(min(self.ipeak_vec), decimals=2)
         plt.text(-110, -0.1, f'Peak Current from IV: {formatted_peak_i} pA', fontsize=10, c='blue')  # pico Amps
@@ -247,18 +251,32 @@ class Activation:
         plt.ylabel('Current density $(mA/cm^2)$')
         plt.title('Activation Time/Current density relation')
         curr = np.array(self.all_is)
-        [plt.plot(self.t_vec[1:], curr[i], c='black') for i in np.arange(len(curr))]
+        mask = np.where(np.logical_or(self.v_vec == -50, self.v_vec == -60))
+        [plt.plot(self.t_vec[1:], curr[i], c='black') for i in np.arange(len(curr))[mask]]
         # save as PGN file
         plt.savefig(os.path.join(os.path.split(__file__)[0], "Plots_Folder/Activation Time Current Density Relation"))
+
+    def plotActivation_allTraces(self):
+        curr = np.array(self.all_is)
+        for volt in self.v_vec:
+            plt.figure()
+            plt.xlabel('Time $(ms)$')
+            plt.ylabel('Current density $(mA/cm^2)$')
+            plt.title(f"Activation Traces for {volt} mV")
+            mask = np.where(self.v_vec == volt)
+            plt.plot(self.t_vec[1:], curr[mask][0], c='black')
+            # save as PGN file
+            plt.savefig(os.path.join(os.path.split(__file__)[0], f"Plots_Folder/Activation Traces for {volt} mV"))
 
     def plotAllActivation(self):
         """
         Saves all plots to CWD/Plots_Folder.
         """
         self.plotActivation_VGnorm()
-        # self.plotActivation_IVCurve()
-        # self.plotActivation_TimeVRelation()
+        self.plotActivation_IVCurve()
+        self.plotActivation_TimeVRelation()
         self.plotActivation_TCurrDensityRelation()
+        self.plotActivation_allTraces()
 
     def plotAllActivation_with_ax(self, fig_title,
                                   figsize=(18, 9), color='black',
@@ -1649,8 +1667,8 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.function == 1:
-        genAct = Activation(channel_name='na12mut8st')
-        #genAct = Activation(channel_name='na')
+        genAct = Activation(channel_name='na12mut8st')  # NOT OK
+        #genAct = Activation(channel_name='na12')  # WORKS OK
         genAct.genActivation()
         genAct.plotAllActivation()
 
