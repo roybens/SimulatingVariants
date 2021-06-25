@@ -1667,19 +1667,19 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.function == 1:
-        genAct = Activation(channel_name='na12mut8st')  # NOT OK
-        #genAct = Activation(channel_name='na12')  # WORKS OK
+        genAct = Activation(channel_name='na12mut8st')
+        #genAct = Activation(channel_name='na12')
         genAct.genActivation()
         genAct.plotAllActivation()
 
     elif args.function == 2:
-        genInact = Inactivation()
+        genInact = Inactivation(channel_name='na12mut8st')
         genInact.genInactivation()
         genInact.plotAllInactivation()
 
 
     elif args.function == 3:
-        genRFI = RFI()
+        genRFI = RFI(channel_name='na12mut8st')
         genRFI.genRecInactTau()
         genRFI.plotAllRFI()
 
