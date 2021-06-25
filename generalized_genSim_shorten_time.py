@@ -106,46 +106,38 @@ class Activation:
         """
         curr_tr = 0  # initialization of peak current
         h.finitialize(self.v_init)  # calling the INITIAL block of the mechanism inserted in the section.
-        pre_i = 0  # initialization of variables used to commute the peak current
-        dens = 0
         self.f3cl.amp[1] = v_cl  # mV
 
         for _ in self.ntrials:
             while h.t < h.tstop:  # runs a single trace, calculates peak current
                 dens = self.f3cl.i / self.soma(0.5).area() * 100.0 - self.soma(
                     0.5).i_cap  # clamping current in mA/cm2, for each dt
-
+                # append data
                 self.t_vec.append(h.t)
                 self.v_vec_t.append(self.soma.v)
                 self.i_vec.append(dens)
-
-                #if (h.t > 5) and (h.t <= 10):  # evaluate the peak
-                #    if abs(dens) > abs(pre_i):
-                #        curr_tr = dens  # updates the peak current
-
+                # advance
                 h.fadvance()
-                #pre_i = dens
+
+        # find i peak of trace
+        self.ipeak_vec.append(self.find_ipeaks())
+
+    def find_ipeaks(self):
+        """
+        Evaluate the peak and updates the peak current.
+        Returns peak current.
+        """
         # find peaks
         self.i_vec = np.array(self.i_vec)
         self.t_vec = np.array(self.t_vec)
-        mask = np.where(np.logical_and(self.t_vec>=4, self.t_vec<=10))
+        mask = np.where(np.logical_and(self.t_vec >= 5, self.t_vec <= 10))  # t window to take peak
         i_slice = self.i_vec[mask]
         peak_indices, properties_dict = find_peaks(i_slice * -1, height=0.1)  # find minima
         if len(peak_indices) == 0:
             curr_tr = 0
         else:
             curr_tr = i_slice[peak_indices][0]  # first peak
-
-        #debugging
-        #    print(curr_tr)
-        # print(curr_tr)
-        #if v_cl == -70:
-        #    print(self.i_vec.tolist())
-        #    print(self.t_vec.tolist())
-        #print("XXXXXXXXXX")
-
-        # updates the vectors at the end of the run
-        self.ipeak_vec.append(curr_tr)
+        return curr_tr
 
     def findG(self, v_vec, ipeak_vec):
         """ Returns normalized conductance vector
@@ -195,6 +187,7 @@ class Activation:
                 self.v_vec_t = []
 
                 self.clamp(v_cl)
+
                 self.all_is.append(self.i_vec[1:])
                 self.all_v_vec_t.append(self.v_vec_t)
 
@@ -276,7 +269,7 @@ class Activation:
         self.plotActivation_IVCurve()
         self.plotActivation_TimeVRelation()
         self.plotActivation_TCurrDensityRelation()
-        self.plotActivation_allTraces()
+        #self.plotActivation_allTraces()
 
     def plotAllActivation_with_ax(self, fig_title,
                                   figsize=(18, 9), color='black',
@@ -411,7 +404,6 @@ class Inactivation:
 
         # parameters initialization
         peak_curr = 0
-        t_peak = 0
         dtsave = h.dt
 
         for _ in self.ntrials:
@@ -422,19 +414,32 @@ class Inactivation:
                     h.dt = 1
                 dens = self.f3cl.i / self.soma(0.5).area() * 100.0 - self.soma(
                     0.5).i_cap  # clamping current in mA/cm2, for each dt
+
                 self.t_vec.append(h.t)  # code for store the current
                 self.v_vec_t.append(self.soma.v)  # trace to be plotted
                 self.i_vec.append(dens)  # trace to be plotted
 
-                if (h.t >= 540) and (h.t <= 542):  # evaluate the peak
-                    if abs(dens) > abs(peak_curr):
-                        peak_curr = dens
-                        t_peak = h.t
-
                 h.fadvance()
 
-        # updates the vectors at the end of the run
-        self.ipeak_vec.append(peak_curr)
+        # find i peak of trace
+        self.ipeak_vec.append(self.find_ipeaks())
+
+    def find_ipeaks(self):
+        """
+        Evaluate the peak and updates the peak current.
+        Returns peak current.
+        """
+        # find peaks
+        self.i_vec = np.array(self.i_vec)
+        self.t_vec = np.array(self.t_vec)
+        mask = np.where(np.logical_and(self.t_vec >= 535, self.t_vec <= 545))  # h.t window to take peak
+        i_slice = self.i_vec[mask]
+        peak_indices, properties_dict = find_peaks(i_slice * -1, height=0.1)  # find minima
+        if len(peak_indices) == 0:
+            peak_curr = 0
+        else:
+            peak_curr = i_slice[peak_indices][0]
+        return peak_curr
 
     def genInactivation(self):
         if self.inorm_vec == []:
@@ -535,8 +540,8 @@ class Inactivation:
         ys = fit_exp(xs, *popt)  # get y values
         vmax = max(ys) - min(ys)  # get diff of max and min voltage
         vt = min(ys) + .37 * vmax  # get vmax*1/e
-        # tau = (np.log([(vt - popt[2]) / popt[0]]) / (-popt[1]))[0]  # find time at which curve = vt
-        # Roy said tau should just be the parameter b from fit_exp
+        #tau = (np.log([(vt - popt[2]) / popt[0]]) / (-popt[1]))[0]  # find time at which curve = vt
+        #Roy said tau should just be the parameter b from fit_exp
         tau = popt[1]
         return ts, data, xs, ys, tau
 
@@ -744,6 +749,8 @@ class RFI:
         # updates the vectors at the end of the run
         self.time_vec.append(dur)
         self.log_time_vec.append(np.log10(dur))
+        peak_curr1 = self.find_ipeaks(start_ht=5, end_ht=15)
+        peak_curr2 = self.find_ipeaks(start_ht=5+self.cond_st_dur + dur, end_ht=15 + self.cond_st_dur + dur)
         self.rec_vec.append(peak_curr2 / peak_curr1)
 
         # calc tau using RF and tstop
@@ -751,6 +758,27 @@ class RFI:
         RF_t = peak_curr2 / peak_curr1
         tau = -h.tstop / np.log(-RF_t + 1)
         self.rec_inact_tau_vec.append(tau)
+
+
+    def find_ipeaks(self, start_ht, end_ht):
+        """
+        Evaluate the peak and updates the peak current.
+        Returns peak current.
+        Args:
+            start_ht (int): h.t time of window to find peak
+            end_ht (int): h.t time to end window to find peak
+        """
+        # find peaks
+        self.i_vec_t = np.array(self.i_vec_t)
+        self.t_vec = np.array(self.t_vec)
+        mask = np.where(np.logical_and(self.t_vec >= start_ht, self.t_vec <= end_ht))  # h.t window to take peak
+        i_slice = self.i_vec_t[mask]
+        peak_indices, properties_dict = find_peaks(i_slice * -1, height=0.1)  # find minima
+        if len(peak_indices) == 0:
+            peak_curr = 0
+        else:
+            peak_curr = i_slice[peak_indices][0]
+        return peak_curr
 
     def genRecInactTau(self):
         recov = []  # RFI tau curve
@@ -1668,7 +1696,7 @@ if __name__ == "__main__":
 
     if args.function == 1:
         genAct = Activation(channel_name='na12mut8st')
-        #genAct = Activation(channel_name='na12')
+        genAct = Activation()
         genAct.genActivation()
         genAct.plotAllActivation()
 
