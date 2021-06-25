@@ -759,7 +759,6 @@ class RFI:
         tau = -h.tstop / np.log(-RF_t + 1)
         self.rec_inact_tau_vec.append(tau)
 
-
     def find_ipeaks(self, start_ht, end_ht):
         """
         Evaluate the peak and updates the peak current.
@@ -1753,46 +1752,46 @@ if __name__ == "__main__":
 
     elif args.function == 8:
         # run all with saving ax
-        # change channel name accordingly
+        # change channel name accordingly for HH models
         # na12 (na12.mod)
         # na16 (na16.mod)
-        genAct = Activation(channel_name='na16')
+        genAct = Activation(channel_name='na12')
         genAct.genActivation()
         genAct.plotAllActivation_with_ax(fig_title="Activation HH vs HMM", color='black',
                                          saveAsFileName="Plots_Folder/Act HHvHMM", loadFileName=None,
                                          saveAsPNGFileName="Plots_Folder/Act HHvHMM")
 
-        genInact = Inactivation(channel_name='na16')
+        genInact = Inactivation(channel_name='na12')
         genInact.genInactivation()
         genInact.plotAllInactivation_with_ax(fig_title="Inactivation HH vs HMM", color='black',
                                              saveAsFileName="Plots_Folder/Inact HHvHMM", loadFileName=None,
                                              saveAsPNGFileName="Plots_Folder/Inact HHvHMM")
 
-        genRFI = RFI(channel_name='na16')
+        genRFI = RFI(channel_name='na12')
         genRFI.genRecInactTau()
         genRFI.plotAllRFI_with_ax(fig_title="RFI HH vs HMM", color='black',
                                   saveAsFileName="Plots_Folder/RFI HHvHMM", loadFileName=None,
                                   saveAsPNGFileName="Plots_Folder/RFI HHvHMM")
     elif args.function == 9:
         # run all with saving ax
-        # change channel name accordingly
-        # na (na8st.mod)
-        # nax (na8xst.mod)
-        genAct = Activation(channel_name='nax')
+        # change channel name accordingly for HMM models
+        # na (na8st.mod) (corresponding na12)
+        # nax (na8xst.mod) (corresponding na16)
+        genAct = Activation(channel_name='na')
         genAct.genActivation()
         genAct.plotAllActivation_with_ax(fig_title="Activation HH vs HMM", color='red',
                                          saveAsFileName="Plots_Folder/Act HHvHMM",
                                          loadFileName="Plots_Folder/Act HHvHMM",
                                          saveAsPNGFileName="Plots_Folder/Act HHvHMM")
 
-        genInact = Inactivation(channel_name='nax')
+        genInact = Inactivation(channel_name='na')
         genInact.genInactivation()
         genInact.plotAllInactivation_with_ax(fig_title="Inactivation HH vs HMM", color='red',
                                              saveAsFileName="Plots_Folder/Inact HHvHMM",
                                              loadFileName="Plots_Folder/Inact HHvHMM",
                                              saveAsPNGFileName="Plots_Folder/Inact HHvHMM")
 
-        genRFI = RFI(channel_name='nax')
+        genRFI = RFI(channel_name='na')
         genRFI.genRecInactTau()
         genRFI.plotAllRFI_with_ax(fig_title="RFI HH vs HMM", color='red',
                                   saveAsFileName="Plots_Folder/RFI HHvHMM",
