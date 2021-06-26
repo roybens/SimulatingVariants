@@ -135,14 +135,21 @@ class Activation:
         # convert to numpy arrays
         v_vec = np.array(v_vec)
         ipeak_vec = np.array(ipeak_vec)
-
-        # find start of linear portion (0 mV and onwards)
-        inds = np.where(v_vec >= 0)
-
+        
+        # find start of linear portion one index after the peak and the next non negative element
+        min_ind = np.argmin(ipeak_vec)
+        next_non_negatives = np.where(ipeak_vec[min_ind:]>=0)[0]+min_ind
+        
+        if len(next_non_negatives)>0:
+            end_of_lin = next_non_negatives[0]
+        else:
+            end_of_lin = len(ipeak_vec)-1
+        inds = range(min_ind+1,end_of_lin)
+        
         # take linear portion of voltage and current relationship
         lin_v = v_vec[inds]
         lin_i = ipeak_vec[inds]
-
+        
         # boltzmann for conductance
         def boltzmann(vm, Gmax, v_half, s):
             return Gmax * (vm - self.vrev) / (1 + np.exp((v_half - vm) / s))
@@ -311,7 +318,6 @@ class Activation:
         if saveAsPNGFileName:
             plt.savefig(
                 os.path.join(os.path.split(__file__)[0], saveAsPNGFileName))
-
 
 ##################
 # Inactivation
