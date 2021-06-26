@@ -9,7 +9,7 @@ import eval_helper as eh
 import scoring_functions_relative as sf
 import curve_fitting as cf
 import matplotlib.pyplot as plt
-import generalized_genSim_shorten_time as ggsd
+import generalized_genSim_shorten_time_HMM as ggsdHMM
 
 class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
     '''
@@ -22,7 +22,7 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
     through the evaluate_with_lists function
     '''
 
-    def __init__(self, params_file, mutant):
+    def __init__(self, params_file, mutant, channel_name):
         '''
         Constructor
 
@@ -38,7 +38,7 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         mutant: name of the mutant
 
         '''
-
+        self.channel_name = channel_name
         def init_params(filepath):
             '''
             Helper to initialize self.params with the parameter file from filepath
@@ -62,8 +62,8 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
                            bpop.objectives.Objective('gv_slope'),\
                            bpop.objectives.Objective('dv_half_ssi'),\
                            bpop.objectives.Objective('ssi_slope'),\
-                           bpop.objectives.Objective('tau_fast'),\
-                           bpop.objectives.Objective('tau_slow'),\
+                           #bpop.objectives.Objective('tau_fast'),\
+                           #bpop.objectives.Objective('tau_slow'),\
                            #bpop.objectives.Objective('percent_fast'),\
                            #bpop.objectives.Objective('udb20'),\
                            #bpop.objectives.Objective('tau0'),\
@@ -71,13 +71,14 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
                            #bpop.objectives.Objective('persistent')
                            ] 
         self.protocols = eh.read_mutant_protocols('mutant_protocols.csv', mutant)
+        
 
     def initialize_wild_data(self):
         wild_data = {}
         is_HMM = True   # This is an HMM model
-        gv_slope, v_half_act, top, bottom = cf.calc_act_obj(is_HMM=is_HMM)
-        ssi_slope, v_half_inact, top, bottom, tau0 = cf.calc_inact_obj(is_HMM=is_HMM)
-        y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(is_HMM=is_HMM)
+        gv_slope, v_half_act, top, bottom = cf.calc_act_obj(self.channel_name, is_HMM=is_HMM)
+        ssi_slope, v_half_inact, top, bottom, tau0 = cf.calc_inact_obj(self.channel_name, is_HMM=is_HMM)
+        y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(self.channel_name, is_HMM=is_HMM)
 
         wild_data['v_half_act'] = v_half_act
         wild_data['gv_slope'] = gv_slope
@@ -123,14 +124,14 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         '''
         assert len(param_values) == len(self.params), 'Parameter value list is not same length number of parameters' 
         #print(self.protocols)
-        score_calculator = sf.Score_Function(self.protocols, self.wild_data)
         eh.change_params(param_values, scaled=False, is_HMM=True)
+        score_calculator = sf.Score_Function(self.protocols, self.wild_data, self.channel_name)
         return score_calculator.total_rmse(is_HMM=True)
 
 
 
     def plot_data(self, param_values, mutant):
-        eh.change_params(param_values, scaled=False)
+        eh.change_params(param_values, scaled=False, is_HMM=True)
         plt.close()
         fig, axs = plt.subplots(3, figsize=(10,10))
         fig.suptitle("Mutant: {}".format(mutant))
@@ -152,11 +153,11 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
 
 
         # Inactivation curve
-        inorm_vec, v_vec, all_is = ggsd.Inactivation().genInactivation()
+        inorm_vec, v_vec, all_is = ggsdHMM.Inactivation().genInactivation()
         inorm_array = np.array(inorm_vec)
         v_array = np.array(v_vec)
 
-        ssi_slope, v_half, top, bottom, tau0 = cf.calc_inact_obj()
+        ssi_slope, v_half, top, bottom, tau0 = cf.calc_inact_obj(self.channel_name)
 
         
         even_xs = np.linspace(v_array[0], v_array[len(v_array)-1], 100)
@@ -174,15 +175,15 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         axs[0].text(-120, 0.6, 'Slope (Experimental): ' + str(ssi_slope_exp) + ' /mV')
         axs[0].text(-120, 0.5, 'V50 (Optimized): ' + str(v_half) + ' mV')
         axs[0].text(-120, 0.4, 'V50 (Experimental): ' + str(v_half_ssi_exp) + ' mV')
-        axs[0].text(-120, 0.3, 'Tau 0 (Optimized): ' + str(tau0))
-        axs[0].text(-120, 0.2, 'Tau 0 (Experimental): ' + str(tau0_exp))
+        #axs[0].text(-120, 0.3, 'Tau 0 (Optimized): ' + str(tau0))
+        #axs[0].text(-120, 0.2, 'Tau 0 (Experimental): ' + str(tau0_exp))
         axs[0].legend()
 
         # Activation curve
-        gnorm_vec, v_vec, all_is = ggsd.Activation().genActivation()
+        gnorm_vec, v_vec, all_is = ggsdHMM.Activation().genActivation()
         gnorm_array = np.array(gnorm_vec)
         v_array = np.array(v_vec)
-        gv_slope, v_half, top, bottom = cf.calc_act_obj()
+        gv_slope, v_half, top, bottom = cf.calc_act_obj(self.channel_name)
 
         even_xs = np.linspace(v_array[0], v_array[len(v_array)-1], 100)
         curve = cf.boltzmann(even_xs, gv_slope, v_half, top, bottom)
@@ -201,20 +202,20 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         axs[1].text(-120, 0.5, 'V50 (Optimized): ' + str(v_half) + ' mV')
         axs[1].text(-120, 0.4, 'V50 (Experimental): ' + str(v_half_act_exp) + ' mV')
         axs[1].legend()
-
+        '''
         # Recovery Curve
-        rec_inact_tau_vec, recov_curves, times = ggsd.RFI().genRecInactTau()
+        rec_inact_tau_vec, recov_curves, times = ggsdHMM.RFI().genRecInactTau()
         times = np.array(times)
         data_pts = np.array(recov_curves[0])
         axs[2].set_xlabel('Log(Time)')
         axs[2].set_ylabel('Fractional Recovery')
         axs[2].set_title("Recovery from Inactivation")
         even_xs = np.linspace(times[0], times[len(times)-1], 100)
-        y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj()
+        y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(self.channel_name)
         curve = cf.two_phase(even_xs, y0, plateau, percent_fast, k_fast, k_slow)
         axs[2].plot(np.log(even_xs), curve, c='red',label="Recovery Fit")
         curve_exp = cf.two_phase(even_xs, y0, plateau, percent_fast_exp, 1/tau_fast_exp, 1/tau_slow_exp)
-        axs[2].plot(np.log(even_xs), curve_exp, c='black')
+        axs[2].plot(np.log   (even_xs), curve_exp, c='black')
         axs[2].scatter(np.log(times), data_pts, label='Optimized Recovery', color='black')
         
         axs[2].text(4, 0.9, 'Tau Fast (Optimized): ' + str(1/k_fast))
@@ -224,5 +225,6 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         axs[2].text(4, 0.7, 'Percent Fast (Optimized): ' + str(percent_fast))
         axs[2].text(4, 0.65, 'Percent Fast (Experimental): ' + str(percent_fast_exp))
         axs[2].legend()
+        '''
         plt.show()
 

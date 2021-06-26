@@ -8,7 +8,7 @@ Generates simulated data.
 Modified from Emilio Andreozzi "Phenomenological models of NaV1.5.
     A side by side, procedural, hands-on comparison between Hodgkin-Huxley and kinetic formalisms." 2019
 """
-
+import scipy
 from neuron import h, gui
 import numpy as np
 from numpy import trapz
@@ -16,12 +16,14 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as colors
 import matplotlib.cm as cmx
 from scipy import optimize, stats
+from scipy.signal import find_peaks
 import argparse
 import os
 import pickle
 
 import optimize_na_ga_v2 as opt
 import curve_fitting as cf
+import eval_helper as eh
 
 # from sys import api_version
 # from test.pythoninfo import collect_platform
@@ -104,28 +106,38 @@ class Activation:
         """
         curr_tr = 0  # initialization of peak current
         h.finitialize(self.v_init)  # calling the INITIAL block of the mechanism inserted in the section.
-        pre_i = 0  # initialization of variables used to commute the peak current
-        dens = 0
         self.f3cl.amp[1] = v_cl  # mV
 
         for _ in self.ntrials:
             while h.t < h.tstop:  # runs a single trace, calculates peak current
                 dens = self.f3cl.i / self.soma(0.5).area() * 100.0 - self.soma(
                     0.5).i_cap  # clamping current in mA/cm2, for each dt
-
+                # append data
                 self.t_vec.append(h.t)
                 self.v_vec_t.append(self.soma.v)
                 self.i_vec.append(dens)
-
-                if (h.t > 5) and (h.t <= 10):  # evaluate the peak
-                    if abs(dens) > abs(pre_i):
-                        curr_tr = dens  # updates the peak current
-
+                # advance
                 h.fadvance()
-                pre_i = dens
 
-        # updates the vectors at the end of the run
-        self.ipeak_vec.append(curr_tr)
+        # find i peak of trace
+        self.ipeak_vec.append(self.find_ipeaks())
+
+    def find_ipeaks(self):
+        """
+        Evaluate the peak and updates the peak current.
+        Returns peak current.
+        """
+        # find peaks
+        self.i_vec = np.array(self.i_vec)
+        self.t_vec = np.array(self.t_vec)
+        mask = np.where(np.logical_and(self.t_vec >= 5, self.t_vec <= 10))  # t window to take peak
+        i_slice = self.i_vec[mask]
+        peak_indices, properties_dict = find_peaks(i_slice * -1, height=0.1)  # find minima
+        if len(peak_indices) == 0:
+            curr_tr = 0
+        else:
+            curr_tr = i_slice[peak_indices][0]  # first peak
+        return curr_tr
 
     def findG(self, v_vec, ipeak_vec):
         """ Returns normalized conductance vector
@@ -182,6 +194,7 @@ class Activation:
                 self.v_vec_t = []
 
                 self.clamp(v_cl)
+
                 self.all_is.append(self.i_vec[1:])
                 self.all_v_vec_t.append(self.v_vec_t)
 
@@ -216,7 +229,7 @@ class Activation:
         plt.xlabel('Voltage $(mV)$')
         plt.ylabel('Peak Current $(pA)$')
         plt.title("Activation: IV Curve")
-        plt.plot(self.v_vec, self.ipeak_vec, 'o', c='black')
+        plt.plot(np.array(self.v_vec), np.array(self.ipeak_vec), 'o', c='black')
         plt.text(-110, -0.05, 'Vrev at ' + str(round(self.vrev, 1)) + ' mV', fontsize=10, c='blue')
         formatted_peak_i = np.round(min(self.ipeak_vec), decimals=2)
         plt.text(-110, -0.1, f'Peak Current from IV: {formatted_peak_i} pA', fontsize=10, c='blue')  # pico Amps
@@ -238,9 +251,22 @@ class Activation:
         plt.ylabel('Current density $(mA/cm^2)$')
         plt.title('Activation Time/Current density relation')
         curr = np.array(self.all_is)
-        [plt.plot(self.t_vec[1:], curr[i], c='black') for i in np.arange(len(curr))]
+        mask = np.where(np.logical_or(self.v_vec == -50, self.v_vec == -60))
+        [plt.plot(self.t_vec[1:], curr[i], c='black') for i in np.arange(len(curr))[mask]]
         # save as PGN file
         plt.savefig(os.path.join(os.path.split(__file__)[0], "Plots_Folder/Activation Time Current Density Relation"))
+
+    def plotActivation_allTraces(self):
+        curr = np.array(self.all_is)
+        for volt in self.v_vec:
+            plt.figure()
+            plt.xlabel('Time $(ms)$')
+            plt.ylabel('Current density $(mA/cm^2)$')
+            plt.title(f"Activation Traces for {volt} mV")
+            mask = np.where(self.v_vec == volt)
+            plt.plot(self.t_vec[1:], curr[mask][0], c='black')
+            # save as PGN file
+            plt.savefig(os.path.join(os.path.split(__file__)[0], f"Plots_Folder/Activation Traces for {volt} mV"))
 
     def plotAllActivation(self):
         """
@@ -250,6 +276,7 @@ class Activation:
         self.plotActivation_IVCurve()
         self.plotActivation_TimeVRelation()
         self.plotActivation_TCurrDensityRelation()
+        #self.plotActivation_allTraces()
 
     def plotAllActivation_with_ax(self, fig_title,
                                   figsize=(18, 9), color='black',
@@ -383,7 +410,6 @@ class Inactivation:
 
         # parameters initialization
         peak_curr = 0
-        t_peak = 0
         dtsave = h.dt
 
         for _ in self.ntrials:
@@ -394,19 +420,32 @@ class Inactivation:
                     h.dt = 1
                 dens = self.f3cl.i / self.soma(0.5).area() * 100.0 - self.soma(
                     0.5).i_cap  # clamping current in mA/cm2, for each dt
+
                 self.t_vec.append(h.t)  # code for store the current
                 self.v_vec_t.append(self.soma.v)  # trace to be plotted
                 self.i_vec.append(dens)  # trace to be plotted
 
-                if (h.t >= 540) and (h.t <= 542):  # evaluate the peak
-                    if abs(dens) > abs(peak_curr):
-                        peak_curr = dens
-                        t_peak = h.t
-
                 h.fadvance()
 
-        # updates the vectors at the end of the run
-        self.ipeak_vec.append(peak_curr)
+        # find i peak of trace
+        self.ipeak_vec.append(self.find_ipeaks())
+
+    def find_ipeaks(self):
+        """
+        Evaluate the peak and updates the peak current.
+        Returns peak current.
+        """
+        # find peaks
+        self.i_vec = np.array(self.i_vec)
+        self.t_vec = np.array(self.t_vec)
+        mask = np.where(np.logical_and(self.t_vec >= 535, self.t_vec <= 545))  # h.t window to take peak
+        i_slice = self.i_vec[mask]
+        peak_indices, properties_dict = find_peaks(i_slice * -1, height=0.1)  # find minima
+        if len(peak_indices) == 0:
+            peak_curr = 0
+        else:
+            peak_curr = i_slice[peak_indices][0]
+        return peak_curr
 
     def genInactivation(self):
         if self.inorm_vec == []:
@@ -498,7 +537,9 @@ class Inactivation:
         ts = [0.1 * i for i in range(len(data))]  # make x values which match sample times
 
         # calc tau and fit exp
-        popt, pcov = optimize.curve_fit(fit_exp, ts, data)  # fit exponential curve
+        # cuts data points in half
+        length = len(ts) // 2
+        popt, pcov = optimize.curve_fit(fit_exp, ts[0:length], data[0:length])  # fit exponential curve
         perr = np.sqrt(np.diag(pcov))
         # print('in ' + str(all_tau_sweeps[i]) + ' the error was ' + str(perr))
         xs = np.linspace(ts[0], ts[len(ts) - 1], 1000)  # create uniform x values to graph curve
@@ -520,8 +561,8 @@ class Inactivation:
         self.plotInactivation_Tau_0mV()
 
     def plotAllInactivation_with_ax(self, fig_title,
-                                  figsize=(18, 9), color='black',
-                                  saveAsFileName=None, loadFileName=None, saveAsPNGFileName=None):
+                                    figsize=(18, 9), color='black',
+                                    saveAsFileName=None, loadFileName=None, saveAsPNGFileName=None):
         """
         Creates new ax if loadFileName is not a valid string. Plots all.
 
@@ -541,19 +582,32 @@ class Inactivation:
         label = 'HH' if color == 'black' else 'HMM'
 
         # upper left
-        ax[0, 0].set_xlabel('Voltage $(mV)$')
-        ax[0, 0].set_ylabel('Normalized current')
-        ax[0, 0].set_title('Inactivation: Voltage/Normalized Current Relation')
-        ax[0, 0].plot(self.v_vec, self.inorm_vec, 'o', c=color)
-        ssi_slope, v_half, top, bottom, tau0 = cf.calc_inact_obj(self.channel_name)
-        formatted_ssi_slope = np.round(ssi_slope, decimals=2)
-        formatted_v_half = np.round(v_half, decimals=2)
-        ax[0, 0].text(-10, 0.5 + y_offset, f'Slope: {formatted_ssi_slope}', c=color)
-        ax[0, 0].text(-10, 0.4 + y_offset, f'V50: {formatted_v_half}', c=color)
-        x_values_v = np.arange(self.st_cl, self.end_cl, 1)
-        curve = cf.boltzmann(x_values_v, ssi_slope, v_half, top, bottom)
-        ax[0, 0].plot(x_values_v, curve, c=color, label=label)
-        ax[0, 0].legend(loc='lower left')  # add legend
+        if color == 'red':  # only plot the red curve. Use it to extrapolate the black curve
+            ax[0, 0].set_xlabel('Voltage $(mV)$')
+            ax[0, 0].set_ylabel('Normalized current')
+            ax[0, 0].set_title('Inactivation: Voltage/Normalized Current Relation')
+
+            inorm_array = np.array(self.inorm_vec)
+            v_array = np.array(self.v_vec)
+            ssi_slope, v_half, top, bottom, tau0 = cf.calc_inact_obj(self.channel_name)
+            even_xs = np.linspace(v_array[0], v_array[len(v_array) - 1], 100)
+            curve = cf.boltzmann(even_xs, ssi_slope, v_half, top, bottom)
+
+            ax[0, 0].scatter(v_array, inorm_array, color='red', marker='s')
+            ax[0, 0].plot(even_xs, curve, color='red', label="Fitted Inactivation")
+
+            # TODO: mutant is a dummy value now. need a csv file for the specific name of the mutant
+            mutant = 'Y816F'
+            protocols = eh.read_mutant_protocols('mutant_protocols.csv', mutant)
+            ssi_slope_exp = ssi_slope * float(protocols['ssi_slope']) / 100
+            v_half_ssi_exp = v_half + float(protocols['dv_half_ssi'])
+            curve_exp = cf.boltzmann(even_xs, ssi_slope_exp, v_half_ssi_exp, 0, 1)
+
+            formatted_ssi_slope = np.round(ssi_slope, decimals=2)
+            formatted_ssi_slope_exp = np.round(ssi_slope_exp, decimals=2)
+            ax[0, 0].plot(even_xs, curve_exp, color='black', label='Inactivation experimental')
+            ax[0, 0].text(-25, 0.5, 'Slope (Optimized): ' + str(formatted_ssi_slope) + ' /mV', c='red')
+            ax[0, 0].text(-25, 0.4, 'Slope (Experimental): ' + str(formatted_ssi_slope_exp) + ' /mV', c='black')
 
         # lower left
         ax[1, 0].set_xlabel('Time $(ms)$')
@@ -571,7 +625,6 @@ class Inactivation:
         ax[1, 0].plot(xs, ys, color=color)
         formatted_tau = np.round(tau, decimals=3)
         ax[1, 0].text(0.2, -0.01 + y_offset, f"Tau at 0 mV: {formatted_tau}", color=color)
-
 
         # upper right
         ax[0, 1].set_xlabel('Time $(ms)$')
@@ -591,6 +644,7 @@ class Inactivation:
         if saveAsPNGFileName:
             plt.savefig(
                 os.path.join(os.path.split(__file__)[0], saveAsPNGFileName))
+
 
 ##################
 # Recovery from Inactivation (RFI)
@@ -701,6 +755,8 @@ class RFI:
         # updates the vectors at the end of the run
         self.time_vec.append(dur)
         self.log_time_vec.append(np.log10(dur))
+        peak_curr1 = self.find_ipeaks(start_ht=5, end_ht=15)
+        peak_curr2 = self.find_ipeaks(start_ht=5+self.cond_st_dur + dur, end_ht=15 + self.cond_st_dur + dur)
         self.rec_vec.append(peak_curr2 / peak_curr1)
 
         # calc tau using RF and tstop
@@ -708,6 +764,26 @@ class RFI:
         RF_t = peak_curr2 / peak_curr1
         tau = -h.tstop / np.log(-RF_t + 1)
         self.rec_inact_tau_vec.append(tau)
+
+    def find_ipeaks(self, start_ht, end_ht):
+        """
+        Evaluate the peak and updates the peak current.
+        Returns peak current.
+        Args:
+            start_ht (int): h.t time of window to find peak
+            end_ht (int): h.t time to end window to find peak
+        """
+        # find peaks
+        self.i_vec_t = np.array(self.i_vec_t)
+        self.t_vec = np.array(self.t_vec)
+        mask = np.where(np.logical_and(self.t_vec >= start_ht, self.t_vec <= end_ht))  # h.t window to take peak
+        i_slice = self.i_vec_t[mask]
+        peak_indices, properties_dict = find_peaks(i_slice * -1, height=0.1)  # find minima
+        if len(peak_indices) == 0:
+            peak_curr = 0
+        else:
+            peak_curr = i_slice[peak_indices][0]
+        return peak_curr
 
     def genRecInactTau(self):
         recov = []  # RFI tau curve
@@ -1624,18 +1700,19 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.function == 1:
+        genAct = Activation(channel_name='na12mut8st')
         genAct = Activation()
         genAct.genActivation()
         genAct.plotAllActivation()
 
     elif args.function == 2:
-        genInact = Inactivation()
+        genInact = Inactivation(channel_name='na12mut8st')
         genInact.genInactivation()
         genInact.plotAllInactivation()
 
 
     elif args.function == 3:
-        genRFI = RFI()
+        genRFI = RFI(channel_name='na12mut8st')
         genRFI.genRecInactTau()
         genRFI.plotAllRFI()
 
@@ -1681,46 +1758,46 @@ if __name__ == "__main__":
 
     elif args.function == 8:
         # run all with saving ax
-        # change channel name accordingly
+        # change channel name accordingly for HH models
         # na12 (na12.mod)
         # na16 (na16.mod)
-        genAct = Activation(channel_name='na16')
+        genAct = Activation(channel_name='na12')
         genAct.genActivation()
         genAct.plotAllActivation_with_ax(fig_title="Activation HH vs HMM", color='black',
                                          saveAsFileName="Plots_Folder/Act HHvHMM", loadFileName=None,
                                          saveAsPNGFileName="Plots_Folder/Act HHvHMM")
 
-        genInact = Inactivation(channel_name='na16')
+        genInact = Inactivation(channel_name='na12')
         genInact.genInactivation()
         genInact.plotAllInactivation_with_ax(fig_title="Inactivation HH vs HMM", color='black',
                                              saveAsFileName="Plots_Folder/Inact HHvHMM", loadFileName=None,
                                              saveAsPNGFileName="Plots_Folder/Inact HHvHMM")
 
-        genRFI = RFI(channel_name='na16')
+        genRFI = RFI(channel_name='na12')
         genRFI.genRecInactTau()
         genRFI.plotAllRFI_with_ax(fig_title="RFI HH vs HMM", color='black',
-                                             saveAsFileName="Plots_Folder/RFI HHvHMM", loadFileName=None,
-                                             saveAsPNGFileName="Plots_Folder/RFI HHvHMM")
+                                  saveAsFileName="Plots_Folder/RFI HHvHMM", loadFileName=None,
+                                  saveAsPNGFileName="Plots_Folder/RFI HHvHMM")
     elif args.function == 9:
         # run all with saving ax
-        # change channel name accordingly
-        # na (na8st.mod)
-        # nax (na8xst.mod)
-        genAct = Activation(channel_name='nax')
+        # change channel name accordingly for HMM models
+        # na (na8st.mod) (corresponding na12)
+        # nax (na8xst.mod) (corresponding na16)
+        genAct = Activation(channel_name='na')
         genAct.genActivation()
         genAct.plotAllActivation_with_ax(fig_title="Activation HH vs HMM", color='red',
                                          saveAsFileName="Plots_Folder/Act HHvHMM",
                                          loadFileName="Plots_Folder/Act HHvHMM",
                                          saveAsPNGFileName="Plots_Folder/Act HHvHMM")
 
-        genInact = Inactivation(channel_name='nax')
+        genInact = Inactivation(channel_name='na')
         genInact.genInactivation()
         genInact.plotAllInactivation_with_ax(fig_title="Inactivation HH vs HMM", color='red',
                                              saveAsFileName="Plots_Folder/Inact HHvHMM",
                                              loadFileName="Plots_Folder/Inact HHvHMM",
                                              saveAsPNGFileName="Plots_Folder/Inact HHvHMM")
 
-        genRFI = RFI(channel_name='nax')
+        genRFI = RFI(channel_name='na')
         genRFI.genRecInactTau()
         genRFI.plotAllRFI_with_ax(fig_title="RFI HH vs HMM", color='red',
                                   saveAsFileName="Plots_Folder/RFI HHvHMM",
