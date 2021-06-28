@@ -106,8 +106,6 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         Returns:
             List of float values of objective errors
         '''
-        #import ipdb
-        #ipdb.set_trace()
         return self.calc_all_rmse(param_values)
     
 
@@ -153,11 +151,11 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
 
 
         # Inactivation curve
-        inorm_vec, v_vec, all_is = ggsdHMM.Inactivation().genInactivation()
+        inorm_vec, v_vec, all_is = ggsdHMM.Inactivation(channel_name=self.channel_name, step=5).genInactivation()
         inorm_array = np.array(inorm_vec)
         v_array = np.array(v_vec)
 
-        ssi_slope, v_half, top, bottom, tau0 = cf.calc_inact_obj(self.channel_name)
+        ssi_slope, v_half, top, bottom, tau0 = cf.calc_inact_obj(self.channel_name, is_HMM=True)
 
         
         even_xs = np.linspace(v_array[0], v_array[len(v_array)-1], 100)
@@ -165,38 +163,34 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         axs[0].set_xlabel('Voltage (mV)')
         axs[0].set_ylabel('Fraction Inactivated')
         axs[0].set_title("Inactivation Curve")
-        axs[0].scatter(v_array, inorm_array, color='black', marker='s')
+        axs[0].scatter(v_array, inorm_array, color='red', marker='s', label='Optimized Inactivation')
         axs[0].plot(even_xs, curve, color='red', label="Fitted Inactivation")
 
         
-        curve_exp = cf.boltzmann(even_xs, ssi_slope_exp, v_half_ssi_exp, 0, 1)
+        curve_exp = cf.boltzmann(even_xs, ssi_slope_exp, v_half_ssi_exp, top, bottom)
         axs[0].plot(even_xs, curve_exp, color='black', label='Inactivation experimental')
         axs[0].text(-120, 0.7, 'Slope (Optimized): ' + str(ssi_slope) + ' /mV')
         axs[0].text(-120, 0.6, 'Slope (Experimental): ' + str(ssi_slope_exp) + ' /mV')
         axs[0].text(-120, 0.5, 'V50 (Optimized): ' + str(v_half) + ' mV')
         axs[0].text(-120, 0.4, 'V50 (Experimental): ' + str(v_half_ssi_exp) + ' mV')
-        #axs[0].text(-120, 0.3, 'Tau 0 (Optimized): ' + str(tau0))
-        #axs[0].text(-120, 0.2, 'Tau 0 (Experimental): ' + str(tau0_exp))
         axs[0].legend()
 
         # Activation curve
-        gnorm_vec, v_vec, all_is = ggsdHMM.Activation().genActivation()
+        gnorm_vec, v_vec, all_is = ggsdHMM.Activation(channel_name=self.channel_name, step=5).genActivation()
         gnorm_array = np.array(gnorm_vec)
         v_array = np.array(v_vec)
-        gv_slope, v_half, top, bottom = cf.calc_act_obj(self.channel_name)
+        gv_slope, v_half, top, bottom = cf.calc_act_obj(self.channel_name, is_HMM=True)
 
         even_xs = np.linspace(v_array[0], v_array[len(v_array)-1], 100)
         curve = cf.boltzmann(even_xs, gv_slope, v_half, top, bottom)
         axs[1].set_xlabel('Voltage (mV)')
         axs[1].set_ylabel('Fraction Activated')
         axs[1].set_title("Activation Curve")
-        axs[1].scatter(v_array, gnorm_array, color='black',marker='s')
+        axs[1].scatter(v_array, gnorm_array, color='red',marker='s', label='Optimized Activation')
         axs[1].plot(even_xs, curve, color='red', label="Fitted Activation")
-        #curve_exp = cf.boltzmann(even_xs, gv_slope_exp, v_half_ssi_exp, top, bottom)
-        curve_exp = cf.boltzmann(even_xs, gv_slope_exp, v_half_act_exp, 1, 0)
+        curve_exp = cf.boltzmann(even_xs, gv_slope_exp, v_half_act_exp, top, bottom)
+        #curve_exp = cf.boltzmann(even_xs, gv_slope_exp, v_half_act_exp, 1, 0)
         axs[1].plot(even_xs, curve_exp, color='black', label='Activation Experimental')
-        #axs[1].text(-10, 0.5, 'Slope: ' + str(gv_slope) + ' /mV')
-        #axs[1].text(-10, 0.3, 'V50: ' + str(v_half) + ' mV')
         axs[1].text(-120, 0.7, 'Slope (Optimized): ' + str(gv_slope) + ' /mV')
         axs[1].text(-120, 0.6, 'Slope (Experimental): ' + str(gv_slope_exp) + ' /mV')
         axs[1].text(-120, 0.5, 'V50 (Optimized): ' + str(v_half) + ' mV')
@@ -211,7 +205,7 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         axs[2].set_ylabel('Fractional Recovery')
         axs[2].set_title("Recovery from Inactivation")
         even_xs = np.linspace(times[0], times[len(times)-1], 100)
-        y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(self.channel_name)
+        y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(self.channel_name, is_HMM=True)
         curve = cf.two_phase(even_xs, y0, plateau, percent_fast, k_fast, k_slow)
         axs[2].plot(np.log(even_xs), curve, c='red',label="Recovery Fit")
         curve_exp = cf.two_phase(even_xs, y0, plateau, percent_fast_exp, 1/tau_fast_exp, 1/tau_slow_exp)

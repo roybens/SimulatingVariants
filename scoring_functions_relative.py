@@ -51,8 +51,8 @@ class Score_Function:
                 y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(self.channel_name, is_HMM=False)
             else:
                 gv_slope, v_half_act, top, bottom = cf.calc_act_obj(self.channel_name, is_HMM=True)
-                print('gv_slope: ' + str(gv_slope))
-                print('v_half_act: ' + str(v_half_act))
+                #print('gv_slope: ' + str(gv_slope))
+                #print('v_half_act: ' + str(v_half_act))
                 ssi_slope, v_half_inact, top, bottom, tau0 = cf.calc_inact_obj(self.channel_name, is_HMM=True)
                 y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(self.channel_name, is_HMM=True)
                 
@@ -82,9 +82,8 @@ class Score_Function:
         
         persistent_err = 0
         #return (v_half_act_err, gv_slope_err, v_half_ssi_err, ssi_slope_err, tau_fast_err, tau_slow_err, percent_fast_err, udb20_err, tau0_err, ramp_err, persistent_err)
-        #return (v_half_act_err, gv_slope_err, v_half_ssi_err, ssi_slope_err)
-        return (v_half_act_err, gv_slope_err)
-
+        return (v_half_act_err, gv_slope_err, v_half_ssi_err, ssi_slope_err)
+        
     def dv_half_act(self, plus_minus_wild, v_half):
         try:
             v_half_baseline = float(self.v_half_act_wild) + float(plus_minus_wild)
@@ -112,6 +111,7 @@ class Score_Function:
         try:
             v_half_baseline = float(self.v_half_ssi_wild) + float(plus_minus_wild)
             result = ((float(v_half_ssi) - v_half_baseline)/v_half_baseline)**2
+            #print('((' + str(v_half_ssi) + ' - ' + str(v_half_baseline) + ')/' + str(v_half_baseline) + ')**2' ' = ' + str(result))
             if math.isnan(result):
                 return 1000
             return result

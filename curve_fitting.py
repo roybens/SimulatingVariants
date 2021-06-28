@@ -85,15 +85,13 @@ def gen_figure_given_params(params, save=True, file_name=None,mutant='N_A', exp=
 def calc_act_obj(channel_name, is_HMM=False):
     try:
         if not is_HMM:
-            gnorm_vec, v_vec, all_is = ggsd.Activation(channel_name=channel_name).genActivation()
+            gnorm_vec, v_vec, all_is = ggsd.Activation(channel_name=channel_name, step=5).genActivation()
         else:
-            gnorm_vec, v_vec, all_is = ggsdHMM.Activation(channel_name=channel_name).genActivation()
+            gnorm_vec, v_vec, all_is = ggsdHMM.Activation(channel_name=channel_name, step=5).genActivation()
     except:
         print('Couldn\'t generate activation data')
         return (1000, 1000, 1000, 1000)
     try:
-        print(list(v_vec))
-        print(list(gnorm_vec))
         popt, pcov = optimize.curve_fit(boltzmann, v_vec, gnorm_vec)
     except:
         print("Couldn't fit curve to activation.")
@@ -105,15 +103,13 @@ def calc_act_obj(channel_name, is_HMM=False):
 def calc_inact_obj(channel_name, is_HMM=False):
     try:
         if not is_HMM:
-            inorm_vec, v_vec, all_is = ggsd.Inactivation(channel_name=channel_name).genInactivation()
+            inorm_vec, v_vec, all_is = ggsd.Inactivation(channel_name=channel_name, step=5).genInactivation()
         else:
-            inorm_vec, v_vec, all_is = ggsdHMM.Inactivation(channel_name=channel_name).genInactivation()
+            inorm_vec, v_vec, all_is = ggsdHMM.Inactivation(channel_name=channel_name, step=5).genInactivation()
     except:
         print('Couldn\'t generate inactivation data')
         return (1000, 1000, 1000, 1000, 1000)
     try:
-        print(list(v_vec))
-        print(list(inorm_vec))
         popt, pcov = optimize.curve_fit(boltzmann, v_vec, inorm_vec)
     except:
         print("Couldn't fit curve to inactivation.")
