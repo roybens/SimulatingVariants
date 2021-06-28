@@ -21,8 +21,8 @@ NEURON {
 UNITS { (mV) = (millivolt) }
 : initialize parameters
 PARAMETER {
-:   gbar = 33     (millimho/cm2)
-    gbar = 1000     (mho/cm2)
+   gbar = 3     (millimho/cm2)
+:    gbar = 1000     (mho/cm2)
     a1_0 = 4.584982656184167e+01 (/ms)
     a1_1 = 2.393541665657613e-02 (/mV) 
     
