@@ -106,8 +106,9 @@ class Activation:
         """
         curr_tr = 0  # initialization of peak current
         h.finitialize(self.v_init)  # calling the INITIAL block of the mechanism inserted in the section.
+        pre_i = 0  # initialization of variables used to commute the peak current
+        dens = 0
         self.f3cl.amp[1] = v_cl  # mV
-
         for _ in self.ntrials:
             while h.t < h.tstop:  # runs a single trace, calculates peak current
                 dens = self.f3cl.i / self.soma(0.5).area() * 100.0 - self.soma(
@@ -122,21 +123,23 @@ class Activation:
         # find i peak of trace
         self.ipeak_vec.append(self.find_ipeaks())
 
+
     def find_ipeaks(self):
         """
         Evaluate the peak and updates the peak current.
         Returns peak current.
+        Finds positive and negative peaks.
         """
-        # find peaks
         self.i_vec = np.array(self.i_vec)
         self.t_vec = np.array(self.t_vec)
-        mask = np.where(np.logical_and(self.t_vec >= 5, self.t_vec <= 10))  # t window to take peak
+        mask = np.where(np.logical_and(self.t_vec >= 4, self.t_vec <= 10))
         i_slice = self.i_vec[mask]
-        peak_indices, properties_dict = find_peaks(i_slice * -1, height=0.1)  # find minima
-        if len(peak_indices) == 0:
-            curr_tr = 0
+        curr_max = np.max(i_slice)
+        curr_min = np.min(i_slice)
+        if np.abs(curr_max) > np.abs(curr_min):
+            curr_tr = curr_max
         else:
-            curr_tr = i_slice[peak_indices][0]  # first peak
+            curr_tr = curr_min
         return curr_tr
 
     def findG(self, v_vec, ipeak_vec):
@@ -1695,7 +1698,6 @@ if __name__ == "__main__":
 
     if args.function == 1:
         genAct = Activation(channel_name='na12mut8st')
-        genAct = Activation()
         genAct.genActivation()
         genAct.plotAllActivation()
 
