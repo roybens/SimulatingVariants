@@ -22,7 +22,7 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
     through the evaluate_with_lists function
     '''
 
-    def __init__(self, params_file, mutant, channel_name):
+    def __init__(self, params_file, mutant, channel_name, objective_names=['v_half_act', 'gv_slope', 'v_half_ssi', 'ssi_slope', 'tau_fast', 'tau_slow', 'percent_fast', 'udb20', 'tau0', 'ramp', 'persistent']):
         '''
         Constructor
 
@@ -39,6 +39,7 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
 
         '''
         self.channel_name = channel_name
+        self.objective_names = objective_names
         def init_params(filepath):
             '''
             Helper to initialize self.params with the parameter file from filepath
@@ -58,19 +59,13 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
 
         self.wild_data = self.initialize_wild_data()
         self.params = init_params(params_file)
-        self.objectives = [bpop.objectives.Objective('dv_half_act'),\
-                           bpop.objectives.Objective('gv_slope'),\
-                           bpop.objectives.Objective('dv_half_ssi'),\
-                           bpop.objectives.Objective('ssi_slope'),\
-                           #bpop.objectives.Objective('tau_fast'),\
-                           #bpop.objectives.Objective('tau_slow'),\
-                           #bpop.objectives.Objective('percent_fast'),\
-                           #bpop.objectives.Objective('udb20'),\
-                           #bpop.objectives.Objective('tau0'),\
-                           #bpop.objectives.Objective('ramp'),\
-                           #bpop.objectives.Objective('persistent')
-                           ] 
+        
+        self.objectives = []
+        for obj in objective_names:
+            self.objectives.append(bpop.objectives.Objective(obj))
+
         self.protocols = eh.read_mutant_protocols('mutant_protocols.csv', mutant)
+        self.score_calculator = sf.Score_Function(self.protocols, self.wild_data, self.channel_name)
         
 
     def initialize_wild_data(self):
@@ -121,10 +116,9 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
 
         '''
         assert len(param_values) == len(self.params), 'Parameter value list is not same length number of parameters' 
-        #print(self.protocols)
         eh.change_params(param_values, scaled=False, is_HMM=True)
-        score_calculator = sf.Score_Function(self.protocols, self.wild_data, self.channel_name)
-        return score_calculator.total_rmse(is_HMM=True)
+        #score_calculator = sf.Score_Function(self.protocols, self.wild_data, self.channel_name)
+        return self.score_calculator.total_rmse(is_HMM=True, objectives=self.objective_names)
 
 
 

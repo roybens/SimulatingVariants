@@ -42,7 +42,7 @@ class Score_Function:
         self.channel_name = channel_name
 
 
-    def total_rmse(self, is_HMM=False):
+    def total_rmse(self, is_HMM=False, objectives=['v_half_act', 'gv_slope', 'v_half_ssi', 'ssi_slope', 'tau_fast', 'tau_slow', 'percent_fast', 'udb20', 'tau0', 'ramp', 'persistent']):
         # When using the HH model, leave is_HMM as false. Otherwise, set it to true.
         try:
             if not is_HMM:
@@ -51,44 +51,54 @@ class Score_Function:
                 y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(self.channel_name, is_HMM=False)
             else:
                 gv_slope, v_half_act, top, bottom = cf.calc_act_obj(self.channel_name, is_HMM=True)
-                #print('gv_slope: ' + str(gv_slope))
-                #print('v_half_act: ' + str(v_half_act))
                 ssi_slope, v_half_inact, top, bottom, tau0 = cf.calc_inact_obj(self.channel_name, is_HMM=True)
                 y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(self.channel_name, is_HMM=True)
                 
         except ZeroDivisionError:
             print('Zero Division Error')
             return (1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000)
- 
-        v_half_act_err = self.dv_half_act(self.dv_half_act_diff, v_half_act)
-
-        gv_slope_err = self.gv_slope(self.gv_slope_diff, gv_slope)
-
-        v_half_ssi_err = self.dv_half_ssi(self.dv_half_ssi_diff, v_half_inact)
-
-        ssi_slope_err = self.ssi_slope(self.ssi_slope_diff, ssi_slope)
-
-        tau_fast_err = self.tau_fast(self.tau_fast_diff, 1/k_fast)
-
-        tau_slow_err = self.tau_slow(self.tau_slow_diff, 1/k_slow)
-
-        percent_fast_err = self.percent_fast(self.percent_fast_diff, percent_fast)
-
-        udb20_err = 0
-
-        tau0_err = self.tau0(self.tau0_diff, tau0)
-
-        ramp_err = 0
         
-        persistent_err = 0
-        #return (v_half_act_err, gv_slope_err, v_half_ssi_err, ssi_slope_err, tau_fast_err, tau_slow_err, percent_fast_err, udb20_err, tau0_err, ramp_err, persistent_err)
-        return (v_half_act_err, gv_slope_err, v_half_ssi_err, ssi_slope_err)
+        errors = []
+        if 'v_half_act' in objectives:
+            v_half_act_err = self.dv_half_act(self.dv_half_act_diff, v_half_act)
+            errors.append(v_half_act_err)
+        if 'gv_slope' in objectives:
+            gv_slope_err = self.gv_slope(self.gv_slope_diff, gv_slope)
+            errors.append(gv_slope_err)
+        if 'v_half_ssi' in objectives:
+            v_half_ssi_err = self.dv_half_ssi(self.dv_half_ssi_diff, v_half_inact)
+            errors.append(v_half_ssi_err)
+        if 'ssi_slope' in objectives:
+            ssi_slope_err = self.ssi_slope(self.ssi_slope_diff, ssi_slope)
+            errors.append(ssi_slope_err)
+        if 'tau_fast' in objectives:
+            tau_fast_err = self.tau_fast(self.tau_fast_diff, 1/k_fast)
+            errors.append(tau_fast_err)
+        if 'tau_slow' in objectives:
+            tau_slow_err = self.tau_slow(self.tau_slow_diff, 1/k_slow)
+            errors.append(tau_slow_err)
+        if 'percent_fast' in objectives:
+            percent_fast_err = self.percent_fast(self.percent_fast_diff, percent_fast)
+            errors.append(percent_fast_err)
+        if 'udb20' in objectives:
+            udb20_err = 0
+            errors.append(udb20_err)
+        if 'tau0' in objectives:
+            tau0_err = self.tau0(self.tau0_diff, tau0)
+            errors.append(tau0_err)
+        if 'ramp' in objectives:
+            ramp_err = 0
+            errors.append(ramp_err)
+        if 'persistent' in objectives:
+            persistent_err = 0
+            errors.append(persistent_err)
+
+        return tuple(errors)
         
     def dv_half_act(self, plus_minus_wild, v_half):
         try:
             v_half_baseline = float(self.v_half_act_wild) + float(plus_minus_wild)
             result = ((float(v_half) - v_half_baseline)/v_half_baseline)**2
-            print('((' + str(v_half) + ' - ' + str(v_half_baseline) + ')/' + str(v_half_baseline) + ')**2' ' = ' + str(result))
             if math.isnan(result):
                 return 1000
             return result
@@ -111,7 +121,6 @@ class Score_Function:
         try:
             v_half_baseline = float(self.v_half_ssi_wild) + float(plus_minus_wild)
             result = ((float(v_half_ssi) - v_half_baseline)/v_half_baseline)**2
-            #print('((' + str(v_half_ssi) + ' - ' + str(v_half_baseline) + ')/' + str(v_half_baseline) + ')**2' ' = ' + str(result))
             if math.isnan(result):
                 return 1000
             return result

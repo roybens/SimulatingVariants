@@ -1,24 +1,17 @@
 import numpy as np
 import time
-import generalized_genSim_shorten_time as ggsd
-from neuron import h, gui
+import generalized_genSim_shorten_time_HMM as ggsdHMM
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.colors as colors
-import matplotlib.cm as cmx
 from scipy import optimize, stats
 import bluepyopt as bpop
 import bluepyopt.deapext.algorithms as algo
-import vclamp_evaluator_relative as vcl_ev
+import vclamp_evaluator_HMM as vcl_ev
 import pickle
 import time
-import numpy as np
 from deap import tools
-import random
-from deap import base, creator
 import multiprocessing
-import eval_helper as eh
-import scoring_functions_relative as sf
+
 
 evaluator = vcl_ev.Vclamp_evaluator_relative('./param_stats_narrow.csv', 'A427D')
 
@@ -28,11 +21,8 @@ cp_freq = 1
 old_update = algo._update_history_and_hof
 def my_update(halloffame, history, population):
     global gen_counter,cp_freq
-    #old_update(halloffame, history, population)
     if halloffame is not None:
         halloffame.update(population)
-    #print('hof: ' + str(halloffame))
-    #print('population: ' + str(population))
     
     if halloffame:
         best_indvs.append(halloffame[0])
@@ -66,7 +56,7 @@ deap_opt = bpop.optimisations.DEAPOptimisation(evaluator, offspring_size=100, ho
 cp_file = './cp.pkl'
 
 start_time = time.time()
-pop, hof, log, hst = deap_opt.run(max_ngen=25, cp_filename=cp_file)
+pop, hof, log, hst = deap_opt.run(max_ngen=20, cp_filename=cp_file)
 end_time = time.time()
 print(end_time - start_time)
 
