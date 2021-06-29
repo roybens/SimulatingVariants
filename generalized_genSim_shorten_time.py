@@ -45,7 +45,7 @@ if not os.path.exists(final_directory):
 class Activation:
     def __init__(self, soma_diam=50, soma_L=63.66198, soma_nseg=1, soma_cm=1, soma_Ra=70,
                  channel_name='na12mut', soma_ena=55, h_celsius=33, v_init=-120, h_dt=0.025, ntrials=range(30),
-                 dur=20, step=10, st_cl=-120, end_cl=40, v_cl=-120,
+                 dur=20, step=5, st_cl=-120, end_cl=40, v_cl=-120,
                  f3cl_dur0=5, f3cl_amp0=-120, f3cl_dur2=5, f3cl_amp2=-120,
                  ):
 
@@ -150,21 +150,14 @@ class Activation:
         # convert to numpy arrays
         v_vec = np.array(v_vec)
         ipeak_vec = np.array(ipeak_vec)
-        
-        # find start of linear portion one index after the peak and the next non negative element
-        min_ind = np.argmin(ipeak_vec)
-        next_non_negatives = np.where(ipeak_vec[min_ind:]>=0)[0]+min_ind
-        
-        if len(next_non_negatives)>0:
-            end_of_lin = next_non_negatives[0]
-        else:
-            end_of_lin = len(ipeak_vec)-1
-        inds = range(min_ind+1,end_of_lin)
-        
+
+        # find start of linear portion (0 mV and onwards)
+        inds = np.where(v_vec >= 0)
+
         # take linear portion of voltage and current relationship
         lin_v = v_vec[inds]
         lin_i = ipeak_vec[inds]
-        
+
         # boltzmann for conductance
         def boltzmann(vm, Gmax, v_half, s):
             return Gmax * (vm - self.vrev) / (1 + np.exp((v_half - vm) / s))
@@ -349,13 +342,14 @@ class Activation:
             plt.savefig(
                 os.path.join(os.path.split(__file__)[0], saveAsPNGFileName))
 
+
 ##################
 # Inactivation
 ##################
 class Inactivation:
     def __init__(self, soma_diam=50, soma_L=63.66198, soma_nseg=1, soma_cm=1, soma_Ra=70,
                  channel_name='na12mut', soma_ena=55, h_celsius=33, v_init=-120, h_dt=0.025, ntrials=range(30),
-                 dur=500, step=10, st_cl=-120, end_cl=40, v_cl=-120,
+                 dur=500, step=5, st_cl=-120, end_cl=40, v_cl=-120,
                  f3cl_dur0=40, f3cl_amp0=-120, f3cl_dur2=20, f3cl_amp2=-10):
 
         self.h = h  # NEURON h
