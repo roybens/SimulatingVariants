@@ -1,0 +1,1064 @@
+Warning: Python module not loaded, you already have Python loaded via conda init
+srun: Warning: can't run 1 processes on 4 nodes, setting nnodes to 1
+Current generation:  1
+log: 
+ gen	nevals	avg     	std      	min     	max     
+1  	100   	0.174628	0.0723852	0.100194	0.334132 
+
+Current generation:  2
+log: 
+ gen	nevals	avg     	std      	min     	max     
+1  	100   	0.174628	0.0723852	0.100194	0.334132
+2  	100   	0.173778	0.0722768	0.100194	0.334132 
+
+Current generation:  3
+log: 
+ gen	nevals	avg     	std      	min     	max     
+1  	100   	0.174628	0.0723852	0.100194	0.334132
+2  	100   	0.173778	0.0722768	0.100194	0.334132
+3  	100   	0.200407	0.0658117	0.100546	0.334132 
+
+Current generation:  4
+log: 
+ gen	nevals	avg     	std      	min     	max     
+1  	100   	0.174628	0.0723852	0.100194	0.334132
+2  	100   	0.173778	0.0722768	0.100194	0.334132
+3  	100   	0.200407	0.0658117	0.100546	0.334132
+4  	100   	0.202424	0.0921232	0.100193	0.336933 
+
+Current generation:  5
+log: 
+ gen	nevals	avg     	std      	min     	max     
+1  	100   	0.174628	0.0723852	0.100194	0.334132
+2  	100   	0.173778	0.0722768	0.100194	0.334132
+3  	100   	0.200407	0.0658117	0.100546	0.334132
+4  	100   	0.202424	0.0921232	0.100193	0.336933
+5  	100   	0.176053	0.0691071	0.100193	0.336832 
+
+Current generation:  6
+log: 
+ gen	nevals	avg     	std      	min     	max     
+1  	100   	0.174628	0.0723852	0.100194	0.334132
+2  	100   	0.173778	0.0722768	0.100194	0.334132
+3  	100   	0.200407	0.0658117	0.100546	0.334132
+4  	100   	0.202424	0.0921232	0.100193	0.336933
+5  	100   	0.176053	0.0691071	0.100193	0.336832
+6  	100   	0.17248 	0.0690004	0.100193	0.336893 
+
+Current generation:  7
+log: 
+ gen	nevals	avg     	std      	min     	max     
+1  	100   	0.174628	0.0723852	0.100194	0.334132
+2  	100   	0.173778	0.0722768	0.100194	0.334132
+3  	100   	0.200407	0.0658117	0.100546	0.334132
+4  	100   	0.202424	0.0921232	0.100193	0.336933
+5  	100   	0.176053	0.0691071	0.100193	0.336832
+6  	100   	0.17248 	0.0690004	0.100193	0.336893
+7  	100   	0.221211	0.0870018	0.100193	0.336942 
+
+Current generation:  8
+log: 
+ gen	nevals	avg     	std      	min     	max     
+1  	100   	0.174628	0.0723852	0.100194	0.334132
+2  	100   	0.173778	0.0722768	0.100194	0.334132
+3  	100   	0.200407	0.0658117	0.100546	0.334132
+4  	100   	0.202424	0.0921232	0.100193	0.336933
+5  	100   	0.176053	0.0691071	0.100193	0.336832
+6  	100   	0.17248 	0.0690004	0.100193	0.336893
+7  	100   	0.221211	0.0870018	0.100193	0.336942
+8  	100   	0.158178	0.0535359	0.100193	0.307528 
+
+Current generation:  9
+log: 
+ gen	nevals	avg     	std      	min     	max     
+1  	100   	0.174628	0.0723852	0.100194	0.334132
+2  	100   	0.173778	0.0722768	0.100194	0.334132
+3  	100   	0.200407	0.0658117	0.100546	0.334132
+4  	100   	0.202424	0.0921232	0.100193	0.336933
+5  	100   	0.176053	0.0691071	0.100193	0.336832
+6  	100   	0.17248 	0.0690004	0.100193	0.336893
+7  	100   	0.221211	0.0870018	0.100193	0.336942
+8  	100   	0.158178	0.0535359	0.100193	0.307528
+9  	100   	0.189525	0.0672363	0.100291	0.333201 
+
+Current generation:  10
+log: 
+ gen	nevals	avg     	std      	min     	max     
+1  	100   	0.174628	0.0723852	0.100194	0.334132
+2  	100   	0.173778	0.0722768	0.100194	0.334132
+3  	100   	0.200407	0.0658117	0.100546	0.334132
+4  	100   	0.202424	0.0921232	0.100193	0.336933
+5  	100   	0.176053	0.0691071	0.100193	0.336832
+6  	100   	0.17248 	0.0690004	0.100193	0.336893
+7  	100   	0.221211	0.0870018	0.100193	0.336942
+8  	100   	0.158178	0.0535359	0.100193	0.307528
+9  	100   	0.189525	0.0672363	0.100291	0.333201
+10 	100   	0.154713	0.0664254	0.100193	0.333201 
+
+Current generation:  11
+log: 
+ gen	nevals	avg     	std      	min     	max     
+1  	100   	0.174628	0.0723852	0.100194	0.334132
+2  	100   	0.173778	0.0722768	0.100194	0.334132
+3  	100   	0.200407	0.0658117	0.100546	0.334132
+4  	100   	0.202424	0.0921232	0.100193	0.336933
+5  	100   	0.176053	0.0691071	0.100193	0.336832
+6  	100   	0.17248 	0.0690004	0.100193	0.336893
+7  	100   	0.221211	0.0870018	0.100193	0.336942
+8  	100   	0.158178	0.0535359	0.100193	0.307528
+9  	100   	0.189525	0.0672363	0.100291	0.333201
+10 	100   	0.154713	0.0664254	0.100193	0.333201
+11 	100   	0.208767	0.0739575	0.100193	0.333201 
+
+Current generation:  12
+log: 
+ gen	nevals	avg     	std      	min     	max     
+1  	100   	0.174628	0.0723852	0.100194	0.334132
+2  	100   	0.173778	0.0722768	0.100194	0.334132
+3  	100   	0.200407	0.0658117	0.100546	0.334132
+4  	100   	0.202424	0.0921232	0.100193	0.336933
+5  	100   	0.176053	0.0691071	0.100193	0.336832
+6  	100   	0.17248 	0.0690004	0.100193	0.336893
+7  	100   	0.221211	0.0870018	0.100193	0.336942
+8  	100   	0.158178	0.0535359	0.100193	0.307528
+9  	100   	0.189525	0.0672363	0.100291	0.333201
+10 	100   	0.154713	0.0664254	0.100193	0.333201
+11 	100   	0.208767	0.0739575	0.100193	0.333201
+12 	100   	0.166145	0.0695135	0.100193	0.333201 
+
+Current generation:  13
+log: 
+ gen	nevals	avg     	std      	min     	max     
+1  	100   	0.174628	0.0723852	0.100194	0.334132
+2  	100   	0.173778	0.0722768	0.100194	0.334132
+3  	100   	0.200407	0.0658117	0.100546	0.334132
+4  	100   	0.202424	0.0921232	0.100193	0.336933
+5  	100   	0.176053	0.0691071	0.100193	0.336832
+6  	100   	0.17248 	0.0690004	0.100193	0.336893
+7  	100   	0.221211	0.0870018	0.100193	0.336942
+8  	100   	0.158178	0.0535359	0.100193	0.307528
+9  	100   	0.189525	0.0672363	0.100291	0.333201
+10 	100   	0.154713	0.0664254	0.100193	0.333201
+11 	100   	0.208767	0.0739575	0.100193	0.333201
+12 	100   	0.166145	0.0695135	0.100193	0.333201
+13 	100   	0.200793	0.0707508	0.100696	0.333201 
+
+Current generation:  14
+log: 
+ gen	nevals	avg     	std      	min     	max     
+1  	100   	0.174628	0.0723852	0.100194	0.334132
+2  	100   	0.173778	0.0722768	0.100194	0.334132
+3  	100   	0.200407	0.0658117	0.100546	0.334132
+4  	100   	0.202424	0.0921232	0.100193	0.336933
+5  	100   	0.176053	0.0691071	0.100193	0.336832
+6  	100   	0.17248 	0.0690004	0.100193	0.336893
+7  	100   	0.221211	0.0870018	0.100193	0.336942
+8  	100   	0.158178	0.0535359	0.100193	0.307528
+9  	100   	0.189525	0.0672363	0.100291	0.333201
+10 	100   	0.154713	0.0664254	0.100193	0.333201
+11 	100   	0.208767	0.0739575	0.100193	0.333201
+12 	100   	0.166145	0.0695135	0.100193	0.333201
+13 	100   	0.200793	0.0707508	0.100696	0.333201
+14 	100   	0.193863	0.077878 	0.100197	0.335875 
+
+Current generation:  15
+log: 
+ gen	nevals	avg     	std      	min     	max     
+1  	100   	0.174628	0.0723852	0.100194	0.334132
+2  	100   	0.173778	0.0722768	0.100194	0.334132
+3  	100   	0.200407	0.0658117	0.100546	0.334132
+4  	100   	0.202424	0.0921232	0.100193	0.336933
+5  	100   	0.176053	0.0691071	0.100193	0.336832
+6  	100   	0.17248 	0.0690004	0.100193	0.336893
+7  	100   	0.221211	0.0870018	0.100193	0.336942
+8  	100   	0.158178	0.0535359	0.100193	0.307528
+9  	100   	0.189525	0.0672363	0.100291	0.333201
+10 	100   	0.154713	0.0664254	0.100193	0.333201
+11 	100   	0.208767	0.0739575	0.100193	0.333201
+12 	100   	0.166145	0.0695135	0.100193	0.333201
+13 	100   	0.200793	0.0707508	0.100696	0.333201
+14 	100   	0.193863	0.077878 	0.100197	0.335875
+15 	100   	0.184207	0.0648677	0.100196	0.333155 
+
+Current generation:  16
+log: 
+ gen	nevals	avg     	std      	min     	max     
+1  	100   	0.174628	0.0723852	0.100194	0.334132
+2  	100   	0.173778	0.0722768	0.100194	0.334132
+3  	100   	0.200407	0.0658117	0.100546	0.334132
+4  	100   	0.202424	0.0921232	0.100193	0.336933
+5  	100   	0.176053	0.0691071	0.100193	0.336832
+6  	100   	0.17248 	0.0690004	0.100193	0.336893
+7  	100   	0.221211	0.0870018	0.100193	0.336942
+8  	100   	0.158178	0.0535359	0.100193	0.307528
+9  	100   	0.189525	0.0672363	0.100291	0.333201
+10 	100   	0.154713	0.0664254	0.100193	0.333201
+11 	100   	0.208767	0.0739575	0.100193	0.333201
+12 	100   	0.166145	0.0695135	0.100193	0.333201
+13 	100   	0.200793	0.0707508	0.100696	0.333201
+14 	100   	0.193863	0.077878 	0.100197	0.335875
+15 	100   	0.184207	0.0648677	0.100196	0.333155
+16 	100   	0.183575	0.0839339	0.100197	0.336264 
+
+Current generation:  17
+log: 
+ gen	nevals	avg     	std      	min     	max     
+1  	100   	0.174628	0.0723852	0.100194	0.334132
+2  	100   	0.173778	0.0722768	0.100194	0.334132
+3  	100   	0.200407	0.0658117	0.100546	0.334132
+4  	100   	0.202424	0.0921232	0.100193	0.336933
+5  	100   	0.176053	0.0691071	0.100193	0.336832
+6  	100   	0.17248 	0.0690004	0.100193	0.336893
+7  	100   	0.221211	0.0870018	0.100193	0.336942
+8  	100   	0.158178	0.0535359	0.100193	0.307528
+9  	100   	0.189525	0.0672363	0.100291	0.333201
+10 	100   	0.154713	0.0664254	0.100193	0.333201
+11 	100   	0.208767	0.0739575	0.100193	0.333201
+12 	100   	0.166145	0.0695135	0.100193	0.333201
+13 	100   	0.200793	0.0707508	0.100696	0.333201
+14 	100   	0.193863	0.077878 	0.100197	0.335875
+15 	100   	0.184207	0.0648677	0.100196	0.333155
+16 	100   	0.183575	0.0839339	0.100197	0.336264
+17 	100   	0.177872	0.0657452	0.100197	0.33648  
+
+Current generation:  18
+log: 
+ gen	nevals	avg     	std      	min     	max     
+1  	100   	0.174628	0.0723852	0.100194	0.334132
+2  	100   	0.173778	0.0722768	0.100194	0.334132
+3  	100   	0.200407	0.0658117	0.100546	0.334132
+4  	100   	0.202424	0.0921232	0.100193	0.336933
+5  	100   	0.176053	0.0691071	0.100193	0.336832
+6  	100   	0.17248 	0.0690004	0.100193	0.336893
+7  	100   	0.221211	0.0870018	0.100193	0.336942
+8  	100   	0.158178	0.0535359	0.100193	0.307528
+9  	100   	0.189525	0.0672363	0.100291	0.333201
+10 	100   	0.154713	0.0664254	0.100193	0.333201
+11 	100   	0.208767	0.0739575	0.100193	0.333201
+12 	100   	0.166145	0.0695135	0.100193	0.333201
+13 	100   	0.200793	0.0707508	0.100696	0.333201
+14 	100   	0.193863	0.077878 	0.100197	0.335875
+15 	100   	0.184207	0.0648677	0.100196	0.333155
+16 	100   	0.183575	0.0839339	0.100197	0.336264
+17 	100   	0.177872	0.0657452	0.100197	0.33648 
+18 	100   	0.188884	0.076706 	0.100197	0.336533 
+
+Current generation:  19
+log: 
+ gen	nevals	avg     	std      	min     	max     
+1  	100   	0.174628	0.0723852	0.100194	0.334132
+2  	100   	0.173778	0.0722768	0.100194	0.334132
+3  	100   	0.200407	0.0658117	0.100546	0.334132
+4  	100   	0.202424	0.0921232	0.100193	0.336933
+5  	100   	0.176053	0.0691071	0.100193	0.336832
+6  	100   	0.17248 	0.0690004	0.100193	0.336893
+7  	100   	0.221211	0.0870018	0.100193	0.336942
+8  	100   	0.158178	0.0535359	0.100193	0.307528
+9  	100   	0.189525	0.0672363	0.100291	0.333201
+10 	100   	0.154713	0.0664254	0.100193	0.333201
+11 	100   	0.208767	0.0739575	0.100193	0.333201
+12 	100   	0.166145	0.0695135	0.100193	0.333201
+13 	100   	0.200793	0.0707508	0.100696	0.333201
+14 	100   	0.193863	0.077878 	0.100197	0.335875
+15 	100   	0.184207	0.0648677	0.100196	0.333155
+16 	100   	0.183575	0.0839339	0.100197	0.336264
+17 	100   	0.177872	0.0657452	0.100197	0.33648 
+18 	100   	0.188884	0.076706 	0.100197	0.336533
+19 	100   	0.176862	0.0787378	0.100197	0.336974 
+
+Current generation:  20
+log: 
+ gen	nevals	avg     	std      	min     	max     
+1  	100   	0.174628	0.0723852	0.100194	0.334132
+2  	100   	0.173778	0.0722768	0.100194	0.334132
+3  	100   	0.200407	0.0658117	0.100546	0.334132
+4  	100   	0.202424	0.0921232	0.100193	0.336933
+5  	100   	0.176053	0.0691071	0.100193	0.336832
+6  	100   	0.17248 	0.0690004	0.100193	0.336893
+7  	100   	0.221211	0.0870018	0.100193	0.336942
+8  	100   	0.158178	0.0535359	0.100193	0.307528
+9  	100   	0.189525	0.0672363	0.100291	0.333201
+10 	100   	0.154713	0.0664254	0.100193	0.333201
+11 	100   	0.208767	0.0739575	0.100193	0.333201
+12 	100   	0.166145	0.0695135	0.100193	0.333201
+13 	100   	0.200793	0.0707508	0.100696	0.333201
+14 	100   	0.193863	0.077878 	0.100197	0.335875
+15 	100   	0.184207	0.0648677	0.100196	0.333155
+16 	100   	0.183575	0.0839339	0.100197	0.336264
+17 	100   	0.177872	0.0657452	0.100197	0.33648 
+18 	100   	0.188884	0.076706 	0.100197	0.336533
+19 	100   	0.176862	0.0787378	0.100197	0.336974
+20 	100   	0.194693	0.0749467	0.100491	0.33713  
+
+17252.622344493866
+[[263.30588343360716, 0.16816915361392798, 0.1322592888002158, 0.7052821435764786, 112.40259388457666, 0.11137404015524632, 0.130485065726308, 0.34032297850119647, 406.88775613560665, 0.49102694287239446, 1.3084975638112413, 0.21624298259302682, 1.728279339915252, 2.1058048157530296, 0.573105806721709, 2.553010112712953, 1124.9187072371094, 0.178411359680722, 6.07197103669094, 1.76490238932695], [263.30588343360716, 0.16816915361392798, 0.1322592888002158, 0.7052821435764786, 112.40259388457666, 0.11137404015524632, 0.130485065726308, 0.34032297850119647, 406.88775613560665, 0.49102694287239446, 1.3084975638112413, 0.21624298259302682, 1.728279339915252, 2.1058048157530296, 0.573105806721709, 2.553010112712953, 1124.9187072371094, 0.178411359680722, 6.07197103669094, 1.76490238932695], [263.30588343360716, 0.16816915361392798, 0.1322592888002158, 0.7052821435764786, 112.40259388457666, 0.11137404015524632, 0.130485065726308, 0.34032297850119647, 406.88775613560665, 0.49102694287239446, 1.3084975638112413, 0.21624298259302682, 1.728279339915252, 2.1058048157530296, 0.573105806721709, 2.553010112712953, 1124.9187072371094, 0.178411359680722, 6.07197103669094, 1.76490238932695], [49.14258693986015, 0.06379311269967337, 0.13761357116695497, 0.4062281590612214, 150.3610633266788, 0.12753850700646324, 2.059588680171087, 0.009352638866978166, 180.31801006734472, 0.618759831501391, 2.9365213600918256, 0.16037355681198634, 19.694301941228346, 2.049514996478746, 0.17430367466724062, 2.0817232179822485, 744.4842212503531, 0.1787545897187583, 6.037512710790935, 10.864807734066396], [49.14258693986015, 0.06379311269967337, 0.13761357116695497, 0.4062281590612214, 150.3610633266788, 0.12753850700646324, 2.059588680171087, 0.009352638866978166, 180.31801006734472, 0.618759831501391, 2.9365213600918256, 0.16037355681198634, 19.694301941228346, 2.049514996478746, 0.17430367466724062, 2.0817232179822485, 744.4842212503531, 0.1787545897187583, 6.037512710790935, 10.864807734066396], [49.14258693986015, 0.06379311269967337, 0.13761357116695497, 0.4062281590612214, 150.3610633266788, 0.12753850700646324, 2.059588680171087, 0.009352638866978166, 180.31801006734472, 0.618759831501391, 2.9365213600918256, 0.16037355681198634, 19.694301941228346, 2.049514996478746, 0.17430367466724062, 2.0817232179822485, 744.4842212503531, 0.1787545897187583, 6.037512710790935, 10.864807734066396], [49.14258693986015, 0.06379311269967337, 0.13761357116695497, 0.4062281590612214, 150.3610633266788, 0.12753850700646324, 2.059588680171087, 0.009352638866978166, 180.31801006734472, 0.618759831501391, 2.9365213600918256, 0.16037355681198634, 19.694301941228346, 2.049514996478746, 0.17430367466724062, 2.0817232179822485, 744.4842212503531, 0.1787545897187583, 6.037512710790935, 10.864807734066396], [49.14258693986015, 0.06379311269967337, 0.13761357116695497, 0.4062281590612214, 150.3610633266788, 0.12753850700646324, 2.059588680171087, 0.009352638866978166, 180.31801006734472, 0.618759831501391, 2.9365213600918256, 0.16037355681198634, 19.694301941228346, 2.049514996478746, 0.17430367466724062, 2.0817232179822485, 744.4842212503531, 0.1787545897187583, 6.037512710790935, 10.864807734066396], [49.14258693986015, 0.06379311269967337, 0.13761357116695497, 0.4062281590612214, 150.3610633266788, 0.12753850700646324, 2.059588680171087, 0.009352638866978166, 180.31801006734472, 0.618759831501391, 2.9365213600918256, 0.16037355681198634, 19.694301941228346, 2.049514996478746, 0.17430367466724062, 2.0817232179822485, 744.4842212503531, 0.1787545897187583, 6.037512710790935, 10.864807734066396], [49.14258693986015, 0.06379311269967337, 0.13761357116695497, 0.4062281590612214, 150.3610633266788, 0.12753850700646324, 2.059588680171087, 0.009352638866978166, 180.31801006734472, 0.618759831501391, 2.9365213600918256, 0.16037355681198634, 19.694301941228346, 2.049514996478746, 0.17430367466724062, 2.0817232179822485, 744.4842212503531, 0.1787545897187583, 6.037512710790935, 10.864807734066396], [49.14258693986015, 0.06379311269967337, 0.13761357116695497, 0.4062281590612214, 150.3610633266788, 0.12753850700646324, 2.059588680171087, 0.009352638866978166, 180.31801006734472, 0.618759831501391, 2.9365213600918256, 0.16037355681198634, 19.694301941228346, 2.049514996478746, 0.17430367466724062, 2.0817232179822485, 744.4842212503531, 0.1787545897187583, 6.037512710790935, 10.864807734066396], [49.14258693986015, 0.06379311269967337, 0.13761357116695497, 0.4062281590612214, 150.3610633266788, 0.12753850700646324, 2.059588680171087, 0.009352638866978166, 180.31801006734472, 0.618759831501391, 2.9365213600918256, 0.16037355681198634, 19.694301941228346, 2.049514996478746, 0.17430367466724062, 2.0817232179822485, 744.4842212503531, 0.1787545897187583, 6.037512710790935, 10.864807734066396], [49.14258693986015, 0.06379311269967337, 0.13761357116695497, 0.4062281590612214, 150.3610633266788, 0.12753850700646324, 2.059588680171087, 0.009352638866978166, 180.31801006734472, 0.618759831501391, 2.9365213600918256, 0.16037355681198634, 19.694301941228346, 2.049514996478746, 0.17430367466724062, 2.0817232179822485, 744.4842212503531, 0.1787545897187583, 6.037512710790935, 10.864807734066396], [49.14258693986015, 0.06379311269967337, 0.13761357116695497, 0.4062281590612214, 150.3610633266788, 0.12753850700646324, 2.059588680171087, 0.009352638866978166, 180.31801006734472, 0.618759831501391, 2.9365213600918256, 0.16037355681198634, 19.694301941228346, 2.049514996478746, 0.17430367466724062, 2.0817232179822485, 744.4842212503531, 0.1787545897187583, 6.037512710790935, 10.864807734066396], [49.14258693986015, 0.06379311269967337, 0.13761357116695497, 0.4062281590612214, 150.3610633266788, 0.12753850700646324, 2.059588680171087, 0.009352638866978166, 180.31801006734472, 0.618759831501391, 2.9365213600918256, 0.16037355681198634, 19.694301941228346, 2.049514996478746, 0.17430367466724062, 2.0817232179822485, 744.4842212503531, 0.1787545897187583, 6.037512710790935, 10.864807734066396], [49.14258693986015, 0.06379311269967337, 0.13761357116695497, 0.4062281590612214, 150.3610633266788, 0.12753850700646324, 2.059588680171087, 0.009352638866978166, 180.31801006734472, 0.618759831501391, 2.9365213600918256, 0.16037355681198634, 19.694301941228346, 2.049514996478746, 0.17430367466724062, 2.0817232179822485, 744.4842212503531, 0.1787545897187583, 6.037512710790935, 10.864807734066396], [49.14258693986015, 0.06379311269967337, 0.13761357116695497, 0.4062281590612214, 150.3610633266788, 0.12753850700646324, 2.059588680171087, 0.009352638866978166, 180.31801006734472, 0.618759831501391, 2.9365213600918256, 0.16037355681198634, 19.694301941228346, 2.049514996478746, 0.17430367466724062, 2.0817232179822485, 744.4842212503531, 0.1787545897187583, 6.037512710790935, 10.864807734066396], [49.14258693986015, 0.06379311269967337, 0.13761357116695497, 0.4062281590612214, 150.3610633266788, 0.12753850700646324, 2.059588680171087, 0.009352638866978166, 180.31801006734472, 0.618759831501391, 2.9365213600918256, 0.16037355681198634, 19.694301941228346, 2.049514996478746, 0.17430367466724062, 2.0817232179822485, 744.4842212503531, 0.1787545897187583, 6.037512710790935, 10.864807734066396], [49.14258693986015, 0.06379311269967337, 0.13761357116695497, 0.4062281590612214, 150.3610633266788, 0.12753850700646324, 2.059588680171087, 0.009352638866978166, 180.31801006734472, 0.618759831501391, 2.9365213600918256, 0.16037355681198634, 19.694301941228346, 2.049514996478746, 0.17430367466724062, 2.0817232179822485, 744.4842212503531, 0.1787545897187583, 6.037512710790935, 10.864807734066396], [49.14258693986015, 0.06379311269967337, 0.13761357116695497, 0.4062281590612214, 150.3610633266788, 0.12753850700646324, 2.059588680171087, 0.009352638866978166, 180.31801006734472, 0.618759831501391, 2.9365213600918256, 0.16037355681198634, 19.694301941228346, 2.049514996478746, 0.17430367466724062, 2.0817232179822485, 744.4842212503531, 0.1787545897187583, 6.037512710790935, 10.864807734066396]]
+gen	nevals	avg     	std      	min     	max     
+1  	100   	0.174628	0.0723852	0.100194	0.334132
+2  	100   	0.173778	0.0722768	0.100194	0.334132
+3  	100   	0.200407	0.0658117	0.100546	0.334132
+4  	100   	0.202424	0.0921232	0.100193	0.336933
+5  	100   	0.176053	0.0691071	0.100193	0.336832
+6  	100   	0.17248 	0.0690004	0.100193	0.336893
+7  	100   	0.221211	0.0870018	0.100193	0.336942
+8  	100   	0.158178	0.0535359	0.100193	0.307528
+9  	100   	0.189525	0.0672363	0.100291	0.333201
+10 	100   	0.154713	0.0664254	0.100193	0.333201
+11 	100   	0.208767	0.0739575	0.100193	0.333201
+12 	100   	0.166145	0.0695135	0.100193	0.333201
+13 	100   	0.200793	0.0707508	0.100696	0.333201
+14 	100   	0.193863	0.077878 	0.100197	0.335875
+15 	100   	0.184207	0.0648677	0.100196	0.333155
+16 	100   	0.183575	0.0839339	0.100197	0.336264
+17 	100   	0.177872	0.0657452	0.100197	0.33648 
+18 	100   	0.188884	0.076706 	0.100197	0.336533
+19 	100   	0.176862	0.0787378	0.100197	0.336974
+20 	100   	0.194693	0.0749467	0.100491	0.33713 
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: invalid value encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time.py:1568: RuntimeWarning: invalid value encountered in sqrt
+  perr = np.sqrt(np.diag(pcov))
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: invalid value encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: invalid value encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time.py:1568: RuntimeWarning: invalid value encountered in sqrt
+  perr = np.sqrt(np.diag(pcov))
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: invalid value encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: invalid value encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time.py:1568: RuntimeWarning: invalid value encountered in sqrt
+  perr = np.sqrt(np.diag(pcov))
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: invalid value encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/u1/m/mikelam/vclamp/curve_fitting.py:27: RuntimeWarning: invalid value encountered in add
+  return y0 + span_fast * (1 - np.exp(-k_fast * x)) + span_slow * (1 - np.exp(-k_slow * x))
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time.py:1568: RuntimeWarning: invalid value encountered in sqrt
+  perr = np.sqrt(np.diag(pcov))
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: invalid value encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: invalid value encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: invalid value encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: invalid value encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: invalid value encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: invalid value encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time.py:1568: RuntimeWarning: invalid value encountered in sqrt
+  perr = np.sqrt(np.diag(pcov))
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: invalid value encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: invalid value encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: invalid value encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: invalid value encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: invalid value encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: invalid value encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: invalid value encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time.py:1568: RuntimeWarning: invalid value encountered in sqrt
+  perr = np.sqrt(np.diag(pcov))
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: invalid value encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time.py:1568: RuntimeWarning: invalid value encountered in sqrt
+  perr = np.sqrt(np.diag(pcov))
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: invalid value encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: invalid value encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: invalid value encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time.py:1568: RuntimeWarning: invalid value encountered in sqrt
+  perr = np.sqrt(np.diag(pcov))
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: invalid value encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: invalid value encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/vclamp/curve_fitting.py:27: RuntimeWarning: invalid value encountered in add
+  return y0 + span_fast * (1 - np.exp(-k_fast * x)) + span_slow * (1 - np.exp(-k_slow * x))
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time.py:1568: RuntimeWarning: invalid value encountered in sqrt
+  perr = np.sqrt(np.diag(pcov))
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: invalid value encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: invalid value encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: invalid value encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time.py:1568: RuntimeWarning: invalid value encountered in sqrt
+  perr = np.sqrt(np.diag(pcov))
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: invalid value encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: invalid value encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: invalid value encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: invalid value encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: invalid value encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: invalid value encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: invalid value encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: invalid value encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time.py:1568: RuntimeWarning: invalid value encountered in sqrt
+  perr = np.sqrt(np.diag(pcov))
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: invalid value encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: invalid value encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: invalid value encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: invalid value encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: invalid value encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time.py:1568: RuntimeWarning: invalid value encountered in sqrt
+  perr = np.sqrt(np.diag(pcov))
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: invalid value encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: invalid value encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: invalid value encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: invalid value encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: invalid value encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: invalid value encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: invalid value encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: invalid value encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time.py:1568: RuntimeWarning: invalid value encountered in sqrt
+  perr = np.sqrt(np.diag(pcov))
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: invalid value encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: invalid value encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: invalid value encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time.py:1568: RuntimeWarning: invalid value encountered in sqrt
+  perr = np.sqrt(np.diag(pcov))
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: invalid value encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: invalid value encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/vclamp/curve_fitting.py:27: RuntimeWarning: invalid value encountered in add
+  return y0 + span_fast * (1 - np.exp(-k_fast * x)) + span_slow * (1 - np.exp(-k_slow * x))
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: invalid value encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+Couldn't fit curve to recovery.
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: invalid value encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/u1/m/mikelam/vclamp/generalized_genSim_shorten_time_HMM.py:699: RuntimeWarning: divide by zero encountered in log
+  tau = -h.tstop / np.log(-RF_t + 1)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
