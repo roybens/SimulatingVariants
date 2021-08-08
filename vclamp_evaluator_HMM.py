@@ -6,7 +6,7 @@
 import numpy as np
 import bluepyopt as bpop
 import eval_helper as eh
-import scoring_functions_relative as sf
+import scoring_functions_exp as sf
 import curve_fitting as cf
 import matplotlib.pyplot as plt
 import generalized_genSim_shorten_time_HMM as ggsdHMM
@@ -190,9 +190,9 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         axs[1].text(-120, 0.5, 'V50 (Optimized): ' + str(v_half) + ' mV')
         axs[1].text(-120, 0.4, 'V50 (Experimental): ' + str(v_half_act_exp) + ' mV')
         axs[1].legend()
-        '''
+        
         # Recovery Curve
-        rec_inact_tau_vec, recov_curves, times = ggsdHMM.RFI().genRecInactTau()
+        rec_inact_tau_vec, recov_curves, times = ggsdHMM.RFI(channel_name=self.channel_name).genRecInactTau()
         times = np.array(times)
         data_pts = np.array(recov_curves[0])
         axs[2].set_xlabel('Log(Time)')
@@ -203,7 +203,7 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         curve = cf.two_phase(even_xs, y0, plateau, percent_fast, k_fast, k_slow)
         axs[2].plot(np.log(even_xs), curve, c='red',label="Recovery Fit")
         curve_exp = cf.two_phase(even_xs, y0, plateau, percent_fast_exp, 1/tau_fast_exp, 1/tau_slow_exp)
-        axs[2].plot(np.log   (even_xs), curve_exp, c='black')
+        axs[2].plot(np.log(even_xs), curve_exp, c='black')
         axs[2].scatter(np.log(times), data_pts, label='Optimized Recovery', color='black')
         
         axs[2].text(4, 0.9, 'Tau Fast (Optimized): ' + str(1/k_fast))
@@ -213,6 +213,6 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         axs[2].text(4, 0.7, 'Percent Fast (Optimized): ' + str(percent_fast))
         axs[2].text(4, 0.65, 'Percent Fast (Experimental): ' + str(percent_fast_exp))
         axs[2].legend()
-        '''
+        
         plt.show()
 
