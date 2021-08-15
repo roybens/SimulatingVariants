@@ -5,6 +5,15 @@ import math
 import numpy as np
 
 class Score_Function:
+    '''
+    Class that calculates the score of any particular set of generated data
+    compared to the wild data.
+
+    Approach: For any individual parameter list from the population, extrapolate
+    a number of points on each curve (activation, inactivation, and recovery). Do 
+    the same for the wild type (same number of points). Calculate the sum squared 
+    error between the two sets of points and return that as the error.
+    '''
     def __init__(self, diff_dict, wild_data, channel_name):
         # Initiation of the scoring function is the same regardless of whether 
         # we're using an HMM or HH model.

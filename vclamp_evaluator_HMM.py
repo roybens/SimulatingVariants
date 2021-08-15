@@ -69,6 +69,15 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         
 
     def initialize_wild_data(self):
+        '''
+        Using the current channel's mod file, calculate and load all objective values into a dict.
+
+        Arguments:
+            None
+
+        Returns:
+            Dictionary of objective values for the wild channel
+        '''
         wild_data = {}
         is_HMM = True   # This is an HMM model
         gv_slope, v_half_act, top, bottom = cf.calc_act_obj(self.channel_name, is_HMM=is_HMM)
@@ -123,6 +132,16 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
 
 
     def plot_data(self, param_values, mutant):
+        '''
+        Plot activation, inactivation, and recovery of the channel corresponding with the PARAM_VALUES overlaid on 
+        that of the wild MUTANT channel.
+
+        Arguments:
+            param_values: list of floar parameter values in order
+
+        Returns:
+            None
+        '''
         eh.change_params(param_values, scaled=False, is_HMM=True)
         plt.close()
         fig, axs = plt.subplots(3, figsize=(10,10))
