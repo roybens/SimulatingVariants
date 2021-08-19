@@ -84,6 +84,11 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         ssi_slope, v_half_inact, top, bottom, tau0 = cf.calc_inact_obj(self.channel_name, is_HMM=is_HMM)
         y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(self.channel_name, is_HMM=is_HMM)
 
+        # Ramp Protocol
+        ramp = ggsd.Ramp(channel_name=self.channel_name)
+        ramp_area = ramp.areaUnderCurve
+        persistent_curr = ramp.persistentCurrent()
+
         wild_data['v_half_act'] = v_half_act
         wild_data['gv_slope'] = gv_slope
         wild_data['v_half_ssi'] = v_half_inact
@@ -93,8 +98,8 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         wild_data['percent_fast'] = percent_fast
         wild_data['udb20'] = 0
         wild_data['tau0'] = tau0
-        wild_data['ramp'] = 0
-        wild_data['persistent'] = 0
+        wild_data['ramp'] = ramp_area
+        wild_data['persistent'] = persistent_curr
 
         return wild_data
 
@@ -126,7 +131,6 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         '''
         assert len(param_values) == len(self.params), 'Parameter value list is not same length number of parameters' 
         eh.change_params(param_values, scaled=False, is_HMM=True)
-        #score_calculator = sf.Score_Function(self.protocols, self.wild_data, self.channel_name)
         return self.score_calculator.total_rmse(is_HMM=True, objectives=self.objective_names)
 
 
