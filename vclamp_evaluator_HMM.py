@@ -85,9 +85,9 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(self.channel_name, is_HMM=is_HMM)
 
         # Ramp Protocol
-        ramp = ggsd.Ramp(channel_name=self.channel_name)
-        ramp_area = ramp.areaUnderCurve
-        persistent_curr = ramp.persistentCurrent()
+        # ramp = ggsdHMM.Ramp(channel_name=self.channel_name)
+        # ramp_area = ramp.areaUnderCurve
+        # persistent_curr = ramp.persistentCurrent()
 
         wild_data['v_half_act'] = v_half_act
         wild_data['gv_slope'] = gv_slope
@@ -96,10 +96,10 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         wild_data['tau_fast'] = 1 / k_fast
         wild_data['tau_slow'] = 1 / k_slow
         wild_data['percent_fast'] = percent_fast
-        wild_data['udb20'] = 0
-        wild_data['tau0'] = tau0
-        wild_data['ramp'] = ramp_area
-        wild_data['persistent'] = persistent_curr
+        # wild_data['udb20'] = 0
+        # wild_data['tau0'] = tau0
+        # wild_data['ramp'] = ramp_area
+        # wild_data['persistent'] = persistent_curr
 
         return wild_data
 
@@ -160,11 +160,11 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         tau_fast_exp = self.wild_data['tau_fast'] * float(self.protocols['tau_fast']) / 100
         tau_slow_exp = self.wild_data['tau_slow'] * float(self.protocols['tau_slow']) / 100
         percent_fast_exp = self.wild_data['percent_fast'] * float(self.protocols['percent_fast']) / 100
-        udb20_exp = 0
-        tau0_exp = self.wild_data['tau0'] * float(self.protocols['tau0']) / 100
+        # udb20_exp = 0
+        # tau0_exp = self.wild_data['tau0'] * float(self.protocols['tau0']) / 100
 
-        ramp_exp = 0
-        persistent_exp = 0
+        # ramp_exp = 0
+        # persistent_exp = 0
 
 
         # Inactivation curve
