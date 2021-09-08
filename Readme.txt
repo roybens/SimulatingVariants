@@ -1,3 +1,5 @@
+
+
 An automated modeling platform to simulate SCN2A and SCN8A variants' effects in pyramidal neurons.
 
 
@@ -20,4 +22,6 @@ conductance calculation formulas:
 
 
 
-
+Installation:
+With conda do:
+conda install -c conda-forge neuron
