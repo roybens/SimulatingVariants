@@ -1,6 +1,6 @@
 import eval_helper as eh
 #import mutant_protocols as mp
-import curve_fitting as cf
+import curve_fitting_tel_aviv as cf
 from scipy.stats import linregress
 import math
 '''

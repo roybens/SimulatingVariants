@@ -2,9 +2,9 @@ import numpy as np
 import bluepyopt as bpop
 import eval_helper as eh
 import scoring_functions_relative as sf
-import curve_fitting as cf
+import curve_fitting_tel_aviv as cf
 import matplotlib.pyplot as plt
-import generalized_genSim_shorten_time as ggsd
+import generalized_genSim_tel_aviv as ggsd
 
 class Vclamp_evaluator_relative(bpop.evaluators.Evaluator):
     '''

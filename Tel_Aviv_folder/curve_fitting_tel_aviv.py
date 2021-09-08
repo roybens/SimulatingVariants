@@ -1,12 +1,13 @@
 ###########################3
 ## Functions for fitting sigmoid curves to activation and inactivation as well as
 ## 2 phase inactivation for recovery.
-## Author: Michael Lam, adapted from code in optimize_na_ga_v2
+## Authors: Michael Lam, Chastin Chung
+##adapted from code in optimize_na_ga_v2
 
 import matplotlib.pyplot as plt
 import numpy as np
 import eval_helper as eh
-import generalized_genSim_shorten_time as ggsd
+import generalized_genSim_tel_aviv as ggsd
 from scipy import optimize, stats
 
 def boltzmann(x, slope, v_half, top, bottom):
@@ -15,16 +16,13 @@ def boltzmann(x, slope, v_half, top, bottom):
     '''
     return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
 
-def two_phase(x, y0, plateau, percent_fast, k_fast, k_slow):
+def one_phase(x, y0, plateau, k):
     '''
-    Fit a two-phase association curve to an array of data points X. 
+    Fit a one-phase association curve to an array of data points X. 
     For info about the parameters, visit 
-    https://www.graphpad.com/guides/prism/latest/curve-fitting/REG_Exponential_association_2phase.htm
+    https://www.graphpad.com/guides/prism/latest/curve-fitting/reg_exponential_association.htm    
     '''
-    span_fast = (plateau - y0) * percent_fast * 0.01
-    span_slow = (plateau - y0) * (100 - percent_fast) * 0.01
-    return y0 + span_fast * (1 - np.exp(-k_fast * x)) + span_slow * (1 - np.exp(-k_slow * x))
-
+    return y0 + (plateau - y0) * (1 - np.exp(-k * x))
 
 def gen_figure_given_params(params, save=True, file_name=None,mutant='N_A', exp='N_A',rmse=None, plot=False):
     #set-up figure
@@ -74,15 +72,15 @@ def gen_figure_given_params(params, save=True, file_name=None,mutant='N_A', exp=
     axs[2].set_ylabel('Fractional Recovery')
     axs[2].set_title("Recovery from Inactivation")
     even_xs = np.linspace(times[0], times[len(times)-1], 100)
-    y0, plateau, percent_fast, k_fast, k_slow, tau0  = calc_recov_obj()
-    curve = two_phase(even_xs, y0, plateau, percent_fast, k_fast, k_slow)
+    y0, plateau, k, tau  = calc_recov_obj()
+    curve = one_phase(even_xs, y0, plateau, k)
     axs[2].plot(np.log(even_xs), curve, c='red',label="Recovery Fit")
     axs[2].scatter(np.log(times), data_pts, label='Recovery', color='black')
     plt.show()
 
-def calc_act_obj():
+def calc_act_obj(channel_name):
     try:
-        gnorm_vec, v_vec, all_is = ggsd.Activation().genActivation()
+        gnorm_vec, v_vec, all_is = ggsd.Activation(channel_name=channel_name).genActivation()
     except:
         print('Couldn\'t generate activation data')
         return (1000, 1000, 1000, 1000)
@@ -95,9 +93,9 @@ def calc_act_obj():
     return gv_slope, v_half, top, bottom
 
 
-def calc_inact_obj():
+def calc_inact_obj(channel_name):
     try:
-        inorm_vec, v_vec, all_is = ggsd.Inactivation().genInactivation()
+        inorm_vec, v_vec, all_is = ggsd.Inactivation(channel_name=channel_name).genInactivation()
     except:
         print('Couldn\'t generate inactivation data')
         return (1000, 1000, 1000, 1000)
@@ -109,21 +107,21 @@ def calc_inact_obj():
     ssi_slope, v_half, top, bottom = popt
     return ssi_slope, v_half, top, bottom
 
-def calc_recov_obj():
+def calc_recov_obj(channel_name):
     try:
-        rec_inact_tau_vec, recov_curves, times = ggsd.RFI().genRecInactTau()
+        rec_inact_tau_vec, recov_curves, times = ggsd.RFI(channel_name=channel_name).genRecInactTau()
     except:
         print('Couldn\'t generate recovery data')
-        return (1000, 1000, 1000, 1000, 1000, 1000)
+        return (1000, 1000, 1000, 1000)
     recov_curve = recov_curves[0]
     try:
-        popt, pcov = optimize.curve_fit(two_phase, times, recov_curve)
+        popt, pcov = optimize.curve_fit(one_phase, times, recov_curve)
     except:
         print("Very bad voltages in Recovery.")
-        return (1000, 1000, 1000, 1000, 1000, 1000)
+        return (1000, 1000, 1000, 1000)
 
-    y0, plateau, percent_fast, k_fast, k_slow = popt
-    tau0 = rec_inact_tau_vec[0]
-    return y0, plateau, percent_fast, k_fast, k_slow, tau0 
+    y0, plateau, k = popt
+    tau = 1/k
+    return y0, plateau, k, tau 
 
 
