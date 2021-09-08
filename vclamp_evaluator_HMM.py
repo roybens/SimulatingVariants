@@ -79,6 +79,8 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
             Dictionary of objective values for the wild channel
         '''
         wild_data = {}
+        # import ipdb
+        # ßipdb.set_trace()
         is_HMM = True   # This is an HMM model
         gv_slope, v_half_act, top, bottom = cf.calc_act_obj(self.channel_name, is_HMM=is_HMM)
         ssi_slope, v_half_inact, top, bottom, tau0 = cf.calc_inact_obj(self.channel_name, is_HMM=is_HMM)
@@ -136,6 +138,8 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
 
 
     def plot_data(self, param_values, mutant):
+        # import ipdb
+        # ipdb.set_trace()
         '''
         Plot activation, inactivation, and recovery of the channel corresponding with the PARAM_VALUES overlaid on 
         that of the wild MUTANT channel.

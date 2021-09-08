@@ -69,11 +69,27 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         
 
     def initialize_wild_data(self):
+        '''
+        Using the current channel's mod file, calculate and load all objective values into a dict.
+
+        Arguments:
+            None
+
+        Returns:
+            Dictionary of objective values for the wild channel
+        '''
         wild_data = {}
+        # import ipdb
+        # ßipdb.set_trace()
         is_HMM = True   # This is an HMM model
         gv_slope, v_half_act, top, bottom = cf.calc_act_obj(self.channel_name, is_HMM=is_HMM)
         ssi_slope, v_half_inact, top, bottom, tau0 = cf.calc_inact_obj(self.channel_name, is_HMM=is_HMM)
         y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(self.channel_name, is_HMM=is_HMM)
+
+        # Ramp Protocol
+        # ramp = ggsdHMM.Ramp(channel_name=self.channel_name)
+        # ramp_area = ramp.areaUnderCurve
+        # persistent_curr = ramp.persistentCurrent()
 
         wild_data['v_half_act'] = v_half_act
         wild_data['gv_slope'] = gv_slope
@@ -82,10 +98,10 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         wild_data['tau_fast'] = 1 / k_fast
         wild_data['tau_slow'] = 1 / k_slow
         wild_data['percent_fast'] = percent_fast
-        wild_data['udb20'] = 0
-        wild_data['tau0'] = tau0
-        wild_data['ramp'] = 0
-        wild_data['persistent'] = 0
+        # wild_data['udb20'] = 0
+        # wild_data['tau0'] = tau0
+        # wild_data['ramp'] = ramp_area
+        # wild_data['persistent'] = persistent_curr
 
         return wild_data
 
@@ -117,12 +133,23 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         '''
         assert len(param_values) == len(self.params), 'Parameter value list is not same length number of parameters' 
         eh.change_params(param_values, scaled=False, is_HMM=True)
-        #score_calculator = sf.Score_Function(self.protocols, self.wild_data, self.channel_name)
         return self.score_calculator.total_rmse(is_HMM=True, objectives=self.objective_names)
 
 
 
     def plot_data(self, param_values, mutant):
+        # import ipdb
+        # ipdb.set_trace()
+        '''
+        Plot activation, inactivation, and recovery of the channel corresponding with the PARAM_VALUES overlaid on 
+        that of the wild MUTANT channel.
+
+        Arguments:
+            param_values: list of floar parameter values in order
+
+        Returns:
+            None
+        '''
         eh.change_params(param_values, scaled=False, is_HMM=True)
         plt.close()
         fig, axs = plt.subplots(3, figsize=(10,10))
@@ -137,11 +164,11 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         tau_fast_exp = self.wild_data['tau_fast'] * float(self.protocols['tau_fast']) / 100
         tau_slow_exp = self.wild_data['tau_slow'] * float(self.protocols['tau_slow']) / 100
         percent_fast_exp = self.wild_data['percent_fast'] * float(self.protocols['percent_fast']) / 100
-        udb20_exp = 0
-        tau0_exp = self.wild_data['tau0'] * float(self.protocols['tau0']) / 100
+        # udb20_exp = 0
+        # tau0_exp = self.wild_data['tau0'] * float(self.protocols['tau0']) / 100
 
-        ramp_exp = 0
-        persistent_exp = 0
+        # ramp_exp = 0
+        # persistent_exp = 0
 
 
         # Inactivation curve
@@ -190,9 +217,9 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         axs[1].text(-120, 0.5, 'V50 (Optimized): ' + str(v_half) + ' mV')
         axs[1].text(-120, 0.4, 'V50 (Experimental): ' + str(v_half_act_exp) + ' mV')
         axs[1].legend()
-        '''
+        
         # Recovery Curve
-        rec_inact_tau_vec, recov_curves, times = ggsdHMM.RFI().genRecInactTau()
+        rec_inact_tau_vec, recov_curves, times = ggsdHMM.RFI(channel_name=self.channel_name).genRecInactTau()
         times = np.array(times)
         data_pts = np.array(recov_curves[0])
         axs[2].set_xlabel('Log(Time)')
@@ -203,7 +230,7 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         curve = cf.two_phase(even_xs, y0, plateau, percent_fast, k_fast, k_slow)
         axs[2].plot(np.log(even_xs), curve, c='red',label="Recovery Fit")
         curve_exp = cf.two_phase(even_xs, y0, plateau, percent_fast_exp, 1/tau_fast_exp, 1/tau_slow_exp)
-        axs[2].plot(np.log   (even_xs), curve_exp, c='black')
+        axs[2].plot(np.log(even_xs), curve_exp, c='black')
         axs[2].scatter(np.log(times), data_pts, label='Optimized Recovery', color='black')
         
         axs[2].text(4, 0.9, 'Tau Fast (Optimized): ' + str(1/k_fast))
@@ -213,6 +240,6 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         axs[2].text(4, 0.7, 'Percent Fast (Optimized): ' + str(percent_fast))
         axs[2].text(4, 0.65, 'Percent Fast (Experimental): ' + str(percent_fast_exp))
         axs[2].legend()
-        '''
+        
         plt.show()
 
