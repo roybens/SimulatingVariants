@@ -3,32 +3,24 @@ import generalized_genSim_tel_aviv as ggsd
 scale_voltage = 30
 scale_fact = 7.5
 
-def read_mutant_protocols(mutant_protocols_csv, mutant):
+def read_mutant_protocols(mutant_protocol_csv, mutant):
     '''
     Reads data for a single MUTANT from a csv of mutant protocols.
     Returns a dictionary with all the relevant protocols for that 
     MUTANT.
     '''
     lines = []
-    with open(mutant_protocols_csv, 'r') as csv_file:
+    with open(mutant_protocol_csv, 'r') as csv_file:
         lines = [line.split(",") for line in csv_file]
 
-    #Each line[0] except the first should contain the name of the mutant 
-    mutant_line = []
-    for line in lines:
-        if line[0] == mutant:
-            mutant_line = line
-            break
-    if mutant_line == []:
-        raise NameError('Invalid mutant name, or mutant is not yet in CSV database')
     protocols_dict = {}
-    protocols_dict['iv'] = mutant_line[1]
-    protocols_dict['dv_half_act'] = mutant_line[2]
-    protocols_dict['dv_half_ssi'] = mutant_line[3]
-    protocols_dict['tau'] = mutant_line[4]
-    protocols_dict['gv_slope'] = mutant_line[5]
-    protocols_dict['ssi_slope'] = mutant_line[6]
-    protocols_dict['persistent'] = mutant_line[7]
+    protocols_dict['iv'] = lines[1][3]
+    protocols_dict['dv_half_act'] = lines[2][3]
+    protocols_dict['dv_half_ssi'] = lines[3][3]
+    protocols_dict['tau'] = lines[4][3]
+    protocols_dict['gv_slope'] = lines[5][3]
+    protocols_dict['ssi_slope'] = lines[6][3]
+    protocols_dict['persistent'] = lines[7][3]
 
     return protocols_dict
 
@@ -218,7 +210,7 @@ def read_HMM_parameters(csv_data_path = './HMM_params.csv'):
 
 def change_params(new_params, scaled=True):
     '''
-    Change params on na16 channel in NEURON.
+    Change params on na8xst channel in NEURON.
     ---
     Param new_params_scaled: list of param values
         scaled: whether the parameters are scaled to be between 0 and 1
@@ -238,72 +230,72 @@ def make_params_dict(params_list, is_HMM = False):
     params_list: list of raw parameter values, unscaled to be between 0 and 1
     '''
     params_dict = {
-        'Ena_na16': params_list[0],
-        'Rd_na16': params_list[1],
-        'Rg_na16': params_list[2],
-        'Rb_na16': params_list[3],
-        'Ra_na16': params_list[4],
-        'a0s_na16': params_list[5],
-        'gms_na16': params_list[6],
-        'hmin_na16': params_list[7],
-        'mmin_na16': params_list[8],
-        'qinf_na16': params_list[9],
-        'q10_na16': params_list[10],
-        'qg_na16': params_list[11],
-        'qd_na16': params_list[12],
-        'qa_na16': params_list[13],
-        'smax_na16': params_list[14],
-        'sh_na16': params_list[15],
-        'thinf_na16': params_list[16],
-        'thi2_na16': params_list[17],
-        'thi1_na16': params_list[18],
-        'tha_na16': params_list[19],
-        'vvs_na16': params_list[20],
-        'vvh_na16': params_list[21],
-        'vhalfs_na16': params_list[22],
-        'zetas_na16': params_list[23]
+        'Ena_na8xst': params_list[0],
+        'Rd_na8xst': params_list[1],
+        'Rg_na8xst': params_list[2],
+        'Rb_na8xst': params_list[3],
+        'Ra_na8xst': params_list[4],
+        'a0s_na8xst': params_list[5],
+        'gms_na8xst': params_list[6],
+        'hmin_na8xst': params_list[7],
+        'mmin_na8xst': params_list[8],
+        'qinf_na8xst': params_list[9],
+        'q10_na8xst': params_list[10],
+        'qg_na8xst': params_list[11],
+        'qd_na8xst': params_list[12],
+        'qa_na8xst': params_list[13],
+        'smax_na8xst': params_list[14],
+        'sh_na8xst': params_list[15],
+        'thinf_na8xst': params_list[16],
+        'thi2_na8xst': params_list[17],
+        'thi1_na8xst': params_list[18],
+        'tha_na8xst': params_list[19],
+        'vvs_na8xst': params_list[20],
+        'vvh_na8xst': params_list[21],
+        'vhalfs_na8xst': params_list[22],
+        'zetas_na8xst': params_list[23]
         }
 
     if is_HMM:
-        params_dict['C1C2b2'] = param_list[24]
-        params_dict['C1C2v2'] = param_list[25]
-        params_dict['C1C2k2'] = param_list[26]
-        params_dict['C2C1b1'] = param_list[27]
-        params_dict['C2C1v1'] = param_list[28]
-        params_dict['C2C1k1'] = param_list[29]
-        params_dict['C2C1b2'] = param_list[30]
-        params_dict['C2C1v2'] = param_list[31]
-        params_dict['C2C1k2'] = param_list[32]
-        params_dict['C2O1b2'] = param_list[33]
-        params_dict['C2O1v2'] = param_list[34]
-        params_dict['C2O1k2'] = param_list[35]
-        params_dict['O1C2b1'] = param_list[36]
-        params_dict['O1C2v1'] = param_list[37]
-        params_dict['O1C2k1'] = param_list[38]
-        params_dict['O1C2b2'] = param_list[39]
-        params_dict['O1C2v2'] = param_list[40]
-        params_dict['O1C2k2'] = param_list[41]
-        params_dict['O1I1b1'] = param_list[42]
-        params_dict['O1I1v1'] = param_list[43]
-        params_dict['O1I1k1'] = param_list[44]
-        params_dict['O1I1b2'] = param_list[45]
-        params_dict['O1I1v2'] = param_list[46]
-        params_dict['O1I1k2'] = param_list[47]
-        params_dict['I1O1b1'] = param_list[48]
-        params_dict['I1O1v1'] = param_list[49]
-        params_dict['I1O1k1'] = param_list[50]
-        params_dict['I1C1b1'] = param_list[51]
-        params_dict['I1C1v1'] = param_list[52]
-        params_dict['I1C1k1'] = param_list[53]
-        params_dict['C1I1b2'] = param_list[54]
-        params_dict['C1I1v2'] = param_list[55]
-        params_dict['C1I1k2'] = param_list[56]
-        params_dict['I1I2b2'] = param_list[57]
-        params_dict['I1I2v2'] = param_list[58]
-        params_dict['I1I2k2'] = param_list[59]
-        params_dict['I2I1b1'] = param_list[60]
-        params_dict['I2I1v1'] = param_list[61]
-        params_dict['I2I1k1'] = param_list[62]
+        params_dict['C1C2b2'] = params_list[24]
+        params_dict['C1C2v2'] = params_list[25]
+        params_dict['C1C2k2'] = params_list[26]
+        params_dict['C2C1b1'] = params_list[27]
+        params_dict['C2C1v1'] = params_list[28]
+        params_dict['C2C1k1'] = params_list[29]
+        params_dict['C2C1b2'] = params_list[30]
+        params_dict['C2C1v2'] = params_list[31]
+        params_dict['C2C1k2'] = params_list[32]
+        params_dict['C2O1b2'] = params_list[33]
+        params_dict['C2O1v2'] = params_list[34]
+        params_dict['C2O1k2'] = params_list[35]
+        params_dict['O1C2b1'] = params_list[36]
+        params_dict['O1C2v1'] = params_list[37]
+        params_dict['O1C2k1'] = params_list[38]
+        params_dict['O1C2b2'] = params_list[39]
+        params_dict['O1C2v2'] = params_list[40]
+        params_dict['O1C2k2'] = params_list[41]
+        params_dict['O1I1b1'] = params_list[42]
+        params_dict['O1I1v1'] = params_list[43]
+        params_dict['O1I1k1'] = params_list[44]
+        params_dict['O1I1b2'] = params_list[45]
+        params_dict['O1I1v2'] = params_list[46]
+        params_dict['O1I1k2'] = params_list[47]
+        params_dict['I1O1b1'] = params_list[48]
+        params_dict['I1O1v1'] = params_list[49]
+        params_dict['I1O1k1'] = params_list[50]
+        params_dict['I1C1b1'] = params_list[51]
+        params_dict['I1C1v1'] = params_list[52]
+        params_dict['I1C1k1'] = params_list[53]
+        params_dict['C1I1b2'] = params_list[54]
+        params_dict['C1I1v2'] = params_list[55]
+        params_dict['C1I1k2'] = params_list[56]
+        params_dict['I1I2b2'] = params_list[57]
+        params_dict['I1I2v2'] = params_list[58]
+        params_dict['I1I2k2'] = params_list[59]
+        params_dict['I2I1b1'] = params_list[60]
+        params_dict['I2I1v1'] = params_list[61]
+        params_dict['I2I1k1'] = params_list[62]
     return params_dict
 
 def scale_params_dict(down, params_arr):
@@ -316,83 +308,83 @@ def scale_params_dict(down, params_arr):
     '''
     #original values of the paramter
     bsae_value = {
-    'Ena_na16': 55,
-    'Rd_na16': .03,
-    'Rg_na16': .01,
-    'Rb_na16': .124,
-    'Ra_na16': 0.4,
-    'a0s_na16': 0.0003,
-    'gms_na16': .02,
-    'hmin_na16': .01,
-    'mmin_na16': .02,
-    'qinf_na16': 7,
-    'q10_na16': 2,
-    'qg_na16': 1.5,
-    'qd_na16': .5,
-    'qa_na16': 7.2,
-    'smax_na16': 10,
-    'sh_na16': 8,
-    'thinf_na16': -45,
-    'thi2_na16': -45,
-    'thi1_na16': -45,
-    'tha_na16': -30,
-    'vvs_na16': 2,
-    'vvh_na16': -58,
-    'vhalfs_na16': -60,
-    'zetas_na16': 12
+    'Ena_na8xst': 55,
+    'Rd_na8xst': .03,
+    'Rg_na8xst': .01,
+    'Rb_na8xst': .124,
+    'Ra_na8xst': 0.4,
+    'a0s_na8xst': 0.0003,
+    'gms_na8xst': .02,
+    'hmin_na8xst': .01,
+    'mmin_na8xst': .02,
+    'qinf_na8xst': 7,
+    'q10_na8xst': 2,
+    'qg_na8xst': 1.5,
+    'qd_na8xst': .5,
+    'qa_na8xst': 7.2,
+    'smax_na8xst': 10,
+    'sh_na8xst': 8,
+    'thinf_na8xst': -45,
+    'thi2_na8xst': -45,
+    'thi1_na8xst': -45,
+    'tha_na8xst': -30,
+    'vvs_na8xst': 2,
+    'vvh_na8xst': -58,
+    'vhalfs_na8xst': -60,
+    'zetas_na8xst': 12
     }
 
     types = {
-    'Ena_na16': 'p',
-    'Rd_na16': 'p',
-    'Rg_na16': 'p',
-    'Rb_na16': 'p',
-    'Ra_na16': 'p',
-    'a0s_na16': 'md',
-    'gms_na16': 'p',
-    'hmin_na16': 'p',
-    'mmin_na16': 'p',
-    'qinf_na16': 'md',
-    'q10_na16': 'p',
-    'qg_na16': 'md',
-    'qd_na16': 'md',
-    'qa_na16': 'md',
-    'smax_na16': 'p',
-    'sh_na16': 'p',
-    'thinf_na16': 'p',
-    'thi2_na16': 'p',
-    'thi1_na16': 'p',
-    'tha_na16': 'p',
-    'vvs_na16': 'p',
-    'vvh_na16': 'p',
-    'vhalfs_na16': 'p',
-    'zetas_na16': 'p'
+    'Ena_na8xst': 'p',
+    'Rd_na8xst': 'p',
+    'Rg_na8xst': 'p',
+    'Rb_na8xst': 'p',
+    'Ra_na8xst': 'p',
+    'a0s_na8xst': 'md',
+    'gms_na8xst': 'p',
+    'hmin_na8xst': 'p',
+    'mmin_na8xst': 'p',
+    'qinf_na8xst': 'md',
+    'q10_na8xst': 'p',
+    'qg_na8xst': 'md',
+    'qd_na8xst': 'md',
+    'qa_na8xst': 'md',
+    'smax_na8xst': 'p',
+    'sh_na8xst': 'p',
+    'thinf_na8xst': 'p',
+    'thi2_na8xst': 'p',
+    'thi1_na8xst': 'p',
+    'tha_na8xst': 'p',
+    'vvs_na8xst': 'p',
+    'vvh_na8xst': 'p',
+    'vhalfs_na8xst': 'p',
+    'zetas_na8xst': 'p'
     }
     inds = {
-    'Ena_na16': 0,
-    'Rd_na16': 1,
-    'Rg_na16': 2,
-    'Rb_na16': 3,
-    'Ra_na16': 4,
-    'a0s_na16': 5,
-    'gms_na16': 6,
-    'hmin_na16': 7,
-    'mmin_na16': 8,
-    'qinf_na16': 9,
-    'q10_na16': 10,
-    'qg_na16': 11,
-    'qd_na16': 12,
-    'qa_na16': 13,
-    'smax_na16': 14,
-    'sh_na16': 15,
-    'thinf_na16': 16,
-    'thi2_na16': 17,
-    'thi1_na16': 18,
-    'tha_na16': 19,
-    'vvs_na16': 20,
-    'vvh_na16': 21,
-    'vhalfs_na16': 22,
-    'zetas_na16': 23
+    'Ena_na8xst': 0,
+    'Rd_na8xst': 1,
+    'Rg_na8xst': 2,
+    'Rb_na8xst': 3,
+    'Ra_na8xst': 4,
+    'a0s_na8xst': 5,
+    'gms_na8xst': 6,
+    'hmin_na8xst': 7,
+    'mmin_na8xst': 8,
+    'qinf_na8xst': 9,
+    'q10_na8xst': 10,
+    'qg_na8xst': 11,
+    'qd_na8xst': 12,
+    'qa_na8xst': 13,
+    'smax_na8xst': 14,
+    'sh_na8xst': 15,
+    'thinf_na8xst': 16,
+    'thi2_na8xst': 17,
+    'thi1_na8xst': 18,
+    'tha_na8xst': 19,
+    'vvs_na8xst': 20,
+    'vvh_na8xst': 21,
+    'vhalfs_na8xst': 22,
+    'zetas_na8xst': 23
     }
     params_dict = {}
     bounds = {}
@@ -418,7 +410,7 @@ def scale_params_dict(down, params_arr):
 
 def change_params_dict(new_params):
     '''
-    Change params on na16 channel in NEURON.
+    Change params on na8xst channel in NEURON.
     ---
     Param new_params_scaled: list of scaled param values
     '''
@@ -428,35 +420,34 @@ def change_params_dict(new_params):
     #get NEURON h
     currh = ggsd.Activation().h
     #change values of params
-    #print(new_params)
-    currh.na16= new_params['Rd_na16']
-    currh.Rg_na16= new_params['Rg_na16']
-    currh.Rb_na16= new_params['Rb_na16']
-    currh.Ra_na16= new_params['Ra_na16']
-    currh.a0s_na16= new_params['a0s_na16']
-    currh.gms_na16= new_params['gms_na16']
-    currh.hmin_na16= new_params['hmin_na16']
-    currh.mmin_na16= new_params['mmin_na16']
-    currh.qinf_na16= new_params['qinf_na16']
-    currh.q10_na16= new_params['q10_na16']
-    currh.qg_na16= new_params['qg_na16']
-    currh.qd_na16= new_params['qd_na16']
-    currh.qa_na16= new_params['qa_na16']
-    currh.smax_na16= new_params['smax_na16']
-    currh.sh_na16= new_params['sh_na16']
-    currh.thinf_na16= new_params['thinf_na16']
-    currh.thi2_na16= new_params['thi2_na16']
-    currh.thi1_na16= new_params['thi1_na16']
-    currh.tha_na16= new_params['tha_na16']
-    currh.vvs_na16= new_params['vvs_na16']
-    currh.vvh_na16= new_params['vvh_na16']
-    currh.vhalfs_na16= new_params['vhalfs_na16']
-    currh.zetas_na16= new_params['zetas_na16']
+    currh.na8xst= new_params['Rd_na8xst']
+    currh.Rg_na8xst= new_params['Rg_na8xst']
+    currh.Rb_na8xst= new_params['Rb_na8xst']
+    currh.Ra_na8xst= new_params['Ra_na8xst']
+    currh.a0s_na8xst= new_params['a0s_na8xst']
+    currh.gms_na8xst= new_params['gms_na8xst']
+    currh.hmin_na8xst= new_params['hmin_na8xst']
+    currh.mmin_na8xst= new_params['mmin_na8xst']
+    currh.qinf_na8xst= new_params['qinf_na8xst']
+    currh.q10_na8xst= new_params['q10_na8xst']
+    currh.qg_na8xst= new_params['qg_na8xst']
+    currh.qd_na8xst= new_params['qd_na8xst']
+    currh.qa_na8xst= new_params['qa_na8xst']
+    currh.smax_na8xst= new_params['smax_na8xst']
+    currh.sh_na8xst= new_params['sh_na8xst']
+    currh.thinf_na8xst= new_params['thinf_na8xst']
+    currh.thi2_na8xst= new_params['thi2_na8xst']
+    currh.thi1_na8xst= new_params['thi1_na8xst']
+    currh.tha_na8xst= new_params['tha_na8xst']
+    currh.vvs_na8xst= new_params['vvs_na8xst']
+    currh.vvh_na8xst= new_params['vvh_na8xst']
+    currh.vhalfs_na8xst= new_params['vhalfs_na8xst']
+    currh.zetas_na8xst= new_params['zetas_na8xst']
     return
 
 def change_params_dict_gen(new_params):
     '''
-    Change params on na16 channel in NEURON.
+    Change params on na8xst channel in NEURON.
     ---
     Param new_params_scaled: list of scaled param values
     '''
@@ -467,29 +458,29 @@ def change_params_dict_gen(new_params):
     currh = ggsd.Activation().h
     #change values of params
     #print(new_params)
-    currh.Rd_na16= new_params['Rd']
-    currh.Rg_na16= new_params['Rg']
-    currh.Rb_na16= new_params['Rb']
-    currh.Ra_na16= new_params['Ra']
-    currh.a0s_na16= new_params['a0']
-    currh.gms_na16= new_params['gms']
-    currh.hmin_na16= new_params['hmin']
-    currh.mmin_na16= new_params['mmin']
-    currh.qinf_na16= new_params['qinf']
-    currh.q10_na16= new_params['q10']
-    currh.qg_na16= new_params['qg']
-    currh.qd_na16= new_params['qd']
-    currh.qa_na16= new_params['qa']
-    currh.smax_na16= new_params['smax']
-    currh.sh_na16= new_params['sh']
-    currh.thinf_na16= new_params['thinf']
-    currh.thi2_na16= new_params['thi2']
-    currh.thi1_na16= new_params['thi1']
-    currh.tha_na16= new_params['tha']
-    currh.vvs_na16= new_params['vvs']
-    currh.vvh_na16= new_params['vvh']
-    currh.vhalfs_na16= new_params['vhalfs']
-    currh.zetas_na16= new_params['zetas']
+    currh.Rd_na8xst= new_params['Rd']
+    currh.Rg_na8xst= new_params['Rg']
+    currh.Rb_na8xst= new_params['Rb']
+    currh.Ra_na8xst= new_params['Ra']
+    currh.a0s_na8xst= new_params['a0']
+    currh.gms_na8xst= new_params['gms']
+    currh.hmin_na8xst= new_params['hmin']
+    currh.mmin_na8xst= new_params['mmin']
+    currh.qinf_na8xst= new_params['qinf']
+    currh.q10_na8xst= new_params['q10']
+    currh.qg_na8xst= new_params['qg']
+    currh.qd_na8xst= new_params['qd']
+    currh.qa_na8xst= new_params['qa']
+    currh.smax_na8xst= new_params['smax']
+    currh.sh_na8xst= new_params['sh']
+    currh.thinf_na8xst= new_params['thinf']
+    currh.thi2_na8xst= new_params['thi2']
+    currh.thi1_na8xst= new_params['thi1']
+    currh.tha_na8xst= new_params['tha']
+    currh.vvs_na8xst= new_params['vvs']
+    currh.vvh_na8xst= new_params['vvh']
+    currh.vhalfs_na8xst= new_params['vhalfs']
+    currh.zetas_na8xst= new_params['zetas']
     return
 
 def gen_sim_data():

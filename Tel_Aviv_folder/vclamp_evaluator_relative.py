@@ -57,33 +57,25 @@ class Vclamp_evaluator_relative(bpop.evaluators.Evaluator):
                            bpop.objectives.Objective('gv_slope'),\
                            bpop.objectives.Objective('dv_half_ssi'),\
                            bpop.objectives.Objective('ssi_slope'),\
-                           bpop.objectives.Objective('tau_fast'),\
-                           bpop.objectives.Objective('tau_slow'),\
-                           bpop.objectives.Objective('percent_fast'),\
-                           #bpop.objectives.Objective('udb20'),\
-                           bpop.objectives.Objective('tau0'),\
-                           #bpop.objectives.Objective('ramp'),\
-                           #bpop.objectives.Objective('persistent')
-                           ] 
-        self.protocols = eh.read_mutant_protocols('mutant_protocols.csv', mutant)
+                           bpop.objectives.Objective('tau'),\
+                           bpop.objectives.Objective('persistent10'),\
+                           bpop.objectives.Objective('persistent20')
+                           ]
+        self.protocols = eh.read_mutant_protocols('Tel_Aviv_Optimization_Data.csv', mutant)
 
     def initialize_wild_data(self):
         wild_data = {}
-        gv_slope, v_half_act, top, bottom = cf.calc_act_obj()
-        ssi_slope, v_half_inact, top, bottom = cf.calc_inact_obj()
-        y0, plateau, percent_fast, k_fast, k_slow, tau0 = cf.calc_recov_obj()
+        gv_slope, v_half_act, top, bottom = cf.calc_act_obj(channel_name='na8xst')
+        ssi_slope, v_half_inact, top, bottom = cf.calc_inact_obj(channel_name='na8xst')
+        y0, plateau, k, tau = cf.calc_recov_obj(channel_name='na8xst')
 
         wild_data['v_half_act'] = v_half_act
         wild_data['gv_slope'] = gv_slope
         wild_data['v_half_ssi'] = v_half_inact
         wild_data['ssi_slope'] = ssi_slope
-        wild_data['tau_fast'] = 1 / k_fast
-        wild_data['tau_slow'] = 1 / k_slow
-        wild_data['percent_fast'] = percent_fast
-        wild_data['udb20'] = 0
-        wild_data['tau0'] = tau0
-        wild_data['ramp'] = 0
-        wild_data['persistent'] = 0
+        wild_data['tau'] = tau
+        wild_data['persistent10'] = 0
+        wild_data['persistent20'] = 0
 
         return wild_data
 
@@ -128,18 +120,12 @@ class Vclamp_evaluator_relative(bpop.evaluators.Evaluator):
         fig.suptitle("Mutant: {}".format(mutant))
     
         # Calculate wild baseline values
-        param_dict_rel = eh.read_mutant_protocols('mutant_protocols.csv', mutant)
+        param_dict_rel = eh.read_mutant_protocols('Tel_Aviv_Optimization_Data.csv', mutant)
         v_half_act_exp = self.wild_data['v_half_act'] + float(self.protocols['dv_half_act']) /100
         gv_slope_exp = self.wild_data['gv_slope'] * float(self.protocols['gv_slope']) / 100
         v_half_ssi_exp = self.wild_data['v_half_ssi'] + float(self.protocols['dv_half_ssi'])
         ssi_slope_exp = self.wild_data['ssi_slope'] * float(self.protocols['ssi_slope']) / 100
-        tau_fast_exp = self.wild_data['tau_fast'] * float(self.protocols['tau_fast']) / 100
-        tau_slow_exp = self.wild_data['tau_slow'] * float(self.protocols['tau_slow']) / 100
-        percent_fast_exp = self.wild_data['percent_fast'] * float(self.protocols['percent_fast']) / 100
-        udb20_exp = 0
-        tau0_exp = self.wild_data['tau0'] * float(self.protocols['tau0']) / 100
-
-        ramp_exp = 0
+        tau_exp = self.wild_data['tau'] * float(self.protocols['tau']) / 100
         persistent_exp = 0
 
 
@@ -148,7 +134,7 @@ class Vclamp_evaluator_relative(bpop.evaluators.Evaluator):
         inorm_array = np.array(inorm_vec)
         v_array = np.array(v_vec)
 
-        ssi_slope, v_half, top, bottom = cf.calc_inact_obj()
+        ssi_slope, v_half, top, bottom = cf.calc_inact_obj(channel_name='na8xst')
         '''
         try:
             popt, pcov = optimize.curve_fit(cf.boltzmann, v_vec, inorm_vec)
@@ -176,7 +162,7 @@ class Vclamp_evaluator_relative(bpop.evaluators.Evaluator):
         gnorm_vec, v_vec, all_is = ggsd.Activation().genActivation()
         gnorm_array = np.array(gnorm_vec)
         v_array = np.array(v_vec)
-        gv_slope, v_half, top, bottom = cf.calc_act_obj()
+        gv_slope, v_half, top, bottom = cf.calc_act_obj(channel_name='na8xst')
         '''
         try:
             popt, pcov = optimize.curve_fit(cf.boltzmann, v_vec, gnorm_vec)
@@ -209,7 +195,7 @@ class Vclamp_evaluator_relative(bpop.evaluators.Evaluator):
         axs[2].set_ylabel('Fractional Recovery')
         axs[2].set_title("Recovery from Inactivation")
         even_xs = np.linspace(times[0], times[len(times)-1], 100)
-        y0, plateau, percent_fast, k_fast, k_slow, tau0 = cf.calc_recov_obj()
+        y0, plateau, k, tau = cf.calc_recov_obj(channel_name='na8xst')
         '''
         try:
             y0, plateau, percent_fast, k_fast, k_slow, tau0  = optimize.curve_fit(cf.two_phase, times, data_pts)
@@ -219,7 +205,7 @@ class Vclamp_evaluator_relative(bpop.evaluators.Evaluator):
         '''
         curve = cf.two_phase(even_xs, y0, plateau, percent_fast, k_fast, k_slow)
         axs[2].plot(np.log(even_xs), curve, c='red',label="Recovery Fit")
-        curve_exp = cf.two_phase(even_xs, y0, plateau, percent_fast_exp, 1/tau_fast_exp, 1/tau_slow_exp)
+        curve_exp = cf.one_phase(even_xs, y0, plateau, k)
         axs[2].plot(np.log(even_xs), curve_exp, c='black', label='Recovery Experimental')
         axs[2].scatter(np.log(times), data_pts, label='Recovery', color='black')
         axs[2].legend()

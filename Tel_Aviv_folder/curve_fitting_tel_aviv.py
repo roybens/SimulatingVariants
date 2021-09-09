@@ -14,7 +14,7 @@ def boltzmann(x, slope, v_half, top, bottom):
     '''
     Fit a sigmoid curve to the array of datapoints.
     '''
-    return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+    return bottom + ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
 
 def one_phase(x, y0, plateau, k):
     '''
