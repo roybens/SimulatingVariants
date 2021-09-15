@@ -225,12 +225,15 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         axs[2].set_xlabel('Log(Time)')
         axs[2].set_ylabel('Fractional Recovery')
         axs[2].set_title("Recovery from Inactivation")
-        even_xs = np.linspace(times[0], times[len(times)-1], 100)
+        even_xs = np.linspace(times[0], times[len(times)-1], 10000)
         y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(self.channel_name, is_HMM=True)
         curve = cf.two_phase(even_xs, y0, plateau, percent_fast, k_fast, k_slow)
+        # red curve: using the optimization fitted params to plot on the given x values
         axs[2].plot(np.log(even_xs), curve, c='red',label="Recovery Fit")
         curve_exp = cf.two_phase(even_xs, y0, plateau, percent_fast_exp, 1/tau_fast_exp, 1/tau_slow_exp)
+        # black curve: plotted from given data
         axs[2].plot(np.log(even_xs), curve_exp, c='black')
+        # black dots: plot the given data points
         axs[2].scatter(np.log(times), data_pts, label='Optimized Recovery', color='black')
         
         axs[2].text(4, 0.9, 'Tau Fast (Optimized): ' + str(1/k_fast))
