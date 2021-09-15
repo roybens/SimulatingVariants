@@ -16,13 +16,15 @@ def boltzmann(x, slope, v_half, top, bottom):
     '''
     return bottom + ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
 
-def one_phase(x, y0, plateau, k):
+def two_phase(x, y0, plateau, percent_fast, k_fast, k_slow):
     '''
-    Fit a one-phase association curve to an array of data points X. 
-    For info about the parameters, visit 
-    https://www.graphpad.com/guides/prism/latest/curve-fitting/reg_exponential_association.htm    
+    Fit a two-phase association curve to an array of data points X.
+    For info about the parameters, visit
+    https://www.graphpad.com/guides/prism/latest/curve-fitting/REG_Exponential_association_2phase.htm
     '''
-    return y0 + (plateau - y0) * (1 - np.exp(-k * x))
+    span_fast = (plateau - y0) * percent_fast * 0.01
+    span_slow = (plateau - y0) * (100 - percent_fast) * 0.01
+    return y0 + span_fast * (1 - np.exp(-k_fast * x)) + span_slow * (1 - np.exp(-k_slow * x))
 
 def gen_figure_given_params(params, save=True, file_name=None,mutant='N_A', exp='N_A',rmse=None, plot=False):
     #set-up figure
@@ -73,7 +75,7 @@ def gen_figure_given_params(params, save=True, file_name=None,mutant='N_A', exp=
     axs[2].set_title("Recovery from Inactivation")
     even_xs = np.linspace(times[0], times[len(times)-1], 100)
     y0, plateau, k, tau  = calc_recov_obj()
-    curve = one_phase(even_xs, y0, plateau, k)
+    curve = two_phase(even_xs, y0, plateau, percent_fast, k_fast, k_slow)
     axs[2].plot(np.log(even_xs), curve, c='red',label="Recovery Fit")
     axs[2].scatter(np.log(times), data_pts, label='Recovery', color='black')
     plt.show()
@@ -115,7 +117,7 @@ def calc_recov_obj(channel_name):
         return (1000, 1000, 1000, 1000)
     recov_curve = recov_curves[0]
     try:
-        popt, pcov = optimize.curve_fit(one_phase, times, recov_curve)
+        popt, pcov = optimize.curve_fit(two_phase, times, recov_curve)
     except:
         print("Very bad voltages in Recovery.")
         return (1000, 1000, 1000, 1000)

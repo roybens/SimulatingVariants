@@ -1,18 +1,20 @@
 import numpy as np
 import time
 import generalized_genSim_tel_aviv as ggsd
+import numpy as np
 import matplotlib.pyplot as plt
 from scipy import optimize, stats
 import bluepyopt as bpop
 import bluepyopt.deapext.algorithms as algo
 import vclamp_evaluator_relative as vcl_ev
 import pickle
+import time
 from deap import tools
 import multiprocessing
 import sys
 
 def run(objective_names):
-    evaluator = vcl_ev.Vclamp_evaluator_relative('./param_stats.csv', 'na8xst')
+    evaluator = vcl_ev.Vclamp_evaluator_relative('./param_stats.csv', 'na16')
     gen_counter = 0
     best_indvs = []
     cp_freq = 1
@@ -50,7 +52,7 @@ def run(objective_names):
     algo._update_history_and_hof = my_update
     algo._record_stats = my_record_stats
     pool = multiprocessing.Pool(processes=64)
-    deap_opt = bpop.optimisations.DEAPOptimisation(evaluator, offspring_size=5, hof = hof, map_function=pool.map)
+    deap_opt = bpop.optimisations.DEAPOptimisation(evaluator, offspring_size=2, hof = hof, map_function=pool.map)
     cp_file = './cp.pkl'
 
     start_time = time.time()
