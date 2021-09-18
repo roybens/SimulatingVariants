@@ -1,4 +1,4 @@
-DV1/2 Act,GV Slope (% WT),DV1/2 SSI,SSI Slope (%WT),Tau Fast (%WT),Tau Slow (%WT),% Fast,UDB20,Tau 0mV (%WT),Ramp (%WT),Persistent (%WT)
+Name, DV1/2 Act,GV Slope (% WT),DV1/2 SSI,SSI Slope (%WT),Tau Fast (%WT),Tau Slow (%WT),% Fast,UDB20,Tau 0mV (%WT),Ramp (%WT),Persistent (%WT)
 A427D,-3.789,134.4,-7.824,84.65,703.7,140.5,76.64,91.71,88.24,97.54,90.26
 E430A,0.6711,103.5,-1.851,101.1,66.32,106.1,102.9,97.62,118.5,150.2,153.2
 R571H,4.556,109.1,0.208,125.3,140.7,90.76,93.76,98.02,102,121.1,115.8
