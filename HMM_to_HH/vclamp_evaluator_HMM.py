@@ -81,7 +81,7 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         wild_data = {}
         # import ipdb
         # ßipdb.set_trace()
-        is_HMM = True   # This is an HMM model
+        is_HMM = False   # This is an HMM model  # changed.
         gv_slope, v_half_act, top, bottom = cf.calc_act_obj(self.channel_name, is_HMM=is_HMM)
         ssi_slope, v_half_inact, top, bottom, tau0 = cf.calc_inact_obj(self.channel_name, is_HMM=is_HMM)
         y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(self.channel_name, is_HMM=is_HMM)
@@ -190,10 +190,10 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         
         curve_exp = cf.boltzmann(even_xs, ssi_slope_exp, v_half_ssi_exp, top, bottom)
         axs[0].plot(even_xs, curve_exp, color='black', label='Inactivation experimental')
-        axs[0].text(-120, 0.7, 'Slope (Optimized): ' + str(ssi_slope) + ' /mV')
-        axs[0].text(-120, 0.6, 'Slope (Experimental): ' + str(ssi_slope_exp) + ' /mV')
-        axs[0].text(-120, 0.5, 'V50 (Optimized): ' + str(v_half) + ' mV')
-        axs[0].text(-120, 0.4, 'V50 (Experimental): ' + str(v_half_ssi_exp) + ' mV')
+        axs[0].text(-.120, 0.7, 'Slope (Optimized): ' + str(ssi_slope) + ' /mV')
+        axs[0].text(-.120, 0.6, 'Slope (Experimental): ' + str(ssi_slope_exp) + ' /mV')
+        axs[0].text(-.120, 0.5, 'V50 (Optimized): ' + str(v_half) + ' mV')
+        axs[0].text(-.120, 0.4, 'V50 (Experimental): ' + str(v_half_ssi_exp) + ' mV')
         axs[0].legend()
 
         # Activation curve
@@ -212,10 +212,10 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         curve_exp = cf.boltzmann(even_xs, gv_slope_exp, v_half_act_exp, top, bottom)
         #curve_exp = cf.boltzmann(even_xs, gv_slope_exp, v_half_act_exp, 1, 0)
         axs[1].plot(even_xs, curve_exp, color='black', label='Activation Experimental')
-        axs[1].text(-120, 0.7, 'Slope (Optimized): ' + str(gv_slope) + ' /mV')
-        axs[1].text(-120, 0.6, 'Slope (Experimental): ' + str(gv_slope_exp) + ' /mV')
-        axs[1].text(-120, 0.5, 'V50 (Optimized): ' + str(v_half) + ' mV')
-        axs[1].text(-120, 0.4, 'V50 (Experimental): ' + str(v_half_act_exp) + ' mV')
+        axs[1].text(-.120, 0.7, 'Slope (Optimized): ' + str(gv_slope) + ' /mV')
+        axs[1].text(-.120, 0.6, 'Slope (Experimental): ' + str(gv_slope_exp) + ' /mV')
+        axs[1].text(-.120, 0.5, 'V50 (Optimized): ' + str(v_half) + ' mV')
+        axs[1].text(-.120, 0.4, 'V50 (Experimental): ' + str(v_half_act_exp) + ' mV')
         axs[1].legend()
         
         # Recovery Curve
@@ -225,23 +225,20 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         axs[2].set_xlabel('Log(Time)')
         axs[2].set_ylabel('Fractional Recovery')
         axs[2].set_title("Recovery from Inactivation")
-        even_xs = np.linspace(times[0], times[len(times)-1], 10000)
+        even_xs = np.linspace(times[0], times[len(times)-1], 100)
         y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(self.channel_name, is_HMM=True)
         curve = cf.two_phase(even_xs, y0, plateau, percent_fast, k_fast, k_slow)
-        # red curve: using the optimization fitted params to plot on the given x values
         axs[2].plot(np.log(even_xs), curve, c='red',label="Recovery Fit")
         curve_exp = cf.two_phase(even_xs, y0, plateau, percent_fast_exp, 1/tau_fast_exp, 1/tau_slow_exp)
-        # black curve: plotted from given data
         axs[2].plot(np.log(even_xs), curve_exp, c='black')
-        # black dots: plot the given data points
         axs[2].scatter(np.log(times), data_pts, label='Optimized Recovery', color='black')
         
-        axs[2].text(4, 0.9, 'Tau Fast (Optimized): ' + str(1/k_fast))
-        axs[2].text(4, 0.85, 'Tau Fast (Experimental): ' + str(tau_fast_exp))
-        axs[2].text(4, 0.8, 'Tau Slow (Optimized): ' + str(1/k_slow))
-        axs[2].text(4, 0.75, 'Tau Slow (Experimental): ' + str(tau_slow_exp))
-        axs[2].text(4, 0.7, 'Percent Fast (Optimized): ' + str(percent_fast))
-        axs[2].text(4, 0.65, 'Percent Fast (Experimental): ' + str(percent_fast_exp))
+        axs[2].text(1, 1, 'Tau Fast (Optimized): ' + str(1/k_fast))
+        axs[2].text(1, 1, 'Tau Fast (Experimental): ' + str(tau_fast_exp))
+        axs[2].text(1, 1, 'Tau Slow (Optimized): ' + str(1/k_slow))
+        axs[2].text(1, 1, 'Tau Slow (Experimental): ' + str(tau_slow_exp))
+        axs[2].text(1, 1, 'Percent Fast (Optimized): ' + str(percent_fast))
+        axs[2].text(1, 1, 'Percent Fast (Experimental): ' + str(percent_fast_exp))
         axs[2].legend()
         
         plt.show()

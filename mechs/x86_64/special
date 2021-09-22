@@ -14,4 +14,4 @@ if test "" = "yes" ; then
 else
     NRNIV="${NRNBIN}/nrniv"
 fi
-"${NRNIV}" -dll "/Users/jinanjiang/Documents/Berkeley/temp_delete/SimulatingVariants/x86_64/.libs/libnrnmech.so" "$@"
+"${NRNIV}" -dll "/Users/jinanjiang/Documents/Berkeley/temp_delete/SimulatingVariants/mechs/x86_64/.libs/libnrnmech.so" "$@"

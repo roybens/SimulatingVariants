@@ -1,4 +1,4 @@
-from generalized_genSim_shorten_time import *
+from generalized_genSim_tel_aviv import *
 from eval_helper import *
 from fpdf import FPDF
 import os
@@ -15,12 +15,12 @@ def exec_plot_choice(plot_choice, WT_params_path, variant_params_path = None,
     """
     
     
-    with open(WT_params_path) as f:
+    with open(WT_params_path, 'r', encoding='utf-8') as f:
         # use safe_load instead load
         WT_params = yaml.safe_load(f)
         
     if variant_params_path:
-        with open(variant_params_path) as f:
+        with open(variant_params_path, 'r', encoding='utf-8') as f:
             # use safe_load instead load
             variant_params = yaml.safe_load(f)
     else:
