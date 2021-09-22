@@ -20,7 +20,7 @@ import argparse
 import os
 import pickle
 
-import curve_fitting_tel_aviv as cf
+import curve_fitting as cf
 import eval_helper as eh
 #from sys import api_version
 #from test.pythoninfo import collect_platform
@@ -41,7 +41,7 @@ if not os.path.exists(final_directory):
 ##################
 class Activation:
     def __init__(self, soma_diam=50, soma_L=63.66198, soma_nseg=1, soma_cm=1, soma_Ra=70,
-                 channel_name='nax8st', soma_ena=55, h_celsius=33, v_init=-120, h_dt=0.025, ntrials=range(30),
+                 channel_name='na16', soma_ena=55, h_celsius=33, v_init=-120, h_dt=0.025, ntrials=range(30),
                  dur=20, step=5, st_cl=-120, end_cl=40, v_cl=-120,
                  f3cl_dur0=5, f3cl_amp0=-120, f3cl_dur2=5, f3cl_amp2=-120,
                  ):
@@ -345,7 +345,7 @@ class Activation:
 ##################
 class Inactivation:
     def __init__(self, soma_diam=50, soma_L=63.66198, soma_nseg=1, soma_cm=1, soma_Ra=70,
-                 channel_name='na8xst', soma_ena=55, h_celsius=33, v_init=-120, h_dt=0.025, ntrials=range(30),
+                 channel_name='na16', soma_ena=55, h_celsius=33, v_init=-120, h_dt=0.025, ntrials=range(30),
                  dur=500, step=10, st_cl=-120, end_cl=40, v_cl=-120,
                  f3cl_dur0=40, f3cl_amp0=-120, f3cl_dur2=20, f3cl_amp2=-10):
 
@@ -457,7 +457,7 @@ class Inactivation:
         plt.ylabel('Normalized current')
         plt.title('Inactivation: Voltage/Normalized Current Relation')
         plt.plot(self.v_vec, self.inorm_vec, 'o', c='black')
-        ssi_slope, v_half, top, bottom = cf.calc_inact_obj()
+        ssi_slope, v_half, top, bottom, tau0 = cf.calc_inact_obj(channel_name='na16')
         formatted_ssi_slope = np.round(ssi_slope, decimals=2)
         formatted_v_half = np.round(v_half, decimals=2)
         plt.text(-10, 0.5, f'Slope: {formatted_ssi_slope}')
@@ -589,7 +589,7 @@ class Inactivation:
 ##################
 class RFI:
     def __init__(self, soma_diam=50, soma_L=63.66198, soma_nseg=1, soma_cm=1, soma_Ra=70,
-                 channel_name='na8xst', soma_ena=55, h_celsius=33, v_init=-90, h_dt=0.1, ntrials=30,
+                 channel_name='na16', soma_ena=55, h_celsius=33, v_init=-90, h_dt=0.1, ntrials=30,
                  min_inter=0.1, max_inter=5000, num_pts=50, cond_st_dur=1000, res_pot=-90, dur=0.1,
                  vec_pts=[1, 1.5, 3, 5.6, 10, 30, 56, 100, 150, 300, 560, 1000, 2930, 5000],
                  f3cl_dur0=5, f3cl_amp0=-90, f3cl_amp1=0, f3cl_dur3=20, f3cl_amp3=0, f3cl_dur4=5, f3cl_amp4=-90):
@@ -676,7 +676,7 @@ class RFI:
             self.i_vec_t.append(dens)
 
             if pre_i < abs(dens): #evaluate peak
-                peak_curr1 = abs(dens)
+                peak_curr = abs(dens)
             pre_i = abs(dens)
 
             
@@ -723,12 +723,16 @@ class RFI:
         plt.xlabel('Time $(ms)$')
         plt.ylabel('Fractional recovery (P2/P1)')
         plt.title('Time/Fractional recovery (P2/P1)')
-        y0, plateau, k, tau = cf.calc_recov_obj()
-        formatted_tau = np.round(1 / k, decimals=2)
-        plt.text(-10, 0.75, f'Tau: {formatted_tau}')
+        y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(channel_name='na16')
+        formatted_tauSlow = np.round(1 / k_slow, decimals=2)
+        formatted_tauFast = np.round(1 / k_fast, decimals=2)
+        formatted_percentFast = np.round(percent_fast, decimals=4)
+        plt.text(-10, 0.75, f'Tau Slow: {formatted_tauSlow}')
+        plt.text(-10, 0.8, f'Tau Fast: {formatted_tauFast}')
+        plt.text(-10, 0.85, f'% Fast Component: {formatted_percentFast}')
         plt.plot(self.time_vec, self.rec_vec, 'o', c='black')
         # save as PGN file
-        plt.savefig(os.path.join(os.path.split(__file__)[0], 'Plots_Folder/RFI Time Fractional recovery Relation'))
+        plt.savefig(os.path.join(os.path.split(__file__)[0], 'Plots_Folder/RFI Time Fractional Recovery Relation'))
 
     def plotRFI_TimeVRelation(self):
         plt.figure()
@@ -795,7 +799,7 @@ class RFI:
 ##################
 class Ramp:
     def __init__(self, soma_diam=50, soma_L=63.66198, soma_nseg=1, soma_cm=1, soma_Ra=70,
-                 channel_name='na8xst', soma_ena=55, h_celsius=33, v_init=-120, t_init = 30,
+                 channel_name='na16', soma_ena=55, h_celsius=33, v_init=-120, t_init = 30,
                  v_first_step = -60, t_first_step = 30, v_ramp_end = 0, t_ramp = 300, t_plateau = 100, 
                  v_last_step = -120, t_last_step = 30 ,h_dt=0.025):
         self.h = h  # NEURON h
@@ -970,7 +974,7 @@ class Ramp:
 class RFI_dv:
     def __init__(self, ntrials=30, recordTime=500,
                  soma_diam=50, soma_L=63.66198, soma_nseg=1, soma_cm=1, soma_Ra=70,
-                 channel_name='na8xst', soma_ena=55, h_celsius=33, v_init=-120, h_dt=0.01,
+                 channel_name='na16', soma_ena=55, h_celsius=33, v_init=-120, h_dt=0.01,
                  min_inter=0.1, max_inter=5000, num_pts=50, cond_st_dur=1, res_pot=-120, dur=0.1,
                  vec_pts=np.linspace(-120, 0, num=13),
                  f3cl_dur0=50, f3cl_amp0=-120, f3cl_dur1=5, f3cl_amp1=0, f3cl_dur2=1,
@@ -1436,9 +1440,9 @@ def plot_act_inact_wt():
 #######################
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Generate simulated data.')
-    parser.add_argument("--function", "-f", type=int, default=1, help="Specify which function to run")
+    parser.add_argument("--function", "-f", type=int, default=6, help="Specify which function to run")
     args = parser.parse_args()
-    
+
     if args.function == 1:
         genAct = Activation()
         genAct.genActivation()
@@ -1468,5 +1472,20 @@ if __name__ == "__main__":
         genRFIdv.plotRecInactProcedure_dv()
 
     elif args.function == 6:
-        pass
-    
+        # run all
+        genAct = Activation()
+        genAct.genActivation()
+        genAct.plotAllActivation()
+
+        genInact = Inactivation()
+        genInact.genInactivation()
+        genInact.plotAllInactivation()
+
+        genRFI = RFI()
+        genRFI.genRecInactTau()
+        genRFI.plotAllRFI()
+
+        genRamp = Ramp()
+        genRamp.genRamp()
+        genRamp.plotAllRamp()
+

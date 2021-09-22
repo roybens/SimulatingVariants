@@ -22,7 +22,7 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
     through the evaluate_with_lists function
     '''
 
-    def __init__(self, params_file, mutant, channel_name, objective_names=['v_half_act', 'gv_slope', 'v_half_ssi', 'ssi_slope', 'tau_fast', 'tau_slow', 'percent_fast', 'udb20', 'tau0', 'ramp', 'persistent']):
+    def __init__(self, params_file, mutant, channel_name, objective_names=['inact', 'act', 'recov']):
         '''
         Constructor
 
@@ -87,9 +87,12 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(self.channel_name, is_HMM=is_HMM)
 
         # Ramp Protocol
-        # ramp = ggsdHMM.Ramp(channel_name=self.channel_name)
-        # ramp_area = ramp.areaUnderCurve
+        ramp = ggsdHMM.Ramp(channel_name=self.channel_name)
+        ramp_area = ramp.areaUnderCurve()
         # persistent_curr = ramp.persistentCurrent()
+
+        # UDB20 Protocol
+
 
         wild_data['v_half_act'] = v_half_act
         wild_data['gv_slope'] = gv_slope
@@ -99,8 +102,8 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         wild_data['tau_slow'] = 1 / k_slow
         wild_data['percent_fast'] = percent_fast
         # wild_data['udb20'] = 0
-        # wild_data['tau0'] = tau0
-        # wild_data['ramp'] = ramp_area
+        wild_data['tau0'] = tau0
+        wild_data['ramp'] = ramp_area
         # wild_data['persistent'] = persistent_curr
 
         return wild_data

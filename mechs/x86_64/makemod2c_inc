@@ -1,0 +1,25 @@
+
+./na12_mut.c: ../na12_mut.mod
+	@printf " -> $(C_GREEN)NMODL$(C_RESET) $<\n"
+	(cd ".."; MODLUNIT=$(NRNUNITS) $(NOCMODL) na12_mut.mod -o "/Users/jinanjiang/Documents/Berkeley/temp_delete/SimulatingVariants/mechs/x86_64")
+
+./na12_mut.o: ./na12_mut.c
+	@printf " -> $(C_GREEN)Compiling$(C_RESET) $<\n"
+	$(COMPILE) -I".." $(INCLUDES) -fPIC -c $< -o $@
+
+./na8stmut.c: ../na8stmut.mod
+	@printf " -> $(C_GREEN)NMODL$(C_RESET) $<\n"
+	(cd ".."; MODLUNIT=$(NRNUNITS) $(NOCMODL) na8stmut.mod -o "/Users/jinanjiang/Documents/Berkeley/temp_delete/SimulatingVariants/mechs/x86_64")
+
+./na8stmut.o: ./na8stmut.c
+	@printf " -> $(C_GREEN)Compiling$(C_RESET) $<\n"
+	$(COMPILE) -I".." $(INCLUDES) -fPIC -c $< -o $@
+
+./vclmp_pl.c: ../vclmp_pl.mod
+	@printf " -> $(C_GREEN)NMODL$(C_RESET) $<\n"
+	(cd ".."; MODLUNIT=$(NRNUNITS) $(NOCMODL) vclmp_pl.mod -o "/Users/jinanjiang/Documents/Berkeley/temp_delete/SimulatingVariants/mechs/x86_64")
+
+./vclmp_pl.o: ./vclmp_pl.c
+	@printf " -> $(C_GREEN)Compiling$(C_RESET) $<\n"
+	$(COMPILE) -I".." $(INCLUDES) -fPIC -c $< -o $@
+

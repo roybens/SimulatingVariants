@@ -1,6 +1,7 @@
 import eval_helper as eh
-import curve_fitting_tel_aviv as cf
+import curve_fitting as cf
 import yaml
+import numpy as np
 from scipy.stats import linregress
 import math
 '''
@@ -21,37 +22,43 @@ class Score_Function:
         self.dv_half_ssi_diff = diff_dict['dv_half_ssi']
         self.ssi_slope_diff = diff_dict['ssi_slope']
         self.tau_diff = diff_dict['tau']
-        #self.persistent_diff = diff_dict['persistent10']
+        #self.tau_diff = diff_dict['tau_fast']
+        #self.tau_diff = diff_dict['tau_slow']
+        #self.tau_diff = diff_dict['percent_fast']
+        #.persistent_diff = diff_dict['persistent10']
         #self.persistent_diff = diff_dict['persistent20']
 
         self.v_half_act_wild = wild_data['v_half_act']
         self.gv_slope_wild = wild_data['gv_slope']
         self.v_half_ssi_wild = wild_data['v_half_ssi']
         self.ssi_slope_wild = wild_data['ssi_slope']
-        self.tau_wild = wild_data['tau']
+        self.tau_fast_wild = wild_data['tau_fast']
+        self.tau_slow_wild = wild_data['tau_slow']
+        self.percent_fast_wild = wild_data['percent_fast']
         #self.persistent_wild = wild_data['persistent10']
         #self.persistent_wild = wild_data['persistent20']
 
 
     def total_rmse(self, tel_aviv_data):
         try:
-            gv_slope, v_half_act, top, bottom = cf.calc_act_obj(channel_name='na8xst')
-            ssi_slope, v_half_inact, top, bottom = cf.calc_inact_obj(channel_name='na8xst')
-            y0, plateau, k, tau = cf.calc_recov_obj(channel_name='na8xst')
+            gv_slope, v_half_act, top, bottom = cf.calc_act_obj(channel_name='nax')
+            ssi_slope, v_half_inact, top, bottom, tau0 = cf.calc_inact_obj(channel_name='nax')
+            y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(channel_name='nax')
         except ZeroDivisionError:
             print('Zero Division Error')
             return (1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000)
 
         with open(tel_aviv_data, 'r', encoding='utf-8') as f:
             data = yaml.safe_load(f)
+        data = np.array(data.split(',')).reshape((9, 4))
 
-        v_half_act_err = data[2][1]
-        v_half_ssi_err = data[3][1]
-        tau_err = data[4][1]
-        gv_slope_err = data[5][1]
-        ssi_slope_err = data[6][1]
-        persistent10_err = data[7][1]
-        persistent20_err = data[8][1]
+        v_half_act_err = float(data[2][1])
+        v_half_ssi_err = float(data[3][1])
+        tau_err = float(data[4][1])
+        gv_slope_err = float(data[5][1])
+        ssi_slope_err = float(data[6][1])
+        persistent10_err = float(data[7][1])
+        persistent20_err = float(data[8][1])
         return (v_half_act_err, gv_slope_err, v_half_ssi_err, ssi_slope_err, tau_err)
 
 
