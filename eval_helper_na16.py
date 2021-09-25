@@ -5,6 +5,7 @@
 import generalized_genSim_shorten_time as ggsd
 import generalized_genSim_shorten_time_HMM as ggsdHMM
 import matplotlib.pyplot as plt
+import curve_fitting as cf
 
 currh = ggsd.Activation(channel_name = 'na16').h
 def set_param(param_values):
@@ -115,8 +116,35 @@ def get_name_params_str():
         result.append(param_currh[6:-5])
     return result
 
+def get_norm_vals(new_params):
+    set_param(new_params)
+    
+    act = ggsd.Activation(channel_name = 'na16')
+    act.genActivation()
+    norm_act_y_val = sorted(list(act.gnorm_vec))
+    print("The normalized activation G-V data is:")
+    print(norm_act_y_val)
+
+    inact = ggsd.Inactivation(channel_name = 'na16')
+    inact.genInactivation()
+    norm_inact_y_val = sorted(list(inact.inorm_vec))
+    print("The normalized inactivation I-V data is:")
+    print(norm_act_y_val)
+
+def get_fitted_act_conductance_arr(x_array, gv_slope, act_v_half, act_top, act_bottom):
+    cond_arr = []
+    for x in x_array:
+        cond_arr.append(cf.boltzmann(x, gv_slope, act_v_half, act_top, act_bottom))
+    return cond_arr
+
+def get_fitted_inact_current_arr(x_array, ssi_slope, inact_v_half, inact_top, inact_bottom):
+    curr_arr = []
+    for x in x_array:
+        curr_arr.append(cf.boltzmann(x, ssi_slope, inact_v_half, inact_top, inact_bottom))
+    return curr_arr
 
 def make_act_plots(new_params, param_values_wt = wt_params):
+    
     ############################################################################################################
     plt.figure()
     plt.xlabel('Voltage $(mV)$')
@@ -126,12 +154,13 @@ def make_act_plots(new_params, param_values_wt = wt_params):
     set_param(param_values_wt)
     wt_act = ggsd.Activation(channel_name = 'na16')
     wt_act.genActivation()
-    wt_act.plotActivation_VGnorm_plt(plt, 'black')
+    # (formatted_v_half, formatted_gv_slope)
+    act_v_half_wt, act_slope_wt = wt_act.plotActivation_VGnorm_plt(plt, 'black')
 
     set_param(new_params)
     mut_act = ggsd.Activation(channel_name = 'na16')
     mut_act.genActivation()
-    mut_act.plotActivation_VGnorm_plt(plt, 'red')
+    act_v_half_mut, act_slope_mut = mut_act.plotActivation_VGnorm_plt(plt, 'red')
 
     ############################################################################################################
     plt.figure()
@@ -182,7 +211,10 @@ def make_act_plots(new_params, param_values_wt = wt_params):
     mut_act.plotActivation_TCurrDensityRelation_plt(plt, 'red')
 
     ############################################################################################################
-
+    goal_dict = read_mutant_protocols('mutant_protocols.csv', 'NA16_MUT')
+    print("(actual, goal)")
+    print("activation v half: " + str((act_v_half_mut - act_v_half_wt , goal_dict['dv_half_act'])))
+    print("activation slope: " + str((act_slope_mut/act_slope_wt , goal_dict['gv_slope']/100)))
 
 
 def make_inact_plots(new_params, param_values_wt = wt_params):
@@ -197,12 +229,12 @@ def make_inact_plots(new_params, param_values_wt = wt_params):
     set_param(param_values_wt)
     wt_inact = ggsd.Inactivation(channel_name = 'na16')
     wt_inact.genInactivation()
-    wt_inact.plotInactivation_VInormRelation_plt(plt, 'black')
+    inact_v_half_wt, inact_slope_wt = wt_inact.plotInactivation_VInormRelation_plt(plt, 'black')
 
     set_param(new_params)
     mut_inact = ggsd.Inactivation(channel_name = 'na16')
     mut_inact.genInactivation()
-    mut_inact.plotInactivation_VInormRelation_plt(plt, 'red')
+    inact_v_half_mut, inact_slope_mut =  mut_inact.plotInactivation_VInormRelation_plt(plt, 'red')
 
 
     ############################################################################################################
@@ -253,6 +285,10 @@ def make_inact_plots(new_params, param_values_wt = wt_params):
     mut_inact.genInactivation()
     mut_inact.plotInactivation_Tau_0mV_plt(plt, 'red')
 
+    goal_dict = read_mutant_protocols('mutant_protocols.csv', 'NA16_MUT')
+    print("(actual, goal)")
+    print("inactivation v half: " + str((inact_v_half_mut - inact_v_half_wt , goal_dict['dv_half_ssi'])))
+    print("inactivation slope: " + str((inact_slope_mut/inact_slope_wt , goal_dict['ssi_slope']/100)))
 
 
 def get_param_list_in_str():

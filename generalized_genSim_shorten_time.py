@@ -239,6 +239,7 @@ class Activation:
         x_values_v = np.arange(self.st_cl, self.end_cl, 1)
         curve = cf.boltzmann(x_values_v, gv_slope, v_half, top, bottom)
         plt.plot(x_values_v, curve, c=color)
+        return (formatted_v_half, formatted_gv_slope)
         
         
     def plotActivation_IVCurve(self):
@@ -530,6 +531,7 @@ class Inactivation:
         x_values_v = np.arange(self.st_cl, self.end_cl, 1)
         curve = cf.boltzmann(x_values_v, ssi_slope, v_half, top, bottom)
         plt.plot(x_values_v, curve, c=color)
+        return (formatted_v_half, formatted_ssi_slope)
 
     def plotInactivation_TimeVRelation(self):
         plt.figure()
