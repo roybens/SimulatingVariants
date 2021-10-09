@@ -1,11 +1,13 @@
 ########################################################
-#### Important helper functions for the evaluators. ####
+#### Important NA16 helper functions for the evaluators. ####
 #### Authors: Michael Lam, Jinan Jiang #################
 ########################################################
 import generalized_genSim_shorten_time as ggsd
 import generalized_genSim_shorten_time_HMM as ggsdHMM
 import matplotlib.pyplot as plt
 import curve_fitting as cf
+from scipy import optimize
+import numpy as np
 
 currh = ggsd.Activation(channel_name = 'na16').h
 def set_param(param_values):
@@ -278,17 +280,18 @@ def make_inact_plots(new_params, param_values_wt = wt_params):
     set_param(param_values_wt)
     wt_inact = ggsd.Inactivation(channel_name = 'na16')
     wt_inact.genInactivation()
-    wt_inact.plotInactivation_Tau_0mV_plt(plt, 'black')
+    wt_tau = wt_inact.plotInactivation_Tau_0mV_plt(plt, 'black')
 
     set_param(new_params)
     mut_inact = ggsd.Inactivation(channel_name = 'na16')
     mut_inact.genInactivation()
-    mut_inact.plotInactivation_Tau_0mV_plt(plt, 'red')
+    mut_tau = mut_inact.plotInactivation_Tau_0mV_plt(plt, 'red')
 
     goal_dict = read_mutant_protocols('mutant_protocols.csv', 'NA16_MUT')
     print("(actual, goal)")
     print("inactivation v half: " + str((inact_v_half_mut - inact_v_half_wt , goal_dict['dv_half_ssi'])))
     print("inactivation slope: " + str((inact_slope_mut/inact_slope_wt , goal_dict['ssi_slope']/100)))
+    print("tau: " + str((mut_tau/wt_tau , goal_dict['tau0']/100)))
 
 
 def get_param_list_in_str():
@@ -508,3 +511,21 @@ def change_params_dict(new_params):
 
     return
 
+def find_tau0(upper = 700, make_plot = False, color = 'red'):
+    def fit_expon(x, a, b, c):
+        return a + b * np.exp(-1 * c * x)
+    act = ggsd.Activation(channel_name = 'na16')
+    act.clamp_at_volt(0)
+    starting_index = list(act.i_vec).index(act.find_ipeaks_with_index()[1])
+    
+    t_vecc = act.t_vec[starting_index:upper]
+    i_vecc = act.i_vec[starting_index:upper]
+    popt, pcov = optimize.curve_fit(fit_expon,t_vecc,i_vecc, method = 'dogbox')
+    
+    if make_plot:
+        fitted_i = fit_expon(act.t_vec[starting_index:upper],popt[0],popt[1],popt[2])
+        plt.plot(act.t_vec[starting_index:upper], fitted_i, c=color)
+        plt.show()
+    
+    tau = popt[2]
+    return tau

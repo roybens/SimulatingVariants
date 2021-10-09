@@ -123,6 +123,33 @@ class Activation:
         # find i peak of trace
         self.ipeak_vec.append(self.find_ipeaks())
 
+    def clamp_at_volt(self, v_cl):
+        """ Runs a trace and calculates peak currents.
+        Args:
+            v_cl (int): voltage to run
+        """
+        if self.gnorm_vec == []:
+            time_padding = 5  # ms
+            h.tstop = time_padding + self.dur + time_padding  # time stop
+            
+        curr_tr = 0  # initialization of peak current
+        h.finitialize(self.v_init)  # calling the INITIAL block of the mechanism inserted in the section.
+        pre_i = 0  # initialization of variables used to commute the peak current
+        dens = 0
+        self.f3cl.amp[1] = v_cl  # mV
+        for _ in self.ntrials:
+            while h.t < h.tstop:  # runs a single trace, calculates peak current
+                dens = self.f3cl.i / self.soma(0.5).area() * 100.0 - self.soma(
+                    0.5).i_cap  # clamping current in mA/cm2, for each dt
+                # append data
+                self.t_vec.append(h.t)
+                self.v_vec_t.append(self.soma.v)
+                self.i_vec.append(dens)
+                # advance
+                h.fadvance()
+
+        # find i peak of trace
+        self.ipeak_vec.append(self.find_ipeaks())
 
     def find_ipeaks(self):
         """
@@ -141,6 +168,25 @@ class Activation:
         else:
             curr_tr = curr_min
         return curr_tr
+    
+    def find_ipeaks_with_index(self):
+        """
+        Evaluate the peak and updates the peak current.
+        Returns peak current.
+        Finds positive and negative peaks.
+        """
+        self.i_vec = np.array(self.i_vec)
+        self.t_vec = np.array(self.t_vec)
+        mask = np.where(np.logical_and(self.t_vec >= 4, self.t_vec <= 10))
+        i_slice = self.i_vec[mask]
+        curr_max = np.max(i_slice)
+        curr_min = np.min(i_slice)
+        if np.abs(curr_max) > np.abs(curr_min):
+            curr_tr = curr_max
+        else:
+            curr_tr = curr_min
+        curr_tr_index = list(i_slice).index(curr_tr)
+        return curr_tr_index, curr_tr
 
     def findG(self, v_vec, ipeak_vec):
         """ Returns normalized conductance vector
@@ -461,6 +507,37 @@ class Inactivation:
 
         # find i peak of trace
         self.ipeak_vec.append(self.find_ipeaks())
+        
+        
+    def clamp_at_voltage(self, v_cl):
+        """ Runs a trace and calculates peak currents.
+        Args:
+            v_cl (int): voltage to run
+        """
+        self.f3cl.amp[1] = v_cl
+        h.finitialize(self.v_init)  # calling the INITIAL block of the mechanism inserted in the section.
+
+        # parameters initialization
+        peak_curr = 0
+        dtsave = h.dt
+
+        for _ in self.ntrials:
+            while h.t < h.tstop:  # runs a single trace, calculates peak current
+                if (h.t > 537) or (h.t < 40):
+                    h.dt = dtsave
+                else:
+                    h.dt = 1
+                dens = self.f3cl.i / self.soma(0.5).area() * 100.0 - self.soma(
+                    0.5).i_cap  # clamping current in mA/cm2, for each dt
+
+                self.t_vec.append(h.t)  # code for store the current
+                self.v_vec_t.append(self.soma.v)  # trace to be plotted
+                self.i_vec.append(dens)  # trace to be plotted
+
+                h.fadvance()
+
+        # find i peak of trace
+        self.ipeak_vec.append(self.find_ipeaks())
 
     def find_ipeaks(self):
         """
@@ -478,6 +555,24 @@ class Inactivation:
         else:
             peak_curr = i_slice[peak_indices][0]
         return peak_curr
+    
+    def find_ipeaks_with_index(self):
+        """
+        Evaluate the peak and updates the peak current.
+        Returns peak current.
+        """
+        # find peaks
+        self.i_vec = np.array(self.i_vec)
+        self.t_vec = np.array(self.t_vec)
+        mask = np.where(np.logical_and(self.t_vec >= 535, self.t_vec <= 545))  # h.t window to take peak
+        i_slice = self.i_vec[mask]
+        peak_indices, properties_dict = find_peaks(i_slice * -1, height=0.1)  # find minima
+        if len(peak_indices) == 0:
+            peak_curr = 0
+            return (-1, peak_curr)
+        else:
+            peak_curr = i_slice[peak_indices][0]
+            return peak_indices[0], peak_curr
 
     def genInactivation(self):
         if self.inorm_vec == []:
@@ -554,6 +649,7 @@ class Inactivation:
         # save as PGN file
         plt.savefig(os.path.join(os.path.split(__file__)[0], "Plots_Folder/Inactivation Time Current Density Relation"))
     
+    
     def plotInactivation_TCurrDensityRelation(self, plt,color):
         [plt.plot(self.t_vec[1:], self.all_is[i], c=color) for i in np.arange(self.L)]
 
@@ -576,8 +672,28 @@ class Inactivation:
         #plt.text(0.2, -0.01, f"Tau at 0 mV: {formatted_tau}", color="blue")
         # save as PGN file
         plt.savefig(os.path.join(os.path.split(__file__)[0], "Plots_Folder/Inactivation Tau at 0 mV"))
+    
+    
+    def get_just_tau0(self):
+        try:
+            volt = 0  # mV
+            mask = np.where(self.v_vec == volt)[0]
+            curr = np.array(self.all_is)[mask][0]
+            time = np.array(self.t_vec)[1:]
+            # fit exp: IFit(t) = A * exp (-t/τ) + C
+            ts, data, xs, ys, tau = self.find_tau0_inact(curr)
+            return tau
+        except:
+            return 9999999999 # return very bad tau if cannot be fit
+        
 
     def plotInactivation_Tau_0mV_plt(self, plt,color):
+        
+        diff = 0
+        if color == 'red':
+            diff = 0.1
+            
+
         # select 0 mV
         volt = 0  # mV
         mask = np.where(self.v_vec == volt)[0]
@@ -588,8 +704,9 @@ class Inactivation:
         # plot
         plt.plot(ts, data, color=color)
         plt.plot(xs, ys, color=color)
-        formatted_tau = np.round(tau, decimals=3)
-        #plt.text(0.2, -0.01, f"Tau at 0 mV: {formatted_tau}", color="blue")
+        formatted_tau0 = np.round(tau, decimals=3)
+        plt.text(0.2, -0.01 + diff, f"Tau at 0 mV: {formatted_tau0}", color=color)
+        return tau
         
         
     def fit_exp(self, x, a, b, c):
@@ -597,8 +714,28 @@ class Inactivation:
         IFit(t) = A * exp (-t/τ) + C
         """
         return a * np.exp(-x / b) + c
+    
+    def one_phase(self, x, y0, plateau, k):
+        '''
+        Fit a one-phase association curve to an array of data points X. 
+        For info about the parameters, visit 
+        https://www.graphpad.com/guides/prism/latest/curve-fitting/reg_exponential_association.htm    
+        '''
+        return y0 + (plateau - y0) * (1 - np.exp(-k * x))
+    
+    # one phase asso
+    # 1/b as tau
 
     def find_tau0_inact(self, raw_data):
+        
+        
+        def one_phase(x, y0, plateau, k):
+            return y0 + (plateau - y0) * (1 - np.exp(-k * x))
+        
+        def fit_expon(x, a, b, c):
+            return a + b * np.exp(-1 * c * x)
+    
+    
         # take peak curr and onwards
         min_val, mindex = min((val, idx) for (idx, val) in enumerate(raw_data[:int(0.7 * len(raw_data))]))
         padding = 15  # after peak
@@ -608,16 +745,14 @@ class Inactivation:
         # calc tau and fit exp
         # cuts data points in half
         length = len(ts) // 2
-        popt, pcov = optimize.curve_fit(fit_exp, ts[0:length], data[0:length])  # fit exponential curve
+        popt, pcov = optimize.curve_fit(fit_expon, ts[0:length], data[0:length])  # fit exponential curve
         perr = np.sqrt(np.diag(pcov))
         # print('in ' + str(all_tau_sweeps[i]) + ' the error was ' + str(perr))
         xs = np.linspace(ts[0], ts[len(ts) - 1], 1000)  # create uniform x values to graph curve
-        ys = fit_exp(xs, *popt)  # get y values
+        ys = fit_expon(xs, *popt)  # get y values
         vmax = max(ys) - min(ys)  # get diff of max and min voltage
         vt = min(ys) + .37 * vmax  # get vmax*1/e
-        #tau = (np.log([(vt - popt[2]) / popt[0]]) / (-popt[1]))[0]  # find time at which curve = vt
-        #Roy said tau should just be the parameter b from fit_exp
-        tau = popt[1]
+        tau = popt[2]
         return ts, data, xs, ys, tau
 
     def plotAllInactivation(self):
@@ -1649,12 +1784,12 @@ def find_tau_inact(inact_i, ax=None):
                 # ax.plot(xs, ys, color="blue")
                 # plt.vlines(tau, min(ys)-.02, max(ys)+.02)
         # uncomment to plot
-        # plt.vlines(tau, min(ys)-.02, max(ys)+.02)
-        # plt.figure()
-        # plt.plot(ts, data, color="black")
-        # plt.plot(xs, ys, color="red")
-        # plt.text(0, 0, i)
-        # plt.show()
+        #plt.vlines(tau, min(ys)-.02, max(ys)+.02)
+        #plt.figure()
+        #plt.plot(ts, data, color="black")
+        #plt.plot(xs, ys, color="red")
+        #plt.text(0, 0, i)
+        #plt.show()
 
         all_taus.append(tau)
 
