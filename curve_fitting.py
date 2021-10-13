@@ -26,6 +26,14 @@ def two_phase(x, y0, plateau, percent_fast, k_fast, k_slow):
     span_slow = (plateau - y0) * (100 - percent_fast) * 0.01
     return y0 + span_fast * (1 - np.exp(-k_fast * x)) + span_slow * (1 - np.exp(-k_slow * x))
 
+def one_phase(x, y0, plateau, k):
+    '''
+    Fit a one-phase association curve to an array of data points X. 
+    For info about the parameters, visit 
+    https://www.graphpad.com/guides/prism/latest/curve-fitting/reg_exponential_association.htm    
+    '''
+    return y0 + (plateau - y0) * (1 - np.exp(-k * x))
+
 def calc_act_obj(channel_name, is_HMM=False):
     try:
         if not is_HMM:
@@ -47,7 +55,8 @@ def calc_act_obj(channel_name, is_HMM=False):
 def calc_inact_obj(channel_name, is_HMM=False):
     try:
         if not is_HMM:
-            inorm_vec, v_vec, all_is = ggsd.Inactivation(channel_name=channel_name, step=5).genInactivation()
+            inact = ggsd.Inactivation(channel_name=channel_name, step=5)
+            inorm_vec, v_vec, all_is = inact.genInactivation()
         else:
             inorm_vec, v_vec, all_is = ggsdHMM.Inactivation(channel_name=channel_name, step=5).genInactivation()
     except:
@@ -59,7 +68,8 @@ def calc_inact_obj(channel_name, is_HMM=False):
         print("Couldn't fit curve to inactivation.")
         return (1000, 1000, 1000, 1000, 1000)
     ssi_slope, v_half, top, bottom = popt
-    taus, tau_sweeps, tau0 = ggsd.find_tau_inact(all_is)
+    tau0 = inact.get_just_tau0()
+    # taus, tau_sweeps, tau0 = ggsd.find_tau_inact(all_is)
     return ssi_slope, v_half, top, bottom, tau0
 
 def calc_recov_obj(channel_name, is_HMM=False):
