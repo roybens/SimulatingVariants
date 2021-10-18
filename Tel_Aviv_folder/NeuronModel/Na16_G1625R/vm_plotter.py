@@ -38,17 +38,8 @@ def plot_stim_volts_pair(stim, volts, title_stim, title_volts, file_path_to_save
     axs[0].plot(times,stim, color='black', linewidth=0.25)
     axs[0].locator_params(axis='x', nbins=5)
     axs[0].locator_params(axis='y', nbins=5)
-    
     add_scalebar(axs[0])
-    #=axs[0].set_title('Voltage Response '+title_volts)
-    volts_target = volts[0]
-    if len(volts)>1:
-        volts_best_response = volts[1]
-        axs[1].plot(times,volts_best_response, label='response', color='red',linewidth=1)
-    
-    
-    axs[1].plot(times,volts_target, label='target', color='black',linewidth=1)
-    
+    axs[1].plot(times,volts, label='Vm', color='red',linewidth=1)
     axs[1].locator_params(axis='x', nbins=5)
     axs[1].locator_params(axis='y', nbins=8)
     add_scalebar(axs[1])

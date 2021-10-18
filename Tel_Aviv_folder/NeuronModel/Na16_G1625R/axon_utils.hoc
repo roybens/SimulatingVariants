@@ -37,8 +37,10 @@ proc populate_axon(){
 			g_pas(0.1:1) = gpas_all:gpas_all
 			cm(0:0.1) = (cm_all/myelin_scale):(cm_all/myelin_scale)
 			cm(0.1:1) = cm_all:cm_all
-			gbar_na16(0:0.1) = node_na:node_na
-			gbar_na16(0.1:1) = myelin_na:myelin_na
+			gbar_na16(0:0.1) = node_na/2:node_na/2
+			gbar_na16mut(0:0.1) = node_na/2:node_na/2
+			gbar_na16(0.1:1) = myelin_na/2:myelin_na/2
+			gbar_na16mut(0.1:1) = myelin_na/2:myelin_na/2
 			gSKv3_1bar_SKv3_1(0:0.1) = axon_K:axon_K
 			gSKv3_1bar_SKv3_1(0.1:1) = myelin_K:myelin_K
 			gK_Pstbar_K_Pst(0:0.1) = axon_KP:axon_KP
@@ -84,9 +86,12 @@ access cell.axon[0]
 	nseg = int(L/10)*2 +1  // create 19 segments from this axon section
 	ais_end = 10/nseg // specify the end of the AIS as halfway down this section
 	ais_mid = 4/nseg // specify the middle of the AIS as 1/5 of this section 
-	gbar_na16(0:ais_mid) = 0:ais_na16 // from the start to mid of AIS, create gradient of NaV1.6
-	gbar_na16(ais_mid:ais_end) = ais_na16:ais_na16 // add consistent amount NaV1.6 until the end of the AIS
-	gbar_na16(ais_end:1) = naked_axon_na:naked_axon_na // 1/5th nav1.6
+	gbar_na16(0:ais_mid) = 0:ais_na16/2 // from the start to mid of AIS, create gradient of NaV1.6
+	gbar_na16mut(0:ais_mid) = 0:ais_na16/2 // from the start to mid of AIS, create gradient of NaV1.6
+	gbar_na16(ais_mid/2:ais_end/2) = ais_na16/2:ais_na16/2 // add consistent amount NaV1.6 until the end of the AIS
+	gbar_na16mut(ais_mid/2:ais_end/2) = ais_na16/2:ais_na16/2 // add consistent amount NaV1.6 until the end of the AIS
+	gbar_na16(ais_end:1) = naked_axon_na/2:naked_axon_na/2 // 1/5th nav1.6
+	gbar_na16mut(ais_end:1) = naked_axon_na/2:naked_axon_na/2 // 1/5th nav1.6
 	gbar_na12(0:ais_mid/2) = soma_na12/2:ais_na12/2 // create gradient of NaV12 from [soma] to [AIS]
 	gbar_na12mut(0:ais_mid/2) = soma_na12/2:ais_na12/2 // add a mutant channel in case we want to do a het
 	gbar_na12(ais_mid/2:ais_mid) = ais_na12/2:0 // create gradient down to zero
@@ -150,10 +155,11 @@ access cell.soma
 proc update_soma_na(){
 access cell.soma
 
-vShift_na = navshift
+	vShift_na = navshift
 	gbar_na12 = soma_na12/2
 	gbar_na12mut = soma_na12/2
-	gbar_na16 = soma_na16
+	gbar_na16 = soma_na16/2
+	gbar_na16mut = soma_na16/2
 	gNaTs2_tbar_NaTs2_t = 0
 
 }
@@ -175,7 +181,8 @@ forsec cell.apical{
 	
 	gbar_na12 = dend_na12/2
 	gbar_na12mut = dend_na12/2
-	gbar_na16 = dend_na16
+	gbar_na16 = dend_na16/2
+	gbar_na16mut = dend_na16/2
 	gNaTs2_tbar_NaTs2_t = 0
 	
 	

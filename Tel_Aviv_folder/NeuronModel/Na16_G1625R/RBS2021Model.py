@@ -8,7 +8,12 @@ Created on Sat Oct 16 21:07:44 2021
 import numpy as np
 from vm_plotter import *
 from neuron import h
+import json
 h.load_file("runModel.hoc")
+soma_ref = h.root.sec
+soma = h.secname(sec=soma_ref)
+sl = h.SectionList()
+sl.wholetree(sec=soma_ref)
 def init_settings(nav12=1,
                   nav16=1,
                   dend_nav12=1, 
@@ -64,9 +69,22 @@ def init_settings(nav12=1,
     h.soma_na16 = h.soma_na16 * nav16 * soma_nav16
     h.ais_na16 = h.ais_na16 * nav16 * ais_nav16
     h.working()
+
+def update_na16(dict_fn):
+    with open(dict_fn) as f:
+        data = f.read()
+    param_dict = json.loads(data)
+    for curr_sec in sl:
+        if h.ismembrane('na16mut', sec=curr_sec):
+            h('gbar_na16mut = 0.5*gbar_na16mut')
+            for p_name in param_dict.keys():
+                curr_name = h.secname(sec=curr_sec)
+                hoc_cmd = f'{curr_name}.{p_name} = {param_dict[p_name]}'
+                #print(hoc_cmd)
+                h(hoc_cmd)
+            
     
-    
-def init_stim(sweep_len = 800, stim_start = 100, stim_dur = 500, amp = 0.5, dt = 0.01):
+def init_stim(sweep_len = 800, stim_start = 100, stim_dur = 500, amp = 0.5, dt = 0.1):
     # updates the stimulation params used by the model
     # time values are in ms
     # amp values are in nA
@@ -87,6 +105,7 @@ def run_model(start_Vm = -72):
     I['Na'] = np.zeros(timesteps)
     I['Ca'] = np.zeros(timesteps)
     I['K'] = np.zeros(timesteps)
+    stim = np.zeros(timesteps)
     t = np.zeros(timesteps)
     
     for i in range(timesteps):
@@ -94,13 +113,16 @@ def run_model(start_Vm = -72):
         I['Na'][i] = h.cell.soma[0](0.5).ina
         I['Ca'][i] = h.cell.soma[0](0.5).ica
         I['K'][i] = h.cell.soma[0](0.5).ik
+        stim[i] = h.st.amp 
         t[i] = i*h.dt / 1000
         h.fadvance()
         
-    return Vm, I, t
+    return Vm, I, t,stim
 
 init_settings()
 init_stim()
-Vm, I, t = run_model()
-plot_stim_volts_pair(I, Vm, 'Step Stim', 'SCN8A', file_path_to_save='./',times=t)
+
+update_na16('./params/na16_mutv1.txt')
+Vm, I, t,stim = run_model()
+plot_stim_volts_pair(stim, Vm, 'Step Stim', 'SCN8A', file_path_to_save='./',times=t)
 
