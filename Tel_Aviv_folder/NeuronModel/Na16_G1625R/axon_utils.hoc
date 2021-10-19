@@ -187,6 +187,7 @@ forsec cell.apical{
 	
 	
 	}
+
 }
 proc update_dend_na_young(){
 forsec cell.apical{

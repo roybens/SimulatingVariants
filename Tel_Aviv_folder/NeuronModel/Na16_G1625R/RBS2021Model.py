@@ -9,6 +9,7 @@ import numpy as np
 from vm_plotter import *
 from neuron import h
 import json
+from scipy.signal import find_peaks
 h.load_file("runModel.hoc")
 soma_ref = h.root.sec
 soma = h.secname(sec=soma_ref)
@@ -76,7 +77,7 @@ def update_na16(dict_fn):
     param_dict = json.loads(data)
     for curr_sec in sl:
         if h.ismembrane('na16mut', sec=curr_sec):
-            h('gbar_na16mut = 0.5*gbar_na16mut')
+            #h('gbar_na16mut = 1*gbar_na16mut')
             for p_name in param_dict.keys():
                 curr_name = h.secname(sec=curr_sec)
                 hoc_cmd = f'{curr_name}.{p_name} = {param_dict[p_name]}'
@@ -84,7 +85,7 @@ def update_na16(dict_fn):
                 h(hoc_cmd)
             
     
-def init_stim(sweep_len = 800, stim_start = 100, stim_dur = 500, amp = 0.5, dt = 0.1):
+def init_stim(sweep_len = 800, stim_start = 100, stim_dur = 500, amp = 0.3, dt = 0.1):
     # updates the stimulation params used by the model
     # time values are in ms
     # amp values are in nA
@@ -94,6 +95,32 @@ def init_stim(sweep_len = 800, stim_start = 100, stim_dur = 500, amp = 0.5, dt =
     h("st.amp = " + str(amp))
     h.tstop = sweep_len
     h.dt = dt
+
+
+def get_fi_curve(s_amp,e_amp,nruns,wt_data=None,ax1=None):
+    all_volts = []
+    npeaks = []
+    x_axis = np.linspace(s_amp,e_amp,nruns)
+    stim_length = int(600/dt)
+    for curr_amp in x_axis:
+        init_stim(amp = curr_amp)
+        curr_volts,_,_,_ = run_model()
+        curr_peaks,_ = find_peaks(curr_volts[:stim_length],height = -20)
+        all_volts.append(curr_volts)
+        npeaks.append(len(curr_peaks))
+    print(npeaks)
+    if ax1 is None:
+        fig,ax1 = plt.subplots(1,1)
+    ax1.plot(x_axis,npeaks,'black')
+    ax1.set_title('FI Curve')
+    ax1.set_xlabel('Stim [nA]')
+    ax1.set_ylabel('nAPs for 500ms epoch')
+    if wt_data is None:
+        return npeaks
+    else:
+        ax1.plot(x_axis,npeaks,'blue')
+        ax1.plot(x_axis,wt_data,'black')
+    plt.show()
     
 def run_model(start_Vm = -72):
 
@@ -118,11 +145,26 @@ def run_model(start_Vm = -72):
         h.fadvance()
         
     return Vm, I, t,stim
-
+fig,ficurveax = plt.subplots(1,1)
 init_settings()
-init_stim()
+init_stim(amp=0.2)
+Vm, I, t, stim = run_model()
+plot_stim_volts_pair(Vm, 'Step Stim 200pA', file_path_to_save='./Plots/WT_200pA',times=t)
+init_stim(amp=0.5)
+Vm, I, t, stim = run_model()
+plot_stim_volts_pair(Vm, 'Step Stim 500pA', file_path_to_save='./Plots/WT_500pA',times=t)
+wtnpeaks = get_fi_curve(0.05, 0.55, 11,ax1=ficurveax)
+
 
 update_na16('./params/na16_mutv1.txt')
-Vm, I, t,stim = run_model()
-plot_stim_volts_pair(stim, Vm, 'Step Stim', 'SCN8A', file_path_to_save='./',times=t)
+init_stim(amp=0.2)
+Vm, I, t, stim = run_model()
+plot_stim_volts_pair(Vm, 'Step Stim 200pA', file_path_to_save='./Plots/Mut_200pA',times=t,color_str='blue')
+init_stim(amp=0.5)
+Vm, I, t, stim = run_model()
+plot_stim_volts_pair(Vm, 'Step Stim 500pA', file_path_to_save='./Plots/Mut_500pA',times=t,color_str='blue')
+get_fi_curve(0.05, 0.55, 11,wt_data=wtnpeaks,ax1=ficurveax)
+fig.savefig('./Plots/FI_curves.pdf')
+
+
 

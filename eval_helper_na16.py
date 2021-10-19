@@ -7,6 +7,7 @@ import generalized_genSim_shorten_time_HMM as ggsdHMM
 import matplotlib.pyplot as plt
 import curve_fitting as cf
 from scipy import optimize
+import json
 import numpy as np
 
 currh = ggsd.Activation(channel_name = 'na16').h
@@ -68,6 +69,17 @@ def set_param(param_values):
     currh.vvs_na16 = param_values[24]
     currh.Ena_na16 = param_values[25]
     '''
+
+def convert_dict_to_list(dict_fn):
+    with open(dict_fn) as f:
+        data = f.read()
+    param_dict = json.loads(data)
+    tmp_list = []
+    for p_name in param_dict.keys():
+        tmp_list.append(param_dict[p_name])
+    tmp_list.append(55)
+    return tmp_list
+
 
 def get_wt_params():
     # WT params
@@ -529,3 +541,8 @@ def find_tau0(upper = 700, make_plot = False, color = 'red'):
     
     tau = popt[2]
     return tau
+
+
+param_list = convert_dict_to_list('./Tel_Aviv_folder/NeuronModel/Na16_G1625R/params/na16_mutv1.txt')
+make_inact_plots(param_list)
+make_act_plots(param_list)
