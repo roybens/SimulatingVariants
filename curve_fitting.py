@@ -58,7 +58,8 @@ def calc_inact_obj(channel_name, is_HMM=False):
             inact = ggsd.Inactivation(channel_name=channel_name, step=5)
             inorm_vec, v_vec, all_is = inact.genInactivation()
         else:
-            inorm_vec, v_vec, all_is = ggsdHMM.Inactivation(channel_name=channel_name, step=5).genInactivation()
+            inact = ggsdHMM.Inactivation(channel_name=channel_name, step=5)
+            inorm_vec, v_vec, all_is = inact.genInactivation()
     except:
         print('Couldn\'t generate inactivation data')
         return (1000, 1000, 1000, 1000, 1000)
