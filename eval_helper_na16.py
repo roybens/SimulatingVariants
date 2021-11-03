@@ -7,7 +7,11 @@ import generalized_genSim_shorten_time_HMM as ggsdHMM
 import matplotlib.pyplot as plt
 import curve_fitting as cf
 from scipy import optimize
+<<<<<<< HEAD
 import os
+=======
+import json
+>>>>>>> 47e310ce547fa335ccfde69f949168df511b6c77
 import numpy as np
 import matplotlib.backends.backend_pdf
 
@@ -70,6 +74,17 @@ def set_param(param_values):
     currh.vvs_na16 = param_values[24]
     currh.Ena_na16 = param_values[25]
     '''
+
+def convert_dict_to_list(dict_fn):
+    with open(dict_fn) as f:
+        data = f.read()
+    param_dict = json.loads(data)
+    tmp_list = []
+    for p_name in param_dict.keys():
+        tmp_list.append(param_dict[p_name])
+    tmp_list.append(55)
+    return tmp_list
+
 
 def get_wt_params():
     # WT params
@@ -550,6 +565,7 @@ def find_tau0(upper = 700, make_plot = False, color = 'red'):
         plt.show()
     
     tau = popt[2]
+<<<<<<< HEAD
     
     # to account for the second and millisecond difference, we multiply tau by 1000 for now
     tau = 1000 * tau
@@ -596,3 +612,11 @@ def make_params_dict(param_values):
     }
 
     return params_dict
+=======
+    return tau
+
+
+param_list = convert_dict_to_list('./Tel_Aviv_folder/NeuronModel/Na16_G1625R/params/na16_mutv1.txt')
+make_inact_plots(param_list)
+make_act_plots(param_list)
+>>>>>>> 47e310ce547fa335ccfde69f949168df511b6c77

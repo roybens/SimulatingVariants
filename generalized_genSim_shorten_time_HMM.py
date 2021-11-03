@@ -501,6 +501,18 @@ class Inactivation:
         #Roy said tau should just be the parameter b from fit_exp
         tau = popt[1]
         return ts, data, xs, ys, tau
+    
+    def get_just_tau0(self):
+        try:
+            volt = 0  # mV
+            mask = np.where(self.v_vec == volt)[0]
+            curr = np.array(self.all_is)[mask][0]
+            time = np.array(self.t_vec)[1:]
+            # fit exp: IFit(t) = A * exp (-t/τ) + C
+            ts, data, xs, ys, tau = self.find_tau0_inact(curr)
+            return tau
+        except:
+            return 9999999999 # return very bad tau if cannot be fit
 
     def plotAllInactivation(self):
         """

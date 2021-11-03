@@ -79,8 +79,8 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
             Dictionary of objective values for the wild channel
         '''
         wild_data = {}
-        # import ipdb
-        # ßipdb.set_trace()
+        import ipdb
+        ipdb.set_trace()
         is_HMM = True   # This is an HMM model
         gv_slope, v_half_act, top, bottom = cf.calc_act_obj(self.channel_name, is_HMM=is_HMM)
         ssi_slope, v_half_inact, top, bottom, tau0 = cf.calc_inact_obj(self.channel_name, is_HMM=is_HMM)
@@ -153,6 +153,8 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         Returns:
             None
         '''
+        import ipdb
+        ipdb.set_trace()
         eh.change_params(param_values, scaled=False, is_HMM=True)
         plt.close()
         fig, axs = plt.subplots(3, figsize=(10,10))
@@ -220,7 +222,7 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         axs[1].text(-120, 0.5, 'V50 (Optimized): ' + str(v_half) + ' mV')
         axs[1].text(-120, 0.4, 'V50 (Experimental): ' + str(v_half_act_exp) + ' mV')
         axs[1].legend()
-        
+
         # Recovery Curve
         rec_inact_tau_vec, recov_curves, times = ggsdHMM.RFI(channel_name=self.channel_name).genRecInactTau()
         times = np.array(times)
