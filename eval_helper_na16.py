@@ -7,7 +7,9 @@ import generalized_genSim_shorten_time_HMM as ggsdHMM
 import matplotlib.pyplot as plt
 import curve_fitting as cf
 from scipy import optimize
+import os
 import numpy as np
+import matplotlib.backends.backend_pdf
 
 currh = ggsd.Activation(channel_name = 'na16').h
 def set_param(param_values):
@@ -145,10 +147,14 @@ def get_fitted_inact_current_arr(x_array, ssi_slope, inact_v_half, inact_top, in
         curr_arr.append(cf.boltzmann(x, ssi_slope, inact_v_half, inact_top, inact_bottom))
     return curr_arr
 
-def make_act_plots(new_params, param_values_wt = wt_params):
+def make_act_plots(new_params, param_values_wt = wt_params, filename = 'jinan_plots_out.pdf'):
+    
+    
+    pdf = matplotlib.backends.backend_pdf.PdfPages(filename)
+    figures = []
     
     ############################################################################################################
-    plt.figure()
+    figures.append(plt.figure())
     plt.xlabel('Voltage $(mV)$')
     plt.ylabel('Normalized conductance')
     plt.title('Activation: Voltage/Normalized conductance')
@@ -162,10 +168,10 @@ def make_act_plots(new_params, param_values_wt = wt_params):
     set_param(new_params)
     mut_act = ggsd.Activation(channel_name = 'na16')
     mut_act.genActivation()
-    act_v_half_mut, act_slope_mut = mut_act.plotActivation_VGnorm_plt(plt, 'red')
+    act_v_half_mut, act_slope_mut = mut_act.plotActivation_VGnorm_plt(plt, 'blue')
 
     ############################################################################################################
-    plt.figure()
+    figures.append(plt.figure())
     plt.xlabel('Voltage $(mV)$')
     plt.ylabel('Peak Current $(pA)$')
     plt.title("Activation: IV Curve")
@@ -178,10 +184,10 @@ def make_act_plots(new_params, param_values_wt = wt_params):
     set_param(new_params)
     mut_act = ggsd.Activation(channel_name = 'na16')
     mut_act.genActivation()
-    mut_act.plotActivation_IVCurve_plt(plt, 'red')
+    mut_act.plotActivation_IVCurve_plt(plt, 'blue')
 
     ############################################################################################################
-    plt.figure()
+    figures.append(plt.figure())
     plt.xlabel('Time $(ms)$')
     plt.ylabel('Voltage $(mV)$')
     plt.title('Activation Time/Voltage relation')
@@ -194,10 +200,10 @@ def make_act_plots(new_params, param_values_wt = wt_params):
     set_param(new_params)
     mut_act = ggsd.Activation(channel_name = 'na16')
     mut_act.genActivation()
-    mut_act.plotActivation_TimeVRelation_plt(plt, 'red')
+    mut_act.plotActivation_TimeVRelation_plt(plt, 'blue')
 
     ############################################################################################################
-    plt.figure()
+    figures.append(plt.figure())
     plt.xlabel('Time $(ms)$')
     plt.ylabel('Current density $(mA/cm^2)$')
     plt.title('Activation Time/Current density relation')
@@ -210,7 +216,12 @@ def make_act_plots(new_params, param_values_wt = wt_params):
     set_param(new_params)
     mut_act = ggsd.Activation(channel_name = 'na16')
     mut_act.genActivation()
-    mut_act.plotActivation_TCurrDensityRelation_plt(plt, 'red')
+    mut_act.plotActivation_TCurrDensityRelation_plt(plt, 'blue')
+    
+    
+    for fig in figures: ## will open an empty extra figure :(
+        pdf.savefig( fig )
+    pdf.close()
 
     ############################################################################################################
     goal_dict = read_mutant_protocols('mutant_protocols.csv', 'NA16_MUT')
@@ -219,11 +230,15 @@ def make_act_plots(new_params, param_values_wt = wt_params):
     print("activation slope: " + str((act_slope_mut/act_slope_wt , goal_dict['gv_slope']/100)))
 
 
-def make_inact_plots(new_params, param_values_wt = wt_params):
+def make_inact_plots(new_params, param_values_wt = wt_params, filename = 'jinan_plots_out.pdf'):
+    
+    
+    pdf = matplotlib.backends.backend_pdf.PdfPages(filename)
+    figures = []
     
     ############################################################################################################
 
-    plt.figure()
+    figures.append(plt.figure())
     plt.xlabel('Voltage $(mV)$')
     plt.ylabel('Normalized current')
     plt.title('Inactivation: Voltage/Normalized Current Relation')
@@ -236,11 +251,11 @@ def make_inact_plots(new_params, param_values_wt = wt_params):
     set_param(new_params)
     mut_inact = ggsd.Inactivation(channel_name = 'na16')
     mut_inact.genInactivation()
-    inact_v_half_mut, inact_slope_mut =  mut_inact.plotInactivation_VInormRelation_plt(plt, 'red')
+    inact_v_half_mut, inact_slope_mut =  mut_inact.plotInactivation_VInormRelation_plt(plt, 'blue')
 
 
     ############################################################################################################
-    plt.figure()
+    figures.append(plt.figure())
     plt.xlabel('Time $(ms)$')
     plt.ylabel('Voltage $(mV)$')
     plt.title('Inactivation Time/Voltage relation')
@@ -253,10 +268,10 @@ def make_inact_plots(new_params, param_values_wt = wt_params):
     set_param(new_params)
     mut_inact = ggsd.Inactivation(channel_name = 'na16')
     mut_inact.genInactivation()
-    mut_inact.plotInactivation_TimeVRelation_plt(plt, 'red')
+    mut_inact.plotInactivation_TimeVRelation_plt(plt, 'blue')
 
     ############################################################################################################
-    plt.figure()
+    figures.append(plt.figure())
     plt.xlabel('Time $(ms)$')
     plt.ylabel('Voltage $(mV)$')
     plt.title('Inactivation Time/Voltage relation')
@@ -269,10 +284,10 @@ def make_inact_plots(new_params, param_values_wt = wt_params):
     set_param(new_params)
     mut_inact = ggsd.Inactivation(channel_name = 'na16')
     mut_inact.genInactivation()
-    mut_inact.plotInactivation_TCurrDensityRelation(plt, 'red')
+    mut_inact.plotInactivation_TCurrDensityRelation(plt, 'blue')
 
     ############################################################################################################
-    plt.figure()
+    figures.append(plt.figure())
     plt.xlabel('Time $(ms)$')
     plt.ylabel('Current density $(mA/cm^2)$')
     plt.title('Inactivation Tau at 0 mV')
@@ -281,17 +296,24 @@ def make_inact_plots(new_params, param_values_wt = wt_params):
     wt_inact = ggsd.Inactivation(channel_name = 'na16')
     wt_inact.genInactivation()
     wt_tau = wt_inact.plotInactivation_Tau_0mV_plt(plt, 'black')
+    wt_per_cur = find_persistent_current()
 
     set_param(new_params)
     mut_inact = ggsd.Inactivation(channel_name = 'na16')
     mut_inact.genInactivation()
-    mut_tau = mut_inact.plotInactivation_Tau_0mV_plt(plt, 'red')
+    mut_tau = mut_inact.plotInactivation_Tau_0mV_plt(plt, 'blue')
+    mut_per_cur = find_persistent_current()
+    
+    for fig in figures: ## will open an empty extra figure :(
+        pdf.savefig( fig )
+    pdf.close()
 
     goal_dict = read_mutant_protocols('mutant_protocols.csv', 'NA16_MUT')
     print("(actual, goal)")
     print("inactivation v half: " + str((inact_v_half_mut - inact_v_half_wt , goal_dict['dv_half_ssi'])))
     print("inactivation slope: " + str((inact_slope_mut/inact_slope_wt , goal_dict['ssi_slope']/100)))
     print("tau: " + str((mut_tau/wt_tau , goal_dict['tau0']/100)))
+    print("persistent current: " + str((mut_per_cur/wt_per_cur, goal_dict['persistent']/100)))
 
 
 def get_param_list_in_str():
@@ -528,4 +550,49 @@ def find_tau0(upper = 700, make_plot = False, color = 'red'):
         plt.show()
     
     tau = popt[2]
+    
+    # to account for the second and millisecond difference, we multiply tau by 1000 for now
+    tau = 1000 * tau
     return tau
+
+def find_persistent_current():
+    
+    ramp = ggsd.Ramp(channel_name = 'na16')
+    ramp.genRamp()
+    return ramp.persistentCurrent()
+
+def make_params_dict(param_values):
+    '''
+    Make a dictionary of 24 parameters out of the raw values
+    in PARAMS_LIST.
+    ---
+    params_list: list of raw parameter values, unscaled to be between 0 and 1
+    '''
+    params_dict = {
+        'sh_na16' : param_values[0],
+        'tha_na16' : param_values[1],
+        'qa_na16' : param_values[2],
+        'Ra_na16' : param_values[3],
+        'Rb_na16' : param_values[4],
+        'thi1_na16' : param_values[5],
+        'thi2_na16' : param_values[6],
+        'qd_na16' : param_values[7],
+        'qg_na16' : param_values[8],
+        'mmin_na16' : param_values[9],
+        'hmin_na16' : param_values[10],
+        'q10_na16' : param_values[11],
+        'Rg_na16' : param_values[12],
+        'Rd_na16' : param_values[13],
+        'thinf_na16' : param_values[14],
+        'qinf_na16' : param_values[15],
+        'vhalfs_na16' : param_values[16],
+        'a0s_na16' : param_values[17],
+        'zetas_na16' : param_values[18],
+        'gms_na16' : param_values[19],
+        'smax_na16' : param_values[20],
+        'vvh_na16' : param_values[21],
+        'vvs_na16' : param_values[22],
+        'Ena_na16' : param_values[23]
+    }
+
+    return params_dict
