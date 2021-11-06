@@ -7,18 +7,16 @@ import generalized_genSim_shorten_time_HMM as ggsdHMM
 import matplotlib.pyplot as plt
 import curve_fitting as cf
 from scipy import optimize
-<<<<<<< HEAD
 import os
-=======
 import json
->>>>>>> 47e310ce547fa335ccfde69f949168df511b6c77
 import numpy as np
 import matplotlib.backends.backend_pdf
 
 currh = ggsd.Activation(channel_name = 'na16').h
 def set_param(param_values):
-    
-
+    """
+    used to set parameters values for the NEURON model
+    """
     currh.sh_na16 = param_values[0]
     currh.tha_na16 = param_values[1]
     currh.qa_na16 = param_values[2]
@@ -33,8 +31,6 @@ def set_param(param_values):
     currh.q10_na16 = param_values[11]
     currh.Rg_na16 = param_values[12]
     currh.Rd_na16 = param_values[13]
-    #currh.qq_na16 = param_values[14]
-    #currh.tq_na16 = param_values[15]
     currh.thinf_na16 = param_values[14]
     currh.qinf_na16 = param_values[15]
     currh.vhalfs_na16 = param_values[16]
@@ -46,34 +42,6 @@ def set_param(param_values):
     currh.vvs_na16 = param_values[22]
     currh.Ena_na16 = param_values[23]
         
-    '''
-    currh.sh_na16 = param_values[0]
-    currh.tha_na16 = param_values[1]
-    currh.qa_na16 = param_values[2]
-    currh.Ra_na16 = param_values[3]
-    currh.Rb_na16 = param_values[4]
-    currh.thi1_na16 = param_values[5]
-    currh.thi2_na16 = param_values[6]
-    currh.qd_na16 = param_values[7]
-    currh.qg_na16 = param_values[8]
-    currh.mmin_na16 = param_values[9]
-    currh.hmin_na16 = param_values[10]
-    currh.q10_na16 = param_values[11]
-    currh.Rg_na16 = param_values[12]
-    currh.Rd_na16 = param_values[13]
-    currh.qq_na16 = param_values[14]
-    currh.tq_na16 = param_values[15]
-    currh.thinf_na16 = param_values[16]
-    currh.qinf_na16 = param_values[17]
-    currh.vhalfs_na16 = param_values[18]
-    currh.a0s_na16 = param_values[19]
-    currh.zetas_na16 = param_values[20]
-    currh.gms_na16 = param_values[21]
-    currh.smax_na16 = param_values[22]
-    currh.vvh_na16 = param_values[23]
-    currh.vvs_na16 = param_values[24]
-    currh.Ena_na16 = param_values[25]
-    '''
 
 def convert_dict_to_list(dict_fn):
     with open(dict_fn) as f:
@@ -87,8 +55,10 @@ def convert_dict_to_list(dict_fn):
 
 
 def get_wt_params():
-    # WT params
-
+    """
+    returns the WT NA16 parameters
+    """
+    
     param_values_wt = [8.0,
      -35.0,
      7.2,
@@ -103,8 +73,6 @@ def get_wt_params():
      2.0,
      0.01,
      0.03,
-     #10.0,
-     #-55.0,
      -55.0,
      7.0,
      -60.0,
@@ -116,8 +84,7 @@ def get_wt_params():
      2.0,
      55.0]
     
-    assert len(param_values_wt) == 24, 'This does not make sense'
-    
+    assert len(param_values_wt) == 24, 'length is wrong'
     return param_values_wt
 
 scale_voltage = 30
@@ -126,16 +93,25 @@ wt_params = get_wt_params()
 
 
 def get_currh_params_str():
+    """
+    returns a list of all parameters (in full "currh.***_na16" format) of the NEURON model, in a string format
+    """
     param_list_str = ['currh.sh_na16', 'currh.tha_na16', 'currh.qa_na16', 'currh.Ra_na16', 'currh.Rb_na16', 'currh.thi1_na16', 'currh.thi2_na16', 'currh.qd_na16', 'currh.qg_na16', 'currh.mmin_na16', 'currh.hmin_na16', 'currh.q10_na16', 'currh.Rg_na16', 'currh.Rd_na16', 'currh.qq_na16', 'currh.tq_na16', 'currh.thinf_na16', 'currh.qinf_na16', 'currh.vhalfs_na16', 'currh.a0s_na16', 'currh.zetas_na16', 'currh.gms_na16', 'currh.smax_na16', 'currh.vvh_na16', 'currh.vvs_na16', 'currh.Ena_na16']
     return param_list_str
 
 def get_name_params_str():
+    """
+    returns a list of all parameter names (just the parameter name) of the NEURON model, in a string format
+    """
     result = []
     for param_currh in get_currh_params_str():
         result.append(param_currh[6:-5])
     return result
 
 def get_norm_vals(new_params):
+    """
+    prints the normalized activation G-V as well as normalized inactivation I-V data
+    """
     set_param(new_params)
     
     act = ggsd.Activation(channel_name = 'na16')
@@ -151,18 +127,40 @@ def get_norm_vals(new_params):
     print(norm_act_y_val)
 
 def get_fitted_act_conductance_arr(x_array, gv_slope, act_v_half, act_top, act_bottom):
+    """
+    input:  
+        x_array: an array of X values
+        gv_slope, act_v_half, act_top, act_bottom: a set of parameters for the boltzmann equation
+    returns: 
+        an array of Y values, with each value calculated based on the given X values
+    """
     cond_arr = []
     for x in x_array:
         cond_arr.append(cf.boltzmann(x, gv_slope, act_v_half, act_top, act_bottom))
     return cond_arr
 
 def get_fitted_inact_current_arr(x_array, ssi_slope, inact_v_half, inact_top, inact_bottom):
+    """
+    input:  
+        x_array: an array of X values
+        ssi_slope, inact_v_half, inact_top, inact_bottom: a set of parameters for the boltzmann equation
+    returns: 
+        an array of Y values, with each value calculated based on the given X values
+    """
     curr_arr = []
     for x in x_array:
         curr_arr.append(cf.boltzmann(x, ssi_slope, inact_v_half, inact_top, inact_bottom))
     return curr_arr
 
 def make_act_plots(new_params, param_values_wt = wt_params, filename = 'jinan_plots_out.pdf'):
+    """
+    input:  
+        new_params: a set of variant parameters 
+        param_values_wt: WT parameters. Defaulted to NA 16 WT.
+        filename: name of the pdf file into which we want to store the figures
+    returns:
+        no return values, it just makes the activation plots for each set of parameters
+    """
     
     
     pdf = matplotlib.backends.backend_pdf.PdfPages(filename)
@@ -246,7 +244,14 @@ def make_act_plots(new_params, param_values_wt = wt_params, filename = 'jinan_pl
 
 
 def make_inact_plots(new_params, param_values_wt = wt_params, filename = 'jinan_plots_out.pdf'):
-    
+     """
+     input:  
+        new_params: a set of variant parameters 
+        param_values_wt: WT parameters. Defaulted to NA 16 WT.
+        filename: name of the pdf file into which we want to store the figures
+    returns:
+        no return values, it just makes the inactivation plots for each set of parameters
+    """
     
     pdf = matplotlib.backends.backend_pdf.PdfPages(filename)
     figures = []
@@ -332,6 +337,9 @@ def make_inact_plots(new_params, param_values_wt = wt_params, filename = 'jinan_
 
 
 def get_param_list_in_str():
+    """
+    returns a list of all parameters (in full "currh.***_na16" format) of the NEURON model, in a string format
+    """
     l1 = "[currh.sh_na16, currh.tha_na16, currh.qa_na16, currh.Ra_na16, currh.Rb_na16, currh.thi1_na16, currh.thi2_na16,"
     l2 = " currh.qd_na16, currh.qg_na16, currh.mmin_na16, currh.hmin_na16, currh.q10_na16, currh.Rg_na16, currh.Rd_na16,"
     l3 = " currh.qq_na16, currh.tq_na16, currh.thinf_na16, currh.qinf_na16, currh.vhalfs_na16, currh.a0s_na16,"
@@ -374,6 +382,9 @@ def read_mutant_protocols(mutant_protocols_csv, mutant):
 
 
 def read_params_range(param_range_csv):
+    """
+    returns a dictionary mapping parameter names to its (val, min, max)
+    """
     
     with open(param_range_csv, 'r') as csv_file:
         lines = [line.split(",") for line in csv_file]
@@ -549,6 +560,9 @@ def change_params_dict(new_params):
     return
 
 def find_tau0(upper = 700, make_plot = False, color = 'red'):
+    """
+    returns the tau 0 value, gieven that the NEURON model already has parameters properly set
+    """
     def fit_expon(x, a, b, c):
         return a + b * np.exp(-1 * c * x)
     act = ggsd.Activation(channel_name = 'na16')
@@ -565,13 +579,15 @@ def find_tau0(upper = 700, make_plot = False, color = 'red'):
         plt.show()
     
     tau = popt[2]
-<<<<<<< HEAD
     
     # to account for the second and millisecond difference, we multiply tau by 1000 for now
     tau = 1000 * tau
     return tau
 
 def find_persistent_current():
+    """
+    returns the persistent current, gieven that the NEURON model already has parameters properly set
+    """
     
     ramp = ggsd.Ramp(channel_name = 'na16')
     ramp.genRamp()
@@ -612,11 +628,3 @@ def make_params_dict(param_values):
     }
 
     return params_dict
-=======
-    return tau
-
-
-param_list = convert_dict_to_list('./Tel_Aviv_folder/NeuronModel/Na16_G1625R/params/na16_mutv1.txt')
-make_inact_plots(param_list)
-make_act_plots(param_list)
->>>>>>> 47e310ce547fa335ccfde69f949168df511b6c77
