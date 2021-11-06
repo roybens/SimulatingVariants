@@ -356,6 +356,74 @@ class Activation:
         self.plotActivation_TCurrDensityRelation()
         #self.plotActivation_allTraces()
 
+    def plotAllActivation_with_ax(self, fig_title,
+                                  figsize=(18, 9), color='black',
+                                  saveAsFileName=None, loadFileName=None, saveAsPNGFileName=None):
+        """
+        Creates new ax if loadFileName is not a valid string. Plots all.
+
+        color = 'red' if cur_params == "variant_params" else 'black'
+        color = red if HMM else black
+        """
+        if loadFileName:
+            # read pkl file
+            with open(loadFileName, 'rb') as fid:
+                ax = pickle.load(fid)
+        else:
+            fig, ax = plt.subplots(nrows=2, ncols=2, figsize=figsize)
+            fig.suptitle(fig_title, fontsize=15, fontweight='bold')
+            fig.subplots_adjust(wspace=0.5)
+            fig.subplots_adjust(hspace=0.5)
+
+        y_offset = -0.2 if color == "red" else 0
+        x_offset = 0
+        label = 'HH' if color == 'black' else 'HMM'
+
+        # upper left
+        ax[0, 0].set_xlabel('Voltage $(mV)$')
+        ax[0, 0].set_ylabel('Normalized conductance')
+        ax[0, 0].set_title('Activation: Voltage/Normalized conductance')
+        ax[0, 0].plot(self.v_vec, self.gnorm_vec, 'o', c=color)
+        gv_slope, v_half, top, bottom = cf.calc_act_obj(self.channel_name)
+        formatted_gv_slope = np.round(gv_slope, decimals=2)
+        formatted_v_half = np.round(v_half, decimals=2)
+        ax[0, 0].text(-10 + x_offset, 0.5 + y_offset, f'Slope: {formatted_gv_slope}', color=color)
+        ax[0, 0].text(-10 + x_offset, 0.4 + y_offset, f'V50: {formatted_v_half}', color=color)
+        x_values_v = np.arange(self.st_cl, self.end_cl, 1)
+        curve = cf.boltzmann(x_values_v, gv_slope, v_half, top, bottom)
+        ax[0, 0].plot(x_values_v, curve, c=color, label=label)
+        ax[0, 0].legend(loc='upper left')
+
+        # lower left
+        ax[1, 0].set_xlabel('Voltage $(mV)$')
+        ax[1, 0].set_ylabel('Peak Current')
+        ax[1, 0].set_title("Activation: IV Curve")
+        ax[1, 0].plot(self.v_vec, self.ipeak_vec, 'o', c=color)
+        formatted_vRev = round(self.vrev, 1)
+        ax[1, 0].text(-110 + x_offset, -0.3 + y_offset, f'Vrev at {formatted_vRev} mV', c=color)  # TODO fix pos...
+        formatted_peak_i = np.round(min(self.ipeak_vec), decimals=2)
+        ax[1, 0].text(-110 + x_offset, -0.33 + y_offset, f'Peak Current from IV: {formatted_peak_i} mV', c=color)
+
+        # upper right
+        ax[0, 1].set_xlabel('Time $(ms)$')
+        ax[0, 1].set_ylabel('Voltage $(mV)$')
+        ax[0, 1].set_title('Activation Time/Voltage relation')
+        [ax[0, 1].plot(self.t_vec, self.all_v_vec_t[i], c=color) for i in np.arange(self.L)]
+
+        # lower right
+        ax[1, 1].set_xlabel('Time $(ms)$')
+        ax[1, 1].set_ylabel('Current density $(mA/cm^2)$')
+        ax[1, 1].set_title('Activation Time/Current density relation')
+        curr = np.array(self.all_is)
+        [ax[1, 1].plot(self.t_vec[1:], curr[i], c=color) for i in np.arange(len(curr))]
+
+        if saveAsFileName:
+            with open(saveAsFileName, 'wb') as fid:
+                pickle.dump(ax, fid)
+        if saveAsPNGFileName:
+            plt.savefig(
+                os.path.join(os.path.split(__file__)[0], saveAsPNGFileName))
+
 
 ##################
 # Inactivation
@@ -715,6 +783,91 @@ class Inactivation:
         self.plotInactivation_TimeVRelation()
         self.plotInactivation_TCurrDensityRelation()
         self.plotInactivation_Tau_0mV()
+
+    def plotAllInactivation_with_ax(self, fig_title,
+                                    figsize=(18, 9), color='black',
+                                    saveAsFileName=None, loadFileName=None, saveAsPNGFileName=None):
+        """
+        Creates new ax if loadFileName is not a valid string. Plots all.
+
+        color = red if HMM else black
+        """
+        if loadFileName:
+            # read pkl file
+            with open(loadFileName, 'rb') as fid:
+                ax = pickle.load(fid)
+        else:
+            fig, ax = plt.subplots(nrows=2, ncols=2, figsize=figsize)
+            fig.suptitle(fig_title, fontsize=15, fontweight='bold')
+            fig.subplots_adjust(wspace=0.5)
+            fig.subplots_adjust(hspace=0.5)
+
+        y_offset = -0.2 if color == "red" else 0
+        label = 'HH' if color == 'black' else 'HMM'
+
+        # upper left
+        if color == 'red':  # only plot the red curve. Use it to extrapolate the black curve
+            ax[0, 0].set_xlabel('Voltage $(mV)$')
+            ax[0, 0].set_ylabel('Normalized current')
+            ax[0, 0].set_title('Inactivation: Voltage/Normalized Current Relation')
+
+            inorm_array = np.array(self.inorm_vec)
+            v_array = np.array(self.v_vec)
+            ssi_slope, v_half, top, bottom, tau0 = cf.calc_inact_obj(self.channel_name)
+            even_xs = np.linspace(v_array[0], v_array[len(v_array) - 1], 100)
+            curve = cf.boltzmann(even_xs, ssi_slope, v_half, top, bottom)
+
+            ax[0, 0].scatter(v_array, inorm_array, color='red', marker='s')
+            ax[0, 0].plot(even_xs, curve, color='red', label="Fitted Inactivation")
+
+            # TODO: mutant is a dummy value now. need a csv file for the specific name of the mutant
+            mutant = 'Y816F'
+            protocols = eh.read_mutant_protocols('mutant_protocols.csv', mutant)
+            ssi_slope_exp = ssi_slope * float(protocols['ssi_slope']) / 100
+            v_half_ssi_exp = v_half + float(protocols['dv_half_ssi'])
+            curve_exp = cf.boltzmann(even_xs, ssi_slope_exp, v_half_ssi_exp, 0, 1)
+
+            formatted_ssi_slope = np.round(ssi_slope, decimals=2)
+            formatted_ssi_slope_exp = np.round(ssi_slope_exp, decimals=2)
+            ax[0, 0].plot(even_xs, curve_exp, color='black', label='Inactivation experimental')
+            ax[0, 0].text(-25, 0.5, 'Slope (Optimized): ' + str(formatted_ssi_slope) + ' /mV', c='red')
+            ax[0, 0].text(-25, 0.4, 'Slope (Experimental): ' + str(formatted_ssi_slope_exp) + ' /mV', c='black')
+
+        # lower left
+        ax[1, 0].set_xlabel('Time $(ms)$')
+        ax[1, 0].set_ylabel('Current density $(mA/cm^2)$')
+        ax[1, 0].set_title('Inactivation Tau at 0 mV')
+        # select 0 mV
+        volt = 0  # mV
+        mask = np.where(self.v_vec == volt)[0]
+        curr = np.array(self.all_is)[mask][0]
+        time = np.array(self.t_vec)[1:]
+        # fit exp: IFit(t) = A * exp (-t/τ) + C
+        ts, data, xs, ys, tau = self.find_tau0_inact(curr)
+        # plot
+        ax[1, 0].plot(ts, data, color=color)
+        ax[1, 0].plot(xs, ys, color=color)
+        formatted_tau = np.round(tau, decimals=3)
+        ax[1, 0].text(0.2, -0.01 + y_offset, f"Tau at 0 mV: {formatted_tau}", color=color)
+
+        # upper right
+        ax[0, 1].set_xlabel('Time $(ms)$')
+        ax[0, 1].set_ylabel('Current density $(mA/cm^2)$')
+        ax[0, 1].set_title('Inactivation Time/Current density relation')
+        [ax[0, 1].plot(self.t_vec[1:], self.all_is[i], c=color) for i in np.arange(self.L)]
+
+        # lower right
+        ax[1, 1].set_xlabel('Time $(ms)$')
+        ax[1, 1].set_ylabel('Voltage $(mV)$')
+        ax[1, 1].set_title('Inactivation Time/Voltage relation')
+        [ax[1, 1].plot(self.t_vec, self.all_v_vec_t[i], c=color) for i in np.arange(self.L)]
+
+        if saveAsFileName:
+            with open(saveAsFileName, 'wb') as fid:
+                pickle.dump(ax, fid)
+        if saveAsPNGFileName:
+            plt.savefig(
+                os.path.join(os.path.split(__file__)[0], saveAsPNGFileName))
 
 
 ##################
