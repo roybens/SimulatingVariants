@@ -1,0 +1,9 @@
+
+./na16.c: ../na16.mod
+	@printf " -> $(C_GREEN)NMODL$(C_RESET) $<\n"
+	(cd ".."; MODLUNIT=$(NRNUNITS) $(NOCMODL) na16.mod -o "/Users/jinanjiang/Documents/tempppp/SimulatingVariants/x86_64")
+
+./na16.o: ./na16.c
+	@printf " -> $(C_GREEN)Compiling$(C_RESET) $<\n"
+	$(COMPILE) -I".." $(INCLUDES) -fPIC -c $< -o $@
+
