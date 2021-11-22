@@ -45,7 +45,7 @@ if not os.path.exists(final_directory):
 ##################
 class Activation:
     def __init__(self, soma_diam=50, soma_L=63.66198, soma_nseg=1, soma_cm=1, soma_Ra=70,
-                 channel_name='na16', soma_ena=55, h_celsius=33, v_init=-120, h_dt=0.025, ntrials=range(30),
+                 channel_name='na12', soma_ena=55, h_celsius=33, v_init=-120, h_dt=0.025, ntrials=range(30),
                  dur=20, step=5, st_cl=-120, end_cl=40, v_cl=-120,
                  f3cl_dur0=5, f3cl_amp0=-120, f3cl_dur2=5, f3cl_amp2=-120,
                  ):
@@ -628,7 +628,7 @@ class Inactivation:
             
         def fit_expon(x, a, b, c):
             return a + b * np.exp(-1 * c * x)
-        act = ggsd.Activation(channel_name = 'na16')
+        act = ggsd.Activation(channel_name = 'na12')
         act.clamp_at_volt(0)
         starting_index = list(act.i_vec).index(act.find_ipeaks_with_index()[1])
 
@@ -1076,7 +1076,7 @@ class Ramp:
         v_vec_t_ramp = self.v_vec_t[maskStart:maskEnd]
         # plt.plot(self.t_vec[maskStart:maskEnd], self.v_vec[maskStart:maskEnd], color= 'b') # uncomment to view area taken
         area = trapz(i_vec_ramp, x=v_vec_t_ramp)  # find area
-        act = Activation(channel_name='na16')
+        act = Activation(channel_name='na12')
         act.genActivation()
         area = area / min(act.ipeak_vec)  # normalize to peak currents from activation
         return area
