@@ -54,9 +54,9 @@ def convert_dict_to_list(dict_fn):
     return tmp_list
 
 
-def get_wt_params():
+def get_wt_params_na16():
     """
-    returns the WT na12 parameters
+    returns the WT na16 parameters
     """
     
     param_values_wt = [8.0,
@@ -87,9 +87,42 @@ def get_wt_params():
     assert len(param_values_wt) == 24, 'length is wrong'
     return param_values_wt
 
+def get_wt_params_na12():
+    """
+    returns the WT na12 parameters
+    """
+    
+    param_values_wt = [8.0,
+     -28.76,
+     5.41,
+     0.3282,
+     0.1,
+     -37.651,
+     -30.0,
+     0.5,
+     1.5,
+     0.02,
+     0.01,
+     2.0,
+     0.01,
+     0.02657,
+     -48.4785,
+     7.69,
+     -60.0,
+     0.0003,
+     12.0,
+     0.2,
+     10.0,
+     -58.0,
+     2.0,
+     55.0]
+    
+    assert len(param_values_wt) == 24, 'length is wrong'
+    return param_values_wt
+
 scale_voltage = 30
 scale_fact = 7.5
-wt_params = get_wt_params()
+wt_params = get_wt_params_na12()
 
 
 def get_currh_params_str():
