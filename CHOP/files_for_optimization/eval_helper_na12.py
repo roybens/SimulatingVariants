@@ -120,6 +120,16 @@ def get_wt_params_na12():
     assert len(param_values_wt) == 24, 'length is wrong'
     return param_values_wt
 
+def get_wt_params_adultWT():
+    """
+    returns the WT na12 parameters
+    """
+    
+    param_values_wt = [35.336491999433214, -62.922265018227336, 6.653227770670037, 1.6085194858985032, 1.9610096541498063, -25.131096837653246, -32.726622036137094, 7.4088907890561, 6.087139449301829, 0.04977262720771908, 0.34972666166850597, 8.285176002785123, 0.012852797938524651, 0.02881186435129404, -48.48440841793984, 7.760131602919982, -34.078061414435986, 0.08584137995548408, 79.9573778064748, 1.2622891269923364, 72.38254906735173, -72.65001663340412, 40.10652134477391, 49.56803729217332]
+    
+    assert len(param_values_wt) == 24, 'length is wrong'
+    return param_values_wt
+
 scale_voltage = 30
 scale_fact = 7.5
 wt_params = get_wt_params_na12()
@@ -185,7 +195,7 @@ def get_fitted_inact_current_arr(x_array, ssi_slope, inact_v_half, inact_top, in
         curr_arr.append(cf.boltzmann(x, ssi_slope, inact_v_half, inact_top, inact_bottom))
     return curr_arr
 
-def make_act_plots(new_params, param_values_wt = wt_params, filename = 'jinan_plots_out.pdf'):
+def make_act_plots(new_params, mutant_name, mutant_protocol_csv_name, param_values_wt = wt_params, filename = 'jinan_plots_out.pdf'):
     """
     input:  
         new_params: a set of variant parameters 
@@ -270,13 +280,13 @@ def make_act_plots(new_params, param_values_wt = wt_params, filename = 'jinan_pl
     pdf.close()
 
     ############################################################################################################
-    goal_dict = read_mutant_protocols('./csv_files/mutant_protocols.csv', 'na12_MUT')
+    goal_dict = read_mutant_protocols(mutant_protocol_csv_name, mutant_name)
     print("(actual, goal)")
     print("activation v half: " + str((act_v_half_mut - act_v_half_wt , goal_dict['dv_half_act'])))
     print("activation slope: " + str((act_slope_mut/act_slope_wt , goal_dict['gv_slope']/100)))
 
 
-def make_inact_plots(new_params, param_values_wt = wt_params, filename = 'jinan_plots_out.pdf'):
+def make_inact_plots(new_params, mutant_name, mutant_protocol_csv_name, param_values_wt = wt_params, filename = 'jinan_plots_out.pdf'):
     """
      input:  
         new_params: a set of variant parameters 
@@ -361,7 +371,7 @@ def make_inact_plots(new_params, param_values_wt = wt_params, filename = 'jinan_
         pdf.savefig( fig )
     pdf.close()
 
-    goal_dict = read_mutant_protocols('./csv_files/mutant_protocols.csv', 'na12_MUT')
+    goal_dict = read_mutant_protocols(mutant_protocol_csv_name, mutant_name)
     print("(actual, goal)")
     print("inactivation v half: " + str((inact_v_half_mut - inact_v_half_wt , goal_dict['dv_half_ssi'])))
     print("inactivation slope: " + str((inact_slope_mut/inact_slope_wt , goal_dict['ssi_slope']/100)))
