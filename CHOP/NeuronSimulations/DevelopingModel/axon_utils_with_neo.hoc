@@ -24,8 +24,8 @@ proc initial_values(){
 	gpas_all = 3e-5
 	cm_all = 1
 	
-	A_factor = 0.6
-	N_factor = 0.4
+	A_factor = 0.5
+	N_factor = 0.5
 	Mut_factor = 0.5
 	WT_factor = 0.5
 }
@@ -277,6 +277,15 @@ access cell.soma
 
 }
 
+proc update_soma_na_young(){
+access cell.soma
+	gbar_na16 = 0
+	gNaTs2_tbar_NaTs2_t = 0
+	gbar_na12A = soma_na16AWT
+	gbar_na12A_Mut = soma_na16AMut
+	gbar_na12N = soma_na16NWT
+	gbar_na12N_Mut = soma_na16NMut
+}
 
 
 
@@ -294,49 +303,21 @@ forsec cell.apical{
 	}
 
 }
-/*
 
-
-
-
-
-
-
-proc update_soma_na_young(){
-access cell.soma
-insert na1216
-insert na1216mut
-gbar_na16 = 0
-vShift_na = navshift
-	gbar_na12 = soma_na12/2 
-	gbar_na12mut = soma_na12/2 
-	gbar_na1216 = soma_na16/2
-	gbar_na1216mut = soma_na16/2
-	gNaTs2_tbar_NaTs2_t = 0
-
-}
 proc update_dend_na_young(){
 forsec cell.apical{
-	insert na1216
-	insert na1216mut
-	gbar_na12 = dend_na12/2 
 	gbar_na16 = 0
-	gbar_na12mut = dend_na12/2 
 	gNaTs2_tbar_NaTs2_t = 0
-	gbar_na1216 = dend_na16/2
-	gbar_na1216mut = dend_na16/2
+	gbar_na12A = dend_na16AWT
+	gbar_na12A_Mut = dend_na16AMut
+	gbar_na12N = dend_na16NWT
+	gbar_na12N_Mut = dend_na16NMut
+	
 	
 	}
-}
-proc working_young(){
-	populate_axon_young()
-	create_ais_young()
-	update_soma_na_young()
-	update_dend_na_young()
-
 
 }
-*/
+
 
 
 proc working(){
@@ -345,6 +326,15 @@ proc working(){
 	create_ais()
 	update_soma_na()
 	update_dend_na()
+
+}
+
+proc working_young(){
+	update_Nas_for_young()
+	populate_axon_young()
+	create_ais_young()
+	update_soma_na_young()
+	update_dend_na_young()
 
 }
 
@@ -368,5 +358,5 @@ access cell.axon[0]
 	L=90
 		
 access cell.soma
-working()
+//working()
 

@@ -69,7 +69,7 @@ def init_settings(nav12=1,
     h.dend_na16 = h.dend_na16 * nav16 * dend_nav16
     h.soma_na16 = h.soma_na16 * nav16 * soma_nav16
     h.ais_na16 = h.ais_na16 * nav16 * ais_nav16
-    h.working()
+    h.working_young()
 
 def update_na16(dict_fn):
     with open(dict_fn) as f:
@@ -123,7 +123,7 @@ def get_fi_curve(s_amp,e_amp,nruns,wt_data=None,ax1=None):
     plt.show()
     
 def run_model(start_Vm = -72):
-    h.working()
+    h.working_young()
     h.finitialize(start_Vm)
     timesteps = int(h.tstop/h.dt)
     
@@ -147,13 +147,13 @@ def run_model(start_Vm = -72):
     return Vm, I, t,stim
 fig,ficurveax = plt.subplots(1,1)
 init_settings()
-init_stim(amp=0.2)
+init_stim(amp=0.75)
 Vm, I, t, stim = run_model()
 plot_stim_volts_pair(Vm, 'Step Stim 200pA', file_path_to_save='./Plots/WT_200pA',times=t)
-init_stim(amp=0.5)
+init_stim(amp=1.25)
 Vm, I, t, stim = run_model()
 plot_stim_volts_pair(Vm, 'Step Stim 500pA', file_path_to_save='./Plots/WT_500pA',times=t)
-wtnpeaks = get_fi_curve(0.05, 0.55, 11,ax1=ficurveax)
+wtnpeaks = get_fi_curve(0.75, 1.25, 11,ax1=ficurveax)
 
 
 # update_na16('./params/na16_mutv1.txt')
