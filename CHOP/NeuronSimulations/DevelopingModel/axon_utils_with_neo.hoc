@@ -45,6 +45,7 @@ proc update_Nas(){
 	ais_na12NWT = ais_na12N*WT_factor
 	ais_na12NMut = ais_na12N*Mut_factor
 	
+	
 	dend_na12A = dend_na12*A_factor
 	dend_na12N = dend_na12*N_factor
 	dend_na12AWT = dend_na12A*WT_factor
@@ -72,34 +73,6 @@ proc populate_axon(){
 			cm(0.1:1) = cm_all:cm_all
 			gbar_na16(0:0.1) = node_na:node_na
 			gbar_na16(0.1:1) = myelin_na:myelin_na
-			gSKv3_1bar_SKv3_1(0:0.1) = axon_K:axon_K
-			gSKv3_1bar_SKv3_1(0.1:1) = myelin_K:myelin_K
-			gK_Pstbar_K_Pst(0:0.1) = axon_KP:axon_KP
-			gK_Pstbar_K_Pst(0.1:1) = axon_KP/10:axon_KP/10
-			gK_Tstbar_K_Tst(0:0.1) = axon_KT:axon_KT
-			gK_Tstbar_K_Tst(0.1:1) = axon_KT/10:axon_KT/10	
-		}
-}
-proc populate_axon_young(){
-	forsec cell.axonal{ 	
-			insert na1216
-			insert na1216mut
-			gNaTa_tbar_NaTa_t = 0
-			gNap_Et2bar_Nap_Et2 = 0
-			gCa_HVAbar_Ca_HVA = 0 
-			gSK_E2bar_SK_E2 = 0
-			gbar_na1216 = 0
-			gbar_na1216mut = 0
-			
-			nseg=11
-			g_pas(0:0.1) = (gpas_all/myelin_scale):(gpas_all/myelin_scale)
-			g_pas(0.1:1) = gpas_all:gpas_all
-			cm(0:0.1) = (cm_all/myelin_scale):(cm_all/myelin_scale)
-			cm(0.1:1) = cm_all:cm_all
-			gbar_na1216mut(0:0.1) = node_na/2:node_na/2
-			gbar_na1216(0:0.1) = node_na/2:node_na/2
-			gbar_na1216(0.1:1) = myelin_na/2:myelin_na/2
-			gbar_na1216mut(0.1:1) = myelin_na/2:myelin_na/2
 			gSKv3_1bar_SKv3_1(0:0.1) = axon_K:axon_K
 			gSKv3_1bar_SKv3_1(0.1:1) = myelin_K:myelin_K
 			gK_Pstbar_K_Pst(0:0.1) = axon_KP:axon_KP
@@ -158,6 +131,36 @@ access cell.axon[0]
 	
 access cell.soma
 }
+
+proc update_soma_na(){
+access cell.soma
+	gbar_na12A = soma_na12AWT
+	gbar_na12A_Mut = soma_na12AMut
+	gbar_na12N = soma_na12NWT
+	gbar_na12N_Mut = soma_na12NMut
+	gbar_na16 = soma_na16
+	gNaTs2_tbar_NaTs2_t = 0
+
+}
+
+
+
+
+proc update_dend_na(){
+forsec cell.apical{
+	
+	gbar_na12A = dend_na12AWT
+	gbar_na12A_Mut = dend_na12AMut
+	gbar_na12N = dend_na12NWT
+	gbar_na12N_Mut = dend_na12NMut
+	gbar_na16 = dend_na16
+	gNaTs2_tbar_NaTs2_t = 0
+	
+	
+	}
+
+}
+/*
 proc create_ais_young(){
 access cell.axon[0]
 gbar_na16 = 0
@@ -196,17 +199,36 @@ gbar_na16 = 0
 access cell.soma
 }
 
-
-proc update_soma_na(){
-access cell.soma
-	gbar_na12A = soma_na12AWT
-	gbar_na12A_Mut = soma_na12AMut
-	gbar_na12N = soma_na12NWT
-	gbar_na12N_Mut = soma_na12NMut
-	gbar_na16 = soma_na16
-	gNaTs2_tbar_NaTs2_t = 0
-
+proc populate_axon_young(){
+	forsec cell.axonal{ 	
+			insert na1216
+			insert na1216mut
+			gNaTa_tbar_NaTa_t = 0
+			gNap_Et2bar_Nap_Et2 = 0
+			gCa_HVAbar_Ca_HVA = 0 
+			gSK_E2bar_SK_E2 = 0
+			gbar_na1216 = 0
+			gbar_na1216mut = 0
+			
+			nseg=11
+			g_pas(0:0.1) = (gpas_all/myelin_scale):(gpas_all/myelin_scale)
+			g_pas(0.1:1) = gpas_all:gpas_all
+			cm(0:0.1) = (cm_all/myelin_scale):(cm_all/myelin_scale)
+			cm(0.1:1) = cm_all:cm_all
+			gbar_na1216mut(0:0.1) = node_na/2:node_na/2
+			gbar_na1216(0:0.1) = node_na/2:node_na/2
+			gbar_na1216(0.1:1) = myelin_na/2:myelin_na/2
+			gbar_na1216mut(0.1:1) = myelin_na/2:myelin_na/2
+			gSKv3_1bar_SKv3_1(0:0.1) = axon_K:axon_K
+			gSKv3_1bar_SKv3_1(0.1:1) = myelin_K:myelin_K
+			gK_Pstbar_K_Pst(0:0.1) = axon_KP:axon_KP
+			gK_Pstbar_K_Pst(0.1:1) = axon_KP/10:axon_KP/10
+			gK_Tstbar_K_Tst(0:0.1) = axon_KT:axon_KT
+			gK_Tstbar_K_Tst(0.1:1) = axon_KT/10:axon_KT/10	
+		}
 }
+
+
 proc update_soma_na_young(){
 access cell.soma
 insert na1216
@@ -218,20 +240,6 @@ vShift_na = navshift
 	gbar_na1216 = soma_na16/2
 	gbar_na1216mut = soma_na16/2
 	gNaTs2_tbar_NaTs2_t = 0
-
-}
-proc update_dend_na(){
-forsec cell.apical{
-	
-	gbar_na12A = dend_na12AWT
-	gbar_na12A_Mut = dend_na12AMut
-	gbar_na12N = dend_na12NWT
-	gbar_na12N_Mut = dend_na12NMut
-	gbar_na16 = dend_na16
-	gNaTs2_tbar_NaTs2_t = 0
-	
-	
-	}
 
 }
 proc update_dend_na_young(){
@@ -247,15 +255,6 @@ forsec cell.apical{
 	
 	}
 }
-
-
-proc working(){
-	populate_axon()
-	create_ais()
-	update_soma_na()
-	update_dend_na()
-
-}
 proc working_young(){
 	populate_axon_young()
 	create_ais_young()
@@ -264,6 +263,18 @@ proc working_young(){
 
 
 }
+*/
+
+
+proc working(){
+	update_Nas()
+	populate_axon()
+	create_ais()
+	update_soma_na()
+	update_dend_na()
+
+}
+
 proc run_gui(){
 		
 xpanel("params_values")

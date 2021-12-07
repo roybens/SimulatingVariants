@@ -156,15 +156,15 @@ plot_stim_volts_pair(Vm, 'Step Stim 500pA', file_path_to_save='./Plots/WT_500pA'
 wtnpeaks = get_fi_curve(0.05, 0.55, 11,ax1=ficurveax)
 
 
-update_na16('./params/na16_mutv1.txt')
-init_stim(amp=0.2)
-Vm, I, t, stim = run_model()
-plot_stim_volts_pair(Vm, 'Step Stim 200pA', file_path_to_save='./Plots/Mut_200pA',times=t,color_str='blue')
-init_stim(amp=0.5)
-Vm, I, t, stim = run_model()
-plot_stim_volts_pair(Vm, 'Step Stim 500pA', file_path_to_save='./Plots/Mut_500pA',times=t,color_str='blue')
-get_fi_curve(0.05, 0.55, 11,wt_data=wtnpeaks,ax1=ficurveax)
-fig.savefig('./Plots/FI_curves.pdf')
+# update_na16('./params/na16_mutv1.txt')
+# init_stim(amp=0.2)
+# Vm, I, t, stim = run_model()
+# plot_stim_volts_pair(Vm, 'Step Stim 200pA', file_path_to_save='./Plots/Mut_200pA',times=t,color_str='blue')
+# init_stim(amp=0.5)
+# Vm, I, t, stim = run_model()
+# plot_stim_volts_pair(Vm, 'Step Stim 500pA', file_path_to_save='./Plots/Mut_500pA',times=t,color_str='blue')
+# get_fi_curve(0.05, 0.55, 11,wt_data=wtnpeaks,ax1=ficurveax)
+# fig.savefig('./Plots/FI_curves.pdf')
 
 
 

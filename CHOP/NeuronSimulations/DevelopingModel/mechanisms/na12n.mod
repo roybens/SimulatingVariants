@@ -4,35 +4,35 @@ TITLE na3
 : added sh to account for higher threshold M.Migliore, Apr.2002
 
 NEURON {
-	SUFFIX na16mut
+	SUFFIX na12N
 	USEION na READ ena WRITE ina
-	RANGE  gbar, ar2, thegna,vhalfs,sh,tha,qa,Ra,Rb,thi1,thi2,qd,qg,mmin,hmin,q10,Rg,qq,Rd,tq,thinf,qinf,vhalfs,a0s,zetas,gms,smax,vvh,vvs
-	
+	RANGE  gbar, ar2, thegna
+	GLOBAL vhalfs,sh,tha,qa,Ra,Rb,thi1,thi2,qd,qg,mmin,hmin,q10,Rg,qq,Rd,tq,thinf,qinf,vhalfs,a0s,zetas,gms,smax,vvh,vvs
 }
 
 PARAMETER {
 	sh   = 8	(mV)
 	gbar = 0.010   	(mho/cm2)	
 								
-	tha  =  -35	(mV)		: v 1/2 for act	
-	qa   = 7.2	(mV)		: act slope (4.5)		
-	Ra   = 0.4	(/ms)		: open (v)		
-	Rb   = 0.124 	(/ms)		: close (v)		
+	tha  =  -28.76	(mV)		: v 1/2 for act	
+	qa   = 5.41	(mV)		: act slope (4.5)		
+	Ra   = 0.3282 (/ms)		: open (v)		
+	Rb   = 0.1 	(/ms)		: close (v)		
 
-	thi1  = -45	(mV)		: v 1/2 for inact 	
-	thi2  = -45 	(mV)		: v 1/2 for inact 	
+	thi1  = -37.651	(mV)		: v 1/2 for inact 	
+	thi2  = -30 	(mV)		: v 1/2 for inact 	
 	qd   = 0.5	(mV)	        : inact tau slope
 	qg   = 1.5      (mV)
 	mmin=0.02	
 	hmin=0.01			
 	q10=2
 	Rg   = 0.01 	(/ms)		: inact recov (v) 	
-	Rd   = .03 	(/ms)		: inact (v)	
+	Rd   = .02657 	(/ms)		: inact (v)	
 	qq   = 10        (mV)
 	tq   = -55      (mV)
 
-	thinf  = -55 	(mV)		: inact inf slope	
-	qinf  = 7 	(mV)		: inact inf slope 
+	thinf  = -48.4785 	(mV)		: inact inf slope	
+	qinf  = 7.69	(mV)		: inact inf slope 
 
         vhalfs=-60	(mV)		: slow inact.
         a0s=0.0003	(ms)		: a0s=b0s

@@ -57,14 +57,14 @@ proc biophys() {
 		insert SKv3_1
 		insert Ih
 		insert na12A
-		insert na12Amut
+		insert na12A_Mut
 		insert na12N
-		insert na12Nmut
+		insert na12N_Mut
 		insert na16
 		gbar_na12A = 0
-		gbar_na12Amut = 0
+		gbar_na12A_Mut = 0
 		gbar_na12N = 0
-		gbar_na12Nmut = 0
+		gbar_na12N_Mut = 0
 		gbar_na16 = 0
 	}
 
@@ -77,14 +77,14 @@ proc biophys() {
 		insert NaTs2_t
 		insert CaDynamics_E2
 		insert na12A
-		insert na12Amut
+		insert na12A_Mut
 		insert na12N
-		insert na12Nmut
+		insert na12N_Mut
 		insert na16
 		gbar_na12A = 0
-		gbar_na12Amut = 0
+		gbar_na12A_Mut = 0
 		gbar_na12N = 0
-		gbar_na12Nmut = 0
+		gbar_na12N_Mut = 0
 		gbar_na16 = 0
 
 	}
@@ -100,14 +100,14 @@ proc biophys() {
 		insert Ca_LVAst
 		insert NaTa_t
 		insert na12A
-		insert na12Amut
+		insert na12A_Mut
 		insert na12N
-		insert na12Nmut
+		insert na12N_Mut
 		insert na16
 		gbar_na12A = 0
-		gbar_na12Amut = 0
+		gbar_na12A_Mut = 0
 		gbar_na12N = 0
-		gbar_na12Nmut = 0
+		gbar_na12N_Mut = 0
 		gbar_na16 = 0
 	}
 
