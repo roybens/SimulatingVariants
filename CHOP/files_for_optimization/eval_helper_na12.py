@@ -11,8 +11,11 @@ import os
 import json
 import numpy as np
 import matplotlib.backends.backend_pdf
-
-currh = ggsd.Activation(channel_name = 'na12').h
+global currh
+def set_channel(channel_suffix = 'na12'):
+    global currh
+    currh = ggsd.Activation(channel_name = channel_suffix).h
+    
 def set_param(param_values):
     """
     used to set parameters values for the NEURON model
@@ -224,7 +227,7 @@ def make_act_plots(new_params, mutant_name, mutant_protocol_csv_name, param_valu
     set_param(new_params)
     mut_act = ggsd.Activation(channel_name = 'na12')
     mut_act.genActivation()
-    act_v_half_mut, act_slope_mut = mut_act.plotActivation_VGnorm_plt(plt, 'blue')
+    act_v_half_mut, act_slope_mut = mut_act.plotActivation_VGnorm_plt(plt, 'red')
 
     ############################################################################################################
     figures.append(plt.figure())
@@ -240,23 +243,23 @@ def make_act_plots(new_params, mutant_name, mutant_protocol_csv_name, param_valu
     set_param(new_params)
     mut_act = ggsd.Activation(channel_name = 'na12')
     mut_act.genActivation()
-    mut_act.plotActivation_IVCurve_plt(plt, 'blue')
+    mut_act.plotActivation_IVCurve_plt(plt, 'red')
 
     ############################################################################################################
-    figures.append(plt.figure())
-    plt.xlabel('Time $(ms)$')
-    plt.ylabel('Voltage $(mV)$')
-    plt.title('Activation Time/Voltage relation')
+    # figures.append(plt.figure())
+    # plt.xlabel('Time $(ms)$')
+    # plt.ylabel('Voltage $(mV)$')
+    # plt.title('Activation Time/Voltage relation')
 
-    set_param(param_values_wt)
-    wt_act = ggsd.Activation(channel_name = 'na12')
-    wt_act.genActivation()
-    wt_act.plotActivation_TimeVRelation_plt(plt, 'black')
+    # set_param(param_values_wt)
+    # wt_act = ggsd.Activation(channel_name = 'na12')
+    # wt_act.genActivation()
+    # wt_act.plotActivation_TimeVRelation_plt(plt, 'black')
 
-    set_param(new_params)
-    mut_act = ggsd.Activation(channel_name = 'na12')
-    mut_act.genActivation()
-    mut_act.plotActivation_TimeVRelation_plt(plt, 'blue')
+    # set_param(new_params)
+    # mut_act = ggsd.Activation(channel_name = 'na12')
+    # mut_act.genActivation()
+    # mut_act.plotActivation_TimeVRelation_plt(plt, 'red')
 
     ############################################################################################################
     figures.append(plt.figure())
@@ -272,7 +275,7 @@ def make_act_plots(new_params, mutant_name, mutant_protocol_csv_name, param_valu
     set_param(new_params)
     mut_act = ggsd.Activation(channel_name = 'na12')
     mut_act.genActivation()
-    mut_act.plotActivation_TCurrDensityRelation_plt(plt, 'blue')
+    mut_act.plotActivation_TCurrDensityRelation_plt(plt, 'red')
     
     
     for fig in figures: ## will open an empty extra figure :(
@@ -314,40 +317,40 @@ def make_inact_plots(new_params, mutant_name, mutant_protocol_csv_name, param_va
     set_param(new_params)
     mut_inact = ggsd.Inactivation(channel_name = 'na12')
     mut_inact.genInactivation()
-    inact_v_half_mut, inact_slope_mut =  mut_inact.plotInactivation_VInormRelation_plt(plt, 'blue')
+    inact_v_half_mut, inact_slope_mut =  mut_inact.plotInactivation_VInormRelation_plt(plt, 'red')
 
 
     ############################################################################################################
-    figures.append(plt.figure())
-    plt.xlabel('Time $(ms)$')
-    plt.ylabel('Voltage $(mV)$')
-    plt.title('Inactivation Time/Voltage relation')
+    # figures.append(plt.figure())
+    # plt.xlabel('Time $(ms)$')
+    # plt.ylabel('Voltage $(mV)$')
+    # plt.title('Inactivation Time/Voltage relation')
 
-    set_param(param_values_wt)
-    wt_inact = ggsd.Inactivation(channel_name = 'na12')
-    wt_inact.genInactivation()
-    wt_inact.plotInactivation_TimeVRelation_plt(plt, 'black')
+    # set_param(param_values_wt)
+    # wt_inact = ggsd.Inactivation(channel_name = 'na12')
+    # wt_inact.genInactivation()
+    # wt_inact.plotInactivation_TimeVRelation_plt(plt, 'black')
 
-    set_param(new_params)
-    mut_inact = ggsd.Inactivation(channel_name = 'na12')
-    mut_inact.genInactivation()
-    mut_inact.plotInactivation_TimeVRelation_plt(plt, 'blue')
+    # set_param(new_params)
+    # mut_inact = ggsd.Inactivation(channel_name = 'na12')
+    # mut_inact.genInactivation()
+    # mut_inact.plotInactivation_TimeVRelation_plt(plt, 'red')
 
     ############################################################################################################
-    figures.append(plt.figure())
-    plt.xlabel('Time $(ms)$')
-    plt.ylabel('Voltage $(mV)$')
-    plt.title('Inactivation Time/Voltage relation')
+    # figures.append(plt.figure())
+    # plt.xlabel('Time $(ms)$')
+    # plt.ylabel('Voltage $(mV)$')
+    # plt.title('Inactivation Time/Voltage relation')
 
-    set_param(param_values_wt)
-    wt_inact = ggsd.Inactivation(channel_name = 'na12')
-    wt_inact.genInactivation()
-    wt_inact.plotInactivation_TCurrDensityRelation(plt, 'black')
+    # set_param(param_values_wt)
+    # wt_inact = ggsd.Inactivation(channel_name = 'na12')
+    # wt_inact.genInactivation()
+    # wt_inact.plotInactivation_TCurrDensityRelation(plt, 'black')
 
-    set_param(new_params)
-    mut_inact = ggsd.Inactivation(channel_name = 'na12')
-    mut_inact.genInactivation()
-    mut_inact.plotInactivation_TCurrDensityRelation(plt, 'blue')
+    # set_param(new_params)
+    # mut_inact = ggsd.Inactivation(channel_name = 'na12')
+    # mut_inact.genInactivation()
+    # mut_inact.plotInactivation_TCurrDensityRelation(plt, 'red')
 
     ############################################################################################################
     figures.append(plt.figure())
@@ -364,7 +367,7 @@ def make_inact_plots(new_params, mutant_name, mutant_protocol_csv_name, param_va
     set_param(new_params)
     mut_inact = ggsd.Inactivation(channel_name = 'na12')
     mut_inact.genInactivation()
-    mut_tau = mut_inact.plotInactivation_Tau_0mV_plt(plt, 'blue')
+    mut_tau = mut_inact.plotInactivation_Tau_0mV_plt(plt, 'red')
     mut_per_cur = find_persistent_current()
     
     for fig in figures: ## will open an empty extra figure :(

@@ -324,15 +324,15 @@ class Activation:
         plt.ylabel('Current density $(mA/cm^2)$')
         plt.title('Activation Time/Current density relation')
         curr = np.array(self.all_is)
-        mask = np.where(np.logical_or(self.v_vec == -50, self.v_vec == -60))
+        mask = np.where(np.logical_or(self.v_vec == -5, self.v_vec == 5))
         [plt.plot(self.t_vec[1:], curr[i], c='black') for i in np.arange(len(curr))[mask]]
         # save as PGN file
         plt.savefig(os.path.join(os.path.split(__file__)[0], "Plots_Folder/Activation Time Current Density Relation"))
 
     def plotActivation_TCurrDensityRelation_plt(self,plt,color):
         curr = np.array(self.all_is)
-        mask = np.where(np.logical_or(self.v_vec == -50, self.v_vec == -60))
-        [plt.plot(self.t_vec[1:], curr[i], c=color) for i in np.arange(len(curr))[mask]]
+        mask = np.where(np.logical_or(self.v_vec == 0, self.v_vec == 0))
+        [plt.plot(self.t_vec[190:300], curr[i][190:300], c=color) for i in np.arange(len(curr))[mask]]
         
     def plotActivation_allTraces(self):
         curr = np.array(self.all_is)
