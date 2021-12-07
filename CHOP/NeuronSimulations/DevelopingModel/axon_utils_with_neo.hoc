@@ -54,8 +54,82 @@ proc update_Nas(){
 	dend_na12NMut = dend_na12N*Mut_factor
 }
 
+proc update_Nas_for_young(){
+	
+	//Here we will update_Nas of the Nav16 but will assign it to Na12 channels..
+	//IMPORTANT the main difference between the _young proc and the adult one is that we take each na16 line and have 
+	node_na16A = node_na*A_factor
+	node_na16N = node_na*N_factor
+	node_na16AWT = node_na16A*WT_factor
+	node_na16AMut = node_na16A*Mut_factor
+	node_na16NWT = node_na16N*WT_factor
+	node_na16NMut = node_na16N*Mut_factor
+	
+	myelin_na16A = myelin_na*A_factor
+	myelin_na16N = myelin_na*N_factor
+	myelin_na16AWT = myelin_na16A*WT_factor
+	myelin_na16AMut = myelin_na16A*Mut_factor
+	myelin_na16NWT = myelin_na16N*WT_factor
+	myelin_na16NMut = myelin_na16N*Mut_factor
+	
+	soma_na16A = soma_na16*A_factor
+	soma_na16N = soma_na16*N_factor
+	soma_na16AWT = soma_na16A*WT_factor
+	soma_na16AMut = soma_na16A*Mut_factor
+	soma_na16NWT = soma_na16N*WT_factor
+	soma_na16NMut = soma_na16N*Mut_factor
+	
+	
+	ais_na16A = ais_na16*A_factor
+	ais_na16N = ais_na16*N_factor
+	ais_na16AWT = ais_na16A*WT_factor
+	ais_na16AMut = ais_na16A*Mut_factor
+	ais_na16NWT = ais_na16N*WT_factor
+	ais_na16NMut = ais_na16N*Mut_factor
+	
+	
+	dend_na16A = dend_na16*A_factor
+	dend_na16N = dend_na16*N_factor
+	dend_na16AWT = dend_na16A*WT_factor
+	dend_na16AMut = dend_na16A*Mut_factor
+	dend_na16NWT = dend_na16N*WT_factor
+	dend_na16NMut = dend_na16N*Mut_factor
+	
+	
+	naked_axon16A = naked_axon_na*A_factor
+	naked_axon16N = naked_axon_na*N_factor
+	naked_axon16AWT = naked_axon16A*WT_factor
+	naked_axon16AMut = naked_axon16A*Mut_factor
+	naked_axon16NWT = naked_axon16N*WT_factor
+	naked_axon16NMut = naked_axon16N*Mut_factor
+	
+}
+
 // modify the axon for Roy's purposes (whole thing)
 proc populate_axon(){
+	forsec cell.axonal{
+			gNaTa_tbar_NaTa_t = 0
+			gNap_Et2bar_Nap_Et2 = 0
+			gCa_HVAbar_Ca_HVA = 0 
+			gSK_E2bar_SK_E2 = 0
+			nseg=11
+			g_pas(0:0.1) = (gpas_all/myelin_scale):(gpas_all/myelin_scale)
+			g_pas(0.1:1) = gpas_all:gpas_all
+			cm(0:0.1) = (cm_all/myelin_scale):(cm_all/myelin_scale)
+			cm(0.1:1) = cm_all:cm_all
+			gbar_na16(0:0.1) = node_na:node_na
+			gbar_na16(0.1:1) = myelin_na:myelin_na
+			gSKv3_1bar_SKv3_1(0:0.1) = axon_K:axon_K
+			gSKv3_1bar_SKv3_1(0.1:1) = myelin_K:myelin_K
+			gK_Pstbar_K_Pst(0:0.1) = axon_KP:axon_KP
+			gK_Pstbar_K_Pst(0.1:1) = axon_KP/10:axon_KP/10
+			gK_Tstbar_K_Tst(0:0.1) = axon_KT:axon_KT
+			gK_Tstbar_K_Tst(0.1:1) = axon_KT/10:axon_KT/10	
+		}
+}
+
+
+proc populate_axon_young(){
 	forsec cell.axonal{
 			gNaTa_tbar_NaTa_t = 0
 			gNap_Et2bar_Nap_Et2 = 0
@@ -71,8 +145,18 @@ proc populate_axon(){
 			g_pas(0.1:1) = gpas_all:gpas_all
 			cm(0:0.1) = (cm_all/myelin_scale):(cm_all/myelin_scale)
 			cm(0.1:1) = cm_all:cm_all
-			gbar_na16(0:0.1) = node_na:node_na
-			gbar_na16(0.1:1) = myelin_na:myelin_na
+			
+			gbar_na12A(0:0.1) = node_na16AWT:node_na16AWT
+			gbar_na12A_Mut(0:0.1) = node_na16AMut:node_na16AMut
+			gbar_na12N(0:0.1) = node_na16NWT:node_na16NWT
+			gbar_na12N_Mut(0:0.1) = node_na16NMut:node_na16NMut
+			
+			gbar_na12A(0.1:1) = myelin_na16AWT:myelin_na16AWT
+			gbar_na12A_Mut(0.1:1) = myelin_na16AMut:myelin_na16AMut
+			gbar_na12N(0.1:1) = myelin_na16NWT:myelin_na16NWT
+			gbar_na12N_Mut(0.1:1) = myelin_na16NMut:myelin_na16NMut
+			
+			
 			gSKv3_1bar_SKv3_1(0:0.1) = axon_K:axon_K
 			gSKv3_1bar_SKv3_1(0.1:1) = myelin_K:myelin_K
 			gK_Pstbar_K_Pst(0:0.1) = axon_KP:axon_KP
@@ -98,7 +182,7 @@ access cell.axon[0]
 	ais_end = 10/nseg // specify the end of the AIS as halfway down this section
 	ais_mid = 4/nseg // specify the middle of the AIS as 1/5 of this section 
 	gbar_na16(0:ais_mid) = 0:ais_na16 // from the start to mid of AIS, create gradient of NaV1.6
-	gbar_na16(ais_mid/2:ais_end/2) = ais_na16:ais_na16 // add consistent amount NaV1.6 until the end of the AIS
+	gbar_na16(ais_mid:ais_end) = ais_na16:ais_na16 // add consistent amount NaV1.6 until the end of the AIS
 	gbar_na16(ais_end:1) = naked_axon_na:naked_axon_na // 1/5th nav1.6
 	
 	gbar_na12A(0:ais_mid/2) = soma_na12AWT:ais_na12AWT // create gradient of NaV12 from [soma] to [AIS]
@@ -131,6 +215,56 @@ access cell.axon[0]
 	
 access cell.soma
 }
+proc create_ais_young(){
+access cell.axon[0]
+	gbar_na12A = 0
+	gbar_na12A_Mut = 0
+	gbar_na12N = 0
+	gbar_na12N_Mut = 0
+	gbar_na16 = 0
+	gNaTa_tbar_NaTa_t = 0 // Get rid of old sodium channels
+	gNap_Et2bar_Nap_Et2 = 0  // Get rid of old sodium channels
+	
+	nseg = int(L/10)*2 +1  // create 19 segments from this axon section
+	ais_end = 10/nseg // specify the end of the AIS as halfway down this section
+	ais_mid = 4/nseg // specify the middle of the AIS as 1/5 of this section 
+	
+	//Here we add the two linear functions of na12 and na16 in two segments 0:ais_mid/2 which will be the ais_na12 (the max of na12 is in the ais_mid/2) + 0.5ais_na16 (the max of ais16 is at ais_mid and increasing linearly):
+	//it sums the two lines: gbar_na12(0:ais_mid/2) = soma_na12:ais_na12 and gbar_na16(0:ais_mid) = 0:ais_na16 
+	gbar_na12A(0:ais_mid/2) = soma_na12AWT:(ais_na12AWT + 0.5*ais_na16AWT) 
+	gbar_na12A_Mut(0:ais_mid/2) = soma_na12AMut:(ais_na12AMut + 0.5*ais_na16AMut)
+	gbar_na12N(0:ais_mid/2) = soma_na12NWT:(ais_na12NWT + 0.5*ais_na16NWT) 
+	gbar_na12N_Mut(0:ais_mid/2) = soma_na12NMut:(ais_na12NMut + 0.5*ais_na16NMut)	
+	
+	//Here we sums the two lines: gbar_na16(ais_mid:ais_end) = ais_na16:ais_na16  and gbar_na12(ais_mid:ais_end) = ais_na12:0
+	gbar_na12A((ais_mid/2):ais_end) = (ais_na12AWT + 0.5*ais_na16AWT):ais_na16AWT
+	gbar_na12A_Mut((ais_mid/2):ais_end) = (ais_na12AMut + 0.5*ais_na16AMut):ais_na16AMut
+	gbar_na12N((ais_mid/2):ais_end) = (ais_na12NWT + 0.5*ais_na16NWT):ais_na16NWT
+	gbar_na12N_Mut((ais_mid/2):ais_end) = (ais_na12NMut + 0.5*ais_na16NMut):ais_na16NMut
+	
+	gbar_na12A(ais_end:1) = naked_axon16AWT:naked_axon16AWT
+	gbar_na12A_Mut(ais_end:1) = naked_axon16AMut:naked_axon16AMut
+	gbar_na12N(ais_end:1) = naked_axon16NWT:naked_axon16NWT
+	gbar_na12N_Mut(ais_end:1) = naked_axon16NMut:naked_axon16NMut
+	
+	gK_Pstbar_K_Pst(0:ais_end) = axon_KP:axon_KP
+	gK_Pstbar_K_Pst(ais_end:1) = axon_KP/10:axon_KP/10
+	gK_Tstbar_K_Tst(0:ais_end) = axon_KT:axon_KT
+	gK_Tstbar_K_Tst(ais_end:1) = axon_KT/10:axon_KT/10
+	gSKv3_1bar_SKv3_1(0:ais_end) = axon_K:axon_K
+	gSKv3_1bar_SKv3_1(ais_end:1) = axon_K/10:axon_K/10
+	gCa_HVAbar_Ca_HVA(0:ais_end) = ais_ca:ais_ca
+	gCa_HVAbar_Ca_HVA(0:ais_end) = ais_ca/10:ais_ca/10
+	gSK_E2bar_SK_E2(0:ais_end) = ais_KCa:ais_KCa // SK channel
+	gSK_E2bar_SK_E2(ais_end:1) = ais_KCa/10:ais_KCa/10
+	
+			
+	
+access cell.soma
+}
+
+
+
 
 proc update_soma_na(){
 access cell.soma
@@ -161,72 +295,11 @@ forsec cell.apical{
 
 }
 /*
-proc create_ais_young(){
-access cell.axon[0]
-gbar_na16 = 0
-	gNaTa_tbar_NaTa_t = 0
-	gNap_Et2bar_Nap_Et2 = 0
-	nseg = int(L/10)*2 +1
-	ais_end = 10/nseg
-	ais_mid = 4/nseg
-	//Replacing 16 with 1/2 12 and half 12mut
-	gbar_na1216(0:ais_mid) = 0:ais_na16/2
-	gbar_na1216mut(0:ais_mid) = 0:ais_na16/2
-	gbar_na1216(ais_mid:ais_end) = ais_na16/2:ais_na16/2
-	gbar_na1216mut(ais_mid:ais_end) = ais_na16/2:ais_na16/2
-	gbar_na1216(ais_end:1) = naked_axon_na/2:naked_axon_na/2 //naked axon
-	gbar_na1216mut(ais_end:1) = naked_axon_na/2:naked_axon_na/2 //naked axon
-	//
-	gbar_na12(0:ais_mid/2) = soma_na12/2:ais_na12/2
-	gbar_na12mut(0:ais_mid/2) = soma_na12/2:ais_na12/2
-	gbar_na12(ais_mid/2:ais_mid) = ais_na12/2:0
-	gbar_na12mut(ais_mid/2:ais_mid) = ais_na12/2:0
-	gbar_na12(ais_mid:1) = 0:0 //naked axon
-	gbar_na12mut(ais_mid:1) = 0:0 //naked axon
-	gK_Pstbar_K_Pst(0:ais_end) = axon_KP:axon_KP
-	gK_Pstbar_K_Pst(ais_end:1) = axon_KP/10:axon_KP/10
-	gK_Tstbar_K_Tst(0:ais_end) = axon_KT:axon_KT
-	gK_Tstbar_K_Tst(ais_end:1) = axon_KT/10:axon_KT/10
-	gSKv3_1bar_SKv3_1(0:ais_end) = axon_K:axon_K
-	gSKv3_1bar_SKv3_1(ais_end:1) = axon_K/10:axon_K/10
-	gCa_HVAbar_Ca_HVA(0:ais_end) = ais_ca:ais_ca
-	gCa_HVAbar_Ca_HVA(0:ais_end) = ais_ca/10:ais_ca/10
-	gSK_E2bar_SK_E2(0:ais_end) = ais_KCa:ais_KCa
-	gSK_E2bar_SK_E2(ais_end:1) = ais_KCa/10:ais_KCa/10
-	
-			
-	
-access cell.soma
-}
 
-proc populate_axon_young(){
-	forsec cell.axonal{ 	
-			insert na1216
-			insert na1216mut
-			gNaTa_tbar_NaTa_t = 0
-			gNap_Et2bar_Nap_Et2 = 0
-			gCa_HVAbar_Ca_HVA = 0 
-			gSK_E2bar_SK_E2 = 0
-			gbar_na1216 = 0
-			gbar_na1216mut = 0
-			
-			nseg=11
-			g_pas(0:0.1) = (gpas_all/myelin_scale):(gpas_all/myelin_scale)
-			g_pas(0.1:1) = gpas_all:gpas_all
-			cm(0:0.1) = (cm_all/myelin_scale):(cm_all/myelin_scale)
-			cm(0.1:1) = cm_all:cm_all
-			gbar_na1216mut(0:0.1) = node_na/2:node_na/2
-			gbar_na1216(0:0.1) = node_na/2:node_na/2
-			gbar_na1216(0.1:1) = myelin_na/2:myelin_na/2
-			gbar_na1216mut(0.1:1) = myelin_na/2:myelin_na/2
-			gSKv3_1bar_SKv3_1(0:0.1) = axon_K:axon_K
-			gSKv3_1bar_SKv3_1(0.1:1) = myelin_K:myelin_K
-			gK_Pstbar_K_Pst(0:0.1) = axon_KP:axon_KP
-			gK_Pstbar_K_Pst(0.1:1) = axon_KP/10:axon_KP/10
-			gK_Tstbar_K_Tst(0:0.1) = axon_KT:axon_KT
-			gK_Tstbar_K_Tst(0.1:1) = axon_KT/10:axon_KT/10	
-		}
-}
+
+
+
+
 
 
 proc update_soma_na_young(){
