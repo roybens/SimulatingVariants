@@ -217,7 +217,7 @@ def make_act_plots(new_params, mutant_name, mutant_protocol_csv_name, param_valu
     figures.append(plt.figure())
     plt.xlabel('Voltage $(mV)$')
     plt.ylabel('Normalized conductance')
-    plt.title('Activation: Voltage/Normalized conductance')
+    plt.title(f'Activation: {mutant_name}')
 
     set_param(param_values_wt)
     wt_act = ggsd.Activation(channel_name = 'na12')
@@ -234,7 +234,7 @@ def make_act_plots(new_params, mutant_name, mutant_protocol_csv_name, param_valu
     figures.append(plt.figure())
     plt.xlabel('Voltage $(mV)$')
     plt.ylabel('Peak Current $(pA)$')
-    plt.title("Activation: IV Curve")
+    plt.title(f'Activation: {mutant_name} IV Curve')
 
     set_param(param_values_wt)
     wt_act = ggsd.Activation(channel_name = 'na12')
@@ -265,8 +265,8 @@ def make_act_plots(new_params, mutant_name, mutant_protocol_csv_name, param_valu
     ############################################################################################################
     figures.append(plt.figure())
     plt.xlabel('Time $(ms)$')
-    plt.ylabel('Current density $(mA/cm^2)$')
-    plt.title('Activation Time/Current density relation')
+    plt.ylabel('I $(mA/cm^2)$')
+    plt.title(f'Activation waveform at 0mV: {mutant_name}')
 
     set_param(param_values_wt)
     wt_act = ggsd.Activation(channel_name = 'na12')
@@ -278,13 +278,21 @@ def make_act_plots(new_params, mutant_name, mutant_protocol_csv_name, param_valu
     mut_act.genActivation()
     mut_act.plotActivation_TCurrDensityRelation_plt(plt, 'red')
     
+    figures.append(plt.figure())
+    goal_dict = read_mutant_protocols(mutant_protocol_csv_name, mutant_name)
+    plt.text(0.4,0.9,"(actual, goal)")
+    plt.text(0.1,0.7,"activation v half: " + str((act_v_half_mut - act_v_half_wt , goal_dict['dv_half_act'])))
+    plt.text(0.1,0.5,"activation slope: " + str((act_slope_mut/act_slope_wt , goal_dict['gv_slope']/100)))
     
+    
+
+    plt.axis('off')
     for fig in figures: ## will open an empty extra figure :(
         pdf.savefig( fig )
     pdf.close()
 
     ############################################################################################################
-    goal_dict = read_mutant_protocols(mutant_protocol_csv_name, mutant_name)
+    
     print("(actual, goal)")
     print("activation v half: " + str((act_v_half_mut - act_v_half_wt , goal_dict['dv_half_act'])))
     print("activation slope: " + str((act_slope_mut/act_slope_wt , goal_dict['gv_slope']/100)))
@@ -308,7 +316,7 @@ def make_inact_plots(new_params, mutant_name, mutant_protocol_csv_name, param_va
     figures.append(plt.figure())
     plt.xlabel('Voltage $(mV)$')
     plt.ylabel('Normalized current')
-    plt.title('Inactivation: Voltage/Normalized Current Relation')
+    plt.title(f'Inactivation: {mutant_name}')
 
     set_param(param_values_wt)
     wt_inact = ggsd.Inactivation(channel_name = 'na12')
@@ -341,7 +349,7 @@ def make_inact_plots(new_params, mutant_name, mutant_protocol_csv_name, param_va
     figures.append(plt.figure())
     plt.xlabel('Time $(ms)$')
     plt.ylabel('Voltage $(mV)$')
-    plt.title('Inactivation Time/Current relation')
+    plt.title(f'Inactivation: {mutant_name}')
 
     set_param(param_values_wt)
     wt_inact = ggsd.Inactivation(channel_name = 'na12')
@@ -357,7 +365,7 @@ def make_inact_plots(new_params, mutant_name, mutant_protocol_csv_name, param_va
     figures.append(plt.figure())
     plt.xlabel('Time $(ms)$')
     plt.ylabel('Current density $(mA/cm^2)$')
-    plt.title('Inactivation Tau at 0 mV')
+    plt.title(f'Inactivation Tau at 0 mV: {mutant_name}')
 
     set_param(param_values_wt)
     wt_inact = ggsd.Inactivation(channel_name = 'na12')
@@ -371,17 +379,21 @@ def make_inact_plots(new_params, mutant_name, mutant_protocol_csv_name, param_va
     mut_tau = mut_inact.plotInactivation_Tau_0mV_plt(plt, 'red')
     mut_per_cur = find_persistent_current()
     
+    
+
+    
+    figures.append(plt.figure())
+    goal_dict = read_mutant_protocols(mutant_protocol_csv_name, mutant_name)
+    plt.text(0.4,0.9,"(actual, goal)")
+    plt.text(0.1,0.7,"tau: " + str((mut_tau/wt_tau , goal_dict['tau0']/100)))
+    plt.text(0.1,0.5,"persistent current: " + str((mut_per_cur/wt_per_cur, goal_dict['persistent']/100)))
+    plt.text(0.1,0.3,"inactivation v half: " + str((inact_v_half_mut - inact_v_half_wt , goal_dict['dv_half_ssi'])))
+    plt.text(0.1,0.1,"inactivation slope: " + str((inact_slope_mut/inact_slope_wt , goal_dict['ssi_slope']/100)))
+    plt.axis('off')
     for fig in figures: ## will open an empty extra figure :(
         pdf.savefig( fig )
     pdf.close()
-
-    goal_dict = read_mutant_protocols(mutant_protocol_csv_name, mutant_name)
-    print("(actual, goal)")
-    print("inactivation v half: " + str((inact_v_half_mut - inact_v_half_wt , goal_dict['dv_half_ssi'])))
-    print("inactivation slope: " + str((inact_slope_mut/inact_slope_wt , goal_dict['ssi_slope']/100)))
-    print("tau: " + str((mut_tau/wt_tau , goal_dict['tau0']/100)))
-    print("persistent current: " + str((mut_per_cur/wt_per_cur, goal_dict['persistent']/100)))
-
+    
 
 def get_param_list_in_str():
     """

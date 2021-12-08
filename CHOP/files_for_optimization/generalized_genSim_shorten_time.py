@@ -638,10 +638,13 @@ class Inactivation:
         
         tau = popt[2]
         tau = 1000 * tau
-
+        xmid = (max(t_vecc) + min(t_vecc))/2
+        ymid = (max(i_vecc) + min(i_vecc))/2
+        if color == 'red':
+            diff = ymid*0.2
         fitted_i = fit_expon(act.t_vec[starting_index:upper],popt[0],popt[1],popt[2])
         plt.plot(act.t_vec[starting_index:upper], fitted_i, c=color)
-        plt.text(0.2, -2 + diff, f"Tau at 0 mV: {tau}", color=color)
+        plt.text(xmid, ymid + diff, f"Tau at 0 mV: {tau}", color=color)
 
         return tau
             
