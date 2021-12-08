@@ -43,7 +43,8 @@ def set_param(param_values):
     currh.smax_na12 = param_values[20]
     currh.vvh_na12 = param_values[21]
     currh.vvs_na12 = param_values[22]
-    currh.Ena_na12 = param_values[23]
+    currh.Ena_na12 = param_values[23] #we don't want to change Ena...
+    currh.Ena_na12 = 55
         
 
 def convert_dict_to_list(dict_fn):
@@ -337,20 +338,20 @@ def make_inact_plots(new_params, mutant_name, mutant_protocol_csv_name, param_va
     # mut_inact.plotInactivation_TimeVRelation_plt(plt, 'red')
 
     ############################################################################################################
-    # figures.append(plt.figure())
-    # plt.xlabel('Time $(ms)$')
-    # plt.ylabel('Voltage $(mV)$')
-    # plt.title('Inactivation Time/Voltage relation')
+    figures.append(plt.figure())
+    plt.xlabel('Time $(ms)$')
+    plt.ylabel('Voltage $(mV)$')
+    plt.title('Inactivation Time/Current relation')
 
-    # set_param(param_values_wt)
-    # wt_inact = ggsd.Inactivation(channel_name = 'na12')
-    # wt_inact.genInactivation()
-    # wt_inact.plotInactivation_TCurrDensityRelation(plt, 'black')
+    set_param(param_values_wt)
+    wt_inact = ggsd.Inactivation(channel_name = 'na12')
+    wt_inact.genInactivation()
+    wt_inact.plotInactivation_TCurrDensityRelation(plt, 'black')
 
-    # set_param(new_params)
-    # mut_inact = ggsd.Inactivation(channel_name = 'na12')
-    # mut_inact.genInactivation()
-    # mut_inact.plotInactivation_TCurrDensityRelation(plt, 'red')
+    set_param(new_params)
+    mut_inact = ggsd.Inactivation(channel_name = 'na12')
+    mut_inact.genInactivation()
+    mut_inact.plotInactivation_TCurrDensityRelation(plt, 'red')
 
     ############################################################################################################
     figures.append(plt.figure())

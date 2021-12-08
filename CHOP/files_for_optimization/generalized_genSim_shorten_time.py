@@ -484,7 +484,7 @@ class Inactivation:
         i_slice = self.i_vec[mask]
         peak_indices, properties_dict = find_peaks(i_slice * -1, height=0.1)  # find minima
         if len(peak_indices) == 0:
-            peak_curr = 0
+            peak_curr = min(i_slice)
         else:
             peak_curr = i_slice[peak_indices][0]
         return peak_curr
@@ -550,7 +550,7 @@ class Inactivation:
         diff = 0
         if color == 'red':
             diff = 0.5
-        #plt.plot(self.v_vec, self.inorm_vec, 'o', c='black')
+        plt.plot(self.v_vec, self.inorm_vec, 'o', c=color)
         ssi_slope, v_half, top, bottom, tau0 = cf.calc_inact_obj(self.channel_name)
         formatted_ssi_slope = np.round(ssi_slope, decimals=2)
         formatted_v_half = np.round(v_half, decimals=2)
@@ -578,13 +578,13 @@ class Inactivation:
         plt.xlabel('Time $(ms)$')
         plt.ylabel('Current density $(mA/cm^2)$')
         plt.title('Inactivation Time/Current density relation')
-        [plt.plot(self.t_vec[1:], self.all_is[i], c='black') for i in np.arange(self.L)]
+        [plt.plot(self.t_vec[-800:-700], self.all_is[i][-800:-700], c='black') for i in np.arange(self.L)]
         # save as PGN file
         plt.savefig(os.path.join(os.path.split(__file__)[0], "Plots_Folder/Inactivation Time Current Density Relation"))
     
     
     def plotInactivation_TCurrDensityRelation(self, plt,color):
-        [plt.plot(self.t_vec[1:], self.all_is[i], c=color) for i in np.arange(self.L)]
+        [plt.plot(self.t_vec[-800:-700], self.all_is[i][-800:-700], c=color) for i in np.arange(self.L)]
 
     def plotInactivation_Tau_0mV(self):
         plt.figure()
