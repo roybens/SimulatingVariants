@@ -10,6 +10,15 @@ from vm_plotter import *
 from neuron import h
 import json
 from scipy.signal import find_peaks
+import json
+param_names = ['sh','tha','qa','Ra','Rb','thi1','thi2','qd','qg','mmin','hmin','q10','Rg','Rd','thinf','qinf','vhalfs','a0s','zetas','gms','smax','vvh','vvs','Ena']
+def read_params_data(fn):
+    with open(fn) as f:
+        data = f.read()
+        js = json.loads(data)
+    return js
+
+
 h.load_file("runModel.hoc")
 soma_ref = h.root.sec
 soma = h.secname(sec=soma_ref)
@@ -71,17 +80,19 @@ def init_settings(nav12=1,
     h.ais_na16 = h.ais_na16 * nav16 * ais_nav16
     h.working_young()
 
-def update_na16(dict_fn):
+def update_na12(channel_name,param_list,val_list):
     with open(dict_fn) as f:
         data = f.read()
     param_dict = json.loads(data)
     for curr_sec in sl:
-        if h.ismembrane('na16mut', sec=curr_sec):
+        if h.ismembrane(channel_name, sec=curr_sec):
             #h('gbar_na16mut = 1*gbar_na16mut')
-            for p_name in param_dict.keys():
+            for (pname,pval) in zip(param_list,val_list):
+                if pname == 'Ena':
+                    continue
                 curr_name = h.secname(sec=curr_sec)
-                hoc_cmd = f'{curr_name}.{p_name} = {param_dict[p_name]}'
-                #print(hoc_cmd)
+                hoc_cmd = f'{curr_name}.{pname}_{channel_name} = {pval}'
+                print(hoc_cmd)
                 h(hoc_cmd)
             
     
@@ -126,7 +137,6 @@ def run_model(start_Vm = -72):
     h.working_young()
     h.finitialize(start_Vm)
     timesteps = int(h.tstop/h.dt)
-    
     Vm = np.zeros(timesteps)
     I = {}
     I['Na'] = np.zeros(timesteps)
@@ -145,6 +155,12 @@ def run_model(start_Vm = -72):
         h.fadvance()
         
     return Vm, I, t,stim
+param_fn = './csv_files/mutants_parameters.txt'
+var_param_dict = read_params_data(param_fn)
+
+
+
+
 fig,ficurveax = plt.subplots(1,1)
 init_settings()
 init_stim(amp=0.75)
