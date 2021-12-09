@@ -330,6 +330,7 @@ proc working(){
 }
 
 proc working_young(){
+	update_Nas()
 	update_Nas_for_young()
 	populate_axon_young()
 	create_ais_young()

@@ -45,3 +45,16 @@ def plot_stim_volts_pair(volts, title_volts, file_path_to_save=None,times=def_ti
         plt.savefig(file_path_to_save+'.pdf', format='pdf', dpi=my_dpi, bbox_inches="tight")
     return fig,axs
         
+def plot_volts(volts, title_volts, axs = None, file_path_to_save=None,times=def_times,color_str = 'black'):
+    if axs == None:
+        fig,axs = plt.subplots(1,figsize=(cm_to_in(8),cm_to_in(7.8)))
+    axs.plot(times,volts, label='Vm', color=color_str,linewidth=1)
+    axs.locator_params(axis='x', nbins=5)
+    axs.locator_params(axis='y', nbins=8)
+    add_scalebar(axs)
+    
+    #plt.legend(bbox_to_anchor=(1.04,1), loc="upper left")
+    #plt.tight_layout(pad=1)
+    if file_path_to_save:
+        plt.savefig(file_path_to_save+'.pdf', format='pdf', dpi=my_dpi, bbox_inches="tight")
+    return fig,axs

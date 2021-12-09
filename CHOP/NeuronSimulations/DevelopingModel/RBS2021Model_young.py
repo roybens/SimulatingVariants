@@ -11,7 +11,7 @@ from neuron import h
 import json
 from scipy.signal import find_peaks
 import json
-param_names = ['sh','tha','qa','Ra','Rb','thi1','thi2','qd','qg','mmin','hmin','q10','Rg','Rd','thinf','qinf','vhalfs','a0s','zetas','gms','smax','vvh','vvs','Ena']
+param_names = ['sh','tha','qa','Ra','Rb','thi1','thi2','qd','qg','mmin','hmin','q10','Rg','Rd','thinf','qinf','vhalfs','a0s','zetas','gms','smax','vvh','vvs']
 def read_params_data(fn):
     with open(fn) as f:
         data = f.read()
@@ -81,9 +81,6 @@ def init_settings(nav12=1,
     h.working_young()
 
 def update_na12(channel_name,param_list,val_list):
-    with open(dict_fn) as f:
-        data = f.read()
-    param_dict = json.loads(data)
     for curr_sec in sl:
         if h.ismembrane(channel_name, sec=curr_sec):
             #h('gbar_na16mut = 1*gbar_na16mut')
@@ -92,7 +89,7 @@ def update_na12(channel_name,param_list,val_list):
                     continue
                 curr_name = h.secname(sec=curr_sec)
                 hoc_cmd = f'{curr_name}.{pname}_{channel_name} = {pval}'
-                print(hoc_cmd)
+                #print(hoc_cmd)
                 h(hoc_cmd)
             
     
@@ -155,21 +152,32 @@ def run_model(start_Vm = -72):
         h.fadvance()
         
     return Vm, I, t,stim
-param_fn = './csv_files/mutants_parameters.txt'
+
+param_fn = '../../files_for_optimization/csv_files/mutants_parameters.txt'
 var_param_dict = read_params_data(param_fn)
 
+def run_young_model():
+    init_settings()
+    update_na12('na12A', param_names, var_param_dict['A_WT'])
+    update_na12('na12N', param_names, var_param_dict['N_WT'])
+    update_na12('na12A_Mut', param_names, var_param_dict['A_WT'])
+    update_na12('na12N_Mut', param_names, var_param_dict['N_WT'])
+    init_stim(amp=1.25)
+    Vm, I, t, stim = run_model()
+    fig,axs = plot_volts(Vm, 'Step Stim 500pA', file_path_to_save='./Plots/WT_1_25A',times=t)
 
 
 
-fig,ficurveax = plt.subplots(1,1)
-init_settings()
-init_stim(amp=0.75)
-Vm, I, t, stim = run_model()
-plot_stim_volts_pair(Vm, 'Step Stim 200pA', file_path_to_save='./Plots/WT_200pA',times=t)
-init_stim(amp=1.25)
-Vm, I, t, stim = run_model()
-plot_stim_volts_pair(Vm, 'Step Stim 500pA', file_path_to_save='./Plots/WT_500pA',times=t)
-wtnpeaks = get_fi_curve(0.75, 1.25, 11,ax1=ficurveax)
+run_young_model()
+# fig,ficurveax = plt.subplots(1,1)
+# init_settings()
+# init_stim(amp=0.75)
+# Vm, I, t, stim = run_model()
+# plot_stim_volts_pair(Vm, 'Step Stim 200pA', file_path_to_save='./Plots/WT_200pA',times=t)
+# init_stim(amp=1.25)
+# Vm, I, t, stim = run_model()
+# plot_stim_volts_pair(Vm, 'Step Stim 500pA', file_path_to_save='./Plots/WT_500pA',times=t)
+# wtnpeaks = get_fi_curve(0.75, 1.25, 11,ax1=ficurveax)
 
 
 # update_na16('./params/na16_mutv1.txt')
