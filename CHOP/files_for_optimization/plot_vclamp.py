@@ -19,6 +19,8 @@ def plot_vclamp_for_mut(mut_data,mut_name,wt_name):
     eh16.make_inact_plots(mut_data[mut_name],mut_name,mutant_protocol_csv_name,param_values_wt = mut_data[wt_name],filename = f'./Plots_Folder/Inactivation_{mut_name}.pdf')
 eh16.set_channel("na12")
 mut_data = read_params_data()
+
+
 plot_vclamp_for_mut(mut_data, 'A_T400R', 'A_WT')
 plot_vclamp_for_mut(mut_data, 'N_T400R', 'N_WT')
 plot_vclamp_for_mut(mut_data, 'A_I1640N', 'A_WT')
