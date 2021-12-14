@@ -589,6 +589,8 @@ def find_tau0(upper = 700, make_plot = False, color = 'red'):
     """
     def fit_expon(x, a, b, c):
         return a + b * np.exp(-1 * c * x)
+    def one_phase(self, x, y0, plateau, k): 
+        y0 + (plateau - y0) * (1 - np.exp(-k * x))
     act = ggsd.Activation(channel_name = 'na12')
     act.clamp_at_volt(0)
     starting_index = list(act.i_vec).index(act.find_ipeaks_with_index()[1])

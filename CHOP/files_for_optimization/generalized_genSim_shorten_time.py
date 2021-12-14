@@ -634,7 +634,7 @@ class Inactivation:
 
         t_vecc = act.t_vec[starting_index:upper]
         i_vecc = act.i_vec[starting_index:upper]
-        popt, pcov = optimize.curve_fit(fit_expon,t_vecc,i_vecc, method = 'dogbox')
+        popt, pcov = optimize.curve_fit(fit_expon,t_vecc,i_vecc, method = 'trf')
         
         tau = popt[2]
         tau = 1000 * tau
@@ -644,6 +644,7 @@ class Inactivation:
             diff = ymid*0.2
         fitted_i = fit_expon(act.t_vec[starting_index:upper],popt[0],popt[1],popt[2])
         plt.plot(act.t_vec[starting_index:upper], fitted_i, c=color)
+        plt.plot(t_vecc,i_vecc,'o',c=color)
         plt.text(xmid, ymid + diff, f"Tau at 0 mV: {tau}", color=color)
 
         return tau
@@ -1876,3 +1877,9 @@ if __name__ == "__main__":
                                   saveAsFileName="Plots_Folder/RFI HHvHMM",
                                   loadFileName="Plots_Folder/RFI HHvHMM",
                                   saveAsPNGFileName="Plots_Folder/RFI HHvHMM")
+
+    elif args.function == 10:
+        genInact = Inactivation(channel_name='na12')
+        fig,ax = plt.subplots(1)
+        genInact.genInactivation()
+        genInact.plotInactivation_Tau_0mV_plt(ax,'blue')
