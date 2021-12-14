@@ -631,13 +631,13 @@ class Inactivation:
         act = ggsd.Activation(channel_name = 'na12')
         act.clamp_at_volt(0)
         starting_index = list(act.i_vec).index(act.find_ipeaks_with_index()[1])
-
+        
         t_vecc = act.t_vec[starting_index:upper]
         i_vecc = act.i_vec[starting_index:upper]
-        popt, pcov = optimize.curve_fit(fit_expon,t_vecc,i_vecc, method = 'trf')
+        popt, pcov = optimize.curve_fit(fit_expon,t_vecc,i_vecc, method = 'dogbox')
         
-        tau = popt[2]
-        tau = 1000 * tau
+        tau = 1/popt[2]
+        #tau = 1000 * tau
         xmid = (max(t_vecc) + min(t_vecc))/2
         ymid = (max(i_vecc) + min(i_vecc))/2
         if color == 'red':
@@ -682,7 +682,7 @@ class Inactivation:
     # one phase asso
     # 1/b as tau
 
-    def find_tau0_inact(self, raw_data):
+    def find_tau0_inact(self, raw_data,upper=700):
         
         
         def one_phase(x, y0, plateau, k):
@@ -691,25 +691,34 @@ class Inactivation:
         def fit_expon(x, a, b, c):
             return a + b * np.exp(-1 * c * x)
     
-    
-        # take peak curr and onwards
-        min_val, mindex = min((val, idx) for (idx, val) in enumerate(raw_data[:int(0.7 * len(raw_data))]))
-        padding = 15  # after peak
-        data = raw_data[mindex:mindex + padding]
-        ts = [0.1 * i for i in range(len(data))]  # make x values which match sample times
+        
+        # # take peak curr and onwards
+        # min_val, mindex = min((val, idx) for (idx, val) in enumerate(raw_data[:int(0.7 * len(raw_data))]))
+        # padding = 15  # after peak
+        # data = raw_data[mindex:mindex + padding]
+        # ts = [0.1 * i for i in range(len(data))]  # make x values which match sample times
 
-        # calc tau and fit exp
-        # cuts data points in half
-        length = len(ts) // 2
-        popt, pcov = optimize.curve_fit(fit_expon, ts[0:length], data[0:length])  # fit exponential curve
-        perr = np.sqrt(np.diag(pcov))
-        # print('in ' + str(all_tau_sweeps[i]) + ' the error was ' + str(perr))
-        xs = np.linspace(ts[0], ts[len(ts) - 1], 1000)  # create uniform x values to graph curve
-        ys = fit_expon(xs, *popt)  # get y values
-        vmax = max(ys) - min(ys)  # get diff of max and min voltage
-        vt = min(ys) + .37 * vmax  # get vmax*1/e
-        tau = popt[2]
-        return ts, data, xs, ys, tau
+        # # calc tau and fit exp
+        # # cuts data points in half
+        # length = len(ts) // 2
+        # popt, pcov = optimize.curve_fit(fit_expon, ts[0:length], data[0:length])  # fit exponential curve
+        # perr = np.sqrt(np.diag(pcov))
+        # # print('in ' + str(all_tau_sweeps[i]) + ' the error was ' + str(perr))
+        # xs = np.linspace(ts[0], ts[len(ts) - 1], 1000)  # create uniform x values to graph curve
+        # ys = fit_expon(xs, *popt)  # get y values
+        # vmax = max(ys) - min(ys)  # get diff of max and min voltage
+        # vt = min(ys) + .37 * vmax  # get vmax*1/e
+        # tau = popt[2]
+        act = ggsd.Activation(channel_name = 'na12')
+        act.clamp_at_volt(0)
+        starting_index = list(act.i_vec).index(act.find_ipeaks_with_index()[1])
+        
+        t_vecc = act.t_vec[starting_index:upper]
+        i_vecc = act.i_vec[starting_index:upper]
+        popt, pcov = optimize.curve_fit(fit_expon,t_vecc,i_vecc, method = 'dogbox') 
+        fitted_i = fit_expon(act.t_vec[starting_index:upper],popt[0],popt[1],popt[2])
+        tau = 1/popt[2]
+        return t_vecc, i_vecc, t_vecc, fitted_i, tau
 
     def plotAllInactivation(self):
         """
@@ -1626,53 +1635,54 @@ def fit_exp(x, a, b, c):
 
 
 def find_tau_inact(inact_i, ax=None):
-    all_tau_sweeps = [-130 + i * 10 for i in
-                      range(len(inact_i))]  # Need to change the constant every time. Need to fix.
-    all_taus = []
-    for i in range(len(inact_i)):
-        raw_data = inact_i[i][1:]
+    #DONT USE LOOK AT find_tau0_inact to fix this one! 
+    # all_tau_sweeps = [-130 + i * 10 for i in
+    #                   range(len(inact_i))]  # Need to change the constant every time. Need to fix.
+    # all_taus = []
+    # for i in range(len(inact_i)):
+    #     raw_data = inact_i[i][1:]
 
-        min_val, mindex = min((val, idx) for (idx, val) in enumerate(raw_data[:int(0.7 * len(raw_data))]))
-        data = raw_data[mindex:mindex + 100]
-        ts = [0.1 * i for i in range(len(data))]  # make x values which match sample times
-        try:
-            popt, pcov = optimize.curve_fit(fit_exp, ts, data)  # fit exponential curve
-            perr = np.sqrt(np.diag(pcov))
-            # print('in ' + str(all_tau_sweeps[i]) + ' the error was ' + str(perr))
-            xs = np.linspace(ts[0], ts[len(ts) - 1], 1000)  # create uniform x values to graph curve
-            ys = fit_exp(xs, *popt)  # get y values
-            vmax = max(ys) - min(ys)  # get diff of max and min voltage
-            vt = min(ys) + .37 * vmax  # get vmax*1/e
-            tau = (np.log([(vt - popt[2]) / popt[0]]) / (-popt[1]))[0]  # find time at which curve = vt
-        except:
-            tau = 0
-        if ax is not None:
-            if all_tau_sweeps[i] == 0:
-                ts = [0.1 * i for i in range(len(raw_data))]
-                xs = xs + ts[mindex]
-                ax.plot(ts, raw_data, color="red")
-                tau_actual = tau + 0.1 * mindex  # adjust for slicing by adding time sliced off
-                # ax.plot(xs, ys, color="blue")
-                # plt.vlines(tau, min(ys)-.02, max(ys)+.02)
-        # uncomment to plot
-        #plt.vlines(tau, min(ys)-.02, max(ys)+.02)
-        #plt.figure()
-        #plt.plot(ts, data, color="black")
-        #plt.plot(xs, ys, color="red")
-        #plt.text(0, 0, i)
-        #plt.show()
+    #     min_val, mindex = min((val, idx) for (idx, val) in enumerate(raw_data[:int(0.7 * len(raw_data))]))
+    #     data = raw_data[mindex:mindex + 100]
+    #     ts = [0.1 * i for i in range(len(data))]  # make x values which match sample times
+    #     try:
+    #         popt, pcov = optimize.curve_fit(fit_exp, ts, data)  # fit exponential curve
+    #         perr = np.sqrt(np.diag(pcov))
+    #         # print('in ' + str(all_tau_sweeps[i]) + ' the error was ' + str(perr))
+    #         xs = np.linspace(ts[0], ts[len(ts) - 1], 1000)  # create uniform x values to graph curve
+    #         ys = fit_exp(xs, *popt)  # get y values
+    #         vmax = max(ys) - min(ys)  # get diff of max and min voltage
+    #         vt = min(ys) + .37 * vmax  # get vmax*1/e
+    #         tau = (np.log([(vt - popt[2]) / popt[0]]) / (-popt[1]))[0]  # find time at which curve = vt
+    #     except:
+    #         tau = 0
+    #     if ax is not None:
+    #         if all_tau_sweeps[i] == 0:
+    #             ts = [0.1 * i for i in range(len(raw_data))]
+    #             xs = xs + ts[mindex]
+    #             ax.plot(ts, raw_data, color="red")
+    #             tau_actual = tau + 0.1 * mindex  # adjust for slicing by adding time sliced off
+    #             # ax.plot(xs, ys, color="blue")
+    #             # plt.vlines(tau, min(ys)-.02, max(ys)+.02)
+    #     # uncomment to plot
+    #     #plt.vlines(tau, min(ys)-.02, max(ys)+.02)
+    #     #plt.figure()
+    #     #plt.plot(ts, data, color="black")
+    #     #plt.plot(xs, ys, color="red")
+    #     #plt.text(0, 0, i)
+    #     #plt.show()
 
-        all_taus.append(tau)
+    #     all_taus.append(tau)
 
-    tau_sweeps = []
-    taus = []
-    for i in range(len(all_tau_sweeps)):
-        if all_tau_sweeps[i] >= -30:
-            if all_tau_sweeps[i] == 0:
-                tau0 = all_taus[i]
-            tau_sweeps.append(all_tau_sweeps[i])
-            taus.append(all_taus[i])
-    return taus, tau_sweeps, tau0
+    # tau_sweeps = []
+    # taus = []
+    # for i in range(len(all_tau_sweeps)):
+    #     if all_tau_sweeps[i] >= -30:
+    #         if all_tau_sweeps[i] == 0:
+    #             tau0 = all_taus[i]
+    #         tau_sweeps.append(all_tau_sweeps[i])
+    #         taus.append(all_taus[i])
+    return None, None, None
 
 
 def plot_act_inact_mut(new_params, wt_data):

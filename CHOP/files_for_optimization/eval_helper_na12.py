@@ -587,6 +587,7 @@ def find_tau0(upper = 700, make_plot = False, color = 'red'):
     """
     returns the tau 0 value, gieven that the NEURON model already has parameters properly set
     """
+    
     def fit_expon(x, a, b, c):
         return a + b * np.exp(-1 * c * x)
     def one_phase(self, x, y0, plateau, k): 
@@ -604,10 +605,9 @@ def find_tau0(upper = 700, make_plot = False, color = 'red'):
         plt.plot(act.t_vec[starting_index:upper], fitted_i, c=color)
         plt.show()
     
-    tau = popt[2]
+    tau = 1/popt[2]
     
     # to account for the second and millisecond difference, we multiply tau by 1000 for now
-    tau = 1000 * tau
     return tau
 
 def find_persistent_current():
@@ -654,3 +654,50 @@ def make_params_dict(param_values):
     }
 
     return params_dict
+
+#testing inactivation tau at 0mv
+# def test_fit_expon():
+#     def fit_expon(x, a, b, c):
+#         return a + b * np.exp( c * -x)
+#     plt.figure()
+#     act = ggsd.Activation(channel_name = 'na12')
+#     act.clamp_at_volt(0)
+#     starting_index = list(act.i_vec).index(act.find_ipeaks_with_index()[1])
+#     t_vecc = act.t_vec[starting_index:700]
+#     i_vecc = act.i_vec[starting_index:700]
+#     popt, pcov = optimize.curve_fit(fit_expon,t_vecc,i_vecc, method = 'dogbox')
+#     fitted_i = fit_expon(act.t_vec[starting_index:700],popt[0],popt[1],popt[2])
+#     fitted_i2 = fit_expon(act.t_vec[starting_index:700],popt[0],popt[1],popt[2]*1.1)
+#     fitted_i3 = fit_expon(act.t_vec[starting_index:700],popt[0],popt[1],popt[2]*0.9)
+#     plt.plot(act.t_vec[starting_index:700], fitted_i, c='black')
+#     plt.plot(t_vecc,i_vecc,'o',c='black')
+#     plt.plot(act.t_vec[starting_index:700], fitted_i2, c='red')
+#     plt.plot(act.t_vec[starting_index:700], fitted_i3, c='blue')
+
+# test_fit_expon()
+# set_channel("na12")
+# new_par = [29.37455303390747, -57.73385584119139, 11.891550446498853, 0.7034480970709812, 0.7458471676703804, -76.54492828977375, -4.360135868594882, 1.0753187187691573, 7.743820332718601, 0.4342886254656672, 0.42061600443361485, 1.8527146017814786, 0.17671265620260843, 0.04089488556627415, -37.52777117761381, 4.1662221609375685, -104.4691271236539, 0.05585446125335954, 29.571131958843388, 2.5137334884656872, 56.76570675176218, -116.41680866340164, -6.558415415201545, 48.5320376591091]
+# p1 = [35.336491999433214, -62.922265018227336, 6.653227770670037, 1.6085194858985032, 1.9610096541498063, -25.131096837653246, -32.726622036137094, 7.4088907890561, 6.087139449301829, 0.04977262720771908, 0.34972666166850597, 8.285176002785123, 0.012852797938524651, 0.02881186435129404, -48.48440841793984, 7.760131602919982, -34.078061414435986, 0.08584137995548408, 79.9573778064748, 1.2622891269923364, 72.38254906735173, -72.65001663340412, 40.10652134477391, 49.56803729217332]
+# p2 = [40.6518011826718, -68.45892040077595, 8.181666327213588, 1.8742317802329294, 1.3082330079972362, -9.04426338852739, -54.76293708028784, 10.485594005027018, 17.671084457713462, 0.034787065828635326, 0.21494047585551085, 8.58846797647392, 0.029781461742604185, 0.14652470096376696, -51.68700463245487, 8.185824645523601, -13.54798895332122, 0.05810506573617848, 40.8735721471482, 1.9800603003428943, 22.16027055518856, -96.66272614384832, -38.58008401623804, 56.14941520049753]
+
+
+# wt = get_wt_params_adultWT()
+
+# mutant_name = "T400RAdult"
+# mutant_protocol_csv_name = './csv_files/mutant_protocols_CHOP.csv'
+# plt.figure()
+# plt.xlabel('Time $(ms)$')
+# plt.ylabel('Current density $(mA/cm^2)$')
+# plt.title(f'Inactivation Tau at 0 mV: {mutant_name}')
+
+# set_param(wt)
+# wt_inact = ggsd.Inactivation(channel_name = 'na12')
+# wt_inact.genInactivation()
+# wt_tau = wt_inact.plotInactivation_Tau_0mV_plt(plt, 'black')
+# wt_per_cur = find_persistent_current()
+
+# set_param(new_par)
+# mut_inact = ggsd.Inactivation(channel_name = 'na12')
+# mut_inact.genInactivation()
+# mut_tau = mut_inact.plotInactivation_Tau_0mV_plt(plt, 'red')
+# mut_per_cur = find_persistent_current()
