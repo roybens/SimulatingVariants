@@ -119,14 +119,14 @@ def get_fi_curve(s_amp,e_amp,nruns,wt_data=None,ax1=None):
     print(npeaks)
     if ax1 is None:
         fig,ax1 = plt.subplots(1,1)
-    ax1.plot(x_axis,npeaks,'black')
+    ax1.plot(x_axis,npeaks,'o',color = 'black')
     ax1.set_title('FI Curve')
     ax1.set_xlabel('Stim [nA]')
     ax1.set_ylabel('nAPs for 500ms epoch')
     if wt_data is None:
         return npeaks
     else:
-        ax1.plot(x_axis,npeaks,'blue')
+        ax1.plot(x_axis,npeaks,'red')
         ax1.plot(x_axis,wt_data,'black')
     plt.show()
     
@@ -156,19 +156,37 @@ def run_model(start_Vm = -72):
 param_fn = '../../files_for_optimization/csv_files/mutants_parameters.txt'
 var_param_dict = read_params_data(param_fn)
 
-def run_young_model():
+def run_young_model(mut,amps,fi_range,nsweeps):
     init_settings()
+    fig,ficurveax = plt.subplots(1,1)
+    vs_plots = []
     update_na12('na12A', param_names, var_param_dict['A_WT'])
     update_na12('na12N', param_names, var_param_dict['N_WT'])
     update_na12('na12A_Mut', param_names, var_param_dict['A_WT'])
     update_na12('na12N_Mut', param_names, var_param_dict['N_WT'])
-    init_stim(amp=1.25)
-    Vm, I, t, stim = run_model()
-    fig,axs = plot_volts(Vm, 'Step Stim 500pA', file_path_to_save='./Plots/WT_1_25A',times=t)
+    for cur_amp in amps:
+        init_stim(amp=cur_amp)
+        Vm, I, t, stim = run_model()
+        curr_ax = plot_volts(Vm, f'Step {cur_amp}nA {mut}', times=t)
+        vs_plots.append(curr_ax)
+    wtnpeaks = get_fi_curve(fi_range[0],fi_range[1], nsweeps,ax1=ficurveax)
+    #simulate the Mutant
+    mut_a = f'A_{mut}'
+    mut_n = f'N_{mut}'
+    update_na12('na12A', param_names, var_param_dict['A_WT'])
+    update_na12('na12N', param_names, var_param_dict['N_WT'])
+    update_na12('na12A_Mut', param_names, var_param_dict[mut_a])
+    update_na12('na12N_Mut', param_names, var_param_dict[mut_n])
+    for cur_ax,cur_amp in zip(vs_plots,amps):
+        init_stim(amp=cur_amp)
+        Vm, I, t, stim = run_model()
+        plot_volts(Vm, f'Step {cur_amp}nA {mut}',axs = cur_ax, file_path_to_save = f'./Plots/{mut}_{cur_amp}_step.pdf', times=t,color_str = 'red')
+    get_fi_curve(fi_range[0],fi_range[1],nsweeps,wt_data=wtnpeaks,ax1=ficurveax)
+    ficurveax.set_title(f'FI Curve {mut}')
+    fig.savefig(f'./Plots/{mut}_FI_curve.pdf')    
 
-
-
-run_young_model()
+run_young_model('T400R',[0.5,1.25],[0,1.5],7)
+run_young_model('M1770L',[0.5,1.25],[0,1.5],7)
 # fig,ficurveax = plt.subplots(1,1)
 # init_settings()
 # init_stim(amp=0.75)

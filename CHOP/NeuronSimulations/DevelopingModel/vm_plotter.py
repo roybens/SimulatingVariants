@@ -52,9 +52,9 @@ def plot_volts(volts, title_volts, axs = None, file_path_to_save=None,times=def_
     axs.locator_params(axis='x', nbins=5)
     axs.locator_params(axis='y', nbins=8)
     add_scalebar(axs)
-    
+    axs.set_title(title_volts)
     #plt.legend(bbox_to_anchor=(1.04,1), loc="upper left")
     #plt.tight_layout(pad=1)
     if file_path_to_save:
         plt.savefig(file_path_to_save+'.pdf', format='pdf', dpi=my_dpi, bbox_inches="tight")
-    return fig,axs
+    return axs
