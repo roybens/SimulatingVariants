@@ -15,6 +15,12 @@ def read_params_data():
         js = json.loads(data)
     return js
 def plot_vclamp_for_mut(mut_data,mut_name,wt_name):
+    
+    """
+    mut_data: a set of variant parameters
+    mut_name: the name of the mutant to plot, key of mut_data
+    wt_name: the name of the WT to compare to, key of mut_data    
+    """
     eh16.make_act_plots(mut_data[mut_name],mut_name,mutant_protocol_csv_name,param_values_wt = mut_data[wt_name],filename = f'./Plots_Folder/Activation_{mut_name}.pdf')
     eh16.make_inact_plots(mut_data[mut_name],mut_name,mutant_protocol_csv_name,param_values_wt = mut_data[wt_name],filename = f'./Plots_Folder/Inactivation_{mut_name}.pdf')
 eh16.set_channel("na12")
