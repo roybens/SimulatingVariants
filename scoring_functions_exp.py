@@ -92,6 +92,8 @@ class Score_Function:
         except ZeroDivisionError:
             print('Zero Division Error while calculating inact')
             return 1000
+        except: 
+            return 1000
         v_array = np.linspace(-120, 40, 20)
         #Calculate wild protocol values
         slope_wild = float(self.ssi_slope_wild)*float(self.ssi_slope_diff)/100
@@ -109,6 +111,8 @@ class Score_Function:
         except ZeroDivisionError:
             print('Zero Division Error while calculating act')
             return 1000
+        except:
+            return 1000
         v_array = np.linspace(-120, 40, 20)
         #Calculate wild protocol values
         slope_wild = float(self.gv_slope_wild)*float(self.gv_slope_diff)/100
@@ -122,16 +126,30 @@ class Score_Function:
     def calc_recov_err(self, is_HMM):
         try:
             y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(self.channel_name, is_HMM)
+            if (y0, plateau, percent_fast, k_fast, k_slow) == (1000, 1000, 1000, 1000, 1000) or (y0, plateau, percent_fast, k_fast, k_slow) == (1, 1, 1, 1, 1) or y0 > 0.5:
+                return 1000
         except ZeroDivisionError:
             print('Zero Division Error while calculating recov')
             return 1000
-        t_array = np.linspace(1, 5000, 20)
+        except:
+            return 1000
+        t_array = np.linspace(1, 100, 50)
+        # t_array = list(np.linspace(1, 100, 50))
+        # t_array.append(list(np.linspace(101, 5000, 50)))
+        # t_array = np.array(t_array)
         #Calculate wild protocol values
         tau_fast_wild = float(self.tau_fast_wild)*float(self.tau_fast_diff)/100
         tau_slow_wild = float(self.tau_slow_wild)*float(self.tau_slow_diff)/100
         percent_fast_wild = float(self.percent_fast_wild)*float(self.percent_fast_diff)/100
-        wild_curve = cf.two_phase(t_array, y0, plateau, percent_fast_wild, 1/tau_fast_wild, 1/tau_slow_wild)
+        wild_curve = cf.two_phase(t_array, 0, 1, percent_fast_wild, 1/tau_fast_wild, 1/tau_slow_wild)
         opt_curve = cf.two_phase(t_array, y0, plateau, percent_fast, k_fast, k_slow)
-        
-        error = sum([(wild_curve[i] - opt_curve[i])**2 for i in range(len(wild_curve))])
+        errors = [(wild_curve[i] - opt_curve[i])**2 for i in range(len(wild_curve))]
+        print(errors)
+        error = sum(errors)
+        if error == 0:
+            print(y0)
+            print(plateau)
+            print(percent_fast)
+            print(k_fast)
+            print(k_slow)
         return error

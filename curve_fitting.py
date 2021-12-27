@@ -87,7 +87,6 @@ def calc_recov_obj(channel_name, is_HMM=False):
         popt, pcov = optimize.curve_fit(two_phase, times, recov_curve)
     except:
         print("Couldn't fit curve to recovery.")
-        #return (1000, 1000, 1000, 1000, 1000, 1000)
         return (1000, 1000, 1000, 1000, 1000)
 
     y0, plateau, percent_fast, k_fast, k_slow = popt
