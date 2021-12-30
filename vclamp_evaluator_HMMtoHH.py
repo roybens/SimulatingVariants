@@ -10,6 +10,7 @@ import scoring_functions_exp as sf
 import curve_fitting as cf
 import matplotlib.pyplot as plt
 import generalized_genSim_shorten_time_HMM as ggsdHMM
+import eval_helper_na12mut as ehn
 
 class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
     '''
@@ -84,9 +85,9 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         # Getting objective base values for HH model.
         is_HMM = False 
         gv_slope, v_half_act, top, bottom = cf.calc_act_obj(self.channel_name_HH, is_HMM=is_HMM)
-        ssi_slope, v_half_inact, top, bottom, tau0 = cf.calc_inact_obj(self.channel_name_HH, is_HMM=is_HMM)
+        ssi_slope, v_half_inact, top, bottom = cf.calc_inact_obj(self.channel_name_HH, is_HMM=is_HMM)
         y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(self.channel_name_HH, is_HMM=is_HMM)
-
+        tau0 = ehn.find_tau0()
         # Ramp Protocol
         # ramp = ggsdHMM.Ramp(channel_name=self.channel_name)
         # ramp_area = ramp.areaUnderCurve
@@ -100,7 +101,7 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         wild_data['tau_slow'] = 1 / k_slow
         wild_data['percent_fast'] = percent_fast
         # wild_data['udb20'] = 0
-        # wild_data['tau0'] = tau0
+        wild_data['tau0'] = tau0
         # wild_data['ramp'] = ramp_area
         # wild_data['persistent'] = persistent_curr
 
@@ -148,7 +149,7 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         inorm_array = np.array(inorm_vec)
         v_array = np.array(v_vec)
 
-        ssi_slope, v_half, top, bottom, tau0 = cf.calc_inact_obj(self.channel_name_HMM, is_HMM=True)
+        ssi_slope, v_half, top, bottom = cf.calc_inact_obj(self.channel_name_HMM, is_HMM=True)
 
         
         even_xs = np.linspace(v_array[0], v_array[len(v_array)-1], 100)
