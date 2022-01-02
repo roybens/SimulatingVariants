@@ -88,6 +88,7 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         ssi_slope, v_half_inact, top, bottom = cf.calc_inact_obj(self.channel_name_HH, is_HMM=is_HMM)
         y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(self.channel_name_HH, is_HMM=is_HMM)
         tau0 = ehn.find_tau0()
+        peak_amp = ehn.find_peak_amp()
         # Ramp Protocol
         # ramp = ggsdHMM.Ramp(channel_name=self.channel_name)
         # ramp_area = ramp.areaUnderCurve
@@ -104,6 +105,9 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         wild_data['tau0'] = tau0
         # wild_data['ramp'] = ramp_area
         # wild_data['persistent'] = persistent_curr
+        
+        # Some extra objectives added last minute, so this is a bit hard-coded
+        wild_data['peak_amp'] = peak_amp
 
         return wild_data
 

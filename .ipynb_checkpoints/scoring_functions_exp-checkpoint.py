@@ -42,6 +42,8 @@ class Score_Function:
         self.tau0_wild = wild_data['tau0']
         # self.ramp_wild = wild_data['ramp']
         # self.persistent_wild = wild_data['persistent']
+        # Hard-coded last-minute "objectives"
+        self.peak_amp_wild = wild_data['peak_amp']
         
         self.channel_name = channel_name
         
@@ -89,6 +91,9 @@ class Score_Function:
         if 'tau0' in objectives:
             tau0_err = self.calc_tau0_err(is_HMM)
             errors.append(tau0_err)
+        if 'peak_amp' in objectives:
+            peak_amp_err = self.calc_peak_amp_err(is_HMM)
+            errors.append(peak_amp_err)
         return errors
             
     def calc_inact_err(self, is_HMM):
@@ -169,5 +174,12 @@ class Score_Function:
         except:
             print('Error when calculating tau0')
             return 1000
-
-        
+    
+    def calc_peak_amp_err(self, is_HMM):
+        try:
+            peak_amp = cf.calc_peak_amp_obj(self.channel_name, is_HMM)
+            peak_amp_wild = float(self.peak_amp_wild)
+            return (peak_amp - peak_amp_wild)**2
+        except:
+            print('Error when calculating peak_amp')
+            return 1000

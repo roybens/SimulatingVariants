@@ -95,6 +95,8 @@ def calc_recov_obj(channel_name, is_HMM=False):
     #return y0, plateau, percent_fast, k_fast, k_slow, tau0 
     return y0, plateau, percent_fast, k_fast, k_slow
 
+# Technically not fitting any curves here, but Michael is placing this here for consistency until a better
+# place is found.
 def calc_tau0_obj(channel_name, is_HMM=False):
     # Can't actually use the channel_name right now because the eval_helper (ehn) files aren't generalizable yet.
     try:
@@ -106,4 +108,17 @@ def calc_tau0_obj(channel_name, is_HMM=False):
     except:
         print('Couldn\'t generate tau0 data')
         return 1000
-            
+
+# Technically not fitting any curves here, but Michael is placing this here for consistency until a better
+# place is found.
+def calc_peak_amp_obj(channel_name, is_HMM=False):
+    try:
+        if not is_HMM:
+            peak_amp = ehn.find_peak_amp()
+        else:
+            peak_amp = ehn8.find_peak_amp()
+        return peak_amp
+    except:
+        print('Couldn\'t generate peak_amp data')
+        return 1000
+        
