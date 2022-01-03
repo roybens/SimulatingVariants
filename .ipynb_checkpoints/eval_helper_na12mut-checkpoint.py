@@ -612,13 +612,19 @@ def find_tau0(upper = 700, make_plot = False, color = 'red'):
     # to account for the second and millisecond difference, we multiply tau by 1000 for now
     return tau
 
-def find_peak_amp(upper=700):
+# def find_peak_amp(upper=700):
+#     act = ggsd.Activation(channel_name = 'na12mut')
+#     act.clamp_at_volt(0)
+#     starting_index = list(act.i_vec).index(act.find_ipeaks_with_index()[1])
+    
+#     i_vecc = act.i_vec[starting_index:upper]
+#     return max(i_vecc)
+
+def find_peak_amp():
     act = ggsd.Activation(channel_name = 'na12mut')
     act.clamp_at_volt(0)
-    starting_index = list(act.i_vec).index(act.find_ipeaks_with_index()[1])
-    
-    i_vecc = act.i_vec[starting_index:upper]
-    return max(i_vecc)
+    return act.ipeak_vec[0]
+
 
 def find_persistent_current():
     """

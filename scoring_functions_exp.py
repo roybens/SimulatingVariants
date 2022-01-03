@@ -179,6 +179,8 @@ class Score_Function:
         try:
             peak_amp = cf.calc_peak_amp_obj(self.channel_name, is_HMM)
             peak_amp_wild = float(self.peak_amp_wild)
+            # print('peak_amp: ' + str(peak_amp))
+            # print('peak_amp_wild: ' + str(peak_amp_wild))
             return (peak_amp - peak_amp_wild)**2
         except:
             print('Error when calculating peak_amp')
