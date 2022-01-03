@@ -121,4 +121,16 @@ def calc_peak_amp_obj(channel_name, is_HMM=False):
     except:
         print('Couldn\'t generate peak_amp data')
         return 1000
-        
+    
+# Technically not fitting any curves here, but Michael is placing this here for consistency until a better
+# place is found.
+def calc_time_to_peak_obj(channel_name, is_HMM=False):
+    try:
+        if not is_HMM:
+            ttp = ehn.find_time_to_peak()
+        else:
+            ttp = ehn8.find_time_to_peak()            
+        return ttp
+    except:
+        print('Couldn\'t generate time-to-peak data')
+        return 1000
