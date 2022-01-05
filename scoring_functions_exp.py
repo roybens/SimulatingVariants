@@ -3,6 +3,8 @@ import curve_fitting as cf
 from scipy.stats import linregress
 import math
 import numpy as np
+import eval_helper_na12mut as ehn
+import eval_helper_na12mut8st as ehn8
 
 class Score_Function:
     '''
@@ -25,7 +27,7 @@ class Score_Function:
         self.tau_slow_diff = diff_dict['tau_slow']
         self.percent_fast_diff = diff_dict['percent_fast']
         # self.udb20_diff = diff_dict['udb20']
-        # self.tau0_diff = diff_dict['tau0']
+        self.tau0_diff = diff_dict['tau0']
         # self.ramp_diff = diff_dict['ramp']
         # self.persistent_diff = diff_dict['persistent']
 
@@ -37,9 +39,12 @@ class Score_Function:
         self.tau_slow_wild = wild_data['tau_slow']
         self.percent_fast_wild = wild_data['percent_fast']
         # self.udb20_wild = wild_data['udb20']
-        # self.tau0_wild = wild_data['tau0']
+        self.tau0_wild = wild_data['tau0']
         # self.ramp_wild = wild_data['ramp']
         # self.persistent_wild = wild_data['persistent']
+        # Hard-coded last-minute "objectives"
+        self.peak_amp_wild = wild_data['peak_amp']
+        self.time_to_peak_wild = wild_data['time_to_peak']
         
         self.channel_name = channel_name
         
@@ -84,13 +89,24 @@ class Score_Function:
         if 'recov' in objectives:
             recov_err = self.calc_recov_err(is_HMM)
             errors.append(recov_err)
+        if 'tau0' in objectives:
+            tau0_err = self.calc_tau0_err(is_HMM)
+            errors.append(tau0_err)
+        if 'peak_amp' in objectives:
+            peak_amp_err = self.calc_peak_amp_err(is_HMM)
+            errors.append(peak_amp_err)
+        if 'time_to_peak' in objectives:
+            ttp_err = self.calc_ttp_err(is_HMM)
+            errors.append(ttp_err)
         return errors
             
     def calc_inact_err(self, is_HMM):
         try:
-            ssi_slope, v_half_inact, top, bottom, tau0 = cf.calc_inact_obj(self.channel_name, is_HMM)
+            ssi_slope, v_half_inact, top, bottom = cf.calc_inact_obj(self.channel_name, is_HMM)
         except ZeroDivisionError:
             print('Zero Division Error while calculating inact')
+            return 1000
+        except: 
             return 1000
         v_array = np.linspace(-120, 40, 20)
         #Calculate wild protocol values
@@ -109,6 +125,8 @@ class Score_Function:
         except ZeroDivisionError:
             print('Zero Division Error while calculating act')
             return 1000
+        except:
+            return 1000
         v_array = np.linspace(-120, 40, 20)
         #Calculate wild protocol values
         slope_wild = float(self.gv_slope_wild)*float(self.gv_slope_diff)/100
@@ -122,16 +140,56 @@ class Score_Function:
     def calc_recov_err(self, is_HMM):
         try:
             y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(self.channel_name, is_HMM)
+            if (y0, plateau, percent_fast, k_fast, k_slow) == (1000, 1000, 1000, 1000, 1000) or (y0, plateau, percent_fast, k_fast, k_slow) == (1, 1, 1, 1, 1) or y0 > 0.5:
+                return 1000
         except ZeroDivisionError:
             print('Zero Division Error while calculating recov')
             return 1000
-        t_array = np.linspace(1, 5000, 20)
+        except:
+            return 1000
+        t_array = np.linspace(1, 100, 50)
+        # t_array = list(np.linspace(1, 100, 50))
+        # t_array.append(list(np.linspace(101, 5000, 50)))
+        # t_array = np.array(t_array)
         #Calculate wild protocol values
         tau_fast_wild = float(self.tau_fast_wild)*float(self.tau_fast_diff)/100
         tau_slow_wild = float(self.tau_slow_wild)*float(self.tau_slow_diff)/100
         percent_fast_wild = float(self.percent_fast_wild)*float(self.percent_fast_diff)/100
-        wild_curve = cf.two_phase(t_array, y0, plateau, percent_fast_wild, 1/tau_fast_wild, 1/tau_slow_wild)
+        wild_curve = cf.two_phase(t_array, 0, 1, percent_fast_wild, 1/tau_fast_wild, 1/tau_slow_wild)
         opt_curve = cf.two_phase(t_array, y0, plateau, percent_fast, k_fast, k_slow)
-        
-        error = sum([(wild_curve[i] - opt_curve[i])**2 for i in range(len(wild_curve))])
+        errors = [(wild_curve[i] - opt_curve[i])**2 for i in range(len(wild_curve))]
+        print(errors)
+        error = sum(errors)
+        if error == 0:
+            print(y0)
+            print(plateau)
+            print(percent_fast)
+            print(k_fast)
+            print(k_slow)
         return error
+    def calc_tau0_err(self, is_HMM):
+        try:
+            tau0 = cf.calc_tau0_obj(self.channel_name, is_HMM)
+            tau0_wild = float(self.tau0_wild)*float(self.tau0_diff)/100
+            return (tau0 - tau0_wild)**2
+        except:
+            print('Error when calculating tau0')
+            return 1000
+    
+    def calc_peak_amp_err(self, is_HMM):
+        try:
+            peak_amp = cf.calc_peak_amp_obj(self.channel_name, is_HMM)
+            peak_amp_wild = float(self.peak_amp_wild)
+            return (peak_amp - peak_amp_wild)**2
+        except:
+            print('Error when calculating peak_amp')
+            return 1000
+    
+    def calc_ttp_err(self, is_HMM):
+        try:
+            ttp = cf.calc_time_to_peak_obj(self.channel_name, is_HMM)
+            ttp_wild = float(self.time_to_peak_wild)
+            return (ttp - ttp_wild)**2
+        except:
+            print('Error when calculating time-to-peak')
+            return 1000

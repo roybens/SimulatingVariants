@@ -9,6 +9,8 @@ import eval_helper as eh
 import generalized_genSim_shorten_time as ggsd
 import generalized_genSim_shorten_time_HMM as ggsdHMM
 from scipy import optimize, stats
+import eval_helper_na12mut as ehn
+import eval_helper_na12mut8st as ehn8
 
 def boltzmann(x, slope, v_half, top, bottom):
     '''
@@ -26,61 +28,13 @@ def two_phase(x, y0, plateau, percent_fast, k_fast, k_slow):
     span_slow = (plateau - y0) * (100 - percent_fast) * 0.01
     return y0 + span_fast * (1 - np.exp(-k_fast * x)) + span_slow * (1 - np.exp(-k_slow * x))
 
-
-def gen_figure_given_params(params, save=True, file_name=None,mutant='N_A', exp='N_A',rmse=None, plot=False):
-    #Not yet updated for HMM model
-    #set-up figure
-    eh.change_params(params, scaled=False)
-    param_dict = {}
-    plt.close()
-    fig, axs = plt.subplots(3, figsize=(10,10))
-    fig.suptitle("Mutant: {} \n Experiment: {}".format(mutant, exp))
-        
-    # Inactivation curve
-    inorm_vec, v_vec, all_is = ggsd.Inactivation().genInactivation()
-    inorm_array = np.array(inorm_vec)
-    v_array = np.array(v_vec)
-    ssi_slope, v_half, top, bottom = calc_inact_obj()
-    even_xs = np.linspace(v_array[0], v_array[len(v_array)-1], 100)
-    curve = boltzmann(even_xs, ssi_slope, v_half, top, bottom)
-    axs[0].set_xlabel('Voltage (mV)')
-    axs[0].set_ylabel('Fraction Inactivated')
-    axs[0].set_title("Inactivation Curve")
-    axs[0].scatter(v_array, inorm_array, color='black',marker='s')
-    axs[0].plot(even_xs, curve, color='red', label="Inactivation")
-    axs[0].text(-10, 0.5, 'Slope: ' + str(ssi_slope) + ' /mV')
-    axs[0].text(-10, 0.3, 'V50: ' + str(v_half) + ' mV')
-    axs[0].legend()
-
-    # Activation curve
-    gnorm_vec, v_vec, all_is = ggsd.Activation().genActivation()
-    gnorm_array = np.array(gnorm_vec)
-    v_array = np.array(v_vec)
-    gv_slope, v_half, top, bottom = calc_act_obj()
-    even_xs = np.linspace(v_array[0], v_array[len(v_array)-1], 100)
-    curve = boltzmann(even_xs, gv_slope, v_half, top, bottom)
-    axs[1].set_xlabel('Voltage (mV)')
-    axs[1].set_ylabel('Fraction Activated')
-    axs[1].set_title("Activation Curve")
-    axs[1].scatter(v_array, gnorm_array, color='black',marker='s')
-    axs[1].plot(even_xs, curve, color='red', label="Activation")
-    axs[1].text(-10, 0.5, 'Slope: ' + str(gv_slope) + ' /mV')
-    axs[1].text(-10, 0.3, 'V50: ' + str(v_half) + ' mV')
-    axs[1].legend()
-        
-    #Recovery Curve
-    rec_inact_tau_vec, recov_curves, times = ggsd.RFI().genRecInactTau()
-    times = np.array(times)
-    data_pts = np.array(recov_curves[0])
-    axs[2].set_xlabel('Log(Time)')
-    axs[2].set_ylabel('Fractional Recovery')
-    axs[2].set_title("Recovery from Inactivation")
-    even_xs = np.linspace(times[0], times[len(times)-1], 100)
-    y0, plateau, percent_fast, k_fast, k_slow, tau0  = calc_recov_obj()
-    curve = two_phase(even_xs, y0, plateau, percent_fast, k_fast, k_slow)
-    axs[2].plot(np.log(even_xs), curve, c='red',label="Recovery Fit")
-    axs[2].scatter(np.log(times), data_pts, label='Recovery', color='black')
-    plt.show()
+def one_phase(x, y0, plateau, k):
+    '''
+    Fit a one-phase association curve to an array of data points X. 
+    For info about the parameters, visit 
+    https://www.graphpad.com/guides/prism/latest/curve-fitting/reg_exponential_association.htm    
+    '''
+    return y0 + (plateau - y0) * (1 - np.exp(-k * x))
 
 def calc_act_obj(channel_name, is_HMM=False):
     try:
@@ -103,9 +57,11 @@ def calc_act_obj(channel_name, is_HMM=False):
 def calc_inact_obj(channel_name, is_HMM=False):
     try:
         if not is_HMM:
-            inorm_vec, v_vec, all_is = ggsd.Inactivation(channel_name=channel_name, step=5).genInactivation()
+            inact = ggsd.Inactivation(channel_name=channel_name, step=5)
+            inorm_vec, v_vec, all_is = inact.genInactivation()
         else:
-            inorm_vec, v_vec, all_is = ggsdHMM.Inactivation(channel_name=channel_name, step=5).genInactivation()
+            inact = ggsdHMM.Inactivation(channel_name=channel_name, step=5)
+            inorm_vec, v_vec, all_is = inact.genInactivation()
     except:
         print('Couldn\'t generate inactivation data')
         return (1000, 1000, 1000, 1000, 1000)
@@ -115,8 +71,8 @@ def calc_inact_obj(channel_name, is_HMM=False):
         print("Couldn't fit curve to inactivation.")
         return (1000, 1000, 1000, 1000, 1000)
     ssi_slope, v_half, top, bottom = popt
-    taus, tau_sweeps, tau0 = ggsd.find_tau_inact(all_is)
-    return ssi_slope, v_half, top, bottom, tau0
+    # taus, tau_sweeps, tau0 = ggsd.find_tau_inact(all_is)
+    return ssi_slope, v_half, top, bottom
 
 def calc_recov_obj(channel_name, is_HMM=False):
     try:
@@ -132,7 +88,6 @@ def calc_recov_obj(channel_name, is_HMM=False):
         popt, pcov = optimize.curve_fit(two_phase, times, recov_curve)
     except:
         print("Couldn't fit curve to recovery.")
-        #return (1000, 1000, 1000, 1000, 1000, 1000)
         return (1000, 1000, 1000, 1000, 1000)
 
     y0, plateau, percent_fast, k_fast, k_slow = popt
@@ -140,3 +95,30 @@ def calc_recov_obj(channel_name, is_HMM=False):
     #return y0, plateau, percent_fast, k_fast, k_slow, tau0 
     return y0, plateau, percent_fast, k_fast, k_slow
 
+# Technically not fitting any curves here, but Michael is placing this here for consistency until a better
+# place is found.
+def calc_tau0_obj(channel_name, is_HMM=False):
+    # Can't actually use the channel_name right now because the eval_helper (ehn) files aren't generalizable yet.
+    try:
+        if not is_HMM:
+            tau0 = ehn.find_tau0()
+        else:
+            tau0 = ehn8.find_tau0()
+        return tau0
+    except:
+        print('Couldn\'t generate tau0 data')
+        return 1000
+
+# Technically not fitting any curves here, but Michael is placing this here for consistency until a better
+# place is found.
+def calc_peak_amp_obj(channel_name, is_HMM=False):
+    try:
+        if not is_HMM:
+            peak_amp = ehn.find_peak_amp()
+        else:
+            peak_amp = ehn8.find_peak_amp()
+        return peak_amp
+    except:
+        print('Couldn\'t generate peak_amp data')
+        return 1000
+        

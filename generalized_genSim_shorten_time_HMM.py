@@ -123,6 +123,76 @@ class Activation:
         # updates the vectors at the end of the run
         self.ipeak_vec.append(curr_tr)
 
+    # Inserted from generalized_genSim_shorten_time.py
+    def clamp_at_volt(self, v_cl):
+        """ Runs a trace and calculates peak currents.
+        Args:
+            v_cl (int): voltage to run
+        """
+        if self.gnorm_vec == []:
+            time_padding = 5  # ms
+            h.tstop = time_padding + self.dur + time_padding  # time stop
+            
+        curr_tr = 0  # initialization of peak current
+        h.finitialize(self.v_init)  # calling the INITIAL block of the mechanism inserted in the section.
+        pre_i = 0  # initialization of variables used to commute the peak current
+        dens = 0
+        self.f3cl.amp[1] = v_cl  # mV
+        for _ in self.ntrials:
+            while h.t < h.tstop:  # runs a single trace, calculates peak current
+                dens = self.f3cl.i / self.soma(0.5).area() * 100.0 - self.soma(
+                    0.5).i_cap  # clamping current in mA/cm2, for each dt
+                # append data
+                self.t_vec.append(h.t)
+                self.v_vec_t.append(self.soma.v)
+                self.i_vec.append(dens)
+                # advance
+                h.fadvance()
+
+        # find i peak of trace
+        self.ipeak_vec.append(self.find_ipeaks())
+
+    # Inserted from generalized_genSim_shorten_time.py
+    def find_ipeaks(self):
+        """
+        Evaluate the peak and updates the peak current.
+        Returns peak current.
+        Finds positive and negative peaks.
+        """
+        self.i_vec = np.array(self.i_vec)
+        self.t_vec = np.array(self.t_vec)
+        mask = np.where(np.logical_and(self.t_vec >= 4, self.t_vec <= 10))
+        i_slice = self.i_vec[mask]
+        curr_max = np.max(i_slice)
+        curr_min = np.min(i_slice)
+        if np.abs(curr_max) > np.abs(curr_min):
+            curr_tr = curr_max
+        else:
+            curr_tr = curr_min
+        return curr_tr
+    
+    # Inserted from generalized_genSim_shorten_time.py
+    def find_ipeaks_with_index(self):
+        """
+        Evaluate the peak and updates the peak current.
+        Returns peak current.
+        Finds positive and negative peaks.
+        """
+        self.i_vec = np.array(self.i_vec)
+        self.t_vec = np.array(self.t_vec)
+        mask = np.where(np.logical_and(self.t_vec >= 4, self.t_vec <= 10))
+        i_slice = self.i_vec[mask]
+        curr_max = np.max(i_slice)
+        curr_min = np.min(i_slice)
+        if np.abs(curr_max) > np.abs(curr_min):
+            curr_tr = curr_max
+        else:
+            curr_tr = curr_min
+        curr_tr_index = list(i_slice).index(curr_tr)
+        return curr_tr_index, curr_tr
+
+
+        
     def findG(self, v_vec, ipeak_vec):
         """ Returns normalized conductance vector
             Notes:
