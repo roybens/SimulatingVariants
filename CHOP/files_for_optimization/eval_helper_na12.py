@@ -124,6 +124,17 @@ def get_wt_params_na12():
     assert len(param_values_wt) == 24, 'length is wrong'
     return param_values_wt
 
+def get_neoWT():
+    """
+    returns the neoWT parameters
+    """
+    
+    param_values_wt = [23.592553005275935, -42.29140196671787, 6.258612985977677, 1.7404895485237528, 0.9563229723546366, -106.36448944375456, -25.528028399330182, 19.231770188740054, 1.585998932514876, 0.08474311213077988, 0.39532768065099094, 6.0925683657807586, 0.13445400479838493, 0.018506260670855337, -48.512157621449816, 7.360663988091903, -137.58691848183625, 0.026377131972668333, 42.93800112258984, 0.530610055156137, 48.82113052335175, -1.1903969302711968, -5.975732386037467, 49.92468292230373]
+    
+    assert len(param_values_wt) == 24, 'length is wrong'
+    return param_values_wt
+
+
 def get_wt_params_adultWT():
     """
     returns the WT na12 parameters
@@ -278,12 +289,26 @@ def make_act_plots(new_params, mutant_name, mutant_protocol_csv_name, param_valu
     mut_act.genActivation()
     mut_act.plotActivation_TCurrDensityRelation_plt(plt, 'red')
     
+    
+ ############################################################################################################
+
+    set_param(param_values_wt)
+    wt_peak_amp = find_peak_amp()
+
+    set_param(new_params)
+    mut_peak_amp = find_peak_amp()
+    
+    
+############################################################################################################    
+    peak_amp_dict = {"T400RAdult": 0.645, "I1640NAdult": 0.24, "m1770LAdult": 0.4314, "neoWT": 0.748, "T400RAneo": 0.932, "I1640NNeo": 0.28, "m1770LNeo": 1}
+    
     figures.append(plt.figure())
     goal_dict = read_mutant_protocols(mutant_protocol_csv_name, mutant_name)
     plt.text(0.4,0.9,"(actual, goal)")
     plt.text(0.1,0.7,"activation v half: " + str((act_v_half_mut - act_v_half_wt , goal_dict['dv_half_act'])))
     plt.text(0.1,0.5,"activation slope: " + str((act_slope_mut/act_slope_wt , goal_dict['gv_slope']/100)))
-    
+    plt.text(0.1,0.3,"peak amp: " + str((mut_peak_amp/wt_peak_amp , peak_amp_dict[mutant_name])))
+
     
 
     plt.axis('off')
@@ -701,3 +726,12 @@ def make_params_dict(param_values):
 # mut_inact.genInactivation()
 # mut_tau = mut_inact.plotInactivation_Tau_0mV_plt(plt, 'red')
 # mut_per_cur = find_persistent_current()
+
+
+
+
+def find_peak_amp():
+    act = ggsd.Activation(channel_name = 'na12')
+    act.clamp_at_volt(0)
+    return act.ipeak_vec[0]
+    

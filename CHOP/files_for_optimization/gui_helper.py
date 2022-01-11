@@ -22,7 +22,8 @@ for i in range(len(keys)):
             min=diff_min,
             max=diff_max,
             step=0.01,
-            description=keys[i]
+            description=keys[i],
+            readout=True
         )
         diff_widgets[keys[i]] = w
     else:
@@ -31,7 +32,8 @@ for i in range(len(keys)):
             min=ratio_min,
             max=ratio_max,
             step=0.01,
-            description=keys[i]
+            description=keys[i],
+            readout=True
         )
         ratio_widgets[keys[i]] = w
 
@@ -78,6 +80,13 @@ button = widgets.Button(
 
 other_widgets.append(button)
 
+other_widgets.append(widgets.Checkbox(
+    value=False,
+    description='use the Test Queue',
+    disabled=False,
+    indent=False
+))
+
 
 
 def run_opt(b):
@@ -107,6 +116,10 @@ def diaplay_all():
     display(other_widgets[2])
     display(other_widgets[3])
     
-    print("\n\n\n")
+    
+    print("\n")
+    display(other_widgets[5])
+    
+    print("\n")
     display(other_widgets[4])
     
