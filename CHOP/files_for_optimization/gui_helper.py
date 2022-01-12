@@ -1,6 +1,9 @@
 from IPython.display import display
 import ipywidgets as widgets
 import gui_helper_opt
+import pickle
+import os
+
 
 diff_min = -30
 diff_max = 30
@@ -15,6 +18,9 @@ non_percentage_indices = [0, 2]
 ratio_widgets = dict()
 diff_widgets = dict()
 
+layout = widgets.Layout(width='60%', height='40px')
+style = {'description_width': 'initial'}
+
 for i in range(len(keys)):
     if i in non_percentage_indices:  
         w = widgets.FloatSlider(
@@ -23,7 +29,9 @@ for i in range(len(keys)):
             max=diff_max,
             step=0.01,
             description=keys[i],
-            readout=True
+            readout=True,
+            layout = layout,
+            style = style
         )
         diff_widgets[keys[i]] = w
     else:
@@ -33,7 +41,9 @@ for i in range(len(keys)):
             max=ratio_max,
             step=0.01,
             description=keys[i],
-            readout=True
+            readout=True,
+            layout = layout,
+            style = style
         )
         ratio_widgets[keys[i]] = w
 
@@ -44,7 +54,9 @@ other_widgets.append(widgets.IntSlider(
     min=0,
     max=3000,
     step=1,
-    description='# of offsprings:'
+    description='# of offsprings:',
+    layout = layout,
+    style = style
 ))
 
 other_widgets.append(widgets.IntSlider(
@@ -52,13 +64,17 @@ other_widgets.append(widgets.IntSlider(
     min=0,
     max=3000,
     step=1,
-    description='# of generations:'
+    description='# of generations:',
+    layout = layout,
+    style = style
 ))
 
 other_widgets.append(widgets.Text(
     value='na12',
     placeholder='Type something',
     description='channel name:',
+    layout = layout,
+    style = style,
     disabled=False
 ))
 
@@ -67,6 +83,8 @@ other_widgets.append(widgets.Text(
     value='neoWT',
     placeholder='Type something',
     description='mutant name:',
+    layout = layout,
+    style = style,
     disabled=False
 ))
 
@@ -90,7 +108,33 @@ other_widgets.append(widgets.Checkbox(
 
 
 def run_opt(b):
-    gui_helper_opt.run_opt(other_widgets, ratio_widgets, diff_widgets)
+    config_dict = dict()
+    for w in ratio_widgets.values():
+        try:
+            config_dict[w.description] = w.value
+        except:
+            continue
+    
+    for w in other_widgets:
+        try:
+            config_dict[w.description] = w.value
+        except:
+            continue
+        
+    for w in diff_widgets.values():
+        try:
+            config_dict[w.description] = w.value
+        except:
+            continue
+    
+    with open('opt_config.pickle', 'wb') as handle:
+        pickle.dump(config_dict, handle)
+        
+    import subprocess
+
+    bashCommand = "sbatch gui_job_debug.slr"
+    # os.system(bashCommand)
+    print(os.popen(bashCommand).read())
     
     
 
