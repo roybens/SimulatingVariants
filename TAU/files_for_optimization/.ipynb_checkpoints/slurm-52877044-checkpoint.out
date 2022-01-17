@@ -1,0 +1,107 @@
+debug: -3.2027341340615103
+init called
+here are the name, val, min, max of each parameter
+sh
+8.0
+(0.1, 50.0)
+
+tha
+-35.0
+(-150.0, -1.0)
+
+qa
+7.2
+(0.1, 100.0)
+
+Ra
+0.4
+(0.005, 2.0)
+
+Rb
+0.124
+(0.005, 2.0)
+
+thi1
+-45.0
+(-150.0, -1.0)
+
+thi2
+-45.0
+(-150.0, -1.0)
+
+qd
+0.5
+(0.0, 20.0)
+
+qg
+1.5
+(0.0, 20.0)
+
+mmin
+0.02
+(5e-05, 0.5)
+
+hmin
+0.01
+(5e-05, 0.5)
+
+q10
+2.0
+(0.0, 20.0)
+
+Rg
+0.01
+(0.0005, 0.2)
+
+Rd
+0.03
+(0.0005, 0.2)
+
+thinf
+-45.0
+(-150.0, -1.0)
+
+qinf
+7.0
+(0.5, 100.0)
+
+vhalfs
+-60.0
+(-150.0, -1.0)
+
+a0s
+0.0003
+(1.5e-06, 0.1)
+
+zetas
+12.0
+(0.1, 80.0)
+
+gms
+0.2
+(0.003, 3.0)
+
+smax
+10.0
+(0.1, 150.0)
+
+vvh
+-58.0
+(-150.0, -1.0)
+
+vvs
+2.0
+(-50.0, 60.0)
+
+Ena
+55.0
+(45.0, 65.0)
+
+Traceback (most recent call last):
+  File "/global/u1/j/jinan/dec18/SimulatingVariants/TAU/files_for_optimization/jinan_fitting_na16_mut.py", line 197, in <module>
+    evaluator = Vclamp_evaluator(scaled = False)
+  File "/global/u1/j/jinan/dec18/SimulatingVariants/TAU/files_for_optimization/jinan_fitting_na16_mut.py", line 96, in __init__
+    self.peak_amp_ratio_goal = peak_amp_dict[mutant_name]
+KeyError: 'NA16_MUT'
+srun: error: nid00851: task 0: Exited with exit code 1
+srun: launch/slurm: _step_signal: Terminating StepId=52877044.0
