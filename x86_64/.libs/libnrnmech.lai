@@ -14,10 +14,10 @@ library_names='libnrnmech.so.0.0.0 libnrnmech.so.0 libnrnmech.so'
 old_library=''
 
 # Linker flags that cannot go in dependency_libs.
-inherited_linker_flags=''
+inherited_linker_flags=' -pthread'
 
 # Libraries that this one depends upon.
-dependency_libs=' -L/global/cscratch1/sd/mikelam/nrn-7.6/x86_64/lib /global/cscratch1/sd/mikelam/nrn-7.6/x86_64/lib/libnrnoc.la /global/cscratch1/sd/mikelam/nrn-7.6/x86_64/lib/liboc.la /global/cscratch1/sd/mikelam/nrn-7.6/x86_64/lib/libnrnmpi.la /global/cscratch1/sd/mikelam/nrn-7.6/x86_64/lib/libscopmath.la /global/cscratch1/sd/mikelam/nrn-7.6/x86_64/lib/libsparse13.la /global/cscratch1/sd/mikelam/nrn-7.6/x86_64/lib/libnrniv.la /global/cscratch1/sd/mikelam/nrn-7.6/x86_64/lib/libivoc.la /global/cscratch1/sd/mikelam/nrn-7.6/x86_64/lib/libneuron_gnu.la /global/cscratch1/sd/mikelam/nrn-7.6/x86_64/lib/libmeschach.la /global/cscratch1/sd/mikelam/nrn-7.6/x86_64/lib/libsundials.la /global/cscratch1/sd/mikelam/nrn-7.6/x86_64/lib/libivos.la /opt/gcc/8.3.0/snos/lib/../lib64/libgfortran.la /opt/gcc/8.3.0/snos/lib/../lib64/libquadmath.la /opt/gcc/8.3.0/snos/lib/../lib64/libstdc++.la -lm -ldl'
+dependency_libs=' -L/global/cscratch1/sd/adisaran/neuronBBP_build2/nrn/x86_64/lib /global/cscratch1/sd/adisaran/neuronBBP_build2/nrn/x86_64/lib/libnrnoc.la /global/cscratch1/sd/adisaran/neuronBBP_build2/nrn/x86_64/lib/liboc.la /global/cscratch1/sd/adisaran/neuronBBP_build2/nrn/x86_64/lib/libmemacs.la /global/cscratch1/sd/adisaran/neuronBBP_build2/nrn/x86_64/lib/libnrnmpi.la /global/cscratch1/sd/adisaran/neuronBBP_build2/nrn/x86_64/lib/libscopmath.la /global/cscratch1/sd/adisaran/neuronBBP_build2/nrn/x86_64/lib/libsparse13.la /global/cscratch1/sd/adisaran/neuronBBP_build2/nrn/x86_64/lib/libreadline.la -lncurses -ltinfo /global/cscratch1/sd/adisaran/neuronBBP_build2/nrn/x86_64/lib/libnrniv.la /global/cscratch1/sd/adisaran/neuronBBP_build2/nrn/x86_64/lib/libivoc.la /global/cscratch1/sd/adisaran/neuronBBP_build2/nrn/x86_64/lib/libneuron_gnu.la /global/cscratch1/sd/adisaran/neuronBBP_build2/nrn/x86_64/lib/libmeschach.la /global/cscratch1/sd/adisaran/neuronBBP_build2/nrn/x86_64/lib/libsundials.la /global/cscratch1/sd/adisaran/neuronBBP_build2/nrn/x86_64/lib/libivos.la /usr/local/lib/libmpicxx.la /usr/local/lib/libmpi.la -lrt -lpthread -lm -ldl'
 
 # Names of additional weak libraries provided by this library
 weak_library_names=''
@@ -38,4 +38,4 @@ dlopen=''
 dlpreopen=''
 
 # Directory that this library needs to be installed in:
-libdir='/global/cscratch1/sd/mikelam/nrn-7.6/x86_64/lib'
+libdir='/global/cscratch1/sd/adisaran/neuronBBP_build2/nrn/x86_64/lib'

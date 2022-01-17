@@ -1,0 +1,31 @@
+Warning: Python module not loaded, you already have Python loaded via conda init
+/opt/cray/pe/modules/3.2.11.4/bin/modulecmd: error while loading shared libraries: libtcl8.6.so: cannot open shared object file: No such file or directory
+/opt/cray/pe/modules/3.2.11.4/bin/modulecmd: error while loading shared libraries: libtcl8.6.so: cannot open shared object file: No such file or directory
+/opt/cray/pe/modules/3.2.11.4/bin/modulecmd: error while loading shared libraries: libtcl8.6.so: cannot open shared object file: No such file or directory
+/opt/cray/pe/modules/3.2.11.4/bin/modulecmd: error while loading shared libraries: libtcl8.6.so: cannot open shared object file: No such file or directory
+ls: cannot access 'mechs/*.inc': No such file or directory
+/global/homes/m/mikelam/.bashrc: line 10: module: command not found
+/global/homes/m/mikelam/.bashrc: line 11: module: command not found
+/global/homes/m/mikelam/.bashrc: line 12: module: command not found
+/global/homes/m/mikelam/.bashrc: line 13: module: command not found
+/global/homes/m/mikelam/.bashrc: line 10: module: command not found
+/global/homes/m/mikelam/.bashrc: line 11: module: command not found
+/global/homes/m/mikelam/.bashrc: line 12: module: command not found
+/global/homes/m/mikelam/.bashrc: line 13: module: command not found
+/global/homes/m/mikelam/.bashrc: line 10: module: command not found
+/global/homes/m/mikelam/.bashrc: line 11: module: command not found
+/global/homes/m/mikelam/.bashrc: line 12: module: command not found
+/global/homes/m/mikelam/.bashrc: line 13: module: command not found
+/global/homes/m/mikelam/.bashrc: line 10: module: command not found
+/global/homes/m/mikelam/.bashrc: line 11: module: command not found
+/global/homes/m/mikelam/.bashrc: line 12: module: command not found
+/global/homes/m/mikelam/.bashrc: line 13: module: command not found
+./drive.sh: line 6: pip: command not found
+Traceback (most recent call last):
+  File "/global/u1/m/mikelam/SimulatingVariants/Optimization_HHtoHMM.py", line 4, in <module>
+    import generalized_genSim_shorten_time_HMM as ggsdHMM
+  File "/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py", line 17, in <module>
+    from scipy import optimize, stats
+ModuleNotFoundError: No module named 'scipy'
+srun: error: nid00780: task 0: Exited with exit code 1
+srun: launch/slurm: _step_signal: Terminating StepId=53135184.0

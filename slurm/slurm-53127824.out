@@ -1,0 +1,4 @@
+Warning: Python module not loaded, you already have Python loaded via conda init
+/usr/bin/shifter: ./drive.sh: Permission denied
+srun: error: nid00786: task 0: Exited with exit code 127
+srun: launch/slurm: _step_signal: Terminating StepId=53127824.0

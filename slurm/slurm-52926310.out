@@ -1,0 +1,25 @@
+Warning: Python module not loaded, you already have Python loaded via conda init
+Sat Jan  8 09:58:54 2022: [unset]:_pmi_alps_init:alps_get_placement_info returned with error -1
+Sat Jan  8 09:58:54 2022: [unset]:_pmi_init:_pmi_alps_init returned -1
+Reached import hoc
+Reached import neuron.hoc
+Current generation:  1
+log: 
+ gen	nevals	avg    	std    	min     	max    
+1  	50    	2.21029	1.65925	0.184906	5.39844 
+
+20.262057542800903
+[128.05398374897973, 1.8345407294926765, 0.23917315279169665, 0.498390432563808, 709.5548218087624, 1.3786546903959511, 15.149098338289054, 3.082217491006923, 412.9076053113379, 0.321769791392361, 33.45967868111204, 0.06455531395599047, 80.21686049839148, 23.441651574615346, 0.45638154024545374, 0.8448148596392947, 1342.4479041825753, 1.8986374467752065, 22.6044642267579, -4.867563355983]
+[0.09498558245718053, 0.08602480822333192, 0.0027385988978871957, 0.0005317489478485786, 0.0006250000000000178]
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
