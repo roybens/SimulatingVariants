@@ -66,3 +66,4 @@ print("Total runtime: " + str(end_time - start_time))
 
 print("Best params: " + str(best_indvs[-1]))
 print("[inact_err, act_err, tau0_err, peak_amp_err, time_to_peak_err]: " + str(evaluator.evaluate_with_lists(best_indvs[-1])))
+print("Best invs list: " + str(best_indvs))

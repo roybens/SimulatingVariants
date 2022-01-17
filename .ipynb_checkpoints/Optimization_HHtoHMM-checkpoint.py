@@ -15,7 +15,7 @@ from deap import tools
 import multiprocessing
 import generalized_genSim_shorten_time as ggsd
 
-evaluator = vcl_ev.Vclamp_evaluator_HMM('./csv_files/params_na12mut8st_mod.csv', 'Basis', 'na12mut8st', 'na12mut', objective_names=['act', 'inact', 'tau0', 'peak_amp', 'time_to_peak'])
+evaluator = vcl_ev.Vclamp_evaluator_HMM('./csv_files/params_na12mut8st_mod_wide.csv', 'Basis', 'na12mut8st', 'na12mut', objective_names=['act', 'inact', 'tau0', 'peak_amp', 'time_to_peak'])
 
 gen_counter = 0
 best_indvs = []
@@ -60,9 +60,10 @@ deap_opt = bpop.optimisations.DEAPOptimisation(evaluator, offspring_size=500, ho
 cp_file = './cp.pkl'
 
 start_time = time.time()
-pop, hof, log, hst = deap_opt.run(max_ngen=100, cp_filename=cp_file)  # CHANGE max_ngen
+pop, hof, log, hst = deap_opt.run(max_ngen=200, cp_filename=cp_file)  # CHANGE max_ngen
 end_time = time.time()
 print("Total runtime: " + str(end_time - start_time))
 
 print("Best params: " + str(best_indvs[-1]))
 print("[inact_err, act_err, tau0_err, peak_amp_err, time_to_peak_err]: " + str(evaluator.evaluate_with_lists(best_indvs[-1])))
+print("Best invs list: " + str(best_indvs))
