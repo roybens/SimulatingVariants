@@ -1055,6 +1055,9 @@ class Ramp:
         self.v_vec_t = []  # vector for voltage as function of time
         self.i_vec = []  # vector for current
 
+        self.act = Activation(channel_name=channel_name)
+        self.act.genActivation()
+
     def clamp(self, v_cl):
         """ Runs a trace and calculates currents.
         Args:
@@ -1089,9 +1092,7 @@ class Ramp:
         v_vec_t_ramp = self.v_vec_t[maskStart:maskEnd]
         # plt.plot(self.t_vec[maskStart:maskEnd], self.v_vec[maskStart:maskEnd], color= 'b') # uncomment to view area taken
         area = trapz(i_vec_ramp, x=v_vec_t_ramp)  # find area
-        act = Activation(channel_name='na12')
-        act.genActivation()
-        area = area / min(act.ipeak_vec)  # normalize to peak currents from activation
+        area = area / min(self.act.ipeak_vec)  # normalize to peak currents from activation
         return area
 
     def persistentCurrent(self):
@@ -1099,9 +1100,7 @@ class Ramp:
         Normalized by peak from IV (same number as areaUnderCurve).
         """
         persistent = self.i_vec[self.t_start_persist:self.t_end_persist]
-        act = Activation()
-        act.genActivation()
-        IVPeak = min(act.ipeak_vec)
+        IVPeak = min(self.act.ipeak_vec)
         return (sum(persistent) / len(persistent)) / IVPeak
 
     def plotRamp_TimeVRelation(self):
