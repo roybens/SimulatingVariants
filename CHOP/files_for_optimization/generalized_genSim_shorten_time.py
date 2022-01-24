@@ -279,6 +279,10 @@ class Activation:
         
         plt.plot(self.v_vec, self.gnorm_vec, 'o', c=color)
         gv_slope, v_half, top, bottom = cf.calc_act_obj(self.channel_name)
+        
+        # slope inverted
+        gv_slope = 1 / gv_slope
+        
         formatted_gv_slope = np.round(gv_slope, decimals=2)
         formatted_v_half = np.round(v_half, decimals=2)
         plt.text(-10, 0.5 + diff, f'Slope: {formatted_gv_slope}', c = color)
@@ -552,6 +556,11 @@ class Inactivation:
             diff = 0.5
         plt.plot(self.v_vec, self.inorm_vec, 'o', c=color)
         ssi_slope, v_half, top, bottom, tau0 = cf.calc_inact_obj(self.channel_name)
+        
+        #invert slope
+        ssi_slope = 1 / ssi_slope
+        
+        
         formatted_ssi_slope = np.round(ssi_slope, decimals=2)
         formatted_v_half = np.round(v_half, decimals=2)
         plt.text(-10, 0.5 + diff, f'Slope: {formatted_ssi_slope}', c = color)

@@ -235,11 +235,13 @@ def make_act_plots(new_params, mutant_name, mutant_protocol_csv_name, param_valu
     wt_act.genActivation()
     # (formatted_v_half, formatted_gv_slope)
     act_v_half_wt, act_slope_wt = wt_act.plotActivation_VGnorm_plt(plt, 'black')
+    act_slope_wt = 1/act_slope_wt
 
     set_param(new_params)
     mut_act = ggsd.Activation(channel_name = 'na12')
     mut_act.genActivation()
     act_v_half_mut, act_slope_mut = mut_act.plotActivation_VGnorm_plt(plt, 'red')
+    act_slope_mut = 1/act_slope_mut
 
     ############################################################################################################
     figures.append(plt.figure())
@@ -347,11 +349,13 @@ def make_inact_plots(new_params, mutant_name, mutant_protocol_csv_name, param_va
     wt_inact = ggsd.Inactivation(channel_name = 'na12')
     wt_inact.genInactivation()
     inact_v_half_wt, inact_slope_wt = wt_inact.plotInactivation_VInormRelation_plt(plt, 'black')
+    inact_slope_wt = 1/inact_slope_wt
 
     set_param(new_params)
     mut_inact = ggsd.Inactivation(channel_name = 'na12')
     mut_inact.genInactivation()
     inact_v_half_mut, inact_slope_mut =  mut_inact.plotInactivation_VInormRelation_plt(plt, 'red')
+    inact_slope_mut = 1/inact_slope_mut
 
 
     ############################################################################################################

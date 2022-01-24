@@ -18,8 +18,8 @@ import bluepyopt as bpop
 import matplotlib.pyplot as plt
 
 
-mutant_name = "T400RAneo"
-initial_baseline_parameters = eh12.get_neoWT()
+mutant_name = "T400RAdult"
+initial_baseline_parameters = eh12.get_wt_params_na12()
 
 offspring_size = 2000
 num_generations = 250
