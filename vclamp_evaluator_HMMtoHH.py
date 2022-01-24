@@ -167,7 +167,7 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         axs.plot(even_xs, curve, color='red', label="Fitted Inactivation")
 
         
-        curve_exp = cf.boltzmann(even_xs, ssi_slope_exp, v_half_ssi_exp, top, bottom)
+        curve_exp = cf.boltzmann(even_xs, ssi_slope_exp, v_half_ssi_exp, 0, 1)
         axs.plot(even_xs, curve_exp, color='black', label='Inactivation experimental')
         axs.text(-.120, 0.7, 'Slope (Optimized): ' + str(ssi_slope) + ' /mV')
         axs.text(-.120, 0.6, 'Slope (Experimental): ' + str(ssi_slope_exp) + ' /mV')
@@ -197,7 +197,7 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         axs.plot(even_xs, curve, color='red', label="Fitted Activation")
         
         
-        curve_exp = cf.boltzmann(even_xs, gv_slope_exp, v_half_act_exp, top, bottom)
+        curve_exp = cf.boltzmann(even_xs, gv_slope_exp, v_half_act_exp, 1, 0)
         axs.plot(even_xs, curve_exp, color='black', label='Activation Experimental')
         axs.text(-.120, 0.7, 'Slope (Optimized): ' + str(gv_slope) + ' /mV')
         axs.text(-.120, 0.6, 'Slope (Experimental): ' + str(gv_slope_exp) + ' /mV')

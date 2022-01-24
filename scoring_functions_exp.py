@@ -82,10 +82,10 @@ class Score_Function:
         '''
         if 'inact' in objectives:
             inact_err = self.calc_inact_err(is_HMM)
-            errors.append(inact_err)
+            errors.append(inact_err*100)
         if 'act' in objectives:
             act_err = self.calc_act_err(is_HMM)
-            errors.append(act_err)
+            errors.append(act_err*100)
         if 'recov' in objectives:
             recov_err = self.calc_recov_err(is_HMM)
             errors.append(recov_err)
@@ -112,7 +112,7 @@ class Score_Function:
         #Calculate wild protocol values
         slope_wild = float(self.ssi_slope_wild)*float(self.ssi_slope_diff)/100
         v_half_wild = float(self.v_half_ssi_wild) + float(self.dv_half_ssi_diff)
-        wild_curve = cf.boltzmann(v_array, slope_wild, v_half_wild, top, bottom)
+        wild_curve = cf.boltzmann(v_array, slope_wild, v_half_wild, 0, 1)
         opt_curve = cf.boltzmann(v_array, ssi_slope, v_half_inact, top, bottom)
         
         error = sum([(wild_curve[i] - opt_curve[i])**2 for i in range(len(wild_curve))])
@@ -131,7 +131,7 @@ class Score_Function:
         #Calculate wild protocol values
         slope_wild = float(self.gv_slope_wild)*float(self.gv_slope_diff)/100
         v_half_wild = float(self.v_half_act_wild) + float(self.dv_half_act_diff)
-        wild_curve = cf.boltzmann(v_array, slope_wild, v_half_wild, top, bottom)
+        wild_curve = cf.boltzmann(v_array, slope_wild, v_half_wild, 1, 0)
         opt_curve = cf.boltzmann(v_array, gv_slope, v_half_act, top, bottom)
         
         error = sum([(wild_curve[i] - opt_curve[i])**2 for i in range(len(wild_curve))])
