@@ -77,7 +77,7 @@ def update_na16(dict_fn):
     param_dict = json.loads(data)
     for curr_sec in sl:
         if h.ismembrane('na16mut', sec=curr_sec):
-            #h('gbar_na16mut = 1*gbar_na16mut')
+            h('gbar_na16mut = 1*gbar_na16mut')
             for p_name in param_dict.keys():
                 curr_name = h.secname(sec=curr_sec)
                 hoc_cmd = f'{curr_name}.{p_name} = {param_dict[p_name]}'
@@ -145,25 +145,25 @@ def run_model(start_Vm = -72):
         h.fadvance()
         
     return Vm, I, t,stim
-fig,ficurveax = plt.subplots(1,1)
-init_settings()
-init_stim(amp=0.2)
-Vm, I, t, stim = run_model()
-plot_stim_volts_pair(Vm, 'Step Stim 200pA', file_path_to_save='./Plots/WT_200pA',times=t)
-init_stim(amp=0.5)
-Vm, I, t, stim = run_model()
-plot_stim_volts_pair(Vm, 'Step Stim 500pA', file_path_to_save='./Plots/WT_500pA',times=t)
-wtnpeaks = get_fi_curve(0.05, 0.55, 11,ax1=ficurveax)
+#fig,ficurveax = plt.subplots(1,1)
+#init_settings()
+#init_stim(amp=0.2)
+#Vm, I, t, stim = run_model()
+#plot_stim_volts_pair(Vm, 'Step Stim 200pA', file_path_to_save='./Plots/WT_200pA',times=t)
+#init_stim(amp=0.5)
+#Vm, I, t, stim = run_model()
+#plot_stim_volts_pair(Vm, 'Step Stim 500pA', file_path_to_save='./Plots/WT_500pA',times=t)
+#wtnpeaks = get_fi_curve(0.05, 0.55, 2,ax1=ficurveax)
 
 
-update_na16('./params/na16_mutv1.txt')
+update_na16('./params/na16_mutv2.txt')
 init_stim(amp=0.2)
 Vm, I, t, stim = run_model()
 plot_stim_volts_pair(Vm, 'Step Stim 200pA', file_path_to_save='./Plots/Mut_200pA',times=t,color_str='blue')
 init_stim(amp=0.5)
 Vm, I, t, stim = run_model()
 plot_stim_volts_pair(Vm, 'Step Stim 500pA', file_path_to_save='./Plots/Mut_500pA',times=t,color_str='blue')
-get_fi_curve(0.05, 0.55, 11,wt_data=wtnpeaks,ax1=ficurveax)
+get_fi_curve(0.05, 0.55, 2,wt_data=wtnpeaks,ax1=ficurveax)
 fig.savefig('./Plots/FI_curves.pdf')
 
 
