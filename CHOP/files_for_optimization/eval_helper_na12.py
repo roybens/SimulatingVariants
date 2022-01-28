@@ -400,13 +400,13 @@ def make_inact_plots(new_params, mutant_name, mutant_protocol_csv_name, param_va
     wt_inact = ggsd.Inactivation(channel_name = 'na12')
     wt_inact.genInactivation()
     wt_tau = wt_inact.plotInactivation_Tau_0mV_plt(plt, 'black')
-    wt_per_cur = find_persistent_current()
+    wt_per_cur = find_persistent_current()[0]
 
     set_param(new_params)
     mut_inact = ggsd.Inactivation(channel_name = 'na12')
     mut_inact.genInactivation()
     mut_tau = mut_inact.plotInactivation_Tau_0mV_plt(plt, 'red')
-    mut_per_cur = find_persistent_current()
+    mut_per_cur = find_persistent_current()[0]
 
     
     figures.append(plt.figure())
@@ -460,7 +460,7 @@ def make_ramp_plots(new_params, mutant_name, mutant_protocol_csv_name, param_val
     plt.xlabel('Time $(ms)$')
     plt.ylabel('Current', labelpad=25)
     plt.title(f"Ramp: {mutant_name} Time Current Density Relation", x=0.4, y=1.1)
-    ax1.set_title("Ramp")
+    ax1.set_title("Ramp AUC")
     ax2.set_title("Persistent Current")
 
     set_param(param_values_wt)
