@@ -1122,6 +1122,9 @@ class Ramp:
         # save as PGN file
         plt.savefig(os.path.join(os.path.split(__file__)[0], 'Plots_Folder/Ramp Time Voltage relation'))
 
+    def plotRamp_TimeVRelation_plt(self, plt, color):
+        [plt.plot(self.t_vec, self.v_vec, color=color)]
+
     def plotRamp_TimeCurrentRelation(self):
         area = round(self.areaUnderCurve(), 2)
         persistCurr = "{:.2e}".format(round(self.persistentCurrent(), 4))
@@ -1149,6 +1152,25 @@ class Ramp:
         # save as PGN file
         plt.tight_layout()
         plt.savefig(os.path.join(os.path.split(__file__)[0], 'Plots_Folder/Ramp Time Current Density Relation'))
+
+    def plotRamp_TimeCurrentRelation_plt(self, ax1, ax2, color):
+        area = round(self.areaUnderCurve(), 2)
+        persistCurr = "{:.2e}".format(round(self.persistentCurrent(), 4))
+
+        diff = 0
+        if color == "red":
+            diff = 0.2
+
+
+        # starting + first step + ramp section
+        ax1.plot(self.t_vec[1:self.t_start_persist], self.i_vec[1:self.t_start_persist], 'o', c=color, markersize=0.1)
+        plt.text(0.05, 0.2 + diff, f'Normalized area\n under curve: {area}', c=color, fontsize=10)
+
+        # persistent current + last step section
+        ax2.plot(self.t_vec[self.t_start_persist:], self.i_vec[self.t_start_persist:], 'o', c=color, markersize=0.1)
+        plt.text(0.75, 0.2 + diff, f'Persistent Current:\n{persistCurr} mV', c=color, fontsize=10, ha='center')
+
+        return (area, round(self.persistentCurrent(), 4))
 
     def plotAllRamp(self):
         """
