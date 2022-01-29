@@ -270,3 +270,77 @@ def make_inact_plots(new_params, mutant_name, mutant_protocol_csv_name, param_va
     for fig in figures: ## will open an empty extra figure :(
         pdf.savefig( fig )
     pdf.close()
+
+def make_ramp_plots(new_params, mutant_name, mutant_protocol_csv_name, param_values_wt, filename, is_HMM, channel_name):
+    """
+    input:
+        new_params: a set of variant parameters
+        param_values_wt: WT parameters. Defaulted to NA 16 WT.
+        filename: name of the pdf file into which we want to store the figures
+    return:
+        none; creates plots for ramp
+    """
+    if is_HMM:
+        module_name = ggsdHMM
+    else:
+        module_name = ggsd
+
+    pdf = matplotlib.backends.backend_pdf.PdfPages(filename)
+
+
+    pdf = matplotlib.backends.backend_pdf.PdfPages(filename)
+    figures = []
+
+    figures.append(plt.figure())
+    plt.xlabel('Time $(ms)$')
+    plt.ylabel('Voltage $(mV)$')
+    plt.title(f'Ramp: {mutant_name}')
+
+    set_param(param_values_wt, is_HMM)
+    wt_ramp = module_name.Ramp(channel_name = channel_name)
+    wt_ramp.genRamp()
+    wt_ramp.plotRamp_TimeVRelation_plt(plt, 'black')
+
+    set_param(new_params, is_HMM)
+    mut_ramp = module_name.Ramp(channel_name = channel_name)
+    mut_ramp.genRamp()
+    mut_ramp.plotRamp_TimeVRelation_plt(plt, 'red')
+
+    ############################################################################################################
+    f, (ax1, ax2) = plt.subplots(1, 2, sharey=True)
+
+    f.add_subplot(111, frameon=False)  # for shared axes labels and big title
+    # hide tick and tick label of the big axes
+    plt.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
+    plt.grid(False)
+
+    plt.xlabel('Time $(ms)$')
+    plt.ylabel('Current', labelpad=25)
+    plt.title(f"Ramp: {mutant_name} Time Current Density Relation", x=0.4, y=1.1)
+    ax1.set_title("Ramp AUC")
+    ax2.set_title("Persistent Current")
+
+    set_param(param_values_wt, is_HMM)
+    wt_ramp = module_name.Ramp(channel_name = channel_name)
+    wt_ramp.genRamp()
+    wt_ramp_area, wt_ramp_persistcurr = wt_ramp.plotRamp_TimeCurrentRelation_plt(ax1, ax2, 'black')
+
+    set_param(new_params, is_HMM)
+    mut_ramp = module_name.Ramp(channel_name = channel_name)
+    mut_ramp.genRamp()
+    mut_ramp_area, mut_ramp_persistcurr =mut_ramp.plotRamp_TimeCurrentRelation_plt(ax1, ax2, 'red')
+
+    plt.tight_layout()
+
+    figures.append(f)
+    ############################################################################################################
+    figures.append(plt.figure())
+    goal_dict = read_mutant_protocols(mutant_protocol_csv_name, mutant_name)
+    plt.text(0.4,0.9,"(actual, goal)")
+    plt.text(0.1,0.7,"area under curve: " + str((mut_ramp_area/wt_ramp_area , goal_dict['ramp']/100)))
+    plt.text(0.1,0.5,"persistent current: " + str((mut_ramp_persistcurr/wt_ramp_persistcurr, goal_dict['persistent']/100)))
+
+    plt.axis('off')
+    for fig in figures:
+        pdf.savefig( fig )
+    pdf.close()
