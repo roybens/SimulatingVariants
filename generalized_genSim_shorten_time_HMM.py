@@ -19,7 +19,7 @@ import argparse
 import os
 from state_variables import finding_state_variables
 import pickle
-import curve_fitting as cf
+from curve_fitting import boltzmann, calc_act_obj, calc_inact_obj, calc_recov_obj
 
 # from sys import api_version
 # from test.pythoninfo import collect_platform
@@ -259,13 +259,13 @@ class Activation:
         plt.ylabel('Normalized conductance')
         plt.title('Activation: Voltage/Normalized conductance')
         plt.plot(self.v_vec, self.gnorm_vec, 'o', c='black')
-        gv_slope, v_half, top, bottom = cf.calc_act_obj()
+        gv_slope, v_half, top, bottom = calc_act_obj()
         formatted_gv_slope = np.round(gv_slope, decimals=2)
         formatted_v_half = np.round(v_half, decimals=2)
         plt.text(-10, 0.5, f'Slope: {formatted_gv_slope}')
         plt.text(-10, 0.3, f'V50: {formatted_v_half}')
         x_values_v = np.arange(self.st_cl, self.end_cl, 1)
-        curve = cf.boltzmann(x_values_v, gv_slope, v_half, top, bottom)
+        curve = boltzmann(x_values_v, gv_slope, v_half, top, bottom)
         plt.plot(x_values_v, curve, c='red')
         # save as PGN file
         plt.savefig(
@@ -330,13 +330,13 @@ class Activation:
         
         plt.plot(self.v_vec, self.gnorm_vec, 'o', c=color)
         #gv_slope, v_half, top, bottom = cf.calc_act_obj(self.channel_name)
-        gv_slope, v_half, top, bottom = cf.calc_act_obj(self.channel_name, True)
+        gv_slope, v_half, top, bottom = calc_act_obj(self.channel_name, True)
         formatted_gv_slope = np.round(gv_slope, decimals=2)
         formatted_v_half = np.round(v_half, decimals=2)
         plt.text(-10, 0.5 + diff, f'Slope: {formatted_gv_slope}', c = color)
         plt.text(-10, 0.3 + diff, f'V50: {formatted_v_half}', c = color)
         x_values_v = np.arange(self.st_cl, self.end_cl, 1)
-        curve = cf.boltzmann(x_values_v, gv_slope, v_half, top, bottom)
+        curve = boltzmann(x_values_v, gv_slope, v_half, top, bottom)
         plt.plot(x_values_v, curve, c=color)
         return (formatted_v_half, formatted_gv_slope)
 
@@ -376,13 +376,13 @@ class Activation:
         ax[0, 0].set_ylabel('Normalized conductance')
         ax[0, 0].set_title('Activation: Voltage/Normalized conductance')
         ax[0, 0].plot(self.v_vec, self.gnorm_vec, 'o', c=color)
-        gv_slope, v_half, top, bottom = cf.calc_act_obj()
+        gv_slope, v_half, top, bottom = calc_act_obj()
         formatted_gv_slope = np.round(gv_slope, decimals=2)
         formatted_v_half = np.round(v_half, decimals=2)
         ax[0, 0].text(-10 + x_offset, 0.5 + y_offset, f'Slope: {formatted_gv_slope}', color=color)
         ax[0, 0].text(-10 + x_offset, 0.4 + y_offset, f'V50: {formatted_v_half}', color=color)
         x_values_v = np.arange(self.st_cl, self.end_cl, 1)
-        curve = cf.boltzmann(x_values_v, gv_slope, v_half, top, bottom)
+        curve = boltzmann(x_values_v, gv_slope, v_half, top, bottom)
         ax[0, 0].plot(x_values_v, curve, c=color, label='HHM')
         ax[0, 0].legend(loc='upper left')
 
@@ -533,13 +533,13 @@ class Inactivation:
         plt.ylabel('Normalized current')
         plt.title('Inactivation: Voltage/HMM_Normalized Current Relation')
         plt.plot(self.v_vec, self.inorm_vec, 'o', c='black')
-        ssi_slope, v_half, top, bottom, tau0 = cf.calc_inact_obj()
+        ssi_slope, v_half, top, bottom, tau0 = calc_inact_obj()
         formatted_ssi_slope = np.round(ssi_slope, decimals=2)
         formatted_v_half = np.round(v_half, decimals=2)
         plt.text(-10, 0.5, f'Slope: {formatted_ssi_slope}')
         plt.text(-10, 0.3, f'V50: {formatted_v_half}')
         x_values_v = np.arange(self.st_cl, self.end_cl, 1)
-        curve = cf.boltzmann(x_values_v, ssi_slope, v_half, top, bottom)
+        curve = boltzmann(x_values_v, ssi_slope, v_half, top, bottom)
         plt.plot(x_values_v, curve, c='red')
         # save as PGN file
         plt.savefig(
@@ -552,13 +552,13 @@ class Inactivation:
         if color == 'red':
             diff = 0.5
         plt.plot(self.v_vec, self.inorm_vec, 'o', c=color)
-        ssi_slope, v_half, top, bottom = cf.calc_inact_obj(self.channel_name, is_HMM = True)
+        ssi_slope, v_half, top, bottom = calc_inact_obj(self.channel_name, is_HMM = True)
         formatted_ssi_slope = np.round(ssi_slope, decimals=2)
         formatted_v_half = np.round(v_half, decimals=2)
         plt.text(-10, 0.5 + diff, f'Slope: {formatted_ssi_slope}', c = color)
         plt.text(-10, 0.3 + diff, f'V50: {formatted_v_half}', c = color)
         x_values_v = np.arange(self.st_cl, self.end_cl, 1)
-        curve = cf.boltzmann(x_values_v, ssi_slope, v_half, top, bottom)
+        curve = boltzmann(x_values_v, ssi_slope, v_half, top, bottom)
         plt.plot(x_values_v, curve, c=color)
         return (formatted_v_half, formatted_ssi_slope)
     
@@ -722,13 +722,13 @@ class Inactivation:
         ax[0, 0].set_ylabel('Normalized current')
         ax[0, 0].set_title('Inactivation: Voltage/Normalized Current Relation')
         ax[0, 0].plot(self.v_vec, self.inorm_vec, 'o', c=color)
-        ssi_slope, v_half, top, bottom, tau0 = cf.calc_inact_obj()
+        ssi_slope, v_half, top, bottom, tau0 = calc_inact_obj()
         formatted_ssi_slope = np.round(ssi_slope, decimals=2)
         formatted_v_half = np.round(v_half, decimals=2)
         ax[0, 0].text(-10, 0.5 + y_offset, f'Slope: {formatted_ssi_slope}', c=color)
         ax[0, 0].text(-10, 0.4 + y_offset, f'V50: {formatted_v_half}', c=color)
         x_values_v = np.arange(self.st_cl, self.end_cl, 1)
-        curve = cf.boltzmann(x_values_v, ssi_slope, v_half, top, bottom)
+        curve = boltzmann(x_values_v, ssi_slope, v_half, top, bottom)
         ax[0, 0].plot(x_values_v, curve, c=color, label="HHM")
         ax[0, 0].legend(loc='lower left')  # add legend
 
@@ -916,7 +916,7 @@ class RFI:
         plt.xlabel('Time $(ms)$')
         plt.ylabel('Fractional recovery (P2/P1)')
         plt.title('Time/Fractional recovery (P2/P1)')
-        y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj()
+        y0, plateau, percent_fast, k_fast, k_slow = calc_recov_obj()
         formatted_tauSlow = np.round(1 / k_slow, decimals=2)
         formatted_tauFast = np.round(1 / k_fast, decimals=2)
         formatted_percentFast = np.round(percent_fast, decimals=4)
@@ -978,7 +978,7 @@ class RFI:
         ax[0, 0].set_xlabel('Time $(ms)$')
         ax[0, 0].set_ylabel('Fractional recovery (P2/P1)')
         ax[0, 0].set_title('Time/Fractional recovery (P2/P1)')
-        y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj()
+        y0, plateau, percent_fast, k_fast, k_slow = calc_recov_obj()
         formatted_tauSlow = np.round(1 / k_slow, decimals=2)
         formatted_tauFast = np.round(1 / k_fast, decimals=2)
         formatted_percentFast = np.round(percent_fast, decimals=4)
@@ -1337,6 +1337,12 @@ class UDB20:
             self.peak_times.append(self.t_vec[self.i_vec.index(self.ipeak_vec[iter])])
             self.norm_peak.append(self.ipeak_vec[iter] / self.ipeak_vec[0])
     """
+
+    def plotUDB20_TimeVRelation_plt(self, plt, color):
+        plt.plot(self.t_vec, self.v_vec, c=color)
+
+    def plotUDB20_TimeCurrentRelation_plt(self, plt, color):
+        plt.plot(self.t_vec[1:], self.i_vec[1:], c=color)
 
     def plotUDB20_TimeVRelation(self):
         plt.figure()

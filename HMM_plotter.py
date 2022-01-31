@@ -4,6 +4,8 @@ import eval_helper as eh
 import matplotlib.pyplot as plt
 import curve_fitting as cf
 from scipy import optimize
+import argparse
+import generalized_genSim_shorten_time as ggsd
 
 def set_param(param, is_HMM):
     if is_HMM:
@@ -343,4 +345,59 @@ def make_ramp_plots(new_params, mutant_name, mutant_protocol_csv_name, param_val
     plt.axis('off')
     for fig in figures:
         pdf.savefig( fig )
+    pdf.close()
+
+
+############################################################################################################
+def make_UDB20_plots(new_params, mutant_name, mutant_protocol_csv_name, param_values_wt, filename, is_HMM,
+                     channel_name):
+    pdf = matplotlib.backends.backend_pdf.PdfPages(filename)
+    figures = []
+
+    if is_HMM:
+        module_name = ggsdHMM
+    else:
+        module_name = ggsd
+
+    ############################################################################################################
+    figures.append(plt.figure())
+    plt.xlabel('Time $(ms)$')
+    plt.ylabel('Voltage $(mV)$')
+    plt.title(f"UBD20: Time Voltage Relation for {mutant_name}")
+
+    set_param(param_values_wt, is_HMM)
+    wt_udb20 = module_name.UDB20(channel_name=channel_name)
+    wt_udb20.genUDB20()
+    wt_udb20.plotUDB20_TimeVRelation_plt(plt, 'black')
+
+    set_param(new_params, is_HMM)
+    mut_udb20 = module_name.UDB20(channel_name=channel_name)
+    mut_udb20.genUDB20()
+    mut_udb20.plotUDB20_TimeVRelation_plt(plt, 'red')
+
+    ############################################################################################################
+    figures.append(plt.figure())
+    plt.xlabel('Time $(ms)$')
+    plt.ylabel('Current $(pA)$')
+    plt.title(f"UDB20: Current of Pulses for {mutant_name}")
+
+    set_param(param_values_wt, is_HMM)
+    wt_udb20 = module_name.UDB20(channel_name=channel_name)
+    wt_udb20.genUDB20()
+    wt_udb20.plotUDB20_TimeCurrentRelation_plt(plt, 'black')
+
+    set_param(new_params, is_HMM)
+    mut_udb20 = module_name.UDB20(channel_name=channel_name)
+    mut_udb20.genUDB20()
+    mut_udb20.plotUDB20_TimeCurrentRelation_plt(plt, 'red')
+
+    ############################################################################################################
+
+    figures.append(plt.figure())
+    goal_dict = read_mutant_protocols(mutant_protocol_csv_name, mutant_name)
+    plt.text(0.4, 0.9, "(actual, goal)")
+    #plt.text(0.1, 0.7, "tau: " + str((mut_tau / wt_tau, goal_dict['tau0'] / 100)))
+    plt.axis('off')
+    for fig in figures:
+        pdf.savefig(fig)
     pdf.close()

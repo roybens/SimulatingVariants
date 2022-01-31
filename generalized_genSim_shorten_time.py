@@ -1279,6 +1279,12 @@ class UDB20:
             self.norm_peak.append(self.ipeak_vec[iter] / self.ipeak_vec[0])
     """
 
+    def plotUDB20_TimeVRelation_plt(self, plt, color):
+        plt.plot(self.t_vec, self.v_vec, c=color)
+
+    def plotUDB20_TimeCurrentRelation_plt(self, plt, color):
+        plt.plot(self.t_vec[1:], self.i_vec[1:], c=color)
+
     def plotUDB20_TimeVRelation(self):
         plt.figure()
         plt.xlabel('Time $(ms)$')
