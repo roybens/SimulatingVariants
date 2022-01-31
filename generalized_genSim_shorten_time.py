@@ -1268,21 +1268,27 @@ class UDB20:
         h.tstop = self.t_total
         self.clamp(self.v_vec[0])
 
-    """ Currently not working: pulses 2-9 have the same peak current  
     def getPeakCurrs(self):
+        # returns peak4/peak0 or peak5/peak1
+        # pulses 2-9 have the same peak current?
         for iter in range(self.num_repeats):
             peak_starts = int((self.t_init + (2 * self.t_peakdur * iter)) / h.dt)
             peak_ends = int(peak_starts + (2 * self.t_peakdur) / h.dt)
-
             self.ipeak_vec.append(max(self.i_vec[peak_starts: peak_ends - 1]))
             self.peak_times.append(self.t_vec[self.i_vec.index(self.ipeak_vec[iter])])
             self.norm_peak.append(self.ipeak_vec[iter] / self.ipeak_vec[0])
-    """
+        #print(self.ipeak_vec[4], self.ipeak_vec[0])
+        return self.norm_peak[4]
 
     def plotUDB20_TimeVRelation_plt(self, plt, color):
         plt.plot(self.t_vec, self.v_vec, c=color)
 
     def plotUDB20_TimeCurrentRelation_plt(self, plt, color):
+        peakCurrs5 = UDB20.getPeakCurrs(self)
+        diff = 0
+        if color == "red":
+            diff = 0.2
+        plt.text(0, -0.2 + diff, f'peak5/peak1: {np.round(peakCurrs5,decimals=2)}', c=color)
         plt.plot(self.t_vec[1:], self.i_vec[1:], c=color)
 
     def plotUDB20_TimeVRelation(self):

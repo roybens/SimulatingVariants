@@ -2,6 +2,7 @@ import generalized_genSim_shorten_time_HMM as ggsdHMM
 import matplotlib.backends.backend_pdf
 import eval_helper as eh
 import matplotlib.pyplot as plt
+# other
 import curve_fitting as cf
 from scipy import optimize
 import argparse
@@ -205,7 +206,7 @@ def make_inact_plots(new_params, mutant_name, mutant_protocol_csv_name, param_va
     set_param(new_params, is_HMM)
     mut_inact = module_name.Inactivation(channel_name = channel_name)
     mut_inact.genInactivation()
-    inact_v_half_mut, inact_slope_mut =  mut_inact.plotInactivation_VInormRelation_plt(plt, 'red')
+    inact_v_half_mut, inact_slope_mut = mut_inact.plotInactivation_VInormRelation_plt(plt, 'red')
 
 
     ############################################################################################################
@@ -384,11 +385,13 @@ def make_UDB20_plots(new_params, mutant_name, mutant_protocol_csv_name, param_va
     set_param(param_values_wt, is_HMM)
     wt_udb20 = module_name.UDB20(channel_name=channel_name)
     wt_udb20.genUDB20()
+    wt_peakCurrs5 = wt_udb20.getPeakCurrs()
     wt_udb20.plotUDB20_TimeCurrentRelation_plt(plt, 'black')
 
     set_param(new_params, is_HMM)
     mut_udb20 = module_name.UDB20(channel_name=channel_name)
     mut_udb20.genUDB20()
+    mut_peakCurrs5 = mut_udb20.getPeakCurrs()
     mut_udb20.plotUDB20_TimeCurrentRelation_plt(plt, 'red')
 
     ############################################################################################################
@@ -396,8 +399,47 @@ def make_UDB20_plots(new_params, mutant_name, mutant_protocol_csv_name, param_va
     figures.append(plt.figure())
     goal_dict = read_mutant_protocols(mutant_protocol_csv_name, mutant_name)
     plt.text(0.4, 0.9, "(actual, goal)")
-    #plt.text(0.1, 0.7, "tau: " + str((mut_tau / wt_tau, goal_dict['tau0'] / 100)))
+    plt.text(0.1, 0.7, "peak5/peak1: " + str((mut_peakCurrs5 / wt_peakCurrs5, goal_dict['udb20'] / 100)))
     plt.axis('off')
     for fig in figures:
         pdf.savefig(fig)
     pdf.close()
+
+
+
+
+#######################
+# MAIN
+#######################
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Generate simulated data.')
+    parser.add_argument("--function", "-f", type=int, default=1, help="Specify which function to run")
+    args = parser.parse_args()
+
+    p = [1.6145008130686316,
+         1.2702355752969856,
+         0.2856140201135051,
+         2.000672353749617,
+         159.19293105141264,
+         0.8882089670901088,
+         1.54307338742142,
+         4.835533385345919,
+         184.46766214071704,
+         0.6193119174876813,
+         8.851518497666747,
+         0.07019281223744751,
+         46.30970872218895,
+         12.027049656918223,
+         1.0303204433640094,
+         0.05027526734333132,
+         1791.9670172949814,
+         1.3053734595552096,
+         20.37380422148677,
+         -9.174778056184731]
+
+    eh.change_params(p, scaled=False, is_HMM=True)
+
+    if args.function == 1:
+        make_UDB20_plots(p, "K1260E", "./csv_files/mutant_protocols.csv", p, "./Plots_Folder/jinan_test.pdf", is_HMM=True,
+                       channel_name="na12mut")
+
