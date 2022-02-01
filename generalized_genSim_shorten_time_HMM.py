@@ -216,7 +216,7 @@ class Activation:
             return Gmax * (vm - self.vrev) / (1 + np.exp((v_half - vm) / s))
 
         self.vrev = stats.linregress(lin_i, lin_v).intercept
-        Gmax, self.v_half, self.s = optimize.curve_fit(cf.boltzmann, v_vec, ipeak_vec)[0]
+        Gmax, self.v_half, self.s = optimize.curve_fit(boltzmann, v_vec, ipeak_vec)[0]
 
         # find normalized conductances at each voltage
         norm_g = h.Vector()
