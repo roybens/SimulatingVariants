@@ -278,6 +278,15 @@ def make_recov_plots(new_params, mutant_name, mutant_protocol_csv_name, param_va
     pdf = matplotlib.backends.backend_pdf.PdfPages(filename)
     figures = []
     
+    if is_HMM:
+        module_name = ggsdHMM
+    else:
+        module_name = ggsd
+    set_param(param_values_wt, is_HMM)
+    wt_recov = module_name.RFI(channel_name=channel_name)
+    wt_recov.genRecInactTau()
+    wt_recov.plotAllRFI()
+    
 
 def make_ramp_plots(new_params, mutant_name, mutant_protocol_csv_name, param_values_wt, filename, is_HMM, channel_name):
     """
