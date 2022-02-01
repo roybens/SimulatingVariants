@@ -279,6 +279,10 @@ class Activation:
         
         plt.plot(self.v_vec, self.gnorm_vec, 'o', c=color)
         gv_slope, v_half, top, bottom = cf.calc_act_obj(self.channel_name)
+        
+        # slope inverted
+        gv_slope = 1 / gv_slope
+        
         formatted_gv_slope = np.round(gv_slope, decimals=2)
         formatted_v_half = np.round(v_half, decimals=2)
         plt.text(-10, 0.5 + diff, f'Slope: {formatted_gv_slope}', c = color)
@@ -552,6 +556,11 @@ class Inactivation:
             diff = 0.5
         plt.plot(self.v_vec, self.inorm_vec, 'o', c=color)
         ssi_slope, v_half, top, bottom, tau0 = cf.calc_inact_obj(self.channel_name)
+        
+        #invert slope
+        ssi_slope = 1 / ssi_slope
+        
+        
         formatted_ssi_slope = np.round(ssi_slope, decimals=2)
         formatted_v_half = np.round(v_half, decimals=2)
         plt.text(-10, 0.5 + diff, f'Slope: {formatted_ssi_slope}', c = color)
@@ -1098,11 +1107,29 @@ class Ramp:
         """ Calculates persistent current (avg current of last 100 ms at 0 mV)
         Normalized by peak from IV (same number as areaUnderCurve).
         """
+        cutoff_start = self.t_end_persist
+        cutoff_end = len(self.t_vec) - 1
+        # remove current spike at end of 0 mV
+        while np.abs(self.i_vec[cutoff_start + 1] - self.i_vec[cutoff_start]) < 1E-5:
+            cutoff_start += 1
+            if cutoff_start == cutoff_end:
+                break
+        while np.abs(self.i_vec[cutoff_end] - self.i_vec[cutoff_end - 1]) < 1E-5:
+            cutoff_end -= 1
+            if cutoff_end == self.t_end_persist:
+                break
+
         persistent = self.i_vec[self.t_start_persist:self.t_end_persist]
+
+        #create time vector for graphing current
+        t_current = np.concatenate((self.t_vec[1:cutoff_start], self.t_vec[cutoff_end:]))
+        self.i_vec = np.concatenate((self.i_vec[1:cutoff_start], self.i_vec[cutoff_end:]))
+
         act = Activation()
         act.genActivation()
         IVPeak = min(act.ipeak_vec)
-        return (sum(persistent) / len(persistent)) / IVPeak
+
+        return ((sum(persistent) / len(persistent)) / IVPeak), t_current
 
     def plotRamp_TimeVRelation(self):
         plt.figure()
@@ -1113,9 +1140,13 @@ class Ramp:
         # save as PGN file
         plt.savefig(os.path.join(os.path.split(__file__)[0], 'Plots_Folder/Ramp Time Voltage relation'))
 
+    def plotRamp_TimeVRelation_plt(self, plt, color):
+        [plt.plot(self.t_vec, self.v_vec, color=color)]
+
     def plotRamp_TimeCurrentRelation(self):
         area = round(self.areaUnderCurve(), 2)
-        persistCurr = "{:.2e}".format(round(self.persistentCurrent(), 4))
+        persistCurr, t_current = self.persistentCurrent()
+        formattedCurr = "{:.2e}".format(round(persistCurr, 4))
 
         f, (ax1, ax2) = plt.subplots(1, 2, sharey=True)
 
@@ -1128,18 +1159,38 @@ class Ramp:
         plt.ylabel('Current', labelpad=25)
 
         # starting + first step + ramp section
-        ax1.set_title("Ramp")
-        ax1.plot(self.t_vec[1:self.t_start_persist], self.i_vec[1:self.t_start_persist], 'o', c='black', markersize=0.1)
-        plt.text(0.05, 0.2, f'Normalized \narea under \ncurve: {area}', c='blue', fontsize=10)
+        ax1.set_title("Ramp AUC")
+        ax1.plot(t_current[:self.t_start_persist], self.i_vec[:self.t_start_persist], 'o', c='black', markersize=0.1)
+        plt.text(0.05, 0.2, f'Normalized \nAUC: {area}', c='blue', fontsize=10)
 
         # persistent current + last step section
         ax2.set_title("Persistent Current")
-        ax2.plot(self.t_vec[self.t_start_persist:], self.i_vec[self.t_start_persist:], 'o', c='black', markersize=0.1)
-        plt.text(0.75, 0.5, f'Persistent Current:\n{persistCurr} mV', c='blue', fontsize=10, ha='center')
+        ax2.plot(t_current[self.t_start_persist:], self.i_vec[self.t_start_persist:], 'o', c='black', markersize=0.1)
+        plt.text(0.75, 0.5, f'Persistent Current:\n{formattedCurr} mA', c='blue', fontsize=10, ha='center')
 
         # save as PGN file
         plt.tight_layout()
         plt.savefig(os.path.join(os.path.split(__file__)[0], 'Plots_Folder/Ramp Time Current Density Relation'))
+
+    def plotRamp_TimeCurrentRelation_plt(self, ax1, ax2, color):
+        area = round(self.areaUnderCurve(), 2)
+        persistCurr, t_current = self.persistentCurrent()
+        formattedCurr = "{:.2e}".format(round(persistCurr, 4))
+
+        diff = 0
+        if color == "red":
+            diff = 0.2
+
+
+        # starting + first step + ramp section
+        ax1.plot(t_current[:self.t_start_persist], self.i_vec[:self.t_start_persist], 'o', c=color, markersize=0.1)
+        plt.text(0.05, 0.2 + diff, f'Normalized \nAUC: {area}', c=color, fontsize=10)
+
+        # persistent current + last step section
+        ax2.plot(t_current[self.t_start_persist:], self.i_vec[self.t_start_persist:], 'o', c=color, markersize=0.1)
+        plt.text(0.75, 0.2 + diff, f'Persistent Current:\n{formattedCurr} mA', c=color, fontsize=10, ha='center')
+
+        return (area, round(persistCurr, 4))
 
     def plotAllRamp(self):
         """
@@ -1159,7 +1210,8 @@ class Ramp:
         ax_list[0].plot(self.t_vec, self.v_vec, color=color)
 
         area = round(self.areaUnderCurve(), 2)
-        persistCurr = "{:.2e}".format(round(self.persistentCurrent(), 4))
+        persistCurr, t_current = self.persistentCurrent()
+        formattedCurr = "{:.2e}".format(round(persistCurr, 4))
 
         # starting + first step + ramp section
         ax_list[1].set_xlabel('Time $(ms)$')
@@ -1167,7 +1219,7 @@ class Ramp:
         ax_list[1].set_title("Ramp")
         ax_list[1].plot(self.t_vec[1:self.t_start_persist], self.i_vec[1:self.t_start_persist], 'o', c=color,
                         markersize=0.1)
-        ax_list[1].text(0 + x_offset, -0.08 + y_offset, f'Normalized \narea under \ncurve: {area}', color=color,
+        ax_list[1].text(0 + x_offset, -0.08 + y_offset, f'Normalized AUC: {area}', color=color,
                         fontsize=10)
 
         # persistent current + last step section
@@ -1176,7 +1228,7 @@ class Ramp:
         ax_list[2].set_title("Persistent Current")
         ax_list[2].plot(self.t_vec[self.t_start_persist:], self.i_vec[self.t_start_persist:], 'o', c=color,
                         markersize=0.1)
-        ax_list[2].text(420 + x_offset, -0.04 + y_offset, f'Persistent Current:\n{persistCurr} mV', color=color,
+        ax_list[2].text(420 + x_offset, -0.04 + y_offset, f'Persistent Current:\n{formattedCurr} mV', color=color,
                         fontsize=10, ha='center')
 
 

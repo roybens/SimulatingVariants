@@ -235,11 +235,13 @@ def make_act_plots(new_params, mutant_name, mutant_protocol_csv_name, param_valu
     wt_act.genActivation()
     # (formatted_v_half, formatted_gv_slope)
     act_v_half_wt, act_slope_wt = wt_act.plotActivation_VGnorm_plt(plt, 'black')
+    act_slope_wt = 1/act_slope_wt
 
     set_param(new_params)
     mut_act = ggsd.Activation(channel_name = 'na12')
     mut_act.genActivation()
     act_v_half_mut, act_slope_mut = mut_act.plotActivation_VGnorm_plt(plt, 'red')
+    act_slope_mut = 1/act_slope_mut
 
     ############################################################################################################
     figures.append(plt.figure())
@@ -347,11 +349,13 @@ def make_inact_plots(new_params, mutant_name, mutant_protocol_csv_name, param_va
     wt_inact = ggsd.Inactivation(channel_name = 'na12')
     wt_inact.genInactivation()
     inact_v_half_wt, inact_slope_wt = wt_inact.plotInactivation_VInormRelation_plt(plt, 'black')
+    inact_slope_wt = 1/inact_slope_wt
 
     set_param(new_params)
     mut_inact = ggsd.Inactivation(channel_name = 'na12')
     mut_inact.genInactivation()
     inact_v_half_mut, inact_slope_mut =  mut_inact.plotInactivation_VInormRelation_plt(plt, 'red')
+    inact_slope_mut = 1/inact_slope_mut
 
 
     ############################################################################################################
@@ -396,15 +400,13 @@ def make_inact_plots(new_params, mutant_name, mutant_protocol_csv_name, param_va
     wt_inact = ggsd.Inactivation(channel_name = 'na12')
     wt_inact.genInactivation()
     wt_tau = wt_inact.plotInactivation_Tau_0mV_plt(plt, 'black')
-    wt_per_cur = find_persistent_current()
+    wt_per_cur = find_persistent_current()[0]
 
     set_param(new_params)
     mut_inact = ggsd.Inactivation(channel_name = 'na12')
     mut_inact.genInactivation()
     mut_tau = mut_inact.plotInactivation_Tau_0mV_plt(plt, 'red')
-    mut_per_cur = find_persistent_current()
-    
-    
+    mut_per_cur = find_persistent_current()[0]
 
     
     figures.append(plt.figure())
@@ -419,6 +421,73 @@ def make_inact_plots(new_params, mutant_name, mutant_protocol_csv_name, param_va
         pdf.savefig( fig )
     pdf.close()
     
+def make_ramp_plots(new_params, mutant_name, mutant_protocol_csv_name, param_values_wt = wt_params, filename = 'jinan_plots_out.pdf'):
+    """
+    input:
+        new_params: a set of variant parameters
+        param_values_wt: WT parameters. Defaulted to NA 16 WT.
+        filename: name of the pdf file into which we want to store the figures
+    return:
+        none; creates plots for ramp
+    """
+
+    pdf = matplotlib.backends.backend_pdf.PdfPages(filename)
+    figures = []
+
+    figures.append(plt.figure())
+    plt.xlabel('Time $(ms)$')
+    plt.ylabel('Voltage $(mV)$')
+    plt.title(f'Ramp: {mutant_name}')
+
+    set_param(param_values_wt)
+    wt_ramp = ggsd.Ramp(channel_name = 'na12')
+    wt_ramp.genRamp()
+    wt_ramp.plotRamp_TimeVRelation_plt(plt, 'black')
+
+    set_param(new_params)
+    mut_ramp = ggsd.Ramp(channel_name = 'na12')
+    mut_ramp.genRamp()
+    mut_ramp.plotRamp_TimeVRelation_plt(plt, 'red')
+
+    ############################################################################################################
+    f, (ax1, ax2) = plt.subplots(1, 2, sharey=True)
+
+    f.add_subplot(111, frameon=False)  # for shared axes labels and big title
+    # hide tick and tick label of the big axes
+    plt.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
+    plt.grid(False)
+
+    plt.xlabel('Time $(ms)$')
+    plt.ylabel('Current', labelpad=25)
+    plt.title(f"Ramp: {mutant_name} Time Current Density Relation", x=0.4, y=1.1)
+    ax1.set_title("Ramp AUC")
+    ax2.set_title("Persistent Current")
+
+    set_param(param_values_wt)
+    wt_ramp = ggsd.Ramp(channel_name = 'na12')
+    wt_ramp.genRamp()
+    wt_ramp_area, wt_ramp_persistcurr = wt_ramp.plotRamp_TimeCurrentRelation_plt(ax1, ax2, 'black')
+
+    set_param(new_params)
+    mut_ramp = ggsd.Ramp(channel_name = 'na12')
+    mut_ramp.genRamp()
+    mut_ramp_area, mut_ramp_persistcurr =mut_ramp.plotRamp_TimeCurrentRelation_plt(ax1, ax2, 'red')
+
+    plt.tight_layout()
+
+    figures.append(f)
+    ############################################################################################################
+    figures.append(plt.figure())
+    goal_dict = read_mutant_protocols(mutant_protocol_csv_name, mutant_name)
+    plt.text(0.4,0.9,"(actual, goal)")
+    plt.text(0.1,0.7,"area under curve: " + str((mut_ramp_area/wt_ramp_area , goal_dict['ramp']/100)))
+    plt.text(0.1,0.5,"persistent current: " + str((mut_ramp_persistcurr/wt_ramp_persistcurr, goal_dict['persistent']/100)))
+
+    plt.axis('off')
+    for fig in figures:
+        pdf.savefig( fig )
+    pdf.close()
+
 
 def get_param_list_in_str():
     """

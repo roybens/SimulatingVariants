@@ -1055,6 +1055,9 @@ class Ramp:
         self.v_vec_t = []  # vector for voltage as function of time
         self.i_vec = []  # vector for current
 
+        self.act = Activation(channel_name=channel_name)
+        self.act.genActivation()
+
     def clamp(self, v_cl):
         """ Runs a trace and calculates currents.
         Args:
@@ -1089,9 +1092,7 @@ class Ramp:
         v_vec_t_ramp = self.v_vec_t[maskStart:maskEnd]
         # plt.plot(self.t_vec[maskStart:maskEnd], self.v_vec[maskStart:maskEnd], color= 'b') # uncomment to view area taken
         area = trapz(i_vec_ramp, x=v_vec_t_ramp)  # find area
-        act = Activation(channel_name='na12')
-        act.genActivation()
-        area = area / min(act.ipeak_vec)  # normalize to peak currents from activation
+        area = area / min(self.act.ipeak_vec)  # normalize to peak currents from activation
         return area
 
     def persistentCurrent(self):
@@ -1099,9 +1100,7 @@ class Ramp:
         Normalized by peak from IV (same number as areaUnderCurve).
         """
         persistent = self.i_vec[self.t_start_persist:self.t_end_persist]
-        act = Activation()
-        act.genActivation()
-        IVPeak = min(act.ipeak_vec)
+        IVPeak = min(self.act.ipeak_vec)
         return (sum(persistent) / len(persistent)) / IVPeak
 
     def plotRamp_TimeVRelation(self):
@@ -1269,16 +1268,28 @@ class UDB20:
         h.tstop = self.t_total
         self.clamp(self.v_vec[0])
 
-    """ Currently not working: pulses 2-9 have the same peak current  
     def getPeakCurrs(self):
+        # returns peak4/peak0 or peak5/peak1
+        # pulses 2-9 have the same peak current?
         for iter in range(self.num_repeats):
             peak_starts = int((self.t_init + (2 * self.t_peakdur * iter)) / h.dt)
             peak_ends = int(peak_starts + (2 * self.t_peakdur) / h.dt)
-
             self.ipeak_vec.append(max(self.i_vec[peak_starts: peak_ends - 1]))
             self.peak_times.append(self.t_vec[self.i_vec.index(self.ipeak_vec[iter])])
             self.norm_peak.append(self.ipeak_vec[iter] / self.ipeak_vec[0])
-    """
+        #print(self.ipeak_vec[4], self.ipeak_vec[0])
+        return self.norm_peak[4]
+
+    def plotUDB20_TimeVRelation_plt(self, plt, color):
+        plt.plot(self.t_vec, self.v_vec, c=color)
+
+    def plotUDB20_TimeCurrentRelation_plt(self, plt, color):
+        peakCurrs5 = UDB20.getPeakCurrs(self)
+        diff = 0
+        if color == "red":
+            diff = 0.2
+        plt.text(0, -0.2 + diff, f'peak5/peak1: {np.round(peakCurrs5,decimals=2)}', c=color)
+        plt.plot(self.t_vec[1:], self.i_vec[1:], c=color)
 
     def plotUDB20_TimeVRelation(self):
         plt.figure()

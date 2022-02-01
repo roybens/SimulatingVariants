@@ -17,13 +17,16 @@ import numpy as np
 import bluepyopt as bpop
 import matplotlib.pyplot as plt
 
+
+mutant_name = "T400RAneo"
+initial_baseline_parameters = eh12.get_neoWT()
+
 offspring_size = 2000
 num_generations = 250
-output_log_file_name = 'jinan_fitting_result_T400RAneo_interactive.txt'
 param_range_file = "./csv_files/param_stats_wide_na12.csv"
-mutant_name = "T400RAneo"
+output_log_file_name = 'jinan_fitting_result_' + mutant_name + '_interactive.txt'
 mutant_protocol_csv_name = './csv_files/mutant_protocols_CHOP.csv'
-initial_baseline_parameters = eh12.get_neoWT()
+
 
 
 peak_amp_dict = {"T400RAdult": 0.645, "I1640NAdult": 0.24, "m1770LAdult": 0.4314, "neoWT": 0.748, "T400RAneo": 0.932, "I1640NNeo": 0.28, "m1770LNeo": 1}
@@ -48,10 +51,10 @@ class Vclamp_evaluator(bpop.evaluators.Evaluator):
         # first get baseline data points:
         gv_slope, v_half, top, bottom = cf.calc_act_obj("na12", is_HMM=False)
         self.act_v_half = v_half
-        self.act_slope = gv_slope
+        self.act_slope = 1 / gv_slope
         ssi_slope, v_half, top, bottom, _ = cf.calc_inact_obj("na12", is_HMM=False)
         self.inact_v_half = v_half
-        self.inact_slope = ssi_slope
+        self.inact_slope = 1 / ssi_slope
         self.tau0 = eh12.find_tau0()
         self.per_cur = eh12.find_persistent_current()
         self.peak_amp = eh12.find_peak_amp()
@@ -139,6 +142,9 @@ class Vclamp_evaluator(bpop.evaluators.Evaluator):
         try:
             gv_slope, act_v_half, act_top, act_bottom = cf.calc_act_obj("na12", is_HMM=False)
             ssi_slope, inact_v_half, inact_top, inact_bottom, tau999 = cf.calc_inact_obj("na12", is_HMM=False)
+            
+            gv_slope = 1/gv_slope
+            ssi_slope = 1/ssi_slope
             tau0 = eh12.find_tau0()
             per_cur = eh12.find_persistent_current()
         except:

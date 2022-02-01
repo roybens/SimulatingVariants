@@ -58,8 +58,6 @@ proc populate_axon_young(){
 			gNap_Et2bar_Nap_Et2 = 0
 			gCa_HVAbar_Ca_HVA = 0 
 			gSK_E2bar_SK_E2 = 0
-			gbar_na1216 = 0
-			gbar_na1216mut = 0
 			nseg=11
 			g_pas(0:0.1) = (gpas_all/myelin_scale):(gpas_all/myelin_scale)
 			g_pas(0.1:1) = gpas_all:gpas_all
