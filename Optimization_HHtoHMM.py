@@ -15,7 +15,7 @@ from deap import tools
 import multiprocessing
 import generalized_genSim_shorten_time as ggsd
 
-evaluator = vcl_ev.Vclamp_evaluator_HMM('./csv_files/params_na12mut8st_mod_wide.csv', 'Basis', 'na12mut8st', 'na12mut', objective_names=['act', 'inact', 'tau0', 'peak_amp', 'time_to_peak'])
+evaluator = vcl_ev.Vclamp_evaluator_HMM('./csv_files/params_na12mut8st_mod.csv', 'Basis', 'na12mut8st', 'na16', objective_names=['act', 'inact', 'tau0', 'peak_amp', 'time_to_peak'])
 
 gen_counter = 0
 best_indvs = []

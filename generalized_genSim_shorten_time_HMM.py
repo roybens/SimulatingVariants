@@ -792,6 +792,7 @@ class RFI:
         self.soma.Ra = soma_Ra  # ohm-cm
         self.soma.insert(channel_name)  # insert mechanism
         self.soma.ena = soma_ena
+        self.channel_name = channel_name
 
         # clamping parameters
         self.ntrials = ntrials  #
@@ -917,7 +918,7 @@ class RFI:
         plt.xlabel('Time $(ms)$')
         plt.ylabel('Fractional recovery (P2/P1)')
         plt.title('Time/Fractional recovery (P2/P1)')
-        y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj()
+        y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(self.channel_name, is_HMM=True)
         formatted_tauSlow = np.round(1 / k_slow, decimals=2)
         formatted_tauFast = np.round(1 / k_fast, decimals=2)
         formatted_percentFast = np.round(percent_fast, decimals=4)
@@ -1347,6 +1348,7 @@ class RFI_dv:
         self.soma.Ra = soma_Ra  # ohm-cm
         self.soma.insert(channel_name)  # insert mechanism
         self.soma.ena = soma_ena
+        self.channel_name = channel_name
 
         self.h = h
         self.h.celsius = h_celsius  # temperature in celsius

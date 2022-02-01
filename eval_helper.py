@@ -545,5 +545,6 @@ def change_params_dict(new_params, is_HMM=False):
             seg.ah_1_na12mut8st = new_params['ah_1_na12mut8st']
             seg.ah_2_na12mut8st = new_params['ah_2_na12mut8st']
         currh.vShift_na12mut8st = new_params['vShift_na12mut8st']
+        currh.vShift_inact_na12mut8st = new_params['vShift_inact_na12mut8st']
     return
 

@@ -270,3 +270,22 @@ def make_inact_plots(new_params, mutant_name, mutant_protocol_csv_name, param_va
     for fig in figures: ## will open an empty extra figure :(
         pdf.savefig( fig )
     pdf.close()
+    
+def make_recov_plots(new_params, mutant_name, mutant_protocol_csv_name, param_values_wt, filename, is_HMM, channel_name):
+    pdf = matplotlib.backends.backend_pdf.PdfPages(filename)
+    figures = []
+    
+    if is_HMM:
+        module_name = ggsdHMM
+    else:
+        module_name = ggsd
+    
+    # figures.append(plt.figure())
+    # plt.xlabel('Log Time $(mS)$')
+    # plt.ylabel('Fraction Recovered')
+    # plt.title(f'Redovery: {mutant_name}')
+    
+    set_param(param_values_wt, is_HMM)
+    wt_recov = module_name.RFI(channel_name=channel_name)  
+    wt_recov.genRecInactTau()
+    wt_recov.plotAllRFI()

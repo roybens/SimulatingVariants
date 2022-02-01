@@ -149,7 +149,6 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         # Calculate wild baseline values
         v_half_ssi_exp = self.wild_data['v_half_ssi'] + float(self.protocols['dv_half_ssi'])
         ssi_slope_exp = self.wild_data['ssi_slope'] * float(self.protocols['ssi_slope']) / 100
-        
         eh.change_params(param_values, scaled=False, is_HMM=True)
         inorm_vec, v_vec, all_is = ggsdHMM.Inactivation(channel_name=self.channel_name_HMM, step=5).genInactivation()
         inorm_array = np.array(inorm_vec)
