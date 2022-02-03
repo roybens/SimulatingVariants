@@ -278,10 +278,12 @@ def make_recov_plots(new_params, mutant_name, mutant_protocol_csv_name, param_va
     pdf = matplotlib.backends.backend_pdf.PdfPages(filename)
     figures = []
     fig = plt.figure(figsize=(5, 20))
-    ax1 = fig.add_subplot(4, 1, 1)
-    ax2 = fig.add_subplot(4, 1, 2)
-    ax3 = fig.add_subplot(4, 1, 3)
-    ax4 = fig.add_subplot(4, 1, 4)
+    ax1 = fig.add_subplot(6, 1, 1)
+    ax2 = fig.add_subplot(6, 1, 2)
+    ax3 = fig.add_subplot(6, 1, 3)
+    ax4 = fig.add_subplot(6, 1, 4)
+    ax5 = fig.add_subplot(6, 1, 5)
+    ax6 = fig.add_subplot(6, 1, 6)
     if is_HMM:
         module_name = ggsdHMM
     else:
@@ -290,7 +292,12 @@ def make_recov_plots(new_params, mutant_name, mutant_protocol_csv_name, param_va
     set_param(param_values_wt, is_HMM)
     wt_recov = module_name.RFI(channel_name=channel_name)
     wt_recov.genRecInactTau()
-    wt_recov.plotAllRFI(ax1, ax2, ax3, ax4)
+    wt_recov.plotAllRFI(ax1, ax2, ax3, ax4, 'black')
+    
+    set_param(new_params, is_HMM)
+    wt_recov = module_name.RFI(channel_name=channel_name)
+    wt_recov.genRecInactTau()   
+    wt_recov.plotAllRFI(ax1, ax2, ax5, ax6, 'red')
     
 
 def make_ramp_plots(new_params, mutant_name, mutant_protocol_csv_name, param_values_wt, filename, is_HMM, channel_name):

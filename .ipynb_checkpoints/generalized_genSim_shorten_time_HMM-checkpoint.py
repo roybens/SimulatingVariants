@@ -216,7 +216,7 @@ class Activation:
             return Gmax * (vm - self.vrev) / (1 + np.exp((v_half - vm) / s))
 
         self.vrev = stats.linregress(lin_i, lin_v).intercept
-        Gmax, self.v_half, self.s = optimize.curve_fit(cf.boltzmann, v_vec, ipeak_vec)[0]
+        Gmax, self.v_half, self.s = optimize.curve_fit(boltzmann, v_vec, ipeak_vec)[0]
 
         # find normalized conductances at each voltage
         norm_g = h.Vector()
@@ -903,34 +903,13 @@ class RFI:
 
         return self.rec_inact_tau_vec, recov, self.vec_pts
 
-    def plotRFI_LogVInormRelation(self):
-        plt.figure()
-        plt.xlabel('Log(Time)')
-        plt.ylabel('Fractional recovery (P2/P1)')
-        plt.title('Log(Time)/Fractional recovery (P2/P1)')
-        plt.plot(self.log_time_vec, self.rec_vec, 'o', c='black')
-        # save as PGN file
-        plt.savefig(
-            os.path.join(os.path.split(__file__)[0], 'Plots_Folder/HMM_RFI Log Time Fractional recovery Relation'))
+    def plotRFI_LogVInormRelation(self, ax, color):
+        ax.set_xlabel('Log(Time)')
+        ax.set_ylabel('Fractional recovery (P2/P1)')
+        ax.set_title('Log(Time)/Fractional recovery (P2/P1)')
+        ax.plot(self.log_time_vec, self.rec_vec, 'o', c=color)
 
-    def plotRFI_VInormRelation(self, ax):
-        # plt.figure()
-        '''
-        plt.xlabel('Time $(ms)$')
-        plt.ylabel('Fractional recovery (P2/P1)')
-        plt.title('Time/Fractional recovery (P2/P1)')
-        y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(self.channel_name, is_HMM=True)
-        formatted_tauSlow = np.round(1 / k_slow, decimals=2)
-        formatted_tauFast = np.round(1 / k_fast, decimals=2)
-        formatted_percentFast = np.round(percent_fast, decimals=4)
-        plt.text(-10, 0.75, f'Tau Slow: {formatted_tauSlow}')
-        plt.text(-10, 0.8, f'Tau Fast: {formatted_tauFast}')
-        plt.text(-10, 0.85, f'% Fast Component: {formatted_percentFast}')
-        plt.plot(self.time_vec, self.rec_vec, 'o', c='black')
-        # save as PGN file
-        plt.savefig(os.path.join(os.path.split(__file__)[0], 'Plots_Folder/HMM_RFI Time Fractional recovery Relation'))
-
-        '''
+    def plotRFI_VInormRelation(self, ax, color):
         ax.set_xlabel('Time $(ms)$')
         ax.set_ylabel('Fractional recovery (P2/P1)')
         ax.set_title('Time/Fractional recovery (P2/P1)')
@@ -941,34 +920,31 @@ class RFI:
         ax.text(-10, 0.75, f'Tau Slow: {formatted_tauSlow}')
         ax.text(-10, 0.8, f'Tau Fast: {formatted_tauFast}')
         ax.text(-10, 0.85, f'% Fast Component: {formatted_percentFast}')
-        ax.plot(self.time_vec, self.rec_vec, 'o', c='black')
+        ax.plot(self.time_vec, self.rec_vec, 'o', c=color)
         
-    def plotRFI_TimeVRelation(self):
-        plt.figure()
-        plt.xlabel('Time $(ms)$')
-        plt.ylabel('Voltage $(mV)$')
-        plt.title('RFI Time/Voltage relation')
-        [plt.plot(self.all_t_vec[i], self.all_v_vec_t[i], c='black') for i in np.arange(self.L)]
-        # save as PGN file
-        plt.savefig(os.path.join(os.path.split(__file__)[0], 'Plots_Folder/HMM_RFI Time Voltage Relation'))
+    def plotRFI_TimeVRelation(self, ax, color):
+        ax.set_xlabel('Time $(ms)$')
+        ax.set_ylabel('Voltage $(mV)$')
+        ax.set_title('RFI Time/Voltage relation')
+        [ax.plot(self.all_t_vec[i], self.all_v_vec_t[i], c=color) for i in np.arange(self.L)]
 
-    def plotRFI_TCurrDensityRelation(self):
+    def plotRFI_TCurrDensityRelation(self, ax, color):
         plt.figure()
-        plt.xlabel('Time $(ms)$')
-        plt.ylabel('Current density $(mA/cm^2)$')
-        plt.title('RFI Time/Current density relation')
-        [plt.plot(self.all_t_vec[i], self.all_is[i], c='black') for i in np.arange(self.L)]
-        # save as PGN file
-        plt.savefig(os.path.join(os.path.split(__file__)[0], "Plots_Folder/HMM_RFI Time Current Density Relation"))
+        ax.set_xlabel('Time $(ms)$')
+        ax.set_ylabel('Current density $(mA/cm^2)$')
+        ax.set_title('RFI Time/Current density relation')
+        [ax.plot(self.all_t_vec[i], self.all_is[i], c=color) for i in np.arange(self.L)]
+        
+        
 
-    def plotAllRFI(self, ax1, ax2, ax3, ax4):
+    def plotAllRFI(self, ax1, ax2, ax3, ax4, color):
         """
         Saves all plots to CWD/Plots_Folder.
         """
-        self.plotRFI_VInormRelation(ax1)
-        self.plotRFI_LogVInormRelation(ax2)
-        self.plotRFI_TimeVRelation(ax3)
-        self.plotRFI_TCurrDensityRelation(ax4)
+        self.plotRFI_VInormRelation(ax1, color)
+        self.plotRFI_LogVInormRelation(ax2, color)
+        self.plotRFI_TimeVRelation(ax3, color)
+        self.plotRFI_TCurrDensityRelation(ax4, color)
 
     def plotAllRFI_with_ax(self, fig_title,
                            figsize=(18, 9), color='black',
