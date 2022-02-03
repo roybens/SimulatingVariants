@@ -913,8 +913,9 @@ class RFI:
         plt.savefig(
             os.path.join(os.path.split(__file__)[0], 'Plots_Folder/HMM_RFI Log Time Fractional recovery Relation'))
 
-    def plotRFI_VInormRelation(self):
-        plt.figure()
+    def plotRFI_VInormRelation(self, ax):
+        # plt.figure()
+        '''
         plt.xlabel('Time $(ms)$')
         plt.ylabel('Fractional recovery (P2/P1)')
         plt.title('Time/Fractional recovery (P2/P1)')
@@ -929,6 +930,19 @@ class RFI:
         # save as PGN file
         plt.savefig(os.path.join(os.path.split(__file__)[0], 'Plots_Folder/HMM_RFI Time Fractional recovery Relation'))
 
+        '''
+        ax.set_xlabel('Time $(ms)$')
+        ax.set_ylabel('Fractional recovery (P2/P1)')
+        ax.set_title('Time/Fractional recovery (P2/P1)')
+        y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(self.channel_name, is_HMM=True)
+        formatted_tauSlow = np.round(1 / k_slow, decimals=2)
+        formatted_tauFast = np.round(1 / k_fast, decimals=2)
+        formatted_percentFast = np.round(percent_fast, decimals=4)
+        ax.text(-10, 0.75, f'Tau Slow: {formatted_tauSlow}')
+        ax.text(-10, 0.8, f'Tau Fast: {formatted_tauFast}')
+        ax.text(-10, 0.85, f'% Fast Component: {formatted_percentFast}')
+        ax.plot(self.time_vec, self.rec_vec, 'o', c='black')
+        
     def plotRFI_TimeVRelation(self):
         plt.figure()
         plt.xlabel('Time $(ms)$')
@@ -947,14 +961,14 @@ class RFI:
         # save as PGN file
         plt.savefig(os.path.join(os.path.split(__file__)[0], "Plots_Folder/HMM_RFI Time Current Density Relation"))
 
-    def plotAllRFI(self):
+    def plotAllRFI(self, ax1, ax2, ax3, ax4):
         """
         Saves all plots to CWD/Plots_Folder.
         """
-        self.plotRFI_VInormRelation()
-        self.plotRFI_LogVInormRelation()
-        self.plotRFI_TimeVRelation()
-        self.plotRFI_TCurrDensityRelation()
+        self.plotRFI_VInormRelation(ax1)
+        self.plotRFI_LogVInormRelation(ax2)
+        self.plotRFI_TimeVRelation(ax3)
+        self.plotRFI_TCurrDensityRelation(ax4)
 
     def plotAllRFI_with_ax(self, fig_title,
                            figsize=(18, 9), color='black',

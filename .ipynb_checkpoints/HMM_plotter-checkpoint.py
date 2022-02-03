@@ -277,15 +277,20 @@ def make_inact_plots(new_params, mutant_name, mutant_protocol_csv_name, param_va
 def make_recov_plots(new_params, mutant_name, mutant_protocol_csv_name, param_values_wt, filename, is_HMM, channel_name):
     pdf = matplotlib.backends.backend_pdf.PdfPages(filename)
     figures = []
-    
+    fig = plt.figure(figsize=(5, 20))
+    ax1 = fig.add_subplot(4, 1, 1)
+    ax2 = fig.add_subplot(4, 1, 2)
+    ax3 = fig.add_subplot(4, 1, 3)
+    ax4 = fig.add_subplot(4, 1, 4)
     if is_HMM:
         module_name = ggsdHMM
     else:
         module_name = ggsd
+    figures.append(plt.figure())
     set_param(param_values_wt, is_HMM)
     wt_recov = module_name.RFI(channel_name=channel_name)
     wt_recov.genRecInactTau()
-    wt_recov.plotAllRFI()
+    wt_recov.plotAllRFI(ax1, ax2, ax3, ax4)
     
 
 def make_ramp_plots(new_params, mutant_name, mutant_protocol_csv_name, param_values_wt, filename, is_HMM, channel_name):
