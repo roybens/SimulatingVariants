@@ -385,16 +385,6 @@ def make_UDB20_plots(new_params, mutant_name, mutant_protocol_csv_name, param_va
         module_name = ggsdHMM
     else:
         module_name = ggsd
-    
-    # figures.append(plt.figure())
-    # plt.xlabel('Log Time $(mS)$')
-    # plt.ylabel('Fraction Recovered')
-    # plt.title(f'Redovery: {mutant_name}')
-    
-    #set_param(param_values_wt, is_HMM)
-    #wt_recov = module_name.RFI(channel_name=channel_name)
-    #wt_recov.genRecInactTau()
-    #wt_recov.plotAllRFI()
 
     ############################################################################################################
     figures.append(plt.figure())
@@ -440,7 +430,6 @@ def make_UDB20_plots(new_params, mutant_name, mutant_protocol_csv_name, param_va
     for fig in figures:
         pdf.savefig(fig)
     pdf.close()
-    return figures
 
 
 
