@@ -1,0 +1,1103 @@
+Warning: Python module not loaded, you already have Python loaded via conda init
+/opt/cray/pe/modules/3.2.11.4/bin/modulecmd: error while loading shared libraries: libtcl8.6.so: cannot open shared object file: No such file or directory
+/opt/cray/pe/modules/3.2.11.4/bin/modulecmd: error while loading shared libraries: libtcl8.6.so: cannot open shared object file: No such file or directory
+/opt/cray/pe/modules/3.2.11.4/bin/modulecmd: error while loading shared libraries: libtcl8.6.so: cannot open shared object file: No such file or directory
+/opt/cray/pe/modules/3.2.11.4/bin/modulecmd: error while loading shared libraries: libtcl8.6.so: cannot open shared object file: No such file or directory
+ls: cannot access 'mechs/*.inc': No such file or directory
+/global/homes/m/mikelam/.bashrc: line 10: module: command not found
+/global/homes/m/mikelam/.bashrc: line 11: module: command not found
+/global/homes/m/mikelam/.bashrc: line 12: module: command not found
+/global/homes/m/mikelam/.bashrc: line 13: module: command not found
+/global/homes/m/mikelam/.bashrc: line 10: module: command not found
+/global/homes/m/mikelam/.bashrc: line 11: module: command not found
+/global/homes/m/mikelam/.bashrc: line 12: module: command not found
+/global/homes/m/mikelam/.bashrc: line 13: module: command not found
+/global/homes/m/mikelam/.bashrc: line 10: module: command not found
+/global/homes/m/mikelam/.bashrc: line 11: module: command not found
+/global/homes/m/mikelam/.bashrc: line 12: module: command not found
+/global/homes/m/mikelam/.bashrc: line 13: module: command not found
+/global/homes/m/mikelam/.bashrc: line 10: module: command not found
+/global/homes/m/mikelam/.bashrc: line 11: module: command not found
+/global/homes/m/mikelam/.bashrc: line 12: module: command not found
+/global/homes/m/mikelam/.bashrc: line 13: module: command not found
+  Cache entry deserialization failed, entry ignored
+  Cache entry deserialization failed, entry ignored
+  Cache entry deserialization failed, entry ignored
+  Cache entry deserialization failed, entry ignored
+  Cache entry deserialization failed, entry ignored
+  Cache entry deserialization failed, entry ignored
+  Cache entry deserialization failed, entry ignored
+  Cache entry deserialization failed, entry ignored
+  Cache entry deserialization failed, entry ignored
+  Cache entry deserialization failed, entry ignored
+  Cache entry deserialization failed, entry ignored
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:29: RuntimeWarning: overflow encountered in exp
+  return y0 + span_fast * (1 - np.exp(-k_fast * x)) + span_slow * (1 - np.exp(-k_slow * x))
+exp(166427) out of range, returning exp(700)
+exp(114901) out of range, returning exp(700)
+exp(68619.8) out of range, returning exp(700)
+exp(130926) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(70423.1) out of range, returning exp(700)
+exp(48620.2) out of range, returning exp(700)
+exp(29036.3) out of range, returning exp(700)
+exp(55401.6) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(127888) out of range, returning exp(700)
+exp(88294.2) out of range, returning exp(700)
+exp(52729.9) out of range, returning exp(700)
+exp(100609) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(18535.2) out of range, returning exp(700)
+exp(12796.7) out of range, returning exp(700)
+exp(7642.29) out of range, returning exp(700)
+exp(14582.1) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(40437.7) out of range, returning exp(700)
+exp(27918.2) out of range, returning exp(700)
+exp(16673) out of range, returning exp(700)
+exp(31812.5) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(127775) out of range, returning exp(700)
+exp(88215.7) out of range, returning exp(700)
+exp(52683.1) out of range, returning exp(700)
+exp(100519) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(13050.1) out of range, returning exp(700)
+exp(12091.4) out of range, returning exp(700)
+exp(35950.7) out of range, returning exp(700)
+exp(14612.2) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(23213.2) out of range, returning exp(700)
+exp(21507.9) out of range, returning exp(700)
+exp(63948.3) out of range, returning exp(700)
+exp(25992.1) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(15648.8) out of range, returning exp(700)
+exp(14499.3) out of range, returning exp(700)
+exp(43109.9) out of range, returning exp(700)
+exp(17522.2) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(20030.2) out of range, returning exp(700)
+exp(18558.7) out of range, returning exp(700)
+exp(55179.7) out of range, returning exp(700)
+exp(22428) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(21805.9) out of range, returning exp(700)
+exp(20204.1) out of range, returning exp(700)
+exp(60071.6) out of range, returning exp(700)
+exp(24416.4) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(37987.1) out of range, returning exp(700)
+exp(35196.6) out of range, returning exp(700)
+exp(104648) out of range, returning exp(700)
+exp(42534.9) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(80840) out of range, returning exp(700)
+exp(55812) out of range, returning exp(700)
+exp(33331.3) out of range, returning exp(700)
+exp(63596.5) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(35287.4) out of range, returning exp(700)
+exp(32695.2) out of range, returning exp(700)
+exp(97210.8) out of range, returning exp(700)
+exp(39512) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(19355.9) out of range, returning exp(700)
+exp(17934) out of range, returning exp(700)
+exp(53322.1) out of range, returning exp(700)
+exp(21673) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(46968.4) out of range, returning exp(700)
+exp(32427) out of range, returning exp(700)
+exp(19365.7) out of range, returning exp(700)
+exp(36950.1) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(120036) out of range, returning exp(700)
+exp(82872.9) out of range, returning exp(700)
+exp(49492.3) out of range, returning exp(700)
+exp(94431.3) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(1961.46) out of range, returning exp(700)
+exp(1817.37) out of range, returning exp(700)
+exp(5403.49) out of range, returning exp(700)
+exp(2196.03) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(9748.47) out of range, returning exp(700)
+exp(9032.34) out of range, returning exp(700)
+exp(26855.3) out of range, returning exp(700)
+exp(10915.3) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(4005.25) out of range, returning exp(700)
+exp(3711.03) out of range, returning exp(700)
+exp(11033.8) out of range, returning exp(700)
+exp(4484.52) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(149699) out of range, returning exp(700)
+exp(103353) out of range, returning exp(700)
+exp(61723) out of range, returning exp(700)
+exp(117767) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(18509.9) out of range, returning exp(700)
+exp(17150.2) out of range, returning exp(700)
+exp(50991.7) out of range, returning exp(700)
+exp(20725.8) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(55005.5) out of range, returning exp(700)
+exp(37975.8) out of range, returning exp(700)
+exp(22679.4) out of range, returning exp(700)
+exp(43272.8) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(125549) out of range, returning exp(700)
+exp(86679.3) out of range, returning exp(700)
+exp(51765.5) out of range, returning exp(700)
+exp(98768.6) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(44594.7) out of range, returning exp(700)
+exp(30788.2) out of range, returning exp(700)
+exp(18386.9) out of range, returning exp(700)
+exp(35082.7) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(139750) out of range, returning exp(700)
+exp(96483.5) out of range, returning exp(700)
+exp(57620.6) out of range, returning exp(700)
+exp(109940) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(165123) out of range, returning exp(700)
+exp(114001) out of range, returning exp(700)
+exp(68082.4) out of range, returning exp(700)
+exp(129901) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(34098.4) out of range, returning exp(700)
+exp(23541.6) out of range, returning exp(700)
+exp(14059.2) out of range, returning exp(700)
+exp(26825.5) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(160721) out of range, returning exp(700)
+exp(110962) out of range, returning exp(700)
+exp(66267.1) out of range, returning exp(700)
+exp(126438) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(23040.9) out of range, returning exp(700)
+exp(21348.3) out of range, returning exp(700)
+exp(63473.7) out of range, returning exp(700)
+exp(25799.2) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(27557.8) out of range, returning exp(700)
+exp(19025.9) out of range, returning exp(700)
+exp(11362.4) out of range, returning exp(700)
+exp(21680) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(93255.5) out of range, returning exp(700)
+exp(64383.7) out of range, returning exp(700)
+exp(38450.4) out of range, returning exp(700)
+exp(73363.6) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(52389.7) out of range, returning exp(700)
+exp(36169.9) out of range, returning exp(700)
+exp(21600.9) out of range, returning exp(700)
+exp(41215) out of range, returning exp(700)
+exp(32295.7) out of range, returning exp(700)
+exp(29923.3) out of range, returning exp(700)
+exp(88969.2) out of range, returning exp(700)
+exp(36162.1) out of range, returning exp(700)
+No more errno warnings during this execution
+No more errno warnings during this execution
+exp(70167.1) out of range, returning exp(700)
+exp(48443.4) out of range, returning exp(700)
+exp(28930.8) out of range, returning exp(700)
+exp(55200.2) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(20108.1) out of range, returning exp(700)
+exp(18630.9) out of range, returning exp(700)
+exp(55394.3) out of range, returning exp(700)
+exp(22515.3) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(26786.1) out of range, returning exp(700)
+exp(18493.2) out of range, returning exp(700)
+exp(11044.3) out of range, returning exp(700)
+exp(21073) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(48878.2) out of range, returning exp(700)
+exp(33745.5) out of range, returning exp(700)
+exp(20153.1) out of range, returning exp(700)
+exp(38452.5) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(73691.7) out of range, returning exp(700)
+exp(50876.8) out of range, returning exp(700)
+exp(30384) out of range, returning exp(700)
+exp(57973) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(174156) out of range, returning exp(700)
+exp(120237) out of range, returning exp(700)
+exp(71806.6) out of range, returning exp(700)
+exp(137007) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(168420) out of range, returning exp(700)
+exp(116277) out of range, returning exp(700)
+exp(69441.5) out of range, returning exp(700)
+exp(132494) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(146496) out of range, returning exp(700)
+exp(101141) out of range, returning exp(700)
+exp(60402) out of range, returning exp(700)
+exp(115247) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(12917.7) out of range, returning exp(700)
+exp(8918.38) out of range, returning exp(700)
+exp(5326.12) out of range, returning exp(700)
+exp(10162.9) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(27200.2) out of range, returning exp(700)
+exp(18779.1) out of range, returning exp(700)
+exp(11215) out of range, returning exp(700)
+exp(21398.8) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(164168) out of range, returning exp(700)
+exp(113342) out of range, returning exp(700)
+exp(67688.5) out of range, returning exp(700)
+exp(129150) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(50892.4) out of range, returning exp(700)
+exp(35136.2) out of range, returning exp(700)
+exp(20983.6) out of range, returning exp(700)
+exp(40037.1) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(10217.3) out of range, returning exp(700)
+exp(7054.06) out of range, returning exp(700)
+exp(4212.74) out of range, returning exp(700)
+exp(8038.55) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(10189.9) out of range, returning exp(700)
+exp(7035.11) out of range, returning exp(700)
+exp(4201.42) out of range, returning exp(700)
+exp(8016.94) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(200006) out of range, returning exp(700)
+exp(138084) out of range, returning exp(700)
+exp(82465) out of range, returning exp(700)
+exp(157343) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(17804.5) out of range, returning exp(700)
+exp(16496.6) out of range, returning exp(700)
+exp(49048.3) out of range, returning exp(700)
+exp(19935.9) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(27161.7) out of range, returning exp(700)
+exp(25166.4) out of range, returning exp(700)
+exp(74825.8) out of range, returning exp(700)
+exp(30413.4) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(86158.3) out of range, returning exp(700)
+exp(59483.8) out of range, returning exp(700)
+exp(35524.1) out of range, returning exp(700)
+exp(67780.3) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(20184.2) out of range, returning exp(700)
+exp(18701.4) out of range, returning exp(700)
+exp(55603.9) out of range, returning exp(700)
+exp(22600.5) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(183930) out of range, returning exp(700)
+exp(126985) out of range, returning exp(700)
+exp(75836.5) out of range, returning exp(700)
+exp(144696) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(170889) out of range, returning exp(700)
+exp(117982) out of range, returning exp(700)
+exp(70459.9) out of range, returning exp(700)
+exp(134437) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(173189) out of range, returning exp(700)
+exp(119570) out of range, returning exp(700)
+exp(71408.2) out of range, returning exp(700)
+exp(136247) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(23772.1) out of range, returning exp(700)
+exp(22025.8) out of range, returning exp(700)
+exp(65488) out of range, returning exp(700)
+exp(26618) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(20698.7) out of range, returning exp(700)
+exp(14290.4) out of range, returning exp(700)
+exp(8534.34) out of range, returning exp(700)
+exp(16284.1) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(201386) out of range, returning exp(700)
+exp(139037) out of range, returning exp(700)
+exp(83034) out of range, returning exp(700)
+exp(158429) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(43151.6) out of range, returning exp(700)
+exp(39981.7) out of range, returning exp(700)
+exp(118875) out of range, returning exp(700)
+exp(48317.7) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(175816) out of range, returning exp(700)
+exp(121384) out of range, returning exp(700)
+exp(72491.2) out of range, returning exp(700)
+exp(138313) out of range, returning exp(700)
+exp(170585) out of range, returning exp(700)
+exp(117772) out of range, returning exp(700)
+exp(70334.2) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(134198) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(91915.2) out of range, returning exp(700)
+exp(63458.4) out of range, returning exp(700)
+exp(37897.8) out of range, returning exp(700)
+exp(72309.2) out of range, returning exp(700)
+No more errno warnings during this execution
+exp(197802) out of range, returning exp(700)
+exp(136563) out of range, returning exp(700)
+exp(81556.1) out of range, returning exp(700)
+exp(155609) out of range, returning exp(700)
+No more errno warnings during this execution
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:216: RuntimeWarning: overflow encountered in exp
+  return Gmax * (vm - self.vrev) / (1 + np.exp((v_half - vm) / s))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:224: RuntimeWarning: overflow encountered in exp
+  norm_g.append(1 / (1 + np.exp(-(volt - self.v_half) / self.s)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:216: RuntimeWarning: overflow encountered in exp
+  return Gmax * (vm - self.vrev) / (1 + np.exp((v_half - vm) / s))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:216: RuntimeWarning: overflow encountered in exp
+  return Gmax * (vm - self.vrev) / (1 + np.exp((v_half - vm) / s))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:224: RuntimeWarning: overflow encountered in exp
+  norm_g.append(1 / (1 + np.exp(-(volt - self.v_half) / self.s)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:216: RuntimeWarning: overflow encountered in exp
+  return Gmax * (vm - self.vrev) / (1 + np.exp((v_half - vm) / s))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:224: RuntimeWarning: overflow encountered in exp
+  norm_g.append(1 / (1 + np.exp(-(volt - self.v_half) / self.s)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:216: RuntimeWarning: overflow encountered in exp
+  return Gmax * (vm - self.vrev) / (1 + np.exp((v_half - vm) / s))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:224: RuntimeWarning: overflow encountered in exp
+  norm_g.append(1 / (1 + np.exp(-(volt - self.v_half) / self.s)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:216: RuntimeWarning: overflow encountered in exp
+  return Gmax * (vm - self.vrev) / (1 + np.exp((v_half - vm) / s))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:224: RuntimeWarning: overflow encountered in exp
+  norm_g.append(1 / (1 + np.exp(-(volt - self.v_half) / self.s)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:216: RuntimeWarning: overflow encountered in exp
+  return Gmax * (vm - self.vrev) / (1 + np.exp((v_half - vm) / s))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:224: RuntimeWarning: overflow encountered in exp
+  norm_g.append(1 / (1 + np.exp(-(volt - self.v_half) / self.s)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:216: RuntimeWarning: overflow encountered in exp
+  return Gmax * (vm - self.vrev) / (1 + np.exp((v_half - vm) / s))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:224: RuntimeWarning: overflow encountered in exp
+  norm_g.append(1 / (1 + np.exp(-(volt - self.v_half) / self.s)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:216: RuntimeWarning: overflow encountered in exp
+  return Gmax * (vm - self.vrev) / (1 + np.exp((v_half - vm) / s))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:224: RuntimeWarning: overflow encountered in exp
+  norm_g.append(1 / (1 + np.exp(-(volt - self.v_half) / self.s)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:216: RuntimeWarning: overflow encountered in exp
+  return Gmax * (vm - self.vrev) / (1 + np.exp((v_half - vm) / s))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:224: RuntimeWarning: overflow encountered in exp
+  norm_g.append(1 / (1 + np.exp(-(volt - self.v_half) / self.s)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:216: RuntimeWarning: overflow encountered in exp
+  return Gmax * (vm - self.vrev) / (1 + np.exp((v_half - vm) / s))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:224: RuntimeWarning: overflow encountered in exp
+  norm_g.append(1 / (1 + np.exp(-(volt - self.v_half) / self.s)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:216: RuntimeWarning: overflow encountered in exp
+  return Gmax * (vm - self.vrev) / (1 + np.exp((v_half - vm) / s))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:216: RuntimeWarning: overflow encountered in exp
+  return Gmax * (vm - self.vrev) / (1 + np.exp((v_half - vm) / s))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:224: RuntimeWarning: overflow encountered in exp
+  norm_g.append(1 / (1 + np.exp(-(volt - self.v_half) / self.s)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:216: RuntimeWarning: overflow encountered in exp
+  return Gmax * (vm - self.vrev) / (1 + np.exp((v_half - vm) / s))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:224: RuntimeWarning: overflow encountered in exp
+  norm_g.append(1 / (1 + np.exp(-(volt - self.v_half) / self.s)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:216: RuntimeWarning: overflow encountered in exp
+  return Gmax * (vm - self.vrev) / (1 + np.exp((v_half - vm) / s))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:216: RuntimeWarning: overflow encountered in exp
+  return Gmax * (vm - self.vrev) / (1 + np.exp((v_half - vm) / s))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:224: RuntimeWarning: overflow encountered in exp
+  norm_g.append(1 / (1 + np.exp(-(volt - self.v_half) / self.s)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:216: RuntimeWarning: overflow encountered in exp
+  return Gmax * (vm - self.vrev) / (1 + np.exp((v_half - vm) / s))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:224: RuntimeWarning: overflow encountered in exp
+  norm_g.append(1 / (1 + np.exp(-(volt - self.v_half) / self.s)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:216: RuntimeWarning: overflow encountered in exp
+  return Gmax * (vm - self.vrev) / (1 + np.exp((v_half - vm) / s))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:224: RuntimeWarning: overflow encountered in exp
+  norm_g.append(1 / (1 + np.exp(-(volt - self.v_half) / self.s)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:216: RuntimeWarning: overflow encountered in exp
+  return Gmax * (vm - self.vrev) / (1 + np.exp((v_half - vm) / s))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:216: RuntimeWarning: overflow encountered in exp
+  return Gmax * (vm - self.vrev) / (1 + np.exp((v_half - vm) / s))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:224: RuntimeWarning: overflow encountered in exp
+  norm_g.append(1 / (1 + np.exp(-(volt - self.v_half) / self.s)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:216: RuntimeWarning: overflow encountered in exp
+  return Gmax * (vm - self.vrev) / (1 + np.exp((v_half - vm) / s))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:224: RuntimeWarning: overflow encountered in exp
+  norm_g.append(1 / (1 + np.exp(-(volt - self.v_half) / self.s)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:216: RuntimeWarning: overflow encountered in exp
+  return Gmax * (vm - self.vrev) / (1 + np.exp((v_half - vm) / s))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:224: RuntimeWarning: overflow encountered in exp
+  norm_g.append(1 / (1 + np.exp(-(volt - self.v_half) / self.s)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:216: RuntimeWarning: overflow encountered in exp
+  return Gmax * (vm - self.vrev) / (1 + np.exp((v_half - vm) / s))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:224: RuntimeWarning: overflow encountered in exp
+  norm_g.append(1 / (1 + np.exp(-(volt - self.v_half) / self.s)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:216: RuntimeWarning: overflow encountered in exp
+  return Gmax * (vm - self.vrev) / (1 + np.exp((v_half - vm) / s))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:224: RuntimeWarning: overflow encountered in exp
+  norm_g.append(1 / (1 + np.exp(-(volt - self.v_half) / self.s)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:216: RuntimeWarning: overflow encountered in exp
+  return Gmax * (vm - self.vrev) / (1 + np.exp((v_half - vm) / s))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:224: RuntimeWarning: overflow encountered in exp
+  norm_g.append(1 / (1 + np.exp(-(volt - self.v_half) / self.s)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:216: RuntimeWarning: overflow encountered in exp
+  return Gmax * (vm - self.vrev) / (1 + np.exp((v_half - vm) / s))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:224: RuntimeWarning: overflow encountered in exp
+  norm_g.append(1 / (1 + np.exp(-(volt - self.v_half) / self.s)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:216: RuntimeWarning: overflow encountered in exp
+  return Gmax * (vm - self.vrev) / (1 + np.exp((v_half - vm) / s))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:224: RuntimeWarning: overflow encountered in exp
+  norm_g.append(1 / (1 + np.exp(-(volt - self.v_half) / self.s)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:216: RuntimeWarning: overflow encountered in exp
+  return Gmax * (vm - self.vrev) / (1 + np.exp((v_half - vm) / s))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:224: RuntimeWarning: overflow encountered in exp
+  norm_g.append(1 / (1 + np.exp(-(volt - self.v_half) / self.s)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:216: RuntimeWarning: overflow encountered in exp
+  return Gmax * (vm - self.vrev) / (1 + np.exp((v_half - vm) / s))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:224: RuntimeWarning: overflow encountered in exp
+  norm_g.append(1 / (1 + np.exp(-(volt - self.v_half) / self.s)))
+/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py:527: RuntimeWarning: invalid value encountered in true_divide
+  self.inorm_vec = np.array(self.ipeak_vec) / ipeak_min
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:130: RuntimeWarning: invalid value encountered in double_scalars
+  slope = r_num / ssxm
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/stats/_stats_mstats_common.py:142: RuntimeWarning: divide by zero encountered in double_scalars
+  sterrest = np.sqrt((1 - r**2) * ssym / ssxm / df)
+/global/homes/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.6/site-packages/scipy/optimize/minpack.py:829: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+/global/u1/m/mikelam/SimulatingVariants/curve_fitting.py:19: RuntimeWarning: overflow encountered in exp
+  return bottom +  ((top - bottom) / (1.0 + np.exp((v_half - x)/slope)))

@@ -89,6 +89,7 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(self.channel_name_HH, is_HMM=is_HMM)
         tau0 = ehn.find_tau0()
         peak_amp = ehn.find_peak_amp()
+        time_to_peak = ehn.find_time_to_peak()
         # Ramp Protocol
         # ramp = ggsdHMM.Ramp(channel_name=self.channel_name)
         # ramp_area = ramp.areaUnderCurve
@@ -108,6 +109,7 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         
         # Some extra objectives added last minute, so this is a bit hard-coded
         wild_data['peak_amp'] = peak_amp
+        wild_data['time_to_peak'] = time_to_peak
 
         return wild_data
 
@@ -147,7 +149,6 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         # Calculate wild baseline values
         v_half_ssi_exp = self.wild_data['v_half_ssi'] + float(self.protocols['dv_half_ssi'])
         ssi_slope_exp = self.wild_data['ssi_slope'] * float(self.protocols['ssi_slope']) / 100
-        
         eh.change_params(param_values, scaled=False, is_HMM=True)
         inorm_vec, v_vec, all_is = ggsdHMM.Inactivation(channel_name=self.channel_name_HMM, step=5).genInactivation()
         inorm_array = np.array(inorm_vec)
@@ -165,7 +166,7 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         axs.plot(even_xs, curve, color='red', label="Fitted Inactivation")
 
         
-        curve_exp = cf.boltzmann(even_xs, ssi_slope_exp, v_half_ssi_exp, top, bottom)
+        curve_exp = cf.boltzmann(even_xs, ssi_slope_exp, v_half_ssi_exp, 0, 1)
         axs.plot(even_xs, curve_exp, color='black', label='Inactivation experimental')
         axs.text(-.120, 0.7, 'Slope (Optimized): ' + str(ssi_slope) + ' /mV')
         axs.text(-.120, 0.6, 'Slope (Experimental): ' + str(ssi_slope_exp) + ' /mV')
@@ -195,7 +196,7 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         axs.plot(even_xs, curve, color='red', label="Fitted Activation")
         
         
-        curve_exp = cf.boltzmann(even_xs, gv_slope_exp, v_half_act_exp, top, bottom)
+        curve_exp = cf.boltzmann(even_xs, gv_slope_exp, v_half_act_exp, 1, 0)
         axs.plot(even_xs, curve_exp, color='black', label='Activation Experimental')
         axs.text(-.120, 0.7, 'Slope (Optimized): ' + str(gv_slope) + ' /mV')
         axs.text(-.120, 0.6, 'Slope (Experimental): ' + str(gv_slope_exp) + ' /mV')
