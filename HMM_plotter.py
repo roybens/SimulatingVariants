@@ -292,11 +292,13 @@ def make_recov_plots(new_params, mutant_name, mutant_protocol_csv_name, param_va
     set_param(param_values_wt, is_HMM)
     wt_recov = module_name.RFI(channel_name=channel_name)
     wt_recov.genRecInactTau()
+    wt_recov.clampRecInactTau(5000)
     wt_recov.plotAllRFI(ax1, ax2, ax3, ax4, 'black')
     
     set_param(new_params, is_HMM)
     wt_recov = module_name.RFI(channel_name=channel_name)
-    wt_recov.genRecInactTau()   
+    wt_recov.genRecInactTau() 
+    wt_recov.clampRecInactTau(5000)
     wt_recov.plotAllRFI(ax1, ax2, ax5, ax6, 'red')
     
 

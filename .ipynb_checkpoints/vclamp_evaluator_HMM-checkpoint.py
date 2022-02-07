@@ -64,7 +64,7 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         for obj in objective_names:
             self.objectives.append(bpop.objectives.Objective(obj))
 
-        self.protocols = eh.read_mutant_protocols('mutant_protocols.csv', mutant)
+        self.protocols = eh.read_mutant_protocols('csv_files/mutant_protocols.csv', mutant)
         self.score_calculator = sf.Score_Function(self.protocols, self.wild_data, self.channel_name)
         
 
@@ -80,10 +80,10 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         '''
         wild_data = {}
         # import ipdb
-        # ßipdb.set_trace()
+        # ipdb.set_trace()
         is_HMM = True   # This is an HMM model
         gv_slope, v_half_act, top, bottom = cf.calc_act_obj(self.channel_name, is_HMM=is_HMM)
-        ssi_slope, v_half_inact, top, bottom, tau0 = cf.calc_inact_obj(self.channel_name, is_HMM=is_HMM)
+        ssi_slope, v_half_inact, top, bottom = cf.calc_inact_obj(self.channel_name, is_HMM=is_HMM)
         y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(self.channel_name, is_HMM=is_HMM)
 
         # Ramp Protocol
@@ -102,8 +102,8 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         wild_data['tau_slow'] = 1 / k_slow
         wild_data['percent_fast'] = percent_fast
         # wild_data['udb20'] = 0
-        wild_data['tau0'] = tau0
-        wild_data['ramp'] = ramp_area
+        # wild_data['tau0'] = tau0
+        # wild_data['ramp'] = ramp_area
         # wild_data['persistent'] = persistent_curr
 
         return wild_data
@@ -153,15 +153,15 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         Returns:
             None
         '''
-        import ipdb
-        ipdb.set_trace()
+        # import ipdb
+        # ipdb.set_trace()
         eh.change_params(param_values, scaled=False, is_HMM=True)
         plt.close()
         fig, axs = plt.subplots(3, figsize=(10,10))
         fig.suptitle("Mutant: {}".format(mutant))
     
         # Calculate wild baseline values
-        param_dict_rel = eh.read_mutant_protocols('mutant_protocols.csv', mutant)
+        param_dict_rel = eh.read_mutant_protocols('csv_files/mutant_protocols.csv', mutant)
         v_half_act_exp = self.wild_data['v_half_act'] + float(self.protocols['dv_half_act']) /100
         gv_slope_exp = self.wild_data['gv_slope'] * float(self.protocols['gv_slope']) / 100
         v_half_ssi_exp = self.wild_data['v_half_ssi'] + float(self.protocols['dv_half_ssi'])
@@ -181,7 +181,7 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         inorm_array = np.array(inorm_vec)
         v_array = np.array(v_vec)
 
-        ssi_slope, v_half, top, bottom, tau0 = cf.calc_inact_obj(self.channel_name, is_HMM=True)
+        ssi_slope, v_half, top, bottom= cf.calc_inact_obj(self.channel_name, is_HMM=True)
 
         
         even_xs = np.linspace(v_array[0], v_array[len(v_array)-1], 100)

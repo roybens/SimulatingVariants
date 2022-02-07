@@ -39,12 +39,12 @@ class Score_Function:
         self.tau_slow_wild = wild_data['tau_slow']
         self.percent_fast_wild = wild_data['percent_fast']
         # self.udb20_wild = wild_data['udb20']
-        self.tau0_wild = wild_data['tau0']
+        # self.tau0_wild = wild_data['tau0']
         # self.ramp_wild = wild_data['ramp']
         # self.persistent_wild = wild_data['persistent']
         # Hard-coded last-minute "objectives"
-        self.peak_amp_wild = wild_data['peak_amp']
-        self.time_to_peak_wild = wild_data['time_to_peak']
+        # self.peak_amp_wild = wild_data['peak_amp']
+        # self.time_to_peak_wild = wild_data['time_to_peak']
         
         self.channel_name = channel_name
         
