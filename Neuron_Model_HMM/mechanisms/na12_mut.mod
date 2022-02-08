@@ -4,7 +4,7 @@ TITLE na3
 : added sh to account for higher threshold M.Migliore, Apr.2002
 
 NEURON {
-	SUFFIX na12
+	SUFFIX na12mut
 	USEION na READ ena WRITE ina
 	RANGE  gbar, ar2, thegna
 	GLOBAL vhalfs,sh,tha,qa,Ra,Rb,thi1,thi2,qd,qg,mmin,hmin,q10,Rg,qq,Rd,tq,thinf,qinf,vhalfs,a0s,zetas,gms,smax,vvh,vvs

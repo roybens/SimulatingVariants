@@ -71,7 +71,7 @@ def init_settings(nav12=1,
     h.ais_na16 = h.ais_na16 * nav16 * ais_nav16
     h.working()
 
-def update_na16(dict_fn):
+def update_na16(dict_fn,wt_mul,mut_mul):
     with open(dict_fn) as f:
         data = f.read()
     param_dict = json.loads(data)
@@ -79,21 +79,29 @@ def update_na16(dict_fn):
         if h.ismembrane('na16mut', sec=curr_sec):
             curr_name = h.secname(sec=curr_sec)
             for seg in curr_sec:
-                hoc_cmd = f'{curr_name}.gbar_na16mut({seg.x}) *= 0.5'
-                print(hoc_cmd)
+                hoc_cmd = f'{curr_name}.gbar_na16mut({seg.x}) *= {mut_mul}'
+                #print(hoc_cmd)
                 h(hoc_cmd)
             for p_name in param_dict.keys():
                 hoc_cmd = f'{curr_name}.{p_name} = {param_dict[p_name]}'
-                print(hoc_cmd)
+                #print(hoc_cmd)
                 h(hoc_cmd)
         if h.ismembrane('na16', sec=curr_sec):
             curr_name = h.secname(sec=curr_sec)
             for seg in curr_sec:
-                hoc_cmd = f'{curr_name}.gbar_na16({seg.x}) *= 0'
-                print(hoc_cmd)
+                hoc_cmd = f'{curr_name}.gbar_na16({seg.x}) *= {wt_mul}'
+                #print(hoc_cmd)
                 h(hoc_cmd)
             
-        
+def update_K(channel_name,gbar_name,mut_mul):
+    k_name = f'{gbar_name}_{channel_name}'
+    for curr_sec in sl:
+        if h.ismembrane(channel_name, sec=curr_sec):
+            curr_name = h.secname(sec=curr_sec)
+            for seg in curr_sec:
+                hoc_cmd = f'{curr_name}.{k_name}({seg.x}) *= {mut_mul}'
+                print(hoc_cmd)
+                h(hoc_cmd)
             
     
 def init_stim(sweep_len = 800, stim_start = 100, stim_dur = 500, amp = 0.3, dt = 0.1):
@@ -115,7 +123,7 @@ def get_fi_curve(s_amp,e_amp,nruns,wt_data=None,ax1=None):
     stim_length = int(600/dt)
     for curr_amp in x_axis:
         init_stim(amp = curr_amp)
-        curr_volts,_,_,_ = run_model()
+        curr_volts,_,_,_ = run_model(dt=0.5)
         curr_peaks,_ = find_peaks(curr_volts[:stim_length],height = -20)
         all_volts.append(curr_volts)
         npeaks.append(len(curr_peaks))
@@ -133,7 +141,7 @@ def get_fi_curve(s_amp,e_amp,nruns,wt_data=None,ax1=None):
         ax1.plot(x_axis,wt_data,'black')
     plt.show()
     
-def run_model(start_Vm = -72):
+def run_model(start_Vm = -72,dt= 0.1):
 
     h.finitialize(start_Vm)
     timesteps = int(h.tstop/h.dt)
@@ -156,26 +164,75 @@ def run_model(start_Vm = -72):
         h.fadvance()
         
     return Vm, I, t,stim
-#fig,ficurveax = plt.subplots(1,1)
-init_settings()
-#init_stim(amp=0.2)
-#Vm, I, t, stim = run_model()
-#plot_stim_volts_pair(Vm, 'Step Stim 200pA', file_path_to_save='./Plots/WT_200pA',times=t)
-#init_stim(amp=0.5)
-#Vm, I, t, stim = run_model()
-#plot_stim_volts_pair(Vm, 'Step Stim 500pA', file_path_to_save='./Plots/WT_500pA',times=t)
-#wtnpeaks = get_fi_curve(0.05, 0.55, 2,ax1=ficurveax)
+
+def cultured_neurons_wt(extra):
+    init_settings()
+    update_K('SKv3_1','gSKv3_1bar',1.5)
+    update_K('K_Tst','gK_Tstbar',1.5)
+    update_K('K_Pst','gK_Pstbar',1.5)
+    update_na16('./params/na16_mutv2.txt',2+extra,0)
+    init_stim(amp=0.5)
+    Vm, I, t, stim = run_model()
+    plot_stim_volts_pair(Vm, 'Step Stim 500pA', file_path_to_save=f'./Plots/overexpressedWT{extra}_500pA',times=t,color_str='blue')
+
+def cultured_neurons_mut(extra):
+    init_settings()
+    update_K('SKv3_1','gSKv3_1bar',1.5)
+    update_K('K_Tst','gK_Tstbar',1.5)
+    update_K('K_Pst','gK_Pstbar',1.5)
+    update_na16('./params/na16_mutv2.txt',2,extra)
+    init_stim(amp=0.5)
+    Vm, I, t, stim = run_model()
+    plot_stim_volts_pair(Vm, 'Step Stim 500pA', file_path_to_save=f'./Plots/overexpressedMut{extra}_500pA',times=t,color_str='blue')
+    
+def cultured_neurons_wtTTX(extra):
+    init_settings()
+    update_K('SKv3_1','gSKv3_1bar',1.5)
+    update_K('K_Tst','gK_Tstbar',1.5)
+    update_K('K_Pst','gK_Pstbar',1.5)
+    update_na16('./params/na16_mutv2.txt',extra,0)
+    init_stim(amp=1)
+    Vm, I, t, stim = run_model()
+    plot_stim_volts_pair(Vm, 'Step Stim 500pA', file_path_to_save=f'./Plots/overexpressed_TTX_WT{extra}_500pA',times=t,color_str='blue')
+    #fig,ficurveax = plt.subplots(1,1)
+    #get_fi_curve(0.1, 1, 5)
+    #fig.savefig('./Plots/FI_curvesWT_TTX.pdf')
+
+def cultured_neurons_mutTTX(extra):
+    init_settings()
+    update_K('SKv3_1','gSKv3_1bar',1.5)
+    update_K('K_Tst','gK_Tstbar',1.5)
+    update_K('K_Pst','gK_Pstbar',1.5)
+    update_na16('./params/na16_mutv2.txt',0,extra)
+    init_stim(amp=1)
+    Vm, I, t, stim = run_model()
+    plot_stim_volts_pair(Vm, 'Step Stim 500pA', file_path_to_save=f'./Plots/overexpressed_TTX_Mut{extra}_500pA',times=t,color_str='blue')
+    #fig,ficurveax = plt.subplots(1,1)
+    #get_fi_curve(0.1, 1, 5)
+    #fig.savefig('./Plots/FI_curvesMut_TTX.pdf')
+
+def het_sims():
+    init_settings()
+    update_na16('./params/na16_mutv2.txt',1,1)
+    init_stim(amp=0.5)
+    Vm, I, t, stim = run_model()
+    plot_stim_volts_pair(Vm, 'Step Stim 500pA', file_path_to_save=f'./Plots/hetrozygous_500pA',times=t,color_str='blue')
+
+#gK_Tstbar_K_Tst
+#gK_Pstbar_
+#update_K('SKv3_1','gSKv3_1bar',2)
+#update_K('K_Tst','gK_Tstbar',2)
+#update_K('K_Pst','gK_Pstbar',2)
+cultured_neurons_mut(0.25)
+cultured_neurons_wt(0.5)
+cultured_neurons_wtTTX(0.5)
+cultured_neurons_mutTTX(0.25)
 
 
-update_na16('./params/na16_mutv2.txt')
-#init_stim(amp=0.2)
-#Vm, I, t, stim = run_model()
-#plot_stim_volts_pair(Vm, 'Step Stim 200pA', file_path_to_save='./Plots/Mut_200pA',times=t,color_str='blue')
-init_stim(amp=0.5)
-Vm, I, t, stim = run_model()
-plot_stim_volts_pair(Vm, 'Step Stim 500pA', file_path_to_save='./Plots/Mut_500pA',times=t,color_str='blue')
-#get_fi_curve(0.05, 0.55, 2,wt_data=wtnpeaks,ax1=ficurveax)
-#fig.savefig('./Plots/FI_curves.pdf')
+
+
+#het_sims()
+
 
 
 

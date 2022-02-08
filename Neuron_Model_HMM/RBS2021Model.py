@@ -184,7 +184,7 @@ def run_model(start_Vm = -72):
         I['Na'][i] = h.cell.soma[0](0.5).ina
         I['Ca'][i] = h.cell.soma[0](0.5).ica
         I['K'][i] = h.cell.soma[0](0.5).ik
-        I['INa12'][i] = h.cell.soma[0].gna_na16
+        I['INa12'][i] = h.cell.soma[0].gna_na12
         stim[i] = h.st.amp 
         t[i] = i*h.dt / 1000
         h.fadvance()
@@ -203,10 +203,10 @@ update_mechs_props(WT_fn,mechs)
 #update_mechs_props(WT_fn,mechs)
 init_settings()
 h.working()
-vshift_values = [-30,60]
+#vshift_values = [-30,60]
 
-explore_param(mechs,'vShift',vshift_values,False)
-explore_param(mechs,'vShift_inact',vshift_values,False)
+#explore_param(mechs,'vShift',vshift_values,False)
+#explore_param(mechs,'vShift_inact',vshift_values,False)
 #mechs = ['na12','na12mut','na16','na16mut']
 #update_gbar(mechs,10000,gbar_name = 'gbar')
 init_stim(amp=5)
