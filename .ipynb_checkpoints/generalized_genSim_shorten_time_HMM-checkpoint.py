@@ -19,6 +19,7 @@ import argparse
 import os
 from state_variables import finding_state_variables
 import pickle
+#from curve_fitting import boltzmann, calc_act_obj, calc_inact_obj, calc_recov_obj
 import curve_fitting as cf
 
 # from sys import api_version
@@ -55,6 +56,7 @@ class Activation:
         self.soma.Ra = soma_Ra  # ohm-cm
         self.soma.insert(channel_name)  # insert mechanism
         self.soma.ena = soma_ena
+        self.channel_name = channel_name
 
         # clamping parameters
         self.ntrials = ntrials  #
@@ -92,8 +94,6 @@ class Activation:
         self.vrev = 0
         self.v_half = 0
         self.s = 0
-        
-        self.channel_name = channel_name
 
     def clamp(self, v_cl):
         """ Runs a trace and calculates peak currents.
@@ -903,58 +903,48 @@ class RFI:
 
         return self.rec_inact_tau_vec, recov, self.vec_pts
 
-    def plotRFI_LogVInormRelation(self):
-        plt.figure()
-        plt.xlabel('Log(Time)')
-        plt.ylabel('Fractional recovery (P2/P1)')
-        plt.title('Log(Time)/Fractional recovery (P2/P1)')
-        plt.plot(self.log_time_vec, self.rec_vec, 'o', c='black')
-        # save as PGN file
-        plt.savefig(
-            os.path.join(os.path.split(__file__)[0], 'Plots_Folder/HMM_RFI Log Time Fractional recovery Relation'))
+    def plotRFI_LogVInormRelation(self, ax, color):
+        ax.set_xlabel('Log(Time)')
+        ax.set_ylabel('Fractional recovery (P2/P1)')
+        ax.set_title('Log(Time)/Fractional recovery (P2/P1)')
+        ax.plot(self.log_time_vec, self.rec_vec, 'o', c=color)
 
-    def plotRFI_VInormRelation(self):
-        plt.figure()
-        plt.xlabel('Time $(ms)$')
-        plt.ylabel('Fractional recovery (P2/P1)')
-        plt.title('Time/Fractional recovery (P2/P1)')
+    def plotRFI_VInormRelation(self, ax, color):
+        ax.set_xlabel('Time $(ms)$')
+        ax.set_ylabel('Fractional recovery (P2/P1)')
+        ax.set_title('Time/Fractional recovery (P2/P1)')
         y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(self.channel_name, is_HMM=True)
         formatted_tauSlow = np.round(1 / k_slow, decimals=2)
         formatted_tauFast = np.round(1 / k_fast, decimals=2)
         formatted_percentFast = np.round(percent_fast, decimals=4)
-        plt.text(-10, 0.75, f'Tau Slow: {formatted_tauSlow}')
-        plt.text(-10, 0.8, f'Tau Fast: {formatted_tauFast}')
-        plt.text(-10, 0.85, f'% Fast Component: {formatted_percentFast}')
-        plt.plot(self.time_vec, self.rec_vec, 'o', c='black')
-        # save as PGN file
-        plt.savefig(os.path.join(os.path.split(__file__)[0], 'Plots_Folder/HMM_RFI Time Fractional recovery Relation'))
+        ax.text(-10, 0.75, f'Tau Slow: {formatted_tauSlow}')
+        ax.text(-10, 0.8, f'Tau Fast: {formatted_tauFast}')
+        ax.text(-10, 0.85, f'% Fast Component: {formatted_percentFast}')
+        ax.plot(self.time_vec, self.rec_vec, 'o', c=color)
+        
+    def plotRFI_TimeVRelation(self, ax, color):
+        ax.set_xlabel('Time $(ms)$')
+        ax.set_ylabel('Voltage $(mV)$')
+        ax.set_title('RFI Time/Voltage relation')
+        [ax.plot(self.all_t_vec[i], self.all_v_vec_t[i], c=color) for i in np.arange(self.L)]
 
-    def plotRFI_TimeVRelation(self):
+    def plotRFI_TCurrDensityRelation(self, ax, color):
         plt.figure()
-        plt.xlabel('Time $(ms)$')
-        plt.ylabel('Voltage $(mV)$')
-        plt.title('RFI Time/Voltage relation')
-        [plt.plot(self.all_t_vec[i], self.all_v_vec_t[i], c='black') for i in np.arange(self.L)]
-        # save as PGN file
-        plt.savefig(os.path.join(os.path.split(__file__)[0], 'Plots_Folder/HMM_RFI Time Voltage Relation'))
+        ax.set_xlabel('Time $(ms)$')
+        ax.set_ylabel('Current density $(mA/cm^2)$')
+        ax.set_title('RFI Time/Current density relation')
+        [ax.plot(self.all_t_vec[i], self.all_is[i], c=color) for i in np.arange(self.L)]
+        
+        
 
-    def plotRFI_TCurrDensityRelation(self):
-        plt.figure()
-        plt.xlabel('Time $(ms)$')
-        plt.ylabel('Current density $(mA/cm^2)$')
-        plt.title('RFI Time/Current density relation')
-        [plt.plot(self.all_t_vec[i], self.all_is[i], c='black') for i in np.arange(self.L)]
-        # save as PGN file
-        plt.savefig(os.path.join(os.path.split(__file__)[0], "Plots_Folder/HMM_RFI Time Current Density Relation"))
-
-    def plotAllRFI(self):
+    def plotAllRFI(self, ax1, ax2, ax3, ax4, color):
         """
         Saves all plots to CWD/Plots_Folder.
         """
-        self.plotRFI_VInormRelation()
-        self.plotRFI_LogVInormRelation()
-        self.plotRFI_TimeVRelation()
-        self.plotRFI_TCurrDensityRelation()
+        self.plotRFI_VInormRelation(ax1, color)
+        self.plotRFI_LogVInormRelation(ax2, color)
+        self.plotRFI_TimeVRelation(ax3, color)
+        self.plotRFI_TCurrDensityRelation(ax4, color)
 
     def plotAllRFI_with_ax(self, fig_title,
                            figsize=(18, 9), color='black',
@@ -1071,7 +1061,11 @@ class Ramp:
         self.t_vec = np.cumsum(self.t_vec)
         self.v_vec = self.stim_ramp
         self.v_vec_t = []  # vector for voltage as function of time
+        self.t_current = [] # time vector for plotting current
         self.i_vec = []  # vector for current
+
+        self.act = Activation(channel_name=channel_name)
+        self.act.genActivation()
 
     def clamp(self, v_cl):
         """ Runs a trace and calculates currents.
@@ -1107,19 +1101,35 @@ class Ramp:
         v_vec_t_ramp = self.v_vec_t[maskStart:maskEnd]
         # plt.plot(self.t_vec[maskStart:maskEnd], self.v_vec[maskStart:maskEnd], color= 'b') # uncomment to view area taken
         area = trapz(i_vec_ramp, x=v_vec_t_ramp)  # find area
-        act = Activation()
-        act.genActivation()
-        area = area / min(act.ipeak_vec)  # normalize to peak currents from activation
+        area = area / min(self.act.ipeak_vec)  # normalize to peak currents from activation
         return area
 
     def persistentCurrent(self):
         """ Calculates persistent current (avg current of last 100 ms at 0 mV)
         Normalized by peak from IV (same number as areaUnderCurve).
         """
+        cutoff_start = self.t_end_persist
+        cutoff_end = len(self.i_vec) - 1
+        # remove current spike at end of 0 mV
+        while np.abs(self.i_vec[cutoff_start + 1] - self.i_vec[cutoff_start]) < 1E-5:
+            cutoff_start += 1
+            if cutoff_start == len(self.i_vec) - 1:
+                break
+        while np.abs(self.i_vec[cutoff_end] - self.i_vec[cutoff_end - 1]) < 1E-5:
+            cutoff_end -= 1
+            if cutoff_end == self.t_end_persist:
+                break
+
         persistent = self.i_vec[self.t_start_persist:self.t_end_persist]
+
+        #create time vector for graphing current
+        self.t_current = np.concatenate((self.t_vec[1:cutoff_start], self.t_vec[cutoff_end:]))
+        self.i_vec = np.concatenate((self.i_vec[1:cutoff_start], self.i_vec[cutoff_end:]))
+
         act = Activation()
         act.genActivation()
         IVPeak = min(act.ipeak_vec)
+
         return (sum(persistent) / len(persistent)) / IVPeak
 
     def plotRamp_TimeVRelation(self):
@@ -1130,6 +1140,9 @@ class Ramp:
         plt.plot(self.t_vec, self.v_vec, color='black')
         # save as PGN file
         plt.savefig(os.path.join(os.path.split(__file__)[0], 'Plots_Folder/HMM_Ramp Time Voltage relation'))
+
+    def plotRamp_TimeVRelation_plt(self, plt, color):
+        [plt.plot(self.t_vec, self.v_vec, color=color)]
 
     def plotRamp_TimeCurrentRelation(self):
         area = round(self.areaUnderCurve(), 2)
@@ -1146,18 +1159,37 @@ class Ramp:
         plt.ylabel('Current', labelpad=25)
 
         # starting + first step + ramp section
-        ax1.set_title("Ramp")
+        ax1.set_title("Ramp AUC")
         ax1.plot(self.t_vec[1:self.t_start_persist], self.i_vec[1:self.t_start_persist], 'o', c='black', markersize=0.1)
-        plt.text(0.05, 0.2, f'Normalized \narea under \ncurve: {area}', c='blue', fontsize=10)
+        plt.text(0.05, 0.2, f'Normalized \nAUC: {area}', c='blue', fontsize=10)
 
         # persistent current + last step section
         ax2.set_title("Persistent Current")
-        ax2.plot(self.t_vec[self.t_start_persist:], self.i_vec[self.t_start_persist:], 'o', c='black', markersize=0.1)
+        ax2.plot(self.t_current[self.t_start_persist:], self.i_vec[self.t_start_persist:], 'o', c='black', markersize=0.1)
         plt.text(0.75, 0.5, f'Persistent Current:\n{persistCurr} mV', c='blue', fontsize=10, ha='center')
 
         # save as PGN file
         plt.tight_layout()
         plt.savefig(os.path.join(os.path.split(__file__)[0], 'Plots_Folder/HMM_Ramp Time Current Density Relation'))
+
+    def plotRamp_TimeCurrentRelation_plt(self, ax1, ax2, color):
+        area = round(self.areaUnderCurve(), 2)
+        persistCurr = "{:.2e}".format(round(self.persistentCurrent(), 4))
+
+        diff = 0
+        if color == "red":
+            diff = 0.2
+
+
+        # starting + first step + ramp section
+        ax1.plot(self.t_current[:self.t_start_persist], self.i_vec[:self.t_start_persist], 'o', c=color, markersize=0.1)
+        plt.text(0.05, 0.2 + diff, f'Normalized \nAUC: {area}', c=color, fontsize=10)
+
+        # persistent current + last step section
+        ax2.plot(self.t_current[self.t_start_persist:], self.i_vec[self.t_start_persist:], 'o', c=color, markersize=0.1)
+        plt.text(0.75, 0.2 + diff, f'Persistent Current:\n{persistCurr} mA', c=color, fontsize=10, ha='center')
+
+        return (area, round(self.persistentCurrent(), 4))
 
     def plotAllRamp(self):
         """
@@ -1185,7 +1217,7 @@ class Ramp:
         ax_list[1].set_title("Ramp")
         ax_list[1].plot(self.t_vec[1:self.t_start_persist], self.i_vec[1:self.t_start_persist], 'o', c=color,
                         markersize=0.1)
-        ax_list[1].text(0 + x_offset, -0.08 + y_offset, f'Normalized \narea under \ncurve: {area}', color=color,
+        ax_list[1].text(0 + x_offset, -0.08 + y_offset, f'Normalized \nAUC: {area}', color=color,
                         fontsize=10)
 
         # persistent current + last step section
@@ -1287,16 +1319,30 @@ class UDB20:
         h.tstop = self.t_total
         self.clamp(self.v_vec[0])
 
-    # TODO Currently not working: pulses 2-9 have the same peak current
-    """ def getPeakCurrs(self):
+    def getPeakCurrs(self):
+        # returns peak4/peak0 or peak5/peak1
+        # pulses 2-9 have the same peak current?
         for iter in range(self.num_repeats):
             peak_starts = int((self.t_init + (2 * self.t_peakdur * iter)) / h.dt)
             peak_ends = int(peak_starts + (2 * self.t_peakdur) / h.dt)
-
             self.ipeak_vec.append(max(self.i_vec[peak_starts: peak_ends - 1]))
             self.peak_times.append(self.t_vec[self.i_vec.index(self.ipeak_vec[iter])])
             self.norm_peak.append(self.ipeak_vec[iter] / self.ipeak_vec[0])
-    """
+        #print(self.ipeak_vec[4], self.ipeak_vec[0])
+        return self.norm_peak[4]
+
+
+    def plotUDB20_TimeVRelation_plt(self, plt, color):
+        plt.plot(self.t_vec, self.v_vec, c=color)
+
+    def plotUDB20_TimeCurrentRelation_plt(self, plt, color):
+        peakCurrs5 = UDB20.getPeakCurrs(self)
+        diff = 0
+        if color == "red":
+            diff = 0.2
+        plt.text(0, -0.2 + diff, f'peak5/peak1: {np.round(peakCurrs5,decimals=2)}', c=color)
+        plt.plot(self.t_vec[1:], self.i_vec[1:], c=color)
+
 
     def plotUDB20_TimeVRelation(self):
         plt.figure()
@@ -1833,7 +1879,8 @@ if __name__ == "__main__":
     elif args.function == 6:
         genUDB20 = UDB20()
         genUDB20.genUDB20()
-        genUDB20.plotAllUDB20()
+        #genUDB20.plotAllUDB20()
+        genUDB20.getPeakCurrs()
 
     elif args.function == 7:
         # run all

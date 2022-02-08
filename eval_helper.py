@@ -305,6 +305,7 @@ def make_params_dict(params_list, is_HMM=False):
             'ah_2_na12mut8st' : params_list[17],
             'vShift_na12mut8st' : params_list[18],
             'vShift_inact_na12mut8st' : params_list[19], 
+            'maxrate_na12mut8st': params_list[20]
             }
     return params_dict
 
@@ -418,6 +419,7 @@ def scale_params_dict(down, params_arr, is_HMM=False):
         'ah_2_na12mut8st' : 2.680107016756367e-02,
         'vShift_na12mut8st' : 10,
         'vShift_inact_na12mut8st' : 10,
+        'maxrate_na12mut8st': 8.00e+03
         }
         types = {
         'a1_0_na12mut8st' : 'md',
@@ -440,6 +442,7 @@ def scale_params_dict(down, params_arr, is_HMM=False):
         'ah_2_na12mut8st' : 'md',
         'vShift_na12mut8st' : 'p',
         'vShift_inact_na12mut8st' : 'p', 
+        'maxrate_na12mut8st':'md'
         }
 
         inds = {
@@ -463,6 +466,7 @@ def scale_params_dict(down, params_arr, is_HMM=False):
         'ah_2_na12mut8st' : 17,
         'vShift_na12mut8st' : 18,
         'vShift_inact_na12mut8st' : 19, 
+        'maxrate_na12mut8st':20
         }
 
 
@@ -544,7 +548,9 @@ def change_params_dict(new_params, is_HMM=False):
             seg.ah_0_na12mut8st = new_params['ah_0_na12mut8st']
             seg.ah_1_na12mut8st = new_params['ah_1_na12mut8st']
             seg.ah_2_na12mut8st = new_params['ah_2_na12mut8st']
+            
         currh.vShift_na12mut8st = new_params['vShift_na12mut8st']
         currh.vShift_inact_na12mut8st = new_params['vShift_inact_na12mut8st']
+        currh.maxrate_na12mut8st = new_params['maxrate_na12mut8st']
     return
 
