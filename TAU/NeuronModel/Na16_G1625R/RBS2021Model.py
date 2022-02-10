@@ -164,53 +164,67 @@ def run_model(start_Vm = -72,dt= 0.1):
         h.fadvance()
         
     return Vm, I, t,stim
-
-def cultured_neurons_wt(extra):
-    init_settings()
-    update_K('SKv3_1','gSKv3_1bar',1.5)
-    update_K('K_Tst','gK_Tstbar',1.5)
-    update_K('K_Pst','gK_Pstbar',1.5)
-    update_na16('./params/na16_mutv2.txt',2+extra,0)
-    init_stim(amp=0.5)
+def plot_stim(amp,fn):
+    init_stim(amp=amp)
     Vm, I, t, stim = run_model()
-    plot_stim_volts_pair(Vm, 'Step Stim 500pA', file_path_to_save=f'./Plots/overexpressedWT{extra}_500pA',times=t,color_str='blue')
-
-def cultured_neurons_mut(extra):
-    init_settings()
-    update_K('SKv3_1','gSKv3_1bar',1.5)
-    update_K('K_Tst','gK_Tstbar',1.5)
-    update_K('K_Pst','gK_Pstbar',1.5)
-    update_na16('./params/na16_mutv2.txt',2,extra)
-    init_stim(amp=0.5)
-    Vm, I, t, stim = run_model()
-    plot_stim_volts_pair(Vm, 'Step Stim 500pA', file_path_to_save=f'./Plots/overexpressedMut{extra}_500pA',times=t,color_str='blue')
+    plot_stim_volts_pair(Vm, f'Step Stim {amp}pA', file_path_to_save=f'./Plots/Kexplore/{fn}_{amp}pA',times=t,color_str='blue')
+def make_fi(ranges,fn):
+    fig,ficurveax = plt.subplots(1,1)
+    get_fi_curve(ranges[0], ranges[1], ranges[2],ax1 = ficurveax)
+    fig.savefig(f'./Plots/Kexplore/{fn}_FI.pdf')
     
-def cultured_neurons_wtTTX(extra):
-    init_settings()
-    update_K('SKv3_1','gSKv3_1bar',1.5)
-    update_K('K_Tst','gK_Tstbar',1.5)
-    update_K('K_Pst','gK_Pstbar',1.5)
+
+
+def cultured_neurons_wt(extra,fi_ranges,label):
+    #init_settings()
+    #update_K('SKv3_1','gSKv3_1bar',1.5)
+    #update_K('K_Tst','gK_Tstbar',1.5)
+    #update_K('K_Pst','gK_Pstbar',1.5)
+    update_na16('./params/na16_mutv2.txt',2+extra,0)
+    plot_stim(0.5,f'{label}_overexpressedWT{extra}')
+    make_fi(fi_ranges,f'{label}_overexpressedWT{extra}')
+    
+def cultured_neurons_mut(extra,fi_ranges,label):
+    #init_settings()
+    #update_K('SKv3_1','gSKv3_1bar',1.5)
+    #update_K('K_Tst','gK_Tstbar',1.5)
+    #update_K('K_Pst','gK_Pstbar',1.5)
+    update_na16('./params/na16_mutv2.txt',2,extra)
+    plot_stim(0.5,f'{label}_overexpressedMut{extra}')
+    make_fi(fi_ranges,f'{label}_overexpressedMut{extra}')
+    
+    
+def cultured_neurons_wtTTX(extra,fi_ranges,label):
+    #init_settings()
+    #update_K('SKv3_1','gSKv3_1bar',1.5)
+    #update_K('K_Tst','gK_Tstbar',1.5)
+    #update_K('K_Pst','gK_Pstbar',1.5)
     update_na16('./params/na16_mutv2.txt',extra,0)
-    init_stim(amp=1)
-    Vm, I, t, stim = run_model()
-    plot_stim_volts_pair(Vm, 'Step Stim 500pA', file_path_to_save=f'./Plots/overexpressed_TTX_WT{extra}_500pA',times=t,color_str='blue')
-    #fig,ficurveax = plt.subplots(1,1)
-    #get_fi_curve(0.1, 1, 5)
-    #fig.savefig('./Plots/FI_curvesWT_TTX.pdf')
+    plot_stim(2,f'{label}_overexpressedWT_TTX{extra}')
+    make_fi(fi_ranges,f'{label}_overexpressedWT_TTX{extra}')
+    
 
-def cultured_neurons_mutTTX(extra):
-    init_settings()
-    update_K('SKv3_1','gSKv3_1bar',1.5)
-    update_K('K_Tst','gK_Tstbar',1.5)
-    update_K('K_Pst','gK_Pstbar',1.5)
+def cultured_neurons_mutTTX(extra,fi_ranges,label):
+    #init_settings()
+    #update_K('SKv3_1','gSKv3_1bar',1.5)
+    #update_K('K_Tst','gK_Tstbar',1.5)
+    #update_K('K_Pst','gK_Pstbar',1.5)
     update_na16('./params/na16_mutv2.txt',0,extra)
-    init_stim(amp=1)
-    Vm, I, t, stim = run_model()
-    plot_stim_volts_pair(Vm, 'Step Stim 500pA', file_path_to_save=f'./Plots/overexpressed_TTX_Mut{extra}_500pA',times=t,color_str='blue')
-    #fig,ficurveax = plt.subplots(1,1)
-    #get_fi_curve(0.1, 1, 5)
-    #fig.savefig('./Plots/FI_curvesMut_TTX.pdf')
+    plot_stim(2,f'{label}_overexpressedmut_TTX{extra}')
+    make_fi(fi_ranges,f'{label}_overexpressedmut_TTX{extra}')
+    
+def explore_param(ch_name,gbar_name,ranges):
+    factors = np.linspace(ranges[0],ranges[1],ranges[2])
+    for curr_factor in factors:
+        init_settings()
+        update_K(ch_name,gbar_name,curr_factor)
+        label = f'{ch_name}_{curr_factor}'
+        cultured_neurons_wt(0.5,[0.1,1,5],label)
+        cultured_neurons_mut(0.25,[0.1, 1, 5],label)
+        cultured_neurons_wtTTX(0.5,[0.4, 2, 6],label)
+        cultured_neurons_mutTTX(0.25,[0.4, 2, 6],label)
 
+    
 def het_sims():
     init_settings()
     update_na16('./params/na16_mutv2.txt',1,1)
@@ -218,15 +232,21 @@ def het_sims():
     Vm, I, t, stim = run_model()
     plot_stim_volts_pair(Vm, 'Step Stim 500pA', file_path_to_save=f'./Plots/hetrozygous_500pA',times=t,color_str='blue')
 
+
+    
 #gK_Tstbar_K_Tst
 #gK_Pstbar_
 #update_K('SKv3_1','gSKv3_1bar',2)
 #update_K('K_Tst','gK_Tstbar',2)
 #update_K('K_Pst','gK_Pstbar',2)
-cultured_neurons_mut(0.25)
-cultured_neurons_wt(0.5)
-cultured_neurons_wtTTX(0.5)
-cultured_neurons_mutTTX(0.25)
+#cultured_neurons_mut(0.25,[0.1, 1, 5])
+#cultured_neurons_wt(0.5,[0.1, 1, 5])
+#cultured_neurons_wtTTX(0.5,[0.4, 2, 6])
+#cultured_neurons_mutTTX(0.25,[0.4, 2, 6])
+
+explore_param('SKv3_1','gSKv3_1bar',[1,2,3])
+explore_param('K_Tst','gK_Tstbar',[1,2,3])
+explore_param('K_Pst','gK_Pstbar',[1,2,3])
 
 
 
