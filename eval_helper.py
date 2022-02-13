@@ -225,7 +225,7 @@ def read_HMM_parameters(csv_data_path = './HMM_params.csv'):
 
     return params_dict
 
-def change_params(new_params, scaled=True, is_HMM=False):
+def change_params(new_params, scaled=True, is_HMM=False,sim_obj=None):
     '''
     Change params on Na12mut channel in NEURON.
     ---
@@ -243,7 +243,7 @@ def change_params(new_params, scaled=True, is_HMM=False):
             new_param_dict = scale_params_dict(False, new_params, is_HMM=True)
         else:
             new_param_dict = make_params_dict(new_params, is_HMM=True)
-        change_params_dict(new_param_dict, is_HMM=True)
+        change_params_dict(new_param_dict, is_HMM=True,sim_obj = sim_obj)
 
     return
 
@@ -492,7 +492,7 @@ def scale_params_dict(down, params_arr, is_HMM=False):
     #print(new_params)
     return new_params
 
-def change_params_dict(new_params, is_HMM=False):
+def change_params_dict(new_params, is_HMM=False,sim_obj = None):
     '''
     Change params on Na12mut channel in NEURON.
     ---
@@ -526,29 +526,30 @@ def change_params_dict(new_params, is_HMM=False):
         currh.vhalfs_na12mut= new_params['vhalfs_na12mut']
         currh.zetas_na12mut= new_params['zetas_na12mut']
     elif is_HMM:
-        act_object = ggsdHMM.Activation(channel_name='na12mut8st')
-        currh = act_object.h
-        soma = act_object.soma
-        for seg in soma:
-            seg.a1_0_na12mut8st = new_params['a1_0_na12mut8st']
-            seg.a1_1_na12mut8st = new_params['a1_1_na12mut8st']
-            seg.b1_0_na12mut8st = new_params['b1_0_na12mut8st']
-            seg.b1_1_na12mut8st = new_params['b1_1_na12mut8st']
-            seg.a2_0_na12mut8st = new_params['a2_0_na12mut8st']
-            seg.a2_1_na12mut8st = new_params['a2_1_na12mut8st']
-            seg.b2_0_na12mut8st = new_params['b2_0_na12mut8st']
-            seg.b2_1_na12mut8st = new_params['b2_1_na12mut8st']
-            seg.a3_0_na12mut8st = new_params['a3_0_na12mut8st']
-            seg.a3_1_na12mut8st = new_params['a3_1_na12mut8st']
-            seg.b3_0_na12mut8st = new_params['b3_0_na12mut8st']
-            seg.b3_1_na12mut8st = new_params['b3_1_na12mut8st']
-            seg.bh_0_na12mut8st = new_params['bh_0_na12mut8st']
-            seg.bh_1_na12mut8st = new_params['bh_1_na12mut8st']
-            seg.bh_2_na12mut8st = new_params['bh_2_na12mut8st']
-            seg.ah_0_na12mut8st = new_params['ah_0_na12mut8st']
-            seg.ah_1_na12mut8st = new_params['ah_1_na12mut8st']
-            seg.ah_2_na12mut8st = new_params['ah_2_na12mut8st']
-            
+        if sim_obj is None:
+            sim_obj = ggsdHMM.Activation(channel_name='na12mut8st')
+        soma = sim_obj.soma
+        currh = sim_obj.h
+        
+        soma.a1_0_na12mut8st = new_params['a1_0_na12mut8st']
+        soma.a1_1_na12mut8st = new_params['a1_1_na12mut8st']
+        soma.b1_0_na12mut8st = new_params['b1_0_na12mut8st']
+        soma.b1_1_na12mut8st = new_params['b1_1_na12mut8st']
+        soma.a2_0_na12mut8st = new_params['a2_0_na12mut8st']
+        soma.a2_1_na12mut8st = new_params['a2_1_na12mut8st']
+        soma.b2_0_na12mut8st = new_params['b2_0_na12mut8st']
+        soma.b2_1_na12mut8st = new_params['b2_1_na12mut8st']
+        soma.a3_0_na12mut8st = new_params['a3_0_na12mut8st']
+        soma.a3_1_na12mut8st = new_params['a3_1_na12mut8st']
+        soma.b3_0_na12mut8st = new_params['b3_0_na12mut8st']
+        soma.b3_1_na12mut8st = new_params['b3_1_na12mut8st']
+        soma.bh_0_na12mut8st = new_params['bh_0_na12mut8st']
+        soma.bh_1_na12mut8st = new_params['bh_1_na12mut8st']
+        soma.bh_2_na12mut8st = new_params['bh_2_na12mut8st']
+        soma.ah_0_na12mut8st = new_params['ah_0_na12mut8st']
+        soma.ah_1_na12mut8st = new_params['ah_1_na12mut8st']
+        soma.ah_2_na12mut8st = new_params['ah_2_na12mut8st']
+        
         currh.vShift_na12mut8st = new_params['vShift_na12mut8st']
         currh.vShift_inact_na12mut8st = new_params['vShift_inact_na12mut8st']
         currh.maxrate_na12mut8st = new_params['maxrate_na12mut8st']
