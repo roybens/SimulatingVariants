@@ -66,6 +66,7 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
 
         self.protocols = eh.read_mutant_protocols('csv_files/mutant_protocols.csv', mutant)
         self.score_calculator = sf.Score_Function(self.protocols, self.wild_data, self.channel_name)
+        self.act_obj = ggsdHMM.Activation(channel_name=self.channel_name)
         
 
     def initialize_wild_data(self):
@@ -135,7 +136,7 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
 
         '''
         assert len(param_values) == len(self.params), 'Parameter value list is not same length number of parameters' 
-        eh.change_params(param_values, scaled=False, is_HMM=True)
+        eh.change_params(param_values, scaled=False, is_HMM=True, sim_obj=self.act_obj)
         return self.score_calculator.total_rmse(is_HMM=True, objectives=self.objective_names)
 
 

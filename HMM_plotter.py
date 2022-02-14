@@ -8,14 +8,14 @@ from scipy import optimize
 import argparse
 import generalized_genSim_shorten_time as ggsd
 
-def set_param(param, is_HMM):
+def set_param(param, is_HMM,sim_obj = None):
     if is_HMM:
-        eh.change_params(param, scaled=False, is_HMM=True)
+        eh.change_params(param, scaled=False, is_HMM=True,sim_obj = sim_obj)
     else:
         1/0
         
 def read_peak_amp_dict():
-    return {"T400RAdult": 0.645, "I1640NAdult": 0.24, "m1770LAdult": 0.4314, "neoWT": 0.748, "T400RAneo": 0.932, "I1640NNeo": 0.28, "m1770LNeo": 1, "K1260E" : 1}
+    return {"T400RAdult": 0.645, "I1640NAdult": 0.24, "m1770LAdult": 0.4314, "neoWT": 0.748, "T400RAneo": 0.932, "I1640NNeo": 0.28, "m1770LNeo": 1, "K1260E" : 1, "A427D" : 1}
         
 def read_mutant_protocols(mutant_protocols_csv, mutant):
     '''
@@ -88,14 +88,18 @@ def make_act_plots(new_params, mutant_name, mutant_protocol_csv_name, param_valu
     plt.ylabel('Normalized conductance')
     plt.title(f'Activation: {mutant_name}')
 
-    set_param(param_values_wt, is_HMM)
+   
     wt_act = module_name.Activation(channel_name = channel_name)
+    if param_values_wt is not None:
+        set_param(param_values_wt, is_HMM,sim_obj = wt_act)
     wt_act.genActivation()
     # (formatted_v_half, formatted_gv_slope)
     act_v_half_wt, act_slope_wt = wt_act.plotActivation_VGnorm_plt(plt, 'black')
+    
 
-    set_param(new_params, is_HMM)
+   
     mut_act = module_name.Activation(channel_name = channel_name)
+    set_param(new_params, is_HMM,sim_obj = mut_act)
     mut_act.genActivation()
     act_v_half_mut, act_slope_mut = mut_act.plotActivation_VGnorm_plt(plt, 'red')
 
@@ -105,13 +109,15 @@ def make_act_plots(new_params, mutant_name, mutant_protocol_csv_name, param_valu
     plt.ylabel('Peak Current $(pA)$')
     plt.title(f'Activation: {mutant_name} IV Curve')
 
-    set_param(param_values_wt, is_HMM)
+    
     wt_act = module_name.Activation(channel_name = channel_name)
+    if param_values_wt is not None:
+        set_param(param_values_wt, is_HMM,sim_obj = wt_act)
     wt_act.genActivation()
     wt_act.plotActivation_IVCurve_plt(plt, 'black')
 
-    set_param(new_params, is_HMM)
     mut_act = module_name.Activation(channel_name = channel_name)
+    set_param(new_params, is_HMM,sim_obj = mut_act)
     mut_act.genActivation()
     mut_act.plotActivation_IVCurve_plt(plt, 'red')
 
@@ -137,26 +143,28 @@ def make_act_plots(new_params, mutant_name, mutant_protocol_csv_name, param_valu
     plt.ylabel('I $(mA/cm^2)$')
     plt.title(f'Activation waveform at 0mV: {mutant_name}')
 
-    set_param(param_values_wt, is_HMM)
+    
     wt_act = module_name.Activation(channel_name = channel_name)
+    if param_values_wt is not None:
+        set_param(param_values_wt, is_HMM,sim_obj = wt_act)
     wt_act.genActivation()
     wt_act.plotActivation_TCurrDensityRelation_plt(plt, 'black')
-
-    set_param(new_params, is_HMM)
-    mut_act = module_name.Activation(channel_name = channel_name)
-    mut_act.genActivation()
-    mut_act.plotActivation_TCurrDensityRelation_plt(plt, 'red')
-    
-    
- ############################################################################################################
-
-    set_param(param_values_wt, is_HMM)
     wt_peak_amp = find_peak_amp(channel_name, is_HMM)
 
-    set_param(new_params, is_HMM)
+    
+    mut_act = module_name.Activation(channel_name = channel_name)
+    set_param(new_params, is_HMM, sim_obj = mut_act)
+    mut_act.genActivation()
+    mut_act.plotActivation_TCurrDensityRelation_plt(plt, 'red')
     mut_peak_amp = find_peak_amp(channel_name, is_HMM)
     
     
+ ############################################################################################################
+  
+   
+    
+
+   
 ############################################################################################################    
     peak_amp_dict = read_peak_amp_dict()
     
@@ -198,13 +206,14 @@ def make_inact_plots(new_params, mutant_name, mutant_protocol_csv_name, param_va
     plt.ylabel('Normalized current')
     plt.title(f'Inactivation: {mutant_name}')
 
-    set_param(param_values_wt, is_HMM)
     wt_inact = module_name.Inactivation(channel_name = channel_name)
+    if param_values_wt is not None:
+        set_param(param_values_wt, is_HMM,sim_obj = wt_inact)
     wt_inact.genInactivation()
     inact_v_half_wt, inact_slope_wt = wt_inact.plotInactivation_VInormRelation_plt(plt, 'black')
 
-    set_param(new_params, is_HMM)
     mut_inact = module_name.Inactivation(channel_name = channel_name)
+    set_param(new_params, is_HMM, sim_obj = mut_inact)
     mut_inact.genInactivation()
     inact_v_half_mut, inact_slope_mut = mut_inact.plotInactivation_VInormRelation_plt(plt, 'red')
 
@@ -231,13 +240,14 @@ def make_inact_plots(new_params, mutant_name, mutant_protocol_csv_name, param_va
     plt.ylabel('Voltage $(mV)$')
     plt.title(f'Inactivation: {mutant_name}')
 
-    set_param(param_values_wt, is_HMM)
     wt_inact = module_name.Inactivation(channel_name = channel_name)
+    if param_values_wt is not None:
+        set_param(param_values_wt, is_HMM,sim_obj = wt_inact)
     wt_inact.genInactivation()
     wt_inact.plotInactivation_TCurrDensityRelation(plt, 'black')
 
-    set_param(new_params, is_HMM)
     mut_inact = module_name.Inactivation(channel_name = channel_name)
+    set_param(new_params, is_HMM, sim_obj = mut_inact)
     mut_inact.genInactivation()
     mut_inact.plotInactivation_TCurrDensityRelation(plt, 'red')
 
@@ -247,14 +257,15 @@ def make_inact_plots(new_params, mutant_name, mutant_protocol_csv_name, param_va
     plt.ylabel('Current density $(mA/cm^2)$')
     plt.title(f'Inactivation Tau at 0 mV: {mutant_name}')
 
-    set_param(param_values_wt, is_HMM)
     wt_inact = module_name.Inactivation(channel_name = channel_name)
     wt_inact.genInactivation()
+    if param_values_wt is not None:
+        set_param(param_values_wt, is_HMM,sim_obj = wt_inact)
     wt_tau = wt_inact.plotInactivation_Tau_0mV_plt(plt, 'black')
     wt_per_cur = find_persistent_current(is_HMM)
 
-    set_param(new_params, is_HMM)
     mut_inact = module_name.Inactivation(channel_name = channel_name)
+    set_param(new_params, is_HMM, sim_obj = mut_inact)
     mut_inact.genInactivation()
     mut_tau = mut_inact.plotInactivation_Tau_0mV_plt(plt, 'red')
     mut_per_cur = find_persistent_current(is_HMM)
@@ -289,17 +300,21 @@ def make_recov_plots(new_params, mutant_name, mutant_protocol_csv_name, param_va
     else:
         module_name = ggsd
     figures.append(plt.figure())
-    set_param(param_values_wt, is_HMM)
+    
     wt_recov = module_name.RFI(channel_name=channel_name)
+    if param_values_wt is not None:
+        set_param(param_values_wt, is_HMM,sim_obj =wt_recov )
     wt_recov.genRecInactTau()
     wt_recov.clampRecInactTau(5000)
     wt_recov.plotAllRFI(ax1, ax2, ax3, ax4, 'black')
     
     set_param(new_params, is_HMM)
-    wt_recov = module_name.RFI(channel_name=channel_name)
-    wt_recov.genRecInactTau() 
-    wt_recov.clampRecInactTau(5000)
-    wt_recov.plotAllRFI(ax1, ax2, ax5, ax6, 'red')
+    
+    mut_recov = module_name.RFI(channel_name=channel_name)
+    set_param(new_params, is_HMM, sim_obj = mut_recov)
+    mut_recov.genRecInactTau() 
+    mut_recov.clampRecInactTau(5000)
+    mut_recov.plotAllRFI(ax1, ax2, ax5, ax6, 'red')
     
 
 def make_ramp_plots(new_params, mutant_name, mutant_protocol_csv_name, param_values_wt, filename, is_HMM, channel_name):

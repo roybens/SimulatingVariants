@@ -68,6 +68,7 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
 
         self.protocols = eh.read_mutant_protocols('csv_files/mutant_protocols.csv', mutant)
         self.score_calculator = sf.Score_Function(self.protocols, self.wild_data, self.channel_name_HMM)
+        self.act_obj = ggsdHMM.Activation(channel_name=self.channel_name_HMM)
         
 
     def initialize_wild_data(self):
@@ -140,7 +141,7 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
 
         '''
         assert len(param_values) == len(self.params), 'Parameter value list is not same length number of parameters' 
-        eh.change_params(param_values, scaled=False, is_HMM=True)
+        eh.change_params(param_values, scaled=False, is_HMM=True, sim_obj=self.act_obj)
         return self.score_calculator.total_rmse(is_HMM=True, objectives=self.objective_names)
     
     def plot_inact(self, param_values):
@@ -149,7 +150,7 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         # Calculate wild baseline values
         v_half_ssi_exp = self.wild_data['v_half_ssi'] + float(self.protocols['dv_half_ssi'])
         ssi_slope_exp = self.wild_data['ssi_slope'] * float(self.protocols['ssi_slope']) / 100
-        eh.change_params(param_values, scaled=False, is_HMM=True)
+        eh.change_params(param_values, scaled=False, is_HMM=True, sim_obj=self.act_obj)
         inorm_vec, v_vec, all_is = ggsdHMM.Inactivation(channel_name=self.channel_name_HMM, step=5).genInactivation()
         inorm_array = np.array(inorm_vec)
         v_array = np.array(v_vec)
@@ -181,7 +182,7 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         v_half_act_exp = self.wild_data['v_half_act'] + float(self.protocols['dv_half_act'])
         gv_slope_exp = self.wild_data['gv_slope'] + float(self.protocols['gv_slope']) / 100
         
-        eh.change_params(param_values, scaled=False, is_HMM=True)     
+        eh.change_params(param_values, scaled=False, is_HMM=True, sim_obj=self.act_obj)     
         gnorm_vec, v_vec, all_is = ggsdHMM.Activation(channel_name=self.channel_name_HMM, step=5).genActivation()
         gnorm_array = np.array(gnorm_vec)
         v_array = np.array(v_vec)
@@ -210,7 +211,7 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         tau_slow_exp = self.wild_data['tau_slow']  * float(self.protocols['tau_slow']) / 100
         percent_fast_exp = self.wild_data['percent_fast'] * float(self.protocols['percent_fast']) / 100
 
-        eh.change_params(param_values, scaled=False, is_HMM=True)
+        eh.change_params(param_values, scaled=False, is_HMM=True, sim_obj=self.act_obj)
         rec_inact_tau_vec, recov_curves, times = ggsdHMM.RFI(channel_name=self.channel_name_HMM).genRecInactTau()
         times = np.array(times)
         data_pts = np.array(recov_curves[0])
