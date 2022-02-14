@@ -234,7 +234,8 @@ def cultured_neurons_mutTTX(extra,fi_ranges,label):
     return [x_axis, npeaks, name]
 
 def explore_param(ch_name,gbar_name,ranges):
-    factors = np.linspace(ranges[0],ranges[1],ranges[2])
+    #factors = np.linspace(ranges[0],ranges[1],ranges[2])
+    factors = ranges
     all_prevs = []
     all_FIs = []
     for curr_factor in factors:
@@ -319,9 +320,10 @@ if __name__ == "__main__":
         #cultured_neurons_wtTTX(0.5,[0.4, 2, 6])
         #cultured_neurons_mutTTX(0.25,[0.4, 2, 6])
 
-        explore_param('SKv3_1','gSKv3_1bar',[1,2,3])
-        explore_param('K_Tst','gK_Tstbar',[1,2,3])
-        explore_param('K_Pst','gK_Pstbar',[1,2,3])
+        conditions = [1, 10, 100]  # factors
+        explore_param('SKv3_1','gSKv3_1bar', [1, 2, 3])
+        explore_param('K_Tst','gK_Tstbar', conditions)
+        explore_param('K_Pst','gK_Pstbar', [1, 2, 3])
 
 #het_sims()
 
