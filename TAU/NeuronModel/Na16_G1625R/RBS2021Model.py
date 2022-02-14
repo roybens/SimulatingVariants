@@ -72,7 +72,6 @@ def init_settings(nav12=1,
     h.working()
 
 def update_na16(dict_fn,wt_mul,mut_mul):
-    prev = []
     with open(dict_fn) as f:
         data = f.read()
     param_dict = json.loads(data)
@@ -81,29 +80,18 @@ def update_na16(dict_fn,wt_mul,mut_mul):
             curr_name = h.secname(sec=curr_sec)
             for seg in curr_sec:
                 hoc_cmd = f'{curr_name}.gbar_na16mut({seg.x}) *= {mut_mul}'
-                #val = h(f'{curr_name}.gbar_na16mut({seg.x})')
-                #prev.append(f'{curr_name}.gbar_na16mut({seg.x}) = {val}')
-                #print(hoc_cmd)
+                print(hoc_cmd)
                 h(hoc_cmd)
             for p_name in param_dict.keys():
                 hoc_cmd = f'{curr_name}.{p_name} = {param_dict[p_name]}'
-                #val = h(f'{curr_name}.{p_name}')
-                #prev.append(f'{curr_name}.{p_name} = {val}')
-                #print(hoc_cmd)
+                print(hoc_cmd)
                 h(hoc_cmd)
         if h.ismembrane('na16', sec=curr_sec):
             curr_name = h.secname(sec=curr_sec)
             for seg in curr_sec:
                 hoc_cmd = f'{curr_name}.gbar_na16({seg.x}) *= {wt_mul}'
-                #val = h(f'{curr_name}.gbar_na16({seg.x})')
-                #prev.append(f'{curr_name}.gbar_na16({seg.x}) = {val}')
-                #print(hoc_cmd)
+                print(hoc_cmd)
                 h(hoc_cmd)
-    return prev
-
-#def reverse_updates(prev):
-#    for hoc_cmd in prev:
-#        h(hoc_cmd)
 
 def update_K(channel_name,gbar_name,mut_mul):
     k_name = f'{gbar_name}_{channel_name}'
@@ -127,17 +115,9 @@ def reverse_update_K(channel_name,gbar_name, prev):
         if h.ismembrane(channel_name, sec=curr_sec):
             curr_name = h.secname(sec=curr_sec)
             for seg in curr_sec:
-                #hoc_cmd = f'{curr_name}.{k_name}({seg.x}) *= {mut_mul}'
-                #print(hoc_cmd)
-                #h(f'a = {curr_name}.{k_name}({seg.x})')  # get old value
-                #prev_var = h.a
-                #prev.append(f'{curr_name}.{k_name}({seg.x}) = {prev_var}')  # store hoc_cmd
                 hoc_cmd = prev[index]
                 h(hoc_cmd)
                 index += 1
-
-
-
     
 def init_stim(sweep_len = 800, stim_start = 100, stim_dur = 500, amp = 0.3, dt = 0.1):
     # updates the stimulation params used by the model
@@ -175,9 +155,9 @@ def get_fi_curve(s_amp,e_amp,nruns,wt_data=None,ax1=None):
         ax1.plot(x_axis,npeaks,'blue')
         ax1.plot(x_axis,wt_data,'black')
     plt.show()
-    
-def run_model(start_Vm = -72,dt= 0.1):
 
+
+def run_model(start_Vm = -72,dt= 0.1):
     h.finitialize(start_Vm)
     timesteps = int(h.tstop/h.dt)
     
@@ -199,59 +179,44 @@ def run_model(start_Vm = -72,dt= 0.1):
         h.fadvance()
         
     return Vm, I, t,stim
+
+
 def plot_stim(amp,fn):
     init_stim(amp=amp)
     Vm, I, t, stim = run_model()
     plot_stim_volts_pair(Vm, f'Step Stim {amp}pA', file_path_to_save=f'./Plots/Kexplore/{fn}_{amp}pA',times=t,color_str='blue')
+
+
 def make_fi(ranges,fn):
     fig,ficurveax = plt.subplots(1,1)
     get_fi_curve(ranges[0], ranges[1], ranges[2],ax1 = ficurveax)
     fig.savefig(f'./Plots/Kexplore/{fn}_FI.pdf')
     
 
-
 def cultured_neurons_wt(extra,fi_ranges,label):
-    #init_settings()
-    #update_K('SKv3_1','gSKv3_1bar',1.5)
-    #update_K('K_Tst','gK_Tstbar',1.5)
-    #update_K('K_Pst','gK_Pstbar',1.5)
-    prev = update_na16('./params/na16_mutv2.txt',2+extra,0)
+    update_na16('./params/na16_mutv2.txt',2+extra,0)
     plot_stim(0.5,f'{label}_overexpressedWT{extra}')
     make_fi(fi_ranges,f'{label}_overexpressedWT{extra}')
-    return prev
-    
+
+
 def cultured_neurons_mut(extra,fi_ranges,label):
-    #init_settings()
-    #update_K('SKv3_1','gSKv3_1bar',1.5)
-    #update_K('K_Tst','gK_Tstbar',1.5)
-    #update_K('K_Pst','gK_Pstbar',1.5)
-    prev = update_na16('./params/na16_mutv2.txt',2,extra)
+    update_na16('./params/na16_mutv2.txt',2,extra)
     plot_stim(0.5,f'{label}_overexpressedMut{extra}')
     make_fi(fi_ranges,f'{label}_overexpressedMut{extra}')
-    return prev
-    
+
     
 def cultured_neurons_wtTTX(extra,fi_ranges,label):
-    #init_settings()
-    #update_K('SKv3_1','gSKv3_1bar',1.5)
-    #update_K('K_Tst','gK_Tstbar',1.5)
-    #update_K('K_Pst','gK_Pstbar',1.5)
-    prev = update_na16('./params/na16_mutv2.txt',extra,0)
+    update_na16('./params/na16_mutv2.txt',extra,0)
     plot_stim(2,f'{label}_overexpressedWT_TTX{extra}')
     make_fi(fi_ranges,f'{label}_overexpressedWT_TTX{extra}')
-    return prev
-    
+
 
 def cultured_neurons_mutTTX(extra,fi_ranges,label):
-    #init_settings()
-    #update_K('SKv3_1','gSKv3_1bar',1.5)
-    #update_K('K_Tst','gK_Tstbar',1.5)
-    #update_K('K_Pst','gK_Pstbar',1.5)
-    prev = update_na16('./params/na16_mutv2.txt',0,extra)
+    update_na16('./params/na16_mutv2.txt',0,extra)
     plot_stim(2,f'{label}_overexpressedmut_TTX{extra}')
     make_fi(fi_ranges,f'{label}_overexpressedmut_TTX{extra}')
-    return prev
-    
+
+
 def explore_param(ch_name,gbar_name,ranges):
     factors = np.linspace(ranges[0],ranges[1],ranges[2])
     all_prevs = []
@@ -259,15 +224,13 @@ def explore_param(ch_name,gbar_name,ranges):
         init_settings()
         prev = update_K(ch_name,gbar_name,curr_factor)
         label = f'{ch_name}_{curr_factor}'
-        prev_wt = cultured_neurons_wt(0.5,[0.1,1,5],label)
-        prev_mut = cultured_neurons_mut(0.25,[0.1, 1, 5],label)
-        prev_wtTTX = cultured_neurons_wtTTX(0.5,[0.4, 2, 6],label)
-        prev_mutTTX = cultured_neurons_mutTTX(0.25,[0.4, 2, 6],label)
+        cultured_neurons_wt(0.5,[0.1,1,5],label)
+        cultured_neurons_mut(0.25,[0.1, 1, 5],label)
+        cultured_neurons_wtTTX(0.5,[0.4, 2, 6],label)
+        cultured_neurons_mutTTX(0.25,[0.4, 2, 6],label)
         all_prevs.append(prev)
-    print("PREVVVSS", all_prevs[0])
+    # revert h back to initial condition
     reverse_update_K(ch_name,gbar_name, all_prevs[0])
-
-
 
     
 def het_sims():
@@ -300,10 +263,6 @@ if __name__ == "__main__":
         explore_param('SKv3_1','gSKv3_1bar',[1,2,3])
         explore_param('K_Tst','gK_Tstbar',[1,2,3])
         explore_param('K_Pst','gK_Pstbar',[1,2,3])
-
-        # works when I run one at a time, but not all at once.
-
-
 
 #het_sims()
 
