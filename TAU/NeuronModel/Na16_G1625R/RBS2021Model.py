@@ -72,6 +72,7 @@ def init_settings(nav12=1,
     h.soma_na16 = h.soma_na16 * nav16 * soma_nav16
     h.ais_na16 = h.ais_na16 * nav16 * ais_nav16
     h.working()
+  
 
 def update_na16(dict_fn,wt_mul,mut_mul):
     with open(dict_fn) as f:
@@ -190,7 +191,7 @@ def plot_stim(amp,fn):
     init_stim(amp=amp)
     Vm, I, t, stim = run_model()
     plot_stim_volts_pair(Vm, f'Step Stim {amp}pA', file_path_to_save=f'./Plots/Kexplore/{fn}_{amp}pA',times=t,color_str='blue')
-
+    return I
 
 #def make_fi(ranges,fn):
     # not used
@@ -243,9 +244,9 @@ def explore_param(ch_name,gbar_name,ranges):
         prev = update_K(ch_name,gbar_name,curr_factor)
         label = f'{ch_name}_{curr_factor}'
         fi_wt = cultured_neurons_wt(0.5,[0.1,1,6],label)  # set endpoint from 5 to 6 for even spacing across types
-        fi_mut = cultured_neurons_mut(0.25,[0.1, 1, 6],label)  # set endpoint from 5 to 6 for even spacing across types
+        fi_mut = cultured_neurons_mut(0.5,[0.1, 1, 6],label)  # set endpoint from 5 to 6 for even spacing across types
         fi_wtTTX = cultured_neurons_wtTTX(0.5,[0.4, 2, 6],label)
-        fi_mutTTX = cultured_neurons_mutTTX(0.25,[0.4, 2, 6],label)
+        fi_mutTTX = cultured_neurons_mutTTX(0.5,[0.4, 2, 6],label)
         all_prevs.append(prev)
         all_FIs.append([fi_wt, fi_mut, fi_wtTTX, fi_mutTTX])
 
@@ -304,9 +305,16 @@ def het_sims():
 #######################
 # MAIN
 #######################
+
+
+
+#explore_param('','equal_expression', [1])
+
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Generate simulated data.')
-    parser.add_argument("--function", "-f", type=int, default=1, help="Specify which function to run")
+    parser.add_argument("--function", "-f", type=int, default=0, help="Specify which function to run")
     args = parser.parse_args()
 
     if args.function == 1:
@@ -320,13 +328,25 @@ if __name__ == "__main__":
         #cultured_neurons_wtTTX(0.5,[0.4, 2, 6])
         #cultured_neurons_mutTTX(0.25,[0.4, 2, 6])
 
-        conditions = [1, 10, 100]  # factors
+        #conditions = [1, 10, 100]  # factors
         explore_param('SKv3_1','gSKv3_1bar', [1, 2, 3])
         explore_param('K_Tst','gK_Tstbar', conditions)
         explore_param('K_Pst','gK_Pstbar', [1, 2, 3])
 
-#het_sims()
 
 
 
+init_settings()
 
+#create mutTTX
+init_stim(amp=0.5)
+update_na16('./params/na16_mutv2.txt',0,0.25)
+update_K('SKv3_1','gSKv3_1bar',2)
+I = plot_stim(2,f'mut_overexpressedmut_TTX_0.25')
+fig,ax1 = plt.subplots(1,1)
+ax1.plot(I['Na'],color = 'black')
+ax1.plot(I['K'],color = 'blue')
+ax1.plot(I['Ca'],color = 'green')
+fig.savefig('./Plots/mut_vclamp.pdf')
+
+ 

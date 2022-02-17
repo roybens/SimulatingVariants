@@ -31,5 +31,7 @@ p_1 = [251.13271452152281, 0.10437122947276659, 0.12142361782233926, 0.796367812
 #eh.change_params(p, scaled=False, is_HMM=True,sim_obj =  act_object)
 #plotter.make_act_plots(p, "A427D", "./csv_files/mutant_protocols.csv", None, "./Plots_Folder/Testing_Act.pdf", is_HMM = True, channel_name = "na12mut8st")
 #plotter.make_inact_plots(p, "A427D", "./csv_files/mutant_protocols.csv", None, "./Plots_Folder/Testing_Inact.pdf", is_HMM = True, channel_name = "na12mut8st")
-plotter.make_recov_plots(p, "A427D", "./csv_files/mutant_protocols.csv", None, "./Plots_Folder/Testing_Inact.pdf", is_HMM = True, channel_name = "na12mut8st")
+#plotter.make_recov_plots(p, "A427D", "./csv_files/mutant_protocols.csv", None, "./Plots_Folder/Testing_Inact.pdf", is_HMM = True, channel_name = "na12mut8st")
 
+wt_recov = ggsdHMM.RFI(channel_name=channel_name)
+wt_recov.genRecInactTau()

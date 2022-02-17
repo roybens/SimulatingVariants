@@ -316,7 +316,7 @@ def make_recov_plots(new_params, mutant_name, mutant_protocol_csv_name, param_va
     #mut_recov.genRecInactTau() 
     #mut_recov.clampRecInactTau(5000)
     #mut_recov.plotAllRFI(ax1, ax2, ax5, ax6, 'red')
-    pdf.savefig(fig)
+    
 
 def make_ramp_plots(new_params, mutant_name, mutant_protocol_csv_name, param_values_wt, filename, is_HMM, channel_name):
     """

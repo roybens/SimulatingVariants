@@ -915,9 +915,10 @@ class RFI:
         ax.set_title('Time/Fractional recovery (P2/P1)')
         #y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(self.channel_name, is_HMM=True)
         #rec_inact_tau_vec, recov_curves, times =
-        popt, pcov = optimize.curve_fit(two_phase, np.log(times), recov_curve)
+        popt, pcov = optimize.curve_fit(two_phase, np.log(times), self.rec_vec)
         y0, plateau, percent_fast, k_fast, k_slow = popt
         x_values = np.linspace(times[0],times[-1],num = 1000)
+        x_values = np.log(x_values)
         curve = two_phase(x_values,y0,plateau,percent_fast,k_fast,k_slow)
         formatted_tauSlow = np.round(1 / k_slow, decimals=2)
         formatted_tauFast = np.round(1 / k_fast, decimals=2)
@@ -926,7 +927,7 @@ class RFI:
         ax.text(-10, 0.8, f'Tau Fast: {formatted_tauFast}')
         ax.text(-10, 0.85, f'% Fast Component: {formatted_percentFast}')
         ax.plot(times,recov_curve, 'o', c=color)
-        ax.plot(np.log(x_values),curve,c=color)
+        ax.plot(x_values,curve,c=color)
         
     def plotRFI_TimeVRelation(self, ax, color):
         ax.set_xlabel('Time $(ms)$')
