@@ -305,7 +305,6 @@ def make_recov_plots(new_params, mutant_name, mutant_protocol_csv_name, param_va
     if param_values_wt is not None:
         set_param(param_values_wt, is_HMM,sim_obj =wt_recov )
     wt_recov.genRecInactTau()
-    wt_recov.clampRecInactTau(5000)
     wt_recov.plotAllRFI(ax1, ax2, ax3, ax4, 'black')
     
     #set_param(new_params, is_HMM)
