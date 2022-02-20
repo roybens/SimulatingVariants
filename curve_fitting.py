@@ -36,12 +36,9 @@ def one_phase(x, y0, plateau, k):
     '''
     return y0 + (plateau - y0) * (1 - np.exp(-k * x))
 
-def calc_act_obj(channel_name, is_HMM=False):
+def calc_act_obj(channel_name, act_obj):
     try:
-        if not is_HMM:
-            gnorm_vec, v_vec, all_is = ggsd.Activation(channel_name=channel_name, step=5).genActivation()
-        else:
-            gnorm_vec, v_vec, all_is = ggsdHMM.Activation(channel_name=channel_name, step=5).genActivation()
+        gnorm_vec, v_vec, all_is = act_obj.genActivation()
     except:
         print('Couldn\'t generate activation data')
         return (1000, 1000, 1000, 1000)
@@ -54,32 +51,24 @@ def calc_act_obj(channel_name, is_HMM=False):
     return gv_slope, v_half, top, bottom
 
 
-def calc_inact_obj(channel_name, is_HMM=False):
+def calc_inact_obj(channel_name, inact_obj):
     try:
-        if not is_HMM:
-            inact = ggsd.Inactivation(channel_name=channel_name, step=5)
-            inorm_vec, v_vec, all_is = inact.genInactivation()
-        else:
-            inact = ggsdHMM.Inactivation(channel_name=channel_name, step=5)
-            inorm_vec, v_vec, all_is = inact.genInactivation()
+        inorm_vec, v_vec, all_is = inact_obj.genInactivation()
     except:
         print('Couldn\'t generate inactivation data')
-        return (1000, 1000, 1000, 1000, 1000)
+        return (1000, 1000, 1000, 1000)
     try:
         popt, pcov = optimize.curve_fit(boltzmann, v_vec, inorm_vec)
     except:
         print("Couldn't fit curve to inactivation.")
-        return (1000, 1000, 1000, 1000, 1000)
+        return (1000, 1000, 1000, 1000)
     ssi_slope, v_half, top, bottom = popt
     # taus, tau_sweeps, tau0 = ggsd.find_tau_inact(all_is)
     return ssi_slope, v_half, top, bottom
 
-def calc_recov_obj(channel_name, is_HMM=False):
+def calc_recov_obj(channel_name, recov_obj):
     try:
-        if not is_HMM:
-            rec_inact_tau_vec, recov_curves, times = ggsd.RFI(channel_name=channel_name).genRecInactTau()
-        else:
-            rec_inact_tau_vec, recov_curves, times = ggsdHMM.RFI(channel_name=channel_name).genRecInactTau()
+        rec_inact_tau_vec, recov_curves, times = recov_obj.genRecInactTau()
     except:
         print('Couldn\'t generate recovery data')
         return (1000, 1000, 1000, 1000, 1000)

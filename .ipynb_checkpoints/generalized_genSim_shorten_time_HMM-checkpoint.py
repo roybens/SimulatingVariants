@@ -231,23 +231,24 @@ class Activation:
             voltages
             all_is: peak current vector
         """
-        if self.gnorm_vec == []:
-            time_padding = 5  # ms
-            h.tstop = time_padding + self.dur + time_padding  # time stop
+        time_padding = 5  # ms
+        h.tstop = time_padding + self.dur + time_padding  # time stop
+        self.ipeak_vec = []
+        self.all_is = []
+        self.all_v_vec_t = []
+        # iterates across voltages (mV)
+        for v_cl in np.arange(self.st_cl, self.end_cl, self.step):  # self.vec
+            # resizing the vectors
+            self.t_vec = []
+            self.i_vec = []
+            self.v_vec_t = []
 
-            # iterates across voltages (mV)
-            for v_cl in np.arange(self.st_cl, self.end_cl, self.step):  # self.vec
-                # resizing the vectors
-                self.t_vec = []
-                self.i_vec = []
-                self.v_vec_t = []
+            self.clamp(v_cl)
+            self.all_is.append(self.i_vec[1:])
+            self.all_v_vec_t.append(self.v_vec_t)
 
-                self.clamp(v_cl)
-                self.all_is.append(self.i_vec[1:])
-                self.all_v_vec_t.append(self.v_vec_t)
-
-            # calculate normalized peak conductance
-            self.gnorm_vec = self.findG(self.v_vec, self.ipeak_vec)
+        # calculate normalized peak conductance
+        self.gnorm_vec = self.findG(self.v_vec, self.ipeak_vec)
 
         return self.gnorm_vec, self.v_vec, self.all_is
 

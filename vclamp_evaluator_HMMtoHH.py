@@ -41,6 +41,9 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         '''
         self.channel_name_HMM = channel_name_HMM
         self.channel_name_HH = channel_name_HH
+        self.act_obj = ggsdHMM.Activation(channel_name=self.channel_name_HMM)
+        self.recov_obj = ggsdHMM.Inactivation(channel_name = self.channel_name_HMM)
+        self.inact_obj = ggsdHMM.RFI(channel_name = self.channel_name_HMM)
         self.objective_names = objective_names
         def init_params(filepath):
             '''
@@ -68,7 +71,7 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
 
         self.protocols = eh.read_mutant_protocols('csv_files/mutant_protocols.csv', mutant)
         self.score_calculator = sf.Score_Function(self.protocols, self.wild_data, self.channel_name_HMM)
-        self.act_obj = ggsdHMM.Activation(channel_name=self.channel_name_HMM)
+
         
 
     def initialize_wild_data(self):
@@ -85,12 +88,12 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         wild_data = {}
         # Getting objective base values for HH model.
         is_HMM = False 
-        gv_slope, v_half_act, top, bottom = cf.calc_act_obj(self.channel_name_HH, is_HMM=is_HMM)
-        ssi_slope, v_half_inact, top, bottom = cf.calc_inact_obj(self.channel_name_HH, is_HMM=is_HMM)
-        y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(self.channel_name_HH, is_HMM=is_HMM)
-        tau0 = ehn.find_tau0()
-        peak_amp = ehn.find_peak_amp()
-        time_to_peak = ehn.find_time_to_peak()
+        gv_slope, v_half_act, top, bottom = cf.calc_act_obj(self.channel_name_HH, self.act_obj)
+        ssi_slope, v_half_inact, top, bottom = cf.calc_inact_obj(self.channel_name_HH, self.inact_obj)
+        y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(self.channel_name_HH, self.recov_obj)
+        # tau0 = ehn.find_tau0()
+        # peak_amp = ehn.find_peak_amp()
+        # time_to_peak = ehn.find_time_to_peak()
         # Ramp Protocol
         # ramp = ggsdHMM.Ramp(channel_name=self.channel_name)
         # ramp_area = ramp.areaUnderCurve
@@ -104,13 +107,13 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         wild_data['tau_slow'] = 1 / k_slow
         wild_data['percent_fast'] = percent_fast
         # wild_data['udb20'] = 0
-        wild_data['tau0'] = tau0
+        # wild_data['tau0'] = tau0
         # wild_data['ramp'] = ramp_area
         # wild_data['persistent'] = persistent_curr
         
         # Some extra objectives added last minute, so this is a bit hard-coded
-        wild_data['peak_amp'] = peak_amp
-        wild_data['time_to_peak'] = time_to_peak
+        # wild_data['peak_amp'] = peak_amp
+        # wild_data['time_to_peak'] = time_to_peak
 
         return wild_data
 
@@ -151,11 +154,11 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         v_half_ssi_exp = self.wild_data['v_half_ssi'] + float(self.protocols['dv_half_ssi'])
         ssi_slope_exp = self.wild_data['ssi_slope'] * float(self.protocols['ssi_slope']) / 100
         eh.change_params(param_values, scaled=False, is_HMM=True, sim_obj=self.act_obj)
-        inorm_vec, v_vec, all_is = ggsdHMM.Inactivation(channel_name=self.channel_name_HMM, step=5).genInactivation()
+        inorm_vec, v_vec, all_is = self.inact_obj.genInactivation()
         inorm_array = np.array(inorm_vec)
         v_array = np.array(v_vec)
 
-        ssi_slope, v_half, top, bottom = cf.calc_inact_obj(self.channel_name_HMM, is_HMM=True)
+        ssi_slope, v_half, top, bottom = cf.calc_inact_obj(self.channel_name_HMM, self.inact_obj)
 
         
         even_xs = np.linspace(v_array[0], v_array[len(v_array)-1], 100)
@@ -183,10 +186,10 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         gv_slope_exp = self.wild_data['gv_slope'] + float(self.protocols['gv_slope']) / 100
         
         eh.change_params(param_values, scaled=False, is_HMM=True, sim_obj=self.act_obj)     
-        gnorm_vec, v_vec, all_is = ggsdHMM.Activation(channel_name=self.channel_name_HMM, step=5).genActivation()
+        gnorm_vec, v_vec, all_is = self.act_obj.genActivation()
         gnorm_array = np.array(gnorm_vec)
         v_array = np.array(v_vec)
-        gv_slope, v_half, top, bottom = cf.calc_act_obj(self.channel_name_HMM, is_HMM=True)
+        gv_slope, v_half, top, bottom = cf.calc_act_obj(self.channel_name_HMM, self.act_obj)
 
         even_xs = np.linspace(v_array[0], v_array[len(v_array)-1], 100)
         curve = cf.boltzmann(even_xs, gv_slope, v_half, top, bottom)
@@ -212,11 +215,11 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         percent_fast_exp = self.wild_data['percent_fast'] * float(self.protocols['percent_fast']) / 100
 
         eh.change_params(param_values, scaled=False, is_HMM=True, sim_obj=self.act_obj)
-        rec_inact_tau_vec, recov_curves, times = ggsdHMM.RFI(channel_name=self.channel_name_HMM).genRecInactTau()
+        rec_inact_tau_vec, recov_curves, times = self.recov_obj.genRecInactTau()
         times = np.array(times)
         data_pts = np.array(recov_curves[0])
         even_xs = np.linspace(times[0], times[len(times)-1], 10000)
-        y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(self.channel_name_HMM, is_HMM=True)
+        y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(self.channel_name_HMM, self.recov_obj)
         curve = cf.two_phase(even_xs, y0, plateau, percent_fast, k_fast, k_slow)
         # red curve: using the optimization fitted params to plot on the given x values
         axs.plot(np.log(even_xs), curve, c='red',label="Recovery Fit")
@@ -251,8 +254,8 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         plot_act(self)
 
 
-if __name__ == '__main__':
-    vce = Vclamp_evaluator_HMM('./param_stats_narrow.csv', 'A427D', 'na', objective_names=['inact', 'act', 'recov'])
-    print(vce.channel_name)
-    vce.unit_test()
+# if __name__ == '__main__':
+    # vce = Vclamp_evaluator_HMM('./param_stats_narrow.csv', 'A427D', 'na', objective_names=['inact', 'act', 'recov'])
+    # print(vce.channel_name)
+    # vce.unit_test()
     
