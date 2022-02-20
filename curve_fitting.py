@@ -72,9 +72,9 @@ def calc_recov_obj(channel_name, recov_obj):
     except:
         print('Couldn\'t generate recovery data')
         return (1000, 1000, 1000, 1000, 1000)
-    recov_curve = recov_curves[0]
+    #recov_curve = recov_curves[0]
     try:
-        popt, pcov = optimize.curve_fit(two_phase, times, recov_curve)
+        popt, pcov = optimize.curve_fit(two_phase, np.log(times), recov_curve)
     except:
         print("Couldn't fit curve to recovery.")
         return (1000, 1000, 1000, 1000, 1000)

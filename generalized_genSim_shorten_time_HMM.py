@@ -897,12 +897,12 @@ class RFI:
             self.v_vec_t = []
 
             self.clampRecInactTau(dur)
-            recov.append(self.rec_vec)
+            #recov.append(self.rec_vec)
             self.all_is.append(self.i_vec_t)
             self.all_v_vec_t.append(self.v_vec_t)
             self.all_t_vec.append(self.t_vec)
 
-        return self.rec_inact_tau_vec, recov, self.vec_pts
+        return self.rec_inact_tau_vec, self.rec_vec, self.vec_pts
 
     def plotRFI_LogVInormRelation(self, ax, color):
         ax.set_xlabel('Log(Time)')
@@ -914,27 +914,42 @@ class RFI:
         ax.set_xlabel('Time $(ms)$')
         ax.set_ylabel('Fractional recovery (P2/P1)')
         ax.set_title('Time/Fractional recovery (P2/P1)')
-        y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(self.channel_name, is_HMM=True)
+        #y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(self.channel_name, is_HMM=True)
+        #rec_inact_tau_vec, recov_curves, times = self.genRecInactTau()
+        print(f'{len(np.log(self.vec_pts))} {len(self.rec_vec)} {self.rec_vec}')
+        try:
+            popt, pcov = optimize.curve_fit(two_phase, np.log(self.vec_pts), self.rec_vec)
+        except:
+            print('could not fit recovery')
+            y0, plateau, percent_fast, k_fast, k_slow = (0,0,0,-1,-1)
+        else:
+            y0, plateau, percent_fast, k_fast, k_slow = popt
+        x_values = np.linspace(self.vec_pts[0],self.vec_pts[-1],num = 1000)
+        x_values = np.log(x_values)
+        curve = two_phase(x_values,y0,plateau,percent_fast,k_fast,k_slow)
         formatted_tauSlow = np.round(1 / k_slow, decimals=2)
         formatted_tauFast = np.round(1 / k_fast, decimals=2)
         formatted_percentFast = np.round(percent_fast, decimals=4)
         ax.text(-10, 0.75, f'Tau Slow: {formatted_tauSlow}')
         ax.text(-10, 0.8, f'Tau Fast: {formatted_tauFast}')
         ax.text(-10, 0.85, f'% Fast Component: {formatted_percentFast}')
-        ax.plot(self.time_vec, self.rec_vec, 'o', c=color)
+        ax.plot(np.log(self.vec_pts),self.rec_vec, 'o', c=color)
+        ax.plot(x_values,curve,c=color)
         
     def plotRFI_TimeVRelation(self, ax, color):
         ax.set_xlabel('Time $(ms)$')
         ax.set_ylabel('Voltage $(mV)$')
         ax.set_title('RFI Time/Voltage relation')
-        [ax.plot(self.all_t_vec[i], self.all_v_vec_t[i], c=color) for i in np.arange(self.L)]
+        [ax.plot(self.all_t_vec[i], self.all_v_vec_t[i]) for i in np.arange(self.L)]
 
     def plotRFI_TCurrDensityRelation(self, ax, color):
         plt.figure()
         ax.set_xlabel('Time $(ms)$')
         ax.set_ylabel('Current density $(mA/cm^2)$')
         ax.set_title('RFI Time/Current density relation')
-        [ax.plot(self.all_t_vec[i], self.all_is[i], c=color) for i in np.arange(self.L)]
+        miny = np.min(self.all_is[0])
+        [ax.plot(self.all_t_vec[i], self.all_is[i]) for i in np.arange(self.L)]
+        [ax.set_ylim([0,miny]) for i in np.arange(self.L)]
         
         
 
@@ -1699,6 +1714,15 @@ def update_params(vc_params):
 def fit_exp(x, a, b, c):
     return a * np.exp(-b * x) + c
 
+def two_phase(x, y0, plateau, percent_fast, k_fast, k_slow):
+    '''
+    Fit a two-phase association curve to an array of data points X. 
+    For info about the parameters, visit 
+    https://www.graphpad.com/guides/prism/latest/curve-fitting/REG_Exponential_association_2phase.htm
+    '''
+    span_fast = (plateau - y0) * percent_fast * 0.01
+    span_slow = (plateau - y0) * (100 - percent_fast) * 0.01
+    return y0 + span_fast * (1 - np.exp(-k_fast * x)) + span_slow * (1 - np.exp(-k_slow * x))
 
 def find_tau_inact(inact_i, ax=None):
     all_tau_sweeps = [-130 + i * 10 for i in
