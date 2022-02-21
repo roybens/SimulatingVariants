@@ -246,6 +246,120 @@ class Activation:
 
         return self.gnorm_vec, self.v_vec, self.all_is
 
+    def plotActivation_VGnorm(self):
+        """
+        Saves activation plot as PGN file.
+        """
+        plt.figure()
+        plt.xlabel('Voltage $(mV)$')
+        plt.ylabel('Normalized conductance')
+        plt.title('Activation: Voltage/Normalized conductance')
+        plt.plot(self.v_vec, self.gnorm_vec, 'o', c='black')
+        gv_slope, v_half, top, bottom = cf.calc_act_obj(self.channel_name)
+        formatted_gv_slope = np.round(gv_slope, decimals=2)
+        formatted_v_half = np.round(v_half, decimals=2)
+        plt.text(-10, 0.5, f'Slope: {formatted_gv_slope}')
+        plt.text(-10, 0.3, f'V50: {formatted_v_half}')
+        x_values_v = np.arange(self.st_cl, self.end_cl, 1)
+        curve = cf.boltzmann(x_values_v, gv_slope, v_half, top, bottom)
+        plt.plot(x_values_v, curve, c='red')
+        # save as PGN file
+        plt.savefig(
+            os.path.join(os.path.split(__file__)[0], 'Plots_Folder/Activation Voltage-Normalized Conductance Relation'))
+    
+    def plotActivation_VGnorm_plt(self,plt,color):
+        """
+        Saves activation plot as PGN file.
+        """
+        
+        diff = 0
+        if color == 'red':
+            diff = 0.5 
+        
+        
+        plt.plot(self.v_vec, self.gnorm_vec, 'o', c=color)
+        gv_slope, v_half, top, bottom = cf.calc_act_obj(self.channel_name)
+        
+        # slope inverted
+        gv_slope = 1 / gv_slope
+        
+        formatted_gv_slope = np.round(gv_slope, decimals=2)
+        formatted_v_half = np.round(v_half, decimals=2)
+        plt.text(-10, 0.5 + diff, f'Slope: {formatted_gv_slope}', c = color)
+        plt.text(-10, 0.3 + diff, f'V50: {formatted_v_half}', c = color)
+        x_values_v = np.arange(self.st_cl, self.end_cl, 1)
+        curve = cf.boltzmann(x_values_v, gv_slope, v_half, top, bottom)
+        plt.plot(x_values_v, curve, c=color)
+        return (formatted_v_half, formatted_gv_slope)
+        
+        
+    def plotActivation_IVCurve(self):
+        plt.figure()
+        plt.xlabel('Voltage $(mV)$')
+        plt.ylabel('Peak Current $(pA)$')
+        plt.title("Activation: IV Curve")
+        plt.plot(np.array(self.v_vec), np.array(self.ipeak_vec), 'o', c='black')
+        #plt.text(-110, -0.05, 'Vrev at ' + str(round(self.vrev, 1)) + ' mV', fontsize=10, c='blue')
+        formatted_peak_i = np.round(min(self.ipeak_vec), decimals=2)
+        #plt.text(-110, -0.1, f'Peak Current from IV: {formatted_peak_i} pA', fontsize=10, c='blue')  # pico Amps
+        # save as PGN file
+        plt.savefig(os.path.join(os.path.split(__file__)[0], "Plots_Folder/Activation IV Curve"))
+    
+    def plotActivation_IVCurve_plt(self,plt,color):
+        
+        plt.plot(np.array(self.v_vec), np.array(self.ipeak_vec), 'o', c=color)
+        #plt.text(-110, -0.05, 'Vrev at ' + str(round(self.vrev, 1)) + ' mV', fontsize=10, c='blue')
+        formatted_peak_i = np.round(min(self.ipeak_vec), decimals=2)
+        #plt.text(-110, -0.1, f'Peak Current from IV: {formatted_peak_i} pA', fontsize=10, c='blue')  # pico Amps
+        
+    def plotActivation_TimeVRelation(self):
+        plt.figure()
+        plt.xlabel('Time $(ms)$')
+        plt.ylabel('Voltage $(mV)$')
+        plt.title('Activation Time/Voltage relation')
+        [plt.plot(self.t_vec, self.all_v_vec_t[i], c='black') for i in np.arange(self.L)]
+
+    def plotActivation_TimeVRelation_plt(self,plt,color):
+        [plt.plot(self.t_vec, self.all_v_vec_t[i], c=color) for i in np.arange(self.L)]
+        
+    def plotActivation_TCurrDensityRelation(self):
+        plt.figure()
+        plt.xlabel('Time $(ms)$')
+        plt.ylabel('Current density $(mA/cm^2)$')
+        plt.title('Activation Time/Current density relation')
+        curr = np.array(self.all_is)
+        mask = np.where(np.logical_or(self.v_vec == -5, self.v_vec == 5))
+        [plt.plot(self.t_vec[1:], curr[i], c='black') for i in np.arange(len(curr))[mask]]
+        # save as PGN file
+        plt.savefig(os.path.join(os.path.split(__file__)[0], "Plots_Folder/Activation Time Current Density Relation"))
+
+    def plotActivation_TCurrDensityRelation_plt(self,plt,color):
+        curr = np.array(self.all_is)
+        mask = np.where(np.logical_or(self.v_vec == 0, self.v_vec == 0))
+        [plt.plot(self.t_vec[190:300], curr[i][190:300], c=color) for i in np.arange(len(curr))[mask]]
+        
+    def plotActivation_allTraces(self):
+        curr = np.array(self.all_is)
+        for volt in self.v_vec:
+            plt.figure()
+            plt.xlabel('Time $(ms)$')
+            plt.ylabel('Current density $(mA/cm^2)$')
+            plt.title(f"Activation Traces for {volt} mV")
+            mask = np.where(self.v_vec == volt)
+            plt.plot(self.t_vec[1:], curr[mask][0], c='black')
+            # save as PGN file
+            plt.savefig(os.path.join(os.path.split(__file__)[0], f"Plots_Folder/Activation Traces for {volt} mV"))
+
+    def plotAllActivation(self):
+        """
+        Saves all plots to CWD/Plots_Folder.
+        """
+        self.plotActivation_VGnorm()
+        self.plotActivation_IVCurve()
+        self.plotActivation_TimeVRelation()
+        self.plotActivation_TCurrDensityRelation()
+        #self.plotActivation_allTraces()
+
 
 ##################
 # Inactivation
