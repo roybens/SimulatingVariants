@@ -234,7 +234,7 @@ def cultured_neurons_mutTTX(extra,fi_ranges,label):
     x_axis, npeaks = get_fi_curve(fi_ranges[0], fi_ranges[1], fi_ranges[2])
     return [x_axis, npeaks, name]
 
-def explore_param(ch_name,gbar_name,ranges):
+def explore_param_0(ch_name,gbar_name,ranges):
     #factors = np.linspace(ranges[0],ranges[1],ranges[2])
     factors = ranges
     all_prevs = []
@@ -244,20 +244,40 @@ def explore_param(ch_name,gbar_name,ranges):
         prev = update_K(ch_name,gbar_name,curr_factor)
         label = f'{ch_name}_{curr_factor}'
         fi_wt = cultured_neurons_wt(0.5,[0.1,1,6],label)  # set endpoint from 5 to 6 for even spacing across types
-        fi_mut = cultured_neurons_mut(0.5,[0.1, 1, 6],label)  # set endpoint from 5 to 6 for even spacing across types
-        fi_wtTTX = cultured_neurons_wtTTX(0.5,[0.4, 2, 6],label)
+        fi_mut = cultured_neurons_mut(0.25,[0.1, 1, 6],label)  # set endpoint from 5 to 6 for even spacing across types
+        fi_wtTTX = cultured_neurons_wtTTX(0.25,[0.4, 2, 6],label)
         fi_mutTTX = cultured_neurons_mutTTX(0.5,[0.4, 2, 6],label)
         all_prevs.append(prev)
         all_FIs.append([fi_wt, fi_mut, fi_wtTTX, fi_mutTTX])
 
+def explore_param(ch_name, gbar_name, ranges, extras):
+    # factors = np.linspace(ranges[0],ranges[1],ranges[2])
+    factors = ranges
+    all_prevs = []
+    all_FIs = []
+    for i in range(len(factors)):
+        curr_factor = factors[i]
+        extra = np.round(extras[i], 2)
+        init_settings()
+        prev = update_K(ch_name, gbar_name, curr_factor)
+        label = f'{ch_name}_{curr_factor}'
+        fi_wt = cultured_neurons_wt(0.5, [0.1, 1, 5],
+                                    label)  # set endpoint from 5 to 6 for even spacing across types
+        fi_mut = cultured_neurons_mut(extra, [0.1, 1, 5],
+                                      label)  # set endpoint from 5 to 6 for even spacing across types
+        fi_wtTTX = cultured_neurons_wtTTX(0.5, [0.4, 2, 5], label)
+        fi_mutTTX = cultured_neurons_mutTTX(extra, [0.4, 2, 5], label)
+        all_prevs.append(prev)
+        all_FIs.append([fi_wt, fi_mut, fi_wtTTX, fi_mutTTX])
+
     # plot FIs
-    plot_all_FIs(all_FIs, ch_name, factors)
+    plot_all_FIs(all_FIs, ch_name, factors, extras)
 
     # revert h back to initial condition
     reverse_update_K(ch_name,gbar_name, all_prevs[0])
 
 
-def plot_all_FIs(all_FIs, ch_name, factors):
+def plot_all_FIs(all_FIs, ch_name, factors, extras):
     # save multiple figures in one pdf file
     filename= f'./Plots/Kexplore/{ch_name}_FI_plots.pdf'
     pdf = matplotlib.backends.backend_pdf.PdfPages(filename)
@@ -267,6 +287,7 @@ def plot_all_FIs(all_FIs, ch_name, factors):
     for i in range(len(all_FIs)):
         figures.append(plt.figure())
         condition = factors[i]
+        extra = extras[i]
         # get wt, mut, wtTTX, mutTTX data
         condition_data = all_FIs[i]
 
@@ -287,7 +308,7 @@ def plot_all_FIs(all_FIs, ch_name, factors):
         plt.legend()
         plt.xlabel('Stim [nA]')
         plt.ylabel('nAPs for 500ms epoch')
-        plt.title(f'FI Curve: {ch_name} with condition {condition}')
+        plt.title(f'FI Curve: {ch_name} with condition {condition} & extra {extra}')
 
     # save multiple figures in one pdf file
     for fig in figures:
@@ -317,7 +338,7 @@ if __name__ == "__main__":
     parser.add_argument("--function", "-f", type=int, default=0, help="Specify which function to run")
     args = parser.parse_args()
 
-    if args.function == 1:
+    if args.function == 0:
         #gK_Tstbar_K_Tst
         #gK_Pstbar_
         #update_K('SKv3_1','gSKv3_1bar',2)
@@ -328,25 +349,34 @@ if __name__ == "__main__":
         #cultured_neurons_wtTTX(0.5,[0.4, 2, 6])
         #cultured_neurons_mutTTX(0.25,[0.4, 2, 6])
 
-        #conditions = [1, 10, 100]  # factors
-        explore_param('SKv3_1','gSKv3_1bar', [1, 2, 3])
-        explore_param('K_Tst','gK_Tstbar', conditions)
-        explore_param('K_Pst','gK_Pstbar', [1, 2, 3])
+
+        # run 3
+        conditions = np.repeat(2, 5) # factors
+        extras = np.arange(0.1, 0.6, 0.1)
+        explore_param('SKv3_1','gSKv3_1bar', conditions, extras)
+        #explore_param('K_Tst','gK_Tstbar', [1, 10, 100])
+        #explore_param('K_Pst','gK_Pstbar', [1, 2, 3])
+
+        if args.function == 1:
+            # run 1
+            extras = np.repeat(0.25, 3)  # for mut channel
+            explore_param('SKv3_1', 'gSKv3_1bar', [1, 2, 3], extras)
+            explore_param('K_Tst','gK_Tstbar', [1, 10, 100], extras)
+            explore_param('K_Pst','gK_Pstbar', [1, 2, 3], extras)
+
+        if args.function == 2:
+            # run 2
+            init_settings()
+
+            #create mutTTX
+            init_stim(amp=0.5)
+            update_na16('./params/na16_mutv2.txt',0,0.25)
+            update_K('SKv3_1','gSKv3_1bar',2)
+            I = plot_stim(2,f'mut_overexpressedmut_TTX_0.25')
+            fig,ax1 = plt.subplots(1,1)
+            ax1.plot(I['Na'],color = 'black')
+            ax1.plot(I['K'],color = 'blue')
+            ax1.plot(I['Ca'],color = 'green')
+            fig.savefig('./Plots/mut_vclamp.pdf')
 
 
-
-
-init_settings()
-
-#create mutTTX
-init_stim(amp=0.5)
-update_na16('./params/na16_mutv2.txt',0,0.25)
-update_K('SKv3_1','gSKv3_1bar',2)
-I = plot_stim(2,f'mut_overexpressedmut_TTX_0.25')
-fig,ax1 = plt.subplots(1,1)
-ax1.plot(I['Na'],color = 'black')
-ax1.plot(I['K'],color = 'blue')
-ax1.plot(I['Ca'],color = 'green')
-fig.savefig('./Plots/mut_vclamp.pdf')
-
- 
