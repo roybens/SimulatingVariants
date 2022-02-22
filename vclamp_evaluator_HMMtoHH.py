@@ -42,8 +42,8 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         self.channel_name_HMM = channel_name_HMM
         self.channel_name_HH = channel_name_HH
         self.act_obj = ggsdHMM.Activation(channel_name=self.channel_name_HMM)
-        self.recov_obj = ggsdHMM.Inactivation(channel_name = self.channel_name_HMM)
-        self.inact_obj = ggsdHMM.RFI(channel_name = self.channel_name_HMM)
+        self.inact_obj = ggsdHMM.Inactivation(channel_name=self.channel_name_HMM)
+        self.recov_obj = ggsdHMM.RFI(channel_name=self.channel_name_HMM)
         self.objective_names = objective_names
         def init_params(filepath):
             '''
