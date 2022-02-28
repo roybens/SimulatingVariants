@@ -204,7 +204,8 @@ def cultured_neurons_wt(extra,fi_ranges,label):
     update_na16('./params/na16_mutv2.txt',2+extra,0)
     plot_stim(0.5,f'{label}_overexpressedWT{extra}')
     #make_fi(fi_ranges,f'{label}_overexpressedWT{extra}')
-    name = f'{label} WT {extra}' # label is ch_name and condition
+    #name = f'{label} WT {extra}' # label is ch_name and condition
+    name = f'WT'
     x_axis, npeaks = get_fi_curve(fi_ranges[0], fi_ranges[1], fi_ranges[2])
     #fig.savefig(f'./Plots/Kexplore/{fn}_FI.pdf')
     return [x_axis, npeaks, name]
@@ -214,7 +215,8 @@ def cultured_neurons_mut(extra,fi_ranges,label):
     update_na16('./params/na16_mutv2.txt',2,extra)
     plot_stim(0.5,f'{label}_overexpressedMut{extra}')
     #make_fi(fi_ranges,f'{label}_overexpressedMut{extra}')
-    name = f'{label} Mut {extra}'
+    #name = f'{label} Mut {extra}'
+    name = f'Mut'
     x_axis, npeaks = get_fi_curve(fi_ranges[0], fi_ranges[1], fi_ranges[2])
     return [x_axis, npeaks, name]
     
@@ -222,7 +224,8 @@ def cultured_neurons_wtTTX(extra,fi_ranges,label):
     update_na16('./params/na16_mutv2.txt',extra,0)
     plot_stim(2,f'{label}_overexpressedWT_TTX{extra}')
     #make_fi(fi_ranges,f'{label}_overexpressedWT_TTX{extra}')
-    name = f'{label} WT_TTX {extra}'
+    #name = f'{label} WT_TTX {extra}'
+    name = f'WT_TTX'
     x_axis, npeaks = get_fi_curve(fi_ranges[0], fi_ranges[1], fi_ranges[2])
     return [x_axis, npeaks, name]
 
@@ -230,51 +233,36 @@ def cultured_neurons_mutTTX(extra,fi_ranges,label):
     update_na16('./params/na16_mutv2.txt',0,extra)
     plot_stim(2,f'{label}_overexpressedmut_TTX{extra}')
     #make_fi(fi_ranges,f'{label}_overexpressedmut_TTX{extra}')
-    name = f'{label} mut_TTX {extra}'
+    #name = f'{label} mut_TTX {extra}'
+    name = f'mut_TTX'
     x_axis, npeaks = get_fi_curve(fi_ranges[0], fi_ranges[1], fi_ranges[2])
     return [x_axis, npeaks, name]
 
-def explore_param_0(ch_name,gbar_name,ranges):
-    #factors = np.linspace(ranges[0],ranges[1],ranges[2])
-    factors = ranges
-    all_prevs = []
-    all_FIs = []
-    for curr_factor in factors:
-        init_settings()
-        prev = update_K(ch_name,gbar_name,curr_factor)
-        label = f'{ch_name}_{curr_factor}'
-        fi_wt = cultured_neurons_wt(0.5,[0.1,1,6],label)  # set endpoint from 5 to 6 for even spacing across types
-        fi_mut = cultured_neurons_mut(0.25,[0.1, 1, 6],label)  # set endpoint from 5 to 6 for even spacing across types
-        fi_wtTTX = cultured_neurons_wtTTX(0.25,[0.4, 2, 6],label)
-        fi_mutTTX = cultured_neurons_mutTTX(0.5,[0.4, 2, 6],label)
-        all_prevs.append(prev)
-        all_FIs.append([fi_wt, fi_mut, fi_wtTTX, fi_mutTTX])
-
 def explore_param(ch_name, gbar_name, ranges, extras):
-    # factors = np.linspace(ranges[0],ranges[1],ranges[2])
-    factors = ranges
     all_prevs = []
     all_FIs = []
-    for i in range(len(factors)):
-        curr_factor = factors[i]
-        extra = np.round(extras[i], 2)
+
+    for i in range(len(ranges)):
         init_settings()
+        curr_factor = ranges[i]
+        extra = np.round(extras[i], 2)
         prev = update_K(ch_name, gbar_name, curr_factor)
         label = f'{ch_name}_{curr_factor}'
-        fi_wt = cultured_neurons_wt(0.5, [0.1, 1, 5],
+        fi_wt = cultured_neurons_wt(extra, [0.1, 1, 5],
                                     label)  # set endpoint from 5 to 6 for even spacing across types
         fi_mut = cultured_neurons_mut(extra, [0.1, 1, 5],
                                       label)  # set endpoint from 5 to 6 for even spacing across types
-        fi_wtTTX = cultured_neurons_wtTTX(0.5, [0.4, 2, 5], label)
+        fi_wtTTX = cultured_neurons_wtTTX(extra, [0.4, 2, 5], label)
         fi_mutTTX = cultured_neurons_mutTTX(extra, [0.4, 2, 5], label)
         all_prevs.append(prev)
         all_FIs.append([fi_wt, fi_mut, fi_wtTTX, fi_mutTTX])
 
+        reverse_update_K(ch_name, gbar_name, all_prevs[0])
     # plot FIs
-    plot_all_FIs(all_FIs, ch_name, factors, extras)
+    plot_all_FIs(all_FIs, ch_name, ranges, extras)
 
     # revert h back to initial condition
-    reverse_update_K(ch_name,gbar_name, all_prevs[0])
+    #reverse_update_K(ch_name, gbar_name, all_prevs[0])
 
 
 def plot_all_FIs(all_FIs, ch_name, factors, extras):
@@ -359,7 +347,7 @@ if __name__ == "__main__":
 
         if args.function == 1:
             # run 1
-            extras = np.repeat(0.25, 3)  # for mut channel
+            extras = np.repeat(0.25, 3)  # for mut channel # HOLD WT AT 0.5 (need to adjust code for this)
             explore_param('SKv3_1', 'gSKv3_1bar', [1, 2, 3], extras)
             explore_param('K_Tst','gK_Tstbar', [1, 10, 100], extras)
             explore_param('K_Pst','gK_Pstbar', [1, 2, 3], extras)
