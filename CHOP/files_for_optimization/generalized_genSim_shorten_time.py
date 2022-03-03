@@ -442,14 +442,9 @@ class Inactivation:
             diff = 0.5
         plt.plot(self.v_vec, self.inorm_vec, 'o', c=color)
         ssi_slope, v_half, top, bottom, tau0 = cf.calc_inact_obj(self.channel_name)
-        
-        #invert slope
-        ssi_slope = 1 / ssi_slope
-        
-        
         formatted_ssi_slope = np.round(ssi_slope, decimals=2)
         formatted_v_half = np.round(v_half, decimals=2)
-        plt.text(-10, 0.5 + diff, f'Slope: {formatted_ssi_slope}', c = color)
+        plt.text(-10, 0.5 + diff, f'Slope: {1/formatted_ssi_slope}', c = color)
         plt.text(-10, 0.3 + diff, f'V50: {formatted_v_half}', c = color)
         x_values_v = np.arange(self.st_cl, self.end_cl, 1)
         curve = cf.boltzmann(x_values_v, ssi_slope, v_half, top, bottom)
@@ -1060,7 +1055,7 @@ class Ramp:
 
     def plotRamp_TimeCurrentRelation_plt(self, ax1, ax2, color):
         area = round(self.areaUnderCurve(), 2)
-        persistCurr, t_current = self.persistentCurrent()
+        persistCurr, t_current = self.fentCurrent()
         formattedCurr = "{:.2e}".format(round(persistCurr, 4))
 
         diff = 0
@@ -1212,7 +1207,6 @@ class UDB20:
         for iter in range(self.num_repeats):
             peak_starts = int((self.t_init + (2 * self.t_peakdur * iter)) / h.dt)
             peak_ends = int(peak_starts + (2 * self.t_peakdur) / h.dt)
-
             self.ipeak_vec.append(max(self.i_vec[peak_starts: peak_ends - 1]))
             self.peak_times.append(self.t_vec[self.i_vec.index(self.ipeak_vec[iter])])
             self.norm_peak.append(self.ipeak_vec[iter] / self.ipeak_vec[0])

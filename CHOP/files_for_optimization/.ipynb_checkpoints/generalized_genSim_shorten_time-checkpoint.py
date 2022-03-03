@@ -246,116 +246,6 @@ class Activation:
 
         return self.gnorm_vec, self.v_vec, self.all_is
 
-    def plotActivation_VGnorm(self):
-        """
-        Saves activation plot as PGN file.
-        """
-        plt.figure()
-        plt.xlabel('Voltage $(mV)$')
-        plt.ylabel('Normalized conductance')
-        plt.title('Activation: Voltage/Normalized conductance')
-        plt.plot(self.v_vec, self.gnorm_vec, 'o', c='black')
-        gv_slope, v_half, top, bottom = cf.calc_act_obj(self.channel_name)
-        formatted_gv_slope = np.round(gv_slope, decimals=2)
-        formatted_v_half = np.round(v_half, decimals=2)
-        plt.text(-10, 0.5, f'Slope: {formatted_gv_slope}')
-        plt.text(-10, 0.3, f'V50: {formatted_v_half}')
-        x_values_v = np.arange(self.st_cl, self.end_cl, 1)
-        curve = cf.boltzmann(x_values_v, gv_slope, v_half, top, bottom)
-        plt.plot(x_values_v, curve, c='red')
-        # save as PGN file
-        plt.savefig(
-            os.path.join(os.path.split(__file__)[0], 'Plots_Folder/Activation Voltage-Normalized Conductance Relation'))
-    
-    def plotActivation_VGnorm_plt(self,plt,color):
-        """
-        Saves activation plot as PGN file.
-        """
-        
-        diff = 0
-        if color == 'red':
-            diff = 0.5 
-        
-        
-        plt.plot(self.v_vec, self.gnorm_vec, 'o', c=color)
-        gv_slope, v_half, top, bottom = cf.calc_act_obj(self.channel_name)
-        formatted_gv_slope = np.round(gv_slope, decimals=2)
-        formatted_v_half = np.round(v_half, decimals=2)
-        plt.text(-10, 0.5 + diff, f'Slope: {formatted_gv_slope}', c = color)
-        plt.text(-10, 0.3 + diff, f'V50: {formatted_v_half}', c = color)
-        x_values_v = np.arange(self.st_cl, self.end_cl, 1)
-        curve = cf.boltzmann(x_values_v, gv_slope, v_half, top, bottom)
-        plt.plot(x_values_v, curve, c=color)
-        return (formatted_v_half, formatted_gv_slope)
-        
-        
-    def plotActivation_IVCurve(self):
-        plt.figure()
-        plt.xlabel('Voltage $(mV)$')
-        plt.ylabel('Peak Current $(pA)$')
-        plt.title("Activation: IV Curve")
-        plt.plot(np.array(self.v_vec), np.array(self.ipeak_vec), 'o', c='black')
-        #plt.text(-110, -0.05, 'Vrev at ' + str(round(self.vrev, 1)) + ' mV', fontsize=10, c='blue')
-        formatted_peak_i = np.round(min(self.ipeak_vec), decimals=2)
-        #plt.text(-110, -0.1, f'Peak Current from IV: {formatted_peak_i} pA', fontsize=10, c='blue')  # pico Amps
-        # save as PGN file
-        plt.savefig(os.path.join(os.path.split(__file__)[0], "Plots_Folder/Activation IV Curve"))
-    
-    def plotActivation_IVCurve_plt(self,plt,color):
-        
-        plt.plot(np.array(self.v_vec), np.array(self.ipeak_vec), 'o', c=color)
-        #plt.text(-110, -0.05, 'Vrev at ' + str(round(self.vrev, 1)) + ' mV', fontsize=10, c='blue')
-        formatted_peak_i = np.round(min(self.ipeak_vec), decimals=2)
-        #plt.text(-110, -0.1, f'Peak Current from IV: {formatted_peak_i} pA', fontsize=10, c='blue')  # pico Amps
-        
-    def plotActivation_TimeVRelation(self):
-        plt.figure()
-        plt.xlabel('Time $(ms)$')
-        plt.ylabel('Voltage $(mV)$')
-        plt.title('Activation Time/Voltage relation')
-        [plt.plot(self.t_vec, self.all_v_vec_t[i], c='black') for i in np.arange(self.L)]
-
-    def plotActivation_TimeVRelation_plt(self,plt,color):
-        [plt.plot(self.t_vec, self.all_v_vec_t[i], c=color) for i in np.arange(self.L)]
-        
-    def plotActivation_TCurrDensityRelation(self):
-        plt.figure()
-        plt.xlabel('Time $(ms)$')
-        plt.ylabel('Current density $(mA/cm^2)$')
-        plt.title('Activation Time/Current density relation')
-        curr = np.array(self.all_is)
-        mask = np.where(np.logical_or(self.v_vec == -5, self.v_vec == 5))
-        [plt.plot(self.t_vec[1:], curr[i], c='black') for i in np.arange(len(curr))[mask]]
-        # save as PGN file
-        plt.savefig(os.path.join(os.path.split(__file__)[0], "Plots_Folder/Activation Time Current Density Relation"))
-
-    def plotActivation_TCurrDensityRelation_plt(self,plt,color):
-        curr = np.array(self.all_is)
-        mask = np.where(np.logical_or(self.v_vec == 0, self.v_vec == 0))
-        [plt.plot(self.t_vec[190:300], curr[i][190:300], c=color) for i in np.arange(len(curr))[mask]]
-        
-    def plotActivation_allTraces(self):
-        curr = np.array(self.all_is)
-        for volt in self.v_vec:
-            plt.figure()
-            plt.xlabel('Time $(ms)$')
-            plt.ylabel('Current density $(mA/cm^2)$')
-            plt.title(f"Activation Traces for {volt} mV")
-            mask = np.where(self.v_vec == volt)
-            plt.plot(self.t_vec[1:], curr[mask][0], c='black')
-            # save as PGN file
-            plt.savefig(os.path.join(os.path.split(__file__)[0], f"Plots_Folder/Activation Traces for {volt} mV"))
-
-    def plotAllActivation(self):
-        """
-        Saves all plots to CWD/Plots_Folder.
-        """
-        self.plotActivation_VGnorm()
-        self.plotActivation_IVCurve()
-        self.plotActivation_TimeVRelation()
-        self.plotActivation_TCurrDensityRelation()
-        #self.plotActivation_allTraces()
-
 
 ##################
 # Inactivation
@@ -552,6 +442,11 @@ class Inactivation:
             diff = 0.5
         plt.plot(self.v_vec, self.inorm_vec, 'o', c=color)
         ssi_slope, v_half, top, bottom, tau0 = cf.calc_inact_obj(self.channel_name)
+        
+        #invert slope
+        ssi_slope = 1 / ssi_slope
+        
+        
         formatted_ssi_slope = np.round(ssi_slope, decimals=2)
         formatted_v_half = np.round(v_half, decimals=2)
         plt.text(-10, 0.5 + diff, f'Slope: {formatted_ssi_slope}', c = color)
@@ -1098,11 +993,29 @@ class Ramp:
         """ Calculates persistent current (avg current of last 100 ms at 0 mV)
         Normalized by peak from IV (same number as areaUnderCurve).
         """
+        cutoff_start = self.t_end_persist
+        cutoff_end = len(self.t_vec) - 1
+        # remove current spike at end of 0 mV
+        while np.abs(self.i_vec[cutoff_start + 1] - self.i_vec[cutoff_start]) < 1E-5:
+            cutoff_start += 1
+            if cutoff_start == cutoff_end:
+                break
+        while np.abs(self.i_vec[cutoff_end] - self.i_vec[cutoff_end - 1]) < 1E-5:
+            cutoff_end -= 1
+            if cutoff_end == self.t_end_persist:
+                break
+
         persistent = self.i_vec[self.t_start_persist:self.t_end_persist]
+
+        #create time vector for graphing current
+        t_current = np.concatenate((self.t_vec[1:cutoff_start], self.t_vec[cutoff_end:]))
+        self.i_vec = np.concatenate((self.i_vec[1:cutoff_start], self.i_vec[cutoff_end:]))
+
         act = Activation()
         act.genActivation()
         IVPeak = min(act.ipeak_vec)
-        return (sum(persistent) / len(persistent)) / IVPeak
+
+        return ((sum(persistent) / len(persistent)) / IVPeak), t_current
 
     def plotRamp_TimeVRelation(self):
         plt.figure()
@@ -1113,9 +1026,13 @@ class Ramp:
         # save as PGN file
         plt.savefig(os.path.join(os.path.split(__file__)[0], 'Plots_Folder/Ramp Time Voltage relation'))
 
+    def plotRamp_TimeVRelation_plt(self, plt, color):
+        [plt.plot(self.t_vec, self.v_vec, color=color)]
+
     def plotRamp_TimeCurrentRelation(self):
         area = round(self.areaUnderCurve(), 2)
-        persistCurr = "{:.2e}".format(round(self.persistentCurrent(), 4))
+        persistCurr, t_current = self.persistentCurrent()
+        formattedCurr = "{:.2e}".format(round(persistCurr, 4))
 
         f, (ax1, ax2) = plt.subplots(1, 2, sharey=True)
 
@@ -1128,18 +1045,38 @@ class Ramp:
         plt.ylabel('Current', labelpad=25)
 
         # starting + first step + ramp section
-        ax1.set_title("Ramp")
-        ax1.plot(self.t_vec[1:self.t_start_persist], self.i_vec[1:self.t_start_persist], 'o', c='black', markersize=0.1)
-        plt.text(0.05, 0.2, f'Normalized \narea under \ncurve: {area}', c='blue', fontsize=10)
+        ax1.set_title("Ramp AUC")
+        ax1.plot(t_current[:self.t_start_persist], self.i_vec[:self.t_start_persist], 'o', c='black', markersize=0.1)
+        plt.text(0.05, 0.2, f'Normalized \nAUC: {area}', c='blue', fontsize=10)
 
         # persistent current + last step section
         ax2.set_title("Persistent Current")
-        ax2.plot(self.t_vec[self.t_start_persist:], self.i_vec[self.t_start_persist:], 'o', c='black', markersize=0.1)
-        plt.text(0.75, 0.5, f'Persistent Current:\n{persistCurr} mV', c='blue', fontsize=10, ha='center')
+        ax2.plot(t_current[self.t_start_persist:], self.i_vec[self.t_start_persist:], 'o', c='black', markersize=0.1)
+        plt.text(0.75, 0.5, f'Persistent Current:\n{formattedCurr} mA', c='blue', fontsize=10, ha='center')
 
         # save as PGN file
         plt.tight_layout()
         plt.savefig(os.path.join(os.path.split(__file__)[0], 'Plots_Folder/Ramp Time Current Density Relation'))
+
+    def plotRamp_TimeCurrentRelation_plt(self, ax1, ax2, color):
+        area = round(self.areaUnderCurve(), 2)
+        persistCurr, t_current = self.persistentCurrent()
+        formattedCurr = "{:.2e}".format(round(persistCurr, 4))
+
+        diff = 0
+        if color == "red":
+            diff = 0.2
+
+
+        # starting + first step + ramp section
+        ax1.plot(t_current[:self.t_start_persist], self.i_vec[:self.t_start_persist], 'o', c=color, markersize=0.1)
+        plt.text(0.05, 0.2 + diff, f'Normalized \nAUC: {area}', c=color, fontsize=10)
+
+        # persistent current + last step section
+        ax2.plot(t_current[self.t_start_persist:], self.i_vec[self.t_start_persist:], 'o', c=color, markersize=0.1)
+        plt.text(0.75, 0.2 + diff, f'Persistent Current:\n{formattedCurr} mA', c=color, fontsize=10, ha='center')
+
+        return (area, round(persistCurr, 4))
 
     def plotAllRamp(self):
         """
@@ -1159,7 +1096,8 @@ class Ramp:
         ax_list[0].plot(self.t_vec, self.v_vec, color=color)
 
         area = round(self.areaUnderCurve(), 2)
-        persistCurr = "{:.2e}".format(round(self.persistentCurrent(), 4))
+        persistCurr, t_current = self.persistentCurrent()
+        formattedCurr = "{:.2e}".format(round(persistCurr, 4))
 
         # starting + first step + ramp section
         ax_list[1].set_xlabel('Time $(ms)$')
@@ -1167,7 +1105,7 @@ class Ramp:
         ax_list[1].set_title("Ramp")
         ax_list[1].plot(self.t_vec[1:self.t_start_persist], self.i_vec[1:self.t_start_persist], 'o', c=color,
                         markersize=0.1)
-        ax_list[1].text(0 + x_offset, -0.08 + y_offset, f'Normalized \narea under \ncurve: {area}', color=color,
+        ax_list[1].text(0 + x_offset, -0.08 + y_offset, f'Normalized AUC: {area}', color=color,
                         fontsize=10)
 
         # persistent current + last step section
@@ -1176,7 +1114,7 @@ class Ramp:
         ax_list[2].set_title("Persistent Current")
         ax_list[2].plot(self.t_vec[self.t_start_persist:], self.i_vec[self.t_start_persist:], 'o', c=color,
                         markersize=0.1)
-        ax_list[2].text(420 + x_offset, -0.04 + y_offset, f'Persistent Current:\n{persistCurr} mV', color=color,
+        ax_list[2].text(420 + x_offset, -0.04 + y_offset, f'Persistent Current:\n{formattedCurr} mV', color=color,
                         fontsize=10, ha='center')
 
 
