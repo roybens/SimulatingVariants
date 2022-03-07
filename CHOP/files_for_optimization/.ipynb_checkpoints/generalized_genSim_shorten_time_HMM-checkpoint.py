@@ -92,6 +92,8 @@ class Activation:
         self.vrev = 0
         self.v_half = 0
         self.s = 0
+        
+        self.channel_name = channel_name
 
     def clamp(self, v_cl):
         """ Runs a trace and calculates peak currents.
