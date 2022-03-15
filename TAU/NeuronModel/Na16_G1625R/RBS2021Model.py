@@ -187,10 +187,10 @@ def run_model(start_Vm = -72,dt= 0.1):
     return Vm, I, t,stim
 
 
-def plot_stim(amp,fn):
+def plot_stim(amp,fn,clr='blue'):
     init_stim(amp=amp)
     Vm, I, t, stim = run_model()
-    plot_stim_volts_pair(Vm, f'Step Stim {amp}pA', file_path_to_save=f'./Plots/Kexplore/{fn}_{amp}pA',times=t,color_str='blue')
+    plot_stim_volts_pair(Vm, f'Step Stim {amp}pA', file_path_to_save=f'./Plots/V1/{fn}_{amp}pA',times=t,color_str=clr)
     return I
 
 #def make_fi(ranges,fn):
@@ -264,44 +264,63 @@ def explore_param(ch_name, gbar_name, ranges, extras):
     # revert h back to initial condition
     #reverse_update_K(ch_name, gbar_name, all_prevs[0])
 
+#running with the decided paramters (gSKV3.1x2 and extra of 0.1)
 
-def plot_all_FIs(all_FIs, ch_name, factors, extras):
+def plot_wt_vs_ttx(fi_arr):
+    init_settings()
+    extra = 0.1
+    k_factor = 2
+    prev = update_K('SKv3_1','gSKv3_1bar', k_factor)
+    label = f'FI_curves'
+    fi_wt = cultured_neurons_wt(extra, fi_arr,label)
+    fi_mut = cultured_neurons_mut(extra, fi_arr,label)
+    fi_wtTTX = cultured_neurons_wtTTX(extra, fi_arr, label)
+    fi_mutTTX = cultured_neurons_mutTTX(extra, fi_arr, label)
+    all_FIs = [fi_wt, fi_mut, fi_wtTTX, fi_mutTTX]
+    plot_all_FIs(all_FIs)
+def plot_wt_vs_het(fi_ranges):
+    init_settings()
+    k_factor = 2
+    prev = update_K('SKv3_1','gSKv3_1bar', k_factor)
+    label = f'WT_500pA'
+    #NO MUT AND 2 ALLELS OF WT
+    update_na16('./params/na16_mutv2.txt',2,0)
+    plot_stim(0.5,label,clr='black')
+    wt_x_axis, wt_npeaks = get_fi_curve(fi_ranges[0], fi_ranges[1], fi_ranges[2])
+    reverse_update_K('SKv3_1','gSKv3_1bar', prev)
+    init_settings()
+    prev = update_K('SKv3_1','gSKv3_1bar', k_factor)
+    update_na16('./params/na16_mutv2.txt',1,1)
+    label = f'Het_500pA'
+    plot_stim(0.5,label,clr='red')
+    het_x_axis, het_npeaks = get_fi_curve(fi_ranges[0], fi_ranges[1], fi_ranges[2])
+    fig = plt.figure()
+    plt.plot(wt_x_axis, wt_npeaks, label='WT', color='black')
+    plt.plot(het_x_axis, het_npeaks, label='HET', color='red')
+    filename= f'./Plots/V1/FI_Het_plots.pdf'
+    fig.savefig(filename)
+
+def plot_all_FIs(condition_data):
     # save multiple figures in one pdf file
-    filename= f'./Plots/Kexplore/{ch_name}_FI_plots.pdf'
-    pdf = matplotlib.backends.backend_pdf.PdfPages(filename)
-    figures = []
+    filename= f'./Plots/V1/FI_WT_MUT_TTX_WT_plots.pdf'
+    fig = plt.figure()
+    x_axis, npeaks, name = condition_data[0]
+    plt.plot(x_axis, npeaks, label=name, color='black')
+    # plot mut
+    x_axis, npeaks, name = condition_data[1]
+    plt.plot(x_axis, npeaks, label=name, color='red')
+    # plot wtTTX
+    x_axis, npeaks, name = condition_data[2]
+    plt.plot(x_axis, npeaks, label=name, color='black', linestyle='dashed')
+    # plot mutTTX
+    x_axis, npeaks, name = condition_data[3]
+    plt.plot(x_axis, npeaks, label=name, color='red', linestyle='dashed')
 
-    # for each condition
-    for i in range(len(all_FIs)):
-        figures.append(plt.figure())
-        condition = factors[i]
-        extra = extras[i]
-        # get wt, mut, wtTTX, mutTTX data
-        condition_data = all_FIs[i]
-
-        # for each type (4), plot its FI curve
-        # plot WT
-        x_axis, npeaks, name = condition_data[0]
-        plt.plot(x_axis, npeaks, label=name, color='black')
-        # plot mut
-        x_axis, npeaks, name = condition_data[1]
-        plt.plot(x_axis, npeaks, label=name, color='red')
-        # plot wtTTX
-        x_axis, npeaks, name = condition_data[2]
-        plt.plot(x_axis, npeaks, label=name, color='black', linestyle='dashed')
-        # plot mutTTX
-        x_axis, npeaks, name = condition_data[3]
-        plt.plot(x_axis, npeaks, label=name, color='red', linestyle='dashed')
-
-        plt.legend()
-        plt.xlabel('Stim [nA]')
-        plt.ylabel('nAPs for 500ms epoch')
-        plt.title(f'FI Curve: {ch_name} with condition {condition} & extra {extra}')
-
-    # save multiple figures in one pdf file
-    for fig in figures:
-        pdf.savefig(fig)
-    pdf.close()
+    plt.legend()
+    plt.xlabel('Stim [nA]')
+    plt.ylabel('nAPs for 500ms epoch')
+    plt.title(f'FI Curve: WT vs MUT with and without TTX')
+    fig.savefig(filename)
     
 def het_sims():
     init_settings()
@@ -324,9 +343,15 @@ def het_sims():
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Generate simulated data.')
     parser.add_argument("--function", "-f", type=int, default=0, help="Specify which function to run")
+    #plot simulation for cultured neurons with and without ttx
     args = parser.parse_args()
-
     if args.function == 0:
+        plot_wt_vs_ttx([0,1.8, 10])
+     #plot simulation for WT and Hetrozygous
+    if args.function == 1:
+        plot_wt_vs_het([0,1.8, 10])
+        
+    if args.function == 2:
         #gK_Tstbar_K_Tst
         #gK_Pstbar_
         #update_K('SKv3_1','gSKv3_1bar',2)
@@ -345,14 +370,14 @@ if __name__ == "__main__":
         #explore_param('K_Tst','gK_Tstbar', [1, 10, 100])
         #explore_param('K_Pst','gK_Pstbar', [1, 2, 3])
 
-        if args.function == 1:
+        if args.function == 3:
             # run 1
             extras = np.repeat(0.25, 3)  # for mut channel # HOLD WT AT 0.5 (need to adjust code for this)
             explore_param('SKv3_1', 'gSKv3_1bar', [1, 2, 3], extras)
             explore_param('K_Tst','gK_Tstbar', [1, 10, 100], extras)
             explore_param('K_Pst','gK_Pstbar', [1, 2, 3], extras)
 
-        if args.function == 2:
+        if args.function == 4:
             # run 2
             init_settings()
 
