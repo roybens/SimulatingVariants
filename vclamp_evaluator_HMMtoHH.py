@@ -143,8 +143,10 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
             List of float values of objective errors
 
         '''
-        assert len(param_values) == len(self.params), 'Parameter value list is not same length number of parameters' 
+        assert len(param_values) == len(self.params), 'Parameter value list is not same length number of parameters'
+        print('going to change params')
         eh.change_params(param_values, scaled=False, is_HMM=True, sim_obj=self.act_obj)
+        print('params changed')
         return self.score_calculator.total_rmse(is_HMM=True, objectives=self.objective_names)
     
     def plot_inact(self, param_values):

@@ -370,7 +370,7 @@ class Inactivation:
         # find peaks
         self.i_vec = np.array(self.i_vec)
         self.t_vec = np.array(self.t_vec)
-        mask = np.where(np.logical_and(self.t_vec >= 535, self.t_vec <= 545))  # h.t window to take peak
+        mask = np.where(np.logical_and(self.t_vec >= 540.01, self.t_vec <= 545))  # h.t window to take peak
         i_slice = self.i_vec[mask]
         peak_indices, properties_dict = find_peaks(i_slice * -1, height=0.1)  # find minima
         if len(peak_indices) == 0:
@@ -387,7 +387,7 @@ class Inactivation:
         # find peaks
         self.i_vec = np.array(self.i_vec)
         self.t_vec = np.array(self.t_vec)
-        mask = np.where(np.logical_and(self.t_vec >= 535, self.t_vec <= 545))  # h.t window to take peak
+        mask = np.where(np.logical_and(self.t_vec >= 540.01, self.t_vec <= 545))  # h.t window to take peak
         i_slice = self.i_vec[mask]
         peak_indices, properties_dict = find_peaks(i_slice * -1, height=0.1)  # find minima
         if len(peak_indices) == 0:
