@@ -57,6 +57,9 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
                 param_list.append(bpop.parameters.Parameter(param_name, value=param_val, bounds=(min_bound, max_bound)))
             return param_list
 
+        self.act_obj = ggsdHMM.Activation(channel_name=self.channel_name)
+        self.inact_obj = ggsdHMM.Inactivation(channel_name=self.channel_name)
+        self.recov_obj = ggsdHMM.RFI(channel_name=self.channel_name)
         self.wild_data = self.initialize_wild_data()
         self.params = init_params(params_file)
         
@@ -65,9 +68,8 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
             self.objectives.append(bpop.objectives.Objective(obj))
 
         self.protocols = eh.read_mutant_protocols('csv_files/mutant_protocols.csv', mutant)
-        self.score_calculator = sf.Score_Function(self.protocols, self.wild_data, self.channel_name)
-        self.act_obj = ggsdHMM.Activation(channel_name=self.channel_name)
-        
+        self.score_calculator = sf.Score_Function(self.protocols, self.wild_data, self.channel_name, self.act_obj, self.inact_obj, self.recov_obj)
+
 
     def initialize_wild_data(self):
         '''
@@ -83,9 +85,9 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         # import ipdb
         # ipdb.set_trace()
         is_HMM = True   # This is an HMM model
-        gv_slope, v_half_act, top, bottom = cf.calc_act_obj(self.channel_name, is_HMM=is_HMM)
-        ssi_slope, v_half_inact, top, bottom = cf.calc_inact_obj(self.channel_name, is_HMM=is_HMM)
-        y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(self.channel_name, is_HMM=is_HMM)
+        gv_slope, v_half_act, top, bottom = cf.calc_act_obj(self.channel_name, self.act_obj)
+        ssi_slope, v_half_inact, top, bottom = cf.calc_inact_obj(self.channel_name, self.inact_obj)
+        y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(self.channel_name, self.recov_obj)
 
         # Ramp Protocol
         ramp = ggsdHMM.Ramp(channel_name=self.channel_name)

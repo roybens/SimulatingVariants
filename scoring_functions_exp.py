@@ -48,7 +48,10 @@ class Score_Function:
         
         self.channel_name = channel_name
         
-    def total_rmse(self, is_HMM=False, objectives=['inact', 'act', 'recov']):
+        # Simulation objects
+
+        
+    def total_rmse(self, act_obj, inact_obj, recov_obj, is_HMM=False, objectives=['inact', 'act', 'recov']):
         # When using the HH model, leave is_HMM as false. Otherwise, set it to true.
         errors = []
         # Check to see if persistent, ramp, and udb20 are within reasonable ranges:
@@ -81,14 +84,14 @@ class Score_Function:
             return errors
         '''
         if 'inact' in objectives:
-            inact_err = self.calc_inact_err(is_HMM)
+            inact_err = self.calc_inact_err(inact_obj)*0.0000000000000000000000000000000000000000000000000001
             errors.append(inact_err)
             # errors.append(inact_err)
         if 'act' in objectives:
-            act_err = self.calc_act_err(is_HMM)
+            act_err = self.calc_act_err(act_obj)
             errors.append(act_err)
         if 'recov' in objectives:
-            recov_err = self.calc_recov_err(is_HMM)
+            recov_err = self.calc_recov_err(recov_obj)
             errors.append(recov_err)
         if 'tau0' in objectives:
             tau0_err = self.calc_tau0_err(is_HMM)
@@ -101,9 +104,9 @@ class Score_Function:
             errors.append(ttp_err*0.0001)
         return errors
             
-    def calc_inact_err(self, is_HMM):
+    def calc_inact_err(self, inact_obj):
         try:
-            ssi_slope, v_half_inact, top, bottom = cf.calc_inact_obj(self.channel_name, is_HMM)
+            ssi_slope, v_half_inact, top, bottom = cf.calc_inact_obj(inact_obj)
             # print(ssi_slope)
         except ZeroDivisionError:
             print('Zero Division Error while calculating inact')
@@ -123,14 +126,15 @@ class Score_Function:
         return error
         
         
-    def calc_act_err(self, is_HMM):
+    def calc_act_err(self, act_obj):
         try:
-            gv_slope, v_half_act, top, bottom = cf.calc_act_obj(self.channel_name, is_HMM)
+            gv_slope, v_half_act, top, bottom = cf.calc_act_obj(act_obj)
         except ZeroDivisionError:
             print('Zero Division Error while calculating act')
             return 1000
         except:
             return 1000
+        # v_array = np.linspace(-120, 40, 40)
         v_array = np.linspace(-120, 40, 40)
         #Calculate wild protocol values
         slope_wild = float(self.gv_slope_wild)*float(self.gv_slope_diff)/100
@@ -144,9 +148,9 @@ class Score_Function:
             return 1000
         return error
         
-    def calc_recov_err(self, is_HMM):
+    def calc_recov_err(self, recov_obj):
         try:
-            y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(self.channel_name, is_HMM)
+            y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(recov_obj)
             if (y0, plateau, percent_fast, k_fast, k_slow) == (1000, 1000, 1000, 1000, 1000) or (y0, plateau, percent_fast, k_fast, k_slow) == (1, 1, 1, 1, 1) or y0 > 0.5:
                 return 1000
         except ZeroDivisionError:

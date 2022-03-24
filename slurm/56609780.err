@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/global/u1/m/mikelam/SimulatingVariants/Optimization_HHtoHMM.py", line 3, in <module>
+    import generalized_genSim_shorten_time_HMM as ggsdHMM
+  File "/global/u1/m/mikelam/SimulatingVariants/generalized_genSim_shorten_time_HMM.py", line 11, in <module>
+    from neuron import h, gui
+ModuleNotFoundError: No module named 'neuron'
+srun: error: nid01650: task 0: Exited with exit code 1
+srun: launch/slurm: _step_signal: Terminating StepId=56609780.0

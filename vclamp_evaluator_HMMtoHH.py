@@ -10,7 +10,9 @@ import scoring_functions_exp as sf
 import curve_fitting as cf
 import matplotlib.pyplot as plt
 import generalized_genSim_shorten_time_HMM as ggsdHMM
+import generalized_genSim_shorten_time as ggsd
 import eval_helper_na12mut as ehn
+
 
 class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
     '''
@@ -22,6 +24,7 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
     self.objectives holds a set of categories for which an error will be calculated 
     through the evaluate_with_lists function
     '''
+
 
     def __init__(self, params_file, mutant, channel_name_HMM, channel_name_HH, objective_names=['inact', 'act', 'recov']):
         '''
@@ -41,9 +44,6 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         '''
         self.channel_name_HMM = channel_name_HMM
         self.channel_name_HH = channel_name_HH
-        self.act_obj = ggsdHMM.Activation(channel_name=self.channel_name_HMM)
-        self.inact_obj = ggsdHMM.Inactivation(channel_name=self.channel_name_HMM)
-        self.recov_obj = ggsdHMM.RFI(channel_name=self.channel_name_HMM)
         self.objective_names = objective_names
         def init_params(filepath):
             '''
@@ -88,9 +88,16 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         wild_data = {}
         # Getting objective base values for HH model.
         is_HMM = False 
-        gv_slope, v_half_act, top, bottom = cf.calc_act_obj(self.channel_name_HH, self.act_obj)
-        ssi_slope, v_half_inact, top, bottom = cf.calc_inact_obj(self.channel_name_HH, self.inact_obj)
-        y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(self.channel_name_HH, self.recov_obj)
+        # Create genSim objects
+        act_obj = ggsdHMM.Activation(channel_name=self.channel_name_HH)
+        inact_obj = ggsdHMM.Inactivation(channel_name=self.channel_name_HH)
+        recov_obj = ggsdHMM.RFI(channel_name=self.channel_name_HH)
+        gv_slope, v_half_act, top, bottom = cf.calc_act_obj(act_obj)
+        ssi_slope, v_half_inact, top, bottom = cf.calc_inact_obj(inact_obj)
+        y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(recov_obj)
+        # gv_slope, v_half_act, top, bottom = (1, 1, 1, 1)
+        # ssi_slope, v_half_inact, top, bottom = (1, 1, 1, 1)
+        # y0, plateau, percent_fast, k_fast, k_slow = (1, 1, 1, 1, 1)
         # tau0 = ehn.find_tau0()
         # peak_amp = ehn.find_peak_amp()
         # time_to_peak = ehn.find_time_to_peak()
@@ -114,7 +121,7 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         # Some extra objectives added last minute, so this is a bit hard-coded
         # wild_data['peak_amp'] = peak_amp
         # wild_data['time_to_peak'] = time_to_peak
-
+        print(wild_data)
         return wild_data
 
 
@@ -144,21 +151,29 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
 
         '''
         assert len(param_values) == len(self.params), 'Parameter value list is not same length number of parameters' 
-        eh.change_params(param_values, scaled=False, is_HMM=True, sim_obj=self.act_obj)
-        return self.score_calculator.total_rmse(is_HMM=True, objectives=self.objective_names)
+        act_obj = ggsdHMM.Activation(channel_name=self.channel_name_HMM)
+        inact_obj = ggsdHMM.Inactivation(channel_name=self.channel_name_HMM)
+        # recov_obj = ggsdHMM.RFI(channel_name=self.channel_name_HMM)
+        recov_obj = None
+        eh.change_params(param_values, scaled=False, is_HMM=True, sim_obj=act_obj)
+        eh.change_params(param_values, scaled=False, is_HMM=True, sim_obj=inact_obj)
+        score = self.score_calculator.total_rmse(act_obj, inact_obj, recov_obj, is_HMM=True, objectives=self.objective_names)
+        # print((param_values, score))
+        return score
     
     def plot_inact(self, param_values):
         fig, axs = plt.subplots(1, figsize=(10,10))
+        inact_obj = ggsdHMM.Inactivation(channel_name=self.channel_name_HMM)
         # Inactivation curve
         # Calculate wild baseline values
         v_half_ssi_exp = self.wild_data['v_half_ssi'] + float(self.protocols['dv_half_ssi'])
         ssi_slope_exp = self.wild_data['ssi_slope'] * float(self.protocols['ssi_slope']) / 100
-        eh.change_params(param_values, scaled=False, is_HMM=True, sim_obj=self.act_obj)
-        inorm_vec, v_vec, all_is = self.inact_obj.genInactivation()
+        eh.change_params(param_values, scaled=False, is_HMM=True, sim_obj=inact_obj)
+        inorm_vec, v_vec, all_is = inact_obj.genInactivation()
         inorm_array = np.array(inorm_vec)
         v_array = np.array(v_vec)
 
-        ssi_slope, v_half, top, bottom = cf.calc_inact_obj(self.channel_name_HMM, self.inact_obj)
+        ssi_slope, v_half, top, bottom = cf.calc_inact_obj(inact_obj)
 
         
         even_xs = np.linspace(v_array[0], v_array[len(v_array)-1], 100)
@@ -180,16 +195,17 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
 
     
     def plot_act(self, param_values):
+        act_obj = ggsdHMM.Activation(channel_name=self.channel_name_HMM)
         fig, axs = plt.subplots(1, figsize=(10,10))
         # Calculate wild baseline values
         v_half_act_exp = self.wild_data['v_half_act'] + float(self.protocols['dv_half_act'])
         gv_slope_exp = self.wild_data['gv_slope'] + float(self.protocols['gv_slope']) / 100
         
-        eh.change_params(param_values, scaled=False, is_HMM=True, sim_obj=self.act_obj)     
-        gnorm_vec, v_vec, all_is = self.act_obj.genActivation()
+        eh.change_params(param_values, scaled=False, is_HMM=True, sim_obj=act_obj)     
+        gnorm_vec, v_vec, all_is = act_obj.genActivation()
         gnorm_array = np.array(gnorm_vec)
         v_array = np.array(v_vec)
-        gv_slope, v_half, top, bottom = cf.calc_act_obj(self.channel_name_HMM, self.act_obj)
+        gv_slope, v_half, top, bottom = cf.calc_act_obj(act_obj)
 
         even_xs = np.linspace(v_array[0], v_array[len(v_array)-1], 100)
         curve = cf.boltzmann(even_xs, gv_slope, v_half, top, bottom)

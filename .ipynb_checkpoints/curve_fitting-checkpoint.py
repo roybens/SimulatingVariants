@@ -38,6 +38,8 @@ def one_phase(x, y0, plateau, k):
 
 def calc_act_obj(channel_name, act_obj):
     try:
+        import ipdb
+        ipdb.set_trace()
         gnorm_vec, v_vec, all_is = act_obj.genActivation()
     except:
         print('Couldn\'t generate activation data')

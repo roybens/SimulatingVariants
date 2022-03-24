@@ -1,0 +1,3 @@
+Couldn't fit curve to recovery.
+{'v_half_act': -25.372778267087956, 'gv_slope': 5.979533060983208, 'v_half_ssi': -54.77535847253028, 'ssi_slope': 7.039069712260356, 'tau_fast': 0.001, 'tau_slow': 0.001, 'percent_fast': 1000}
+{'v_half_act': -25.372778267087956, 'gv_slope': 5.979533060983208, 'v_half_ssi': -54.77535847253028, 'ssi_slope': 7.039069712260356, 'tau_fast': 0.001, 'tau_slow': 0.001, 'percent_fast': 1000}

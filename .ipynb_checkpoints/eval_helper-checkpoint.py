@@ -243,7 +243,7 @@ def change_params(new_params, scaled=True, is_HMM=False,sim_obj=None):
             new_param_dict = scale_params_dict(False, new_params, is_HMM=True)
         else:
             new_param_dict = make_params_dict(new_params, is_HMM=True)
-        change_params_dict(new_param_dict, is_HMM=True, sim_obj=sim_obj)
+        change_params_dict(new_param_dict, is_HMM=True,sim_obj = sim_obj)
 
     return
 
@@ -530,7 +530,6 @@ def change_params_dict(new_params, is_HMM=False,sim_obj = None):
             sim_obj = ggsdHMM.Activation(channel_name='na12mut8st')
         soma = sim_obj.soma
         currh = sim_obj.h
-        # print(soma.psection())
         soma.a1_0_na12mut8st = new_params['a1_0_na12mut8st']
         soma.a1_1_na12mut8st = new_params['a1_1_na12mut8st']
         soma.b1_0_na12mut8st = new_params['b1_0_na12mut8st']
@@ -549,7 +548,6 @@ def change_params_dict(new_params, is_HMM=False,sim_obj = None):
         soma.ah_0_na12mut8st = new_params['ah_0_na12mut8st']
         soma.ah_1_na12mut8st = new_params['ah_1_na12mut8st']
         soma.ah_2_na12mut8st = new_params['ah_2_na12mut8st']
-        # print(soma.psection())
         currh.vShift_na12mut8st = new_params['vShift_na12mut8st']
         currh.vShift_inact_na12mut8st = new_params['vShift_inact_na12mut8st']
         currh.maxrate_na12mut8st = new_params['maxrate_na12mut8st']

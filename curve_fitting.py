@@ -36,8 +36,10 @@ def one_phase(x, y0, plateau, k):
     '''
     return y0 + (plateau - y0) * (1 - np.exp(-k * x))
 
-def calc_act_obj(channel_name, act_obj):
+def calc_act_obj(act_obj):
     try:
+        # import ipdb
+        # ipdb.set_trace()
         gnorm_vec, v_vec, all_is = act_obj.genActivation()
     except:
         print('Couldn\'t generate activation data')
@@ -51,7 +53,7 @@ def calc_act_obj(channel_name, act_obj):
     return gv_slope, v_half, top, bottom
 
 
-def calc_inact_obj(channel_name, inact_obj):
+def calc_inact_obj(inact_obj):
     try:
         inorm_vec, v_vec, all_is = inact_obj.genInactivation()
     except:
@@ -66,7 +68,7 @@ def calc_inact_obj(channel_name, inact_obj):
     # taus, tau_sweeps, tau0 = ggsd.find_tau_inact(all_is)
     return ssi_slope, v_half, top, bottom
 
-def calc_recov_obj(channel_name, recov_obj):
+def calc_recov_obj(recov_obj):
     try:
         rec_inact_tau_vec, recov_curves, times = recov_obj.genRecInactTau()
     except:

@@ -1,4 +1,3 @@
-import neuron
 import numpy as np
 import time
 import generalized_genSim_shorten_time_HMM as ggsdHMM
@@ -13,10 +12,10 @@ import pickle
 import time
 from deap import tools
 import multiprocessing
-import generalized_genSim_shorten_time as ggsd
 
-evaluator = vcl_ev.Vclamp_evaluator_HMM('./csv_files/params_na12mut8st_mod.csv', 'Basis', 'na12mut8st', 'na16', objective_names=['act', 'inact', 'tau0', 'peak_amp', 'time_to_peak'])
+evaluator = vcl_ev.Vclamp_evaluator_HMM('./csv_files/params_na12mut8st_mod.csv', 'Basis', 'na12mut8st', 'na16', objective_names=['act'])
 
+print(evaluator.wild_data)
 gen_counter = 0
 best_indvs = []
 cp_freq = 1
@@ -25,7 +24,7 @@ def my_update(halloffame, history, population):
     global gen_counter,cp_freq
     if halloffame is not None:
         halloffame.update(population)
-
+    
     if halloffame:
         best_indvs.append(halloffame[0])
     gen_counter = gen_counter+1
@@ -50,20 +49,22 @@ def save_logs(fn, best_indvs, hof):
     output = open("hof"+fn, 'wb')
     pickle.dump(hof, output)
 
-#hof = tools.HallOfFame(1, similar=np.array_equal)
+
+
 hof = tools.ParetoFront()
 algo._update_history_and_hof = my_update
 algo._record_stats = my_record_stats
 pool = multiprocessing.Pool(processes=64)
-deap_opt = bpop.optimisations.DEAPOptimisation(evaluator, offspring_size=500, hof = hof, map_function=pool.map)  # CHANGE offspring_size
+deap_opt = bpop.optimisations.DEAPOptimisation(evaluator, offspring_size=100, hof = hof, map_function=pool.map)  # CHANGE offspring_size
 
 cp_file = './cp.pkl'
 
 start_time = time.time()
-pop, hof, log, hst = deap_opt.run(max_ngen=200, cp_filename=cp_file)  # CHANGE max_ngen
+pop, hof, log, hst = deap_opt.run(max_ngen=20, cp_filename=cp_file)  # CHANGE max_ngen
 end_time = time.time()
-print("Total runtime: " + str(end_time - start_time))
+print(end_time - start_time)
 
+print(log)
 print("Best params: " + str(best_indvs[-1]))
-print("[inact_err, act_err, tau0_err, peak_amp_err, time_to_peak_err]: " + str(evaluator.evaluate_with_lists(best_indvs[-1])))
+print("[inact_err, act_err]: " + str(evaluator.evaluate_with_lists(best_indvs[-1])))
 print("Best invs list: " + str(best_indvs))
