@@ -11,10 +11,40 @@ import os
 import json
 import numpy as np
 import matplotlib.backends.backend_pdf
-global currh
+# global currh
 def set_channel(channel_suffix = 'na12'):
     global currh
     currh = ggsd.Activation(channel_name = channel_suffix).h
+    
+def set_param_currh(currh, param_values):
+    """
+    used to set parameters values for the NEURON model
+    """
+    currh.sh_na12 = param_values[0]
+    currh.tha_na12 = param_values[1]
+    currh.qa_na12 = param_values[2]
+    currh.Ra_na12 = param_values[3]
+    currh.Rb_na12 = param_values[4]
+    currh.thi1_na12 = param_values[5]
+    currh.thi2_na12 = param_values[6]
+    currh.qd_na12 = param_values[7]
+    currh.qg_na12 = param_values[8]
+    currh.mmin_na12 = param_values[9]
+    currh.hmin_na12 = param_values[10]
+    currh.q10_na12 = param_values[11]
+    currh.Rg_na12 = param_values[12]
+    currh.Rd_na12 = param_values[13]
+    currh.thinf_na12 = param_values[14]
+    currh.qinf_na12 = param_values[15]
+    currh.vhalfs_na12 = param_values[16]
+    currh.a0s_na12 = param_values[17]
+    currh.zetas_na12 = param_values[18]
+    currh.gms_na12 = param_values[19]
+    currh.smax_na12 = param_values[20]
+    currh.vvh_na12 = param_values[21]
+    currh.vvs_na12 = param_values[22]
+    currh.Ena_na12 = param_values[23] #we don't want to change Ena...
+    currh.Ena_na12 = 55
     
 def set_param(param_values):
     """
@@ -129,7 +159,7 @@ def get_neoWT():
     returns the neoWT parameters
     """
     
-    param_values_wt = [23.592553005275935, -42.29140196671787, 6.258612985977677, 1.7404895485237528, 0.9563229723546366, -106.36448944375456, -25.528028399330182, 19.231770188740054, 1.585998932514876, 0.08474311213077988, 0.39532768065099094, 6.0925683657807586, 0.13445400479838493, 0.018506260670855337, -48.512157621449816, 7.360663988091903, -137.58691848183625, 0.026377131972668333, 42.93800112258984, 0.530610055156137, 48.82113052335175, -1.1903969302711968, -5.975732386037467, 49.92468292230373]
+    param_values_wt = [44.27436588373431, -69.03438948097099, 8.16188133521619, 0.828417435450995, 0.8891078591986645, -138.1951377492058, -80.43292135609566, 11.799302849120902, 16.202176030853114, 0.07903199185668278, 0.4179331135132167, 8.669117068344866, 0.007210426886067888, 0.04062998435873792, -48.662527658691296, 7.528059083909958, -14.95425308383736, 0.03504998409582081, 58.63940934706251, 2.0199616582450974, 93.61195613194697, -92.65941768484979, 17.420101364601695, 61.34691619540693]
     
     assert len(param_values_wt) == 24, 'length is wrong'
     return param_values_wt
@@ -210,215 +240,8 @@ def get_fitted_inact_current_arr(x_array, ssi_slope, inact_v_half, inact_top, in
         curr_arr.append(cf.boltzmann(x, ssi_slope, inact_v_half, inact_top, inact_bottom))
     return curr_arr
 
-def make_act_plots(new_params, mutant_name, mutant_protocol_csv_name, param_values_wt = wt_params, filename = 'jinan_plots_out.pdf'):
-    """
-    input:  
-        new_params: a set of variant parameters 
-        param_values_wt: WT parameters. Defaulted to NA 16 WT.
-        filename: name of the pdf file into which we want to store the figures
-    returns:
-        no return values, it just makes the activation plots for each set of parameters
-    """
-    
-    
-    pdf = matplotlib.backends.backend_pdf.PdfPages(filename)
-    figures = []
-    
-    ############################################################################################################
-    figures.append(plt.figure())
-    plt.xlabel('Voltage $(mV)$')
-    plt.ylabel('Normalized conductance')
-    plt.title(f'Activation: {mutant_name}')
-
-    set_param(param_values_wt)
-    wt_act = ggsd.Activation(channel_name = 'na12')
-    wt_act.genActivation()
-    # (formatted_v_half, formatted_gv_slope)
-    act_v_half_wt, act_slope_wt = wt_act.plotActivation_VGnorm_plt(plt, 'black')
-
-    set_param(new_params)
-    mut_act = ggsd.Activation(channel_name = 'na12')
-    mut_act.genActivation()
-    act_v_half_mut, act_slope_mut = mut_act.plotActivation_VGnorm_plt(plt, 'red')
-
-    ############################################################################################################
-    figures.append(plt.figure())
-    plt.xlabel('Voltage $(mV)$')
-    plt.ylabel('Peak Current $(pA)$')
-    plt.title(f'Activation: {mutant_name} IV Curve')
-
-    set_param(param_values_wt)
-    wt_act = ggsd.Activation(channel_name = 'na12')
-    wt_act.genActivation()
-    wt_act.plotActivation_IVCurve_plt(plt, 'black')
-
-    set_param(new_params)
-    mut_act = ggsd.Activation(channel_name = 'na12')
-    mut_act.genActivation()
-    mut_act.plotActivation_IVCurve_plt(plt, 'red')
-
-    ############################################################################################################
-    # figures.append(plt.figure())
-    # plt.xlabel('Time $(ms)$')
-    # plt.ylabel('Voltage $(mV)$')
-    # plt.title('Activation Time/Voltage relation')
-
-    # set_param(param_values_wt)
-    # wt_act = ggsd.Activation(channel_name = 'na12')
-    # wt_act.genActivation()
-    # wt_act.plotActivation_TimeVRelation_plt(plt, 'black')
-
-    # set_param(new_params)
-    # mut_act = ggsd.Activation(channel_name = 'na12')
-    # mut_act.genActivation()
-    # mut_act.plotActivation_TimeVRelation_plt(plt, 'red')
-
-    ############################################################################################################
-    figures.append(plt.figure())
-    plt.xlabel('Time $(ms)$')
-    plt.ylabel('I $(mA/cm^2)$')
-    plt.title(f'Activation waveform at 0mV: {mutant_name}')
-
-    set_param(param_values_wt)
-    wt_act = ggsd.Activation(channel_name = 'na12')
-    wt_act.genActivation()
-    wt_act.plotActivation_TCurrDensityRelation_plt(plt, 'black')
-
-    set_param(new_params)
-    mut_act = ggsd.Activation(channel_name = 'na12')
-    mut_act.genActivation()
-    mut_act.plotActivation_TCurrDensityRelation_plt(plt, 'red')
-    
-    
- ############################################################################################################
-
-    set_param(param_values_wt)
-    wt_peak_amp = find_peak_amp()
-
-    set_param(new_params)
-    mut_peak_amp = find_peak_amp()
-    
-    
-############################################################################################################    
-    peak_amp_dict = {"T400RAdult": 0.645, "I1640NAdult": 0.24, "m1770LAdult": 0.4314, "neoWT": 0.748, "T400RAneo": 0.932, "I1640NNeo": 0.28, "m1770LNeo": 1}
-    
-    figures.append(plt.figure())
-    goal_dict = read_mutant_protocols(mutant_protocol_csv_name, mutant_name)
-    plt.text(0.4,0.9,"(actual, goal)")
-    plt.text(0.1,0.7,"activation v half: " + str((act_v_half_mut - act_v_half_wt , goal_dict['dv_half_act'])))
-    plt.text(0.1,0.5,"activation slope: " + str((act_slope_mut/act_slope_wt , goal_dict['gv_slope']/100)))
-    plt.text(0.1,0.3,"peak amp: " + str((mut_peak_amp/wt_peak_amp , peak_amp_dict[mutant_name])))
-
-    
-
-    plt.axis('off')
-    for fig in figures: ## will open an empty extra figure :(
-        pdf.savefig( fig )
-    pdf.close()
-
-    ############################################################################################################
-    
-    print("(actual, goal)")
-    print("activation v half: " + str((act_v_half_mut - act_v_half_wt , goal_dict['dv_half_act'])))
-    print("activation slope: " + str((act_slope_mut/act_slope_wt , goal_dict['gv_slope']/100)))
 
 
-def make_inact_plots(new_params, mutant_name, mutant_protocol_csv_name, param_values_wt = wt_params, filename = 'jinan_plots_out.pdf'):
-    """
-     input:  
-        new_params: a set of variant parameters 
-        param_values_wt: WT parameters. Defaulted to NA 16 WT.
-        filename: name of the pdf file into which we want to store the figures
-    returns:
-        no return values, it just makes the inactivation plots for each set of parameters
-    """
-    
-    pdf = matplotlib.backends.backend_pdf.PdfPages(filename)
-    figures = []
-    
-    ############################################################################################################
-
-    figures.append(plt.figure())
-    plt.xlabel('Voltage $(mV)$')
-    plt.ylabel('Normalized current')
-    plt.title(f'Inactivation: {mutant_name}')
-
-    set_param(param_values_wt)
-    wt_inact = ggsd.Inactivation(channel_name = 'na12')
-    wt_inact.genInactivation()
-    inact_v_half_wt, inact_slope_wt = wt_inact.plotInactivation_VInormRelation_plt(plt, 'black')
-
-    set_param(new_params)
-    mut_inact = ggsd.Inactivation(channel_name = 'na12')
-    mut_inact.genInactivation()
-    inact_v_half_mut, inact_slope_mut =  mut_inact.plotInactivation_VInormRelation_plt(plt, 'red')
-
-
-    ############################################################################################################
-    # figures.append(plt.figure())
-    # plt.xlabel('Time $(ms)$')
-    # plt.ylabel('Voltage $(mV)$')
-    # plt.title('Inactivation Time/Voltage relation')
-
-    # set_param(param_values_wt)
-    # wt_inact = ggsd.Inactivation(channel_name = 'na12')
-    # wt_inact.genInactivation()
-    # wt_inact.plotInactivation_TimeVRelation_plt(plt, 'black')
-
-    # set_param(new_params)
-    # mut_inact = ggsd.Inactivation(channel_name = 'na12')
-    # mut_inact.genInactivation()
-    # mut_inact.plotInactivation_TimeVRelation_plt(plt, 'red')
-
-    ############################################################################################################
-    figures.append(plt.figure())
-    plt.xlabel('Time $(ms)$')
-    plt.ylabel('Voltage $(mV)$')
-    plt.title(f'Inactivation: {mutant_name}')
-
-    set_param(param_values_wt)
-    wt_inact = ggsd.Inactivation(channel_name = 'na12')
-    wt_inact.genInactivation()
-    wt_inact.plotInactivation_TCurrDensityRelation(plt, 'black')
-
-    set_param(new_params)
-    mut_inact = ggsd.Inactivation(channel_name = 'na12')
-    mut_inact.genInactivation()
-    mut_inact.plotInactivation_TCurrDensityRelation(plt, 'red')
-
-    ############################################################################################################
-    figures.append(plt.figure())
-    plt.xlabel('Time $(ms)$')
-    plt.ylabel('Current density $(mA/cm^2)$')
-    plt.title(f'Inactivation Tau at 0 mV: {mutant_name}')
-
-    set_param(param_values_wt)
-    wt_inact = ggsd.Inactivation(channel_name = 'na12')
-    wt_inact.genInactivation()
-    wt_tau = wt_inact.plotInactivation_Tau_0mV_plt(plt, 'black')
-    wt_per_cur = find_persistent_current()
-
-    set_param(new_params)
-    mut_inact = ggsd.Inactivation(channel_name = 'na12')
-    mut_inact.genInactivation()
-    mut_tau = mut_inact.plotInactivation_Tau_0mV_plt(plt, 'red')
-    mut_per_cur = find_persistent_current()
-    
-    
-
-    
-    figures.append(plt.figure())
-    goal_dict = read_mutant_protocols(mutant_protocol_csv_name, mutant_name)
-    plt.text(0.4,0.9,"(actual, goal)")
-    plt.text(0.1,0.7,"tau: " + str((mut_tau/wt_tau , goal_dict['tau0']/100)))
-    plt.text(0.1,0.5,"persistent current: " + str((mut_per_cur/wt_per_cur, goal_dict['persistent']/100)))
-    plt.text(0.1,0.3,"inactivation v half: " + str((inact_v_half_mut - inact_v_half_wt , goal_dict['dv_half_ssi'])))
-    plt.text(0.1,0.1,"inactivation slope: " + str((inact_slope_mut/inact_slope_wt , goal_dict['ssi_slope']/100)))
-    plt.axis('off')
-    for fig in figures: ## will open an empty extra figure :(
-        pdf.savefig( fig )
-    pdf.close()
-    
 
 def get_param_list_in_str():
     """
@@ -680,6 +503,42 @@ def make_params_dict(param_values):
 
     return params_dict
 
+def make_params_dict_no_mut_name(param_values):
+    '''
+    Make a dictionary of 24 parameters out of the raw values
+    in PARAMS_LIST.
+    ---
+    params_list: list of raw parameter values, unscaled to be between 0 and 1
+    '''
+    params_dict = {
+        "sh" : param_values[0],
+        "tha" : param_values[1],
+        "qa" : param_values[2],
+        "Ra" : param_values[3],
+        "Rb" : param_values[4],
+        "thi1" : param_values[5],
+        "thi2" : param_values[6],
+        "qd" : param_values[7],
+        "qg" : param_values[8],
+        "mmin" : param_values[9],
+        "hmin" : param_values[10],
+        "q10" : param_values[11],
+        "Rg" : param_values[12],
+        "Rd" : param_values[13],
+        "thinf" : param_values[14],
+        "qinf" : param_values[15],
+        "vhalfs" : param_values[16],
+        "a0s" : param_values[17],
+        "zetas" : param_values[18],
+        "gms" : param_values[19],
+        "smax" : param_values[20],
+        "vvh" : param_values[21],
+        "vvs" : param_values[22],
+        "Ena" : param_values[23]
+    }
+    
+    return params_dict
+
 #testing inactivation tau at 0mv
 # def test_fit_expon():
 #     def fit_expon(x, a, b, c):
@@ -734,4 +593,3 @@ def find_peak_amp():
     act = ggsd.Activation(channel_name = 'na12')
     act.clamp_at_volt(0)
     return act.ipeak_vec[0]
-    

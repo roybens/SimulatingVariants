@@ -26,7 +26,7 @@ def find_persistent_current():
 
 
 def plotInactivation_TCurrDensityRelation(inact_obj, plt,color):
-    [plt.plot(inact_obj.t_vec[-900:-700], inact_obj.all_is[i][-900:-700], c=color) for i in np.arange(inact_obj.L)]
+    [plt.plot(inact_obj.t_vec[-800:-700], inact_obj.all_is[i][-800:-700], c=color) for i in np.arange(inact_obj.L)]
         
         
 def plotInactivation_Tau_0mV_plt(inact_obj, plt,color, upper = 700):

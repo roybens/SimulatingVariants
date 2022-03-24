@@ -1,6 +1,10 @@
 #!/bin/sh
 if test "x${NRNHOME}" = "x" ; then
+<<<<<<< HEAD
     NRNHOME="/global/u1/m/mikelam/.local/lib/python3.8/site-packages/neuron/.data"
+=======
+    NRNHOME="/usr/local/lib/python3.8/dist-packages/neuron/.data"
+>>>>>>> 4e890fbe21b04c4cb0844b23d20c1e52bb78ce5e
 fi
 if test "${NEURONHOME}" = "" ; then
     NEURONHOME=${NRNHOME}/share/nrn
@@ -14,4 +18,8 @@ if test "" = "yes" ; then
 else
     NRNIV="${NRNBIN}/nrniv"
 fi
+<<<<<<< HEAD
 "${NRNIV}" -dll "/global/homes/m/mikelam/SimulatingVariants/x86_64/.libs/libnrnmech.so" "$@"
+=======
+"${NRNIV}" -dll "/global/homes/r/roybens/SimulatingVariants/x86_64/.libs/libnrnmech.so" "$@"
+>>>>>>> 4e890fbe21b04c4cb0844b23d20c1e52bb78ce5e
