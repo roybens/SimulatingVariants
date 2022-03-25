@@ -1,7 +1,7 @@
 
 ./na12_mut.c: ../mechs/na12_mut.mod
 	@printf " -> $(C_GREEN)NMODL$(C_RESET) $<\n"
-	(cd "../mechs"; MODLUNIT=$(NRNUNITS) $(NOCMODL) na12_mut.mod -o "/Users/workbench/SimulatingVariants/x86_64")
+	(cd "../mechs"; MODLUNIT=$(NRNUNITS) $(NOCMODL) na12_mut.mod -o "/global/homes/m/mikelam/SimulatingVariants/x86_64")
 
 ./na12_mut.o: ./na12_mut.c
 	@printf " -> $(C_GREEN)Compiling$(C_RESET) $<\n"
@@ -9,7 +9,7 @@
 
 ./na16.c: ../mechs/na16.mod
 	@printf " -> $(C_GREEN)NMODL$(C_RESET) $<\n"
-	(cd "../mechs"; MODLUNIT=$(NRNUNITS) $(NOCMODL) na16.mod -o "/Users/workbench/SimulatingVariants/x86_64")
+	(cd "../mechs"; MODLUNIT=$(NRNUNITS) $(NOCMODL) na16.mod -o "/global/homes/m/mikelam/SimulatingVariants/x86_64")
 
 ./na16.o: ./na16.c
 	@printf " -> $(C_GREEN)Compiling$(C_RESET) $<\n"
@@ -17,7 +17,7 @@
 
 ./na8stmut.c: ../mechs/na8stmut.mod
 	@printf " -> $(C_GREEN)NMODL$(C_RESET) $<\n"
-	(cd "../mechs"; MODLUNIT=$(NRNUNITS) $(NOCMODL) na8stmut.mod -o "/Users/workbench/SimulatingVariants/x86_64")
+	(cd "../mechs"; MODLUNIT=$(NRNUNITS) $(NOCMODL) na8stmut.mod -o "/global/homes/m/mikelam/SimulatingVariants/x86_64")
 
 ./na8stmut.o: ./na8stmut.c
 	@printf " -> $(C_GREEN)Compiling$(C_RESET) $<\n"
@@ -25,7 +25,7 @@
 
 ./vclmp_pl.c: ../mechs/vclmp_pl.mod
 	@printf " -> $(C_GREEN)NMODL$(C_RESET) $<\n"
-	(cd "../mechs"; MODLUNIT=$(NRNUNITS) $(NOCMODL) vclmp_pl.mod -o "/Users/workbench/SimulatingVariants/x86_64")
+	(cd "../mechs"; MODLUNIT=$(NRNUNITS) $(NOCMODL) vclmp_pl.mod -o "/global/homes/m/mikelam/SimulatingVariants/x86_64")
 
 ./vclmp_pl.o: ./vclmp_pl.c
 	@printf " -> $(C_GREEN)Compiling$(C_RESET) $<\n"

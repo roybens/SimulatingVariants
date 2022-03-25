@@ -13,7 +13,7 @@ import time
 from deap import tools
 import multiprocessing
 
-evaluator = vcl_ev.Vclamp_evaluator_HMM('./csv_files/params_na12mut8st_mod.csv', 'Basis', 'na12mut8st', 'na16', objective_names=['act'])
+evaluator = vcl_ev.Vclamp_evaluator_HMM('./csv_files/params_na12mut8st_mod.csv', 'Basis', 'na12mut8st', 'na16', objective_names=['inact', 'act'])
 
 print(evaluator.wild_data)
 gen_counter = 0
@@ -60,7 +60,7 @@ deap_opt = bpop.optimisations.DEAPOptimisation(evaluator, offspring_size=100, ho
 cp_file = './cp.pkl'
 
 start_time = time.time()
-pop, hof, log, hst = deap_opt.run(max_ngen=5, cp_filename=cp_file)  # CHANGE max_ngen
+pop, hof, log, hst = deap_opt.run(max_ngen=20, cp_filename=cp_file)  # CHANGE max_ngen
 end_time = time.time()
 print(end_time - start_time)
 
