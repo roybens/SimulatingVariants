@@ -17,6 +17,7 @@ NEURON {
     RANGE a1_0, a1_1, b1_0, b1_1, a2_0, a2_1
     RANGE b2_0, b2_1, a3_0, a3_1, b3_0, b3_1
     RANGE bh_0, bh_1, bh_2, ah_0, ah_1, ah_2
+    RANGE ahfactor,bhfactor
 }
 UNITS { (mV) = (millivolt) }
 : initialize parameters
@@ -45,6 +46,8 @@ PARAMETER {
     ah_0 = 5.757824421450554e-01 (/ms)
     ah_1 = 1.628407420157048e+02
     ah_2 = 2.680107016756367e-02 (/mV)
+    ahfactor=1
+    bhfactor=1
     vShift = 10            (mV)  : shift to the right to account for Donnan potentials
                                  : 12 mV for cclamp, 0 for oo-patch vclamp simulations
     vShift_inact = 10      (mV)  : global additional shift to the right for inactivation
@@ -124,6 +127,8 @@ PROCEDURE rates(v(millivolt)) {
     bh = tadjh*bh_0/(1+bh_1*exp(-bh_2*(vS-vShift_inact-vShift_inact_local)))
     bh = bh*maxrate / (bh+maxrate)
     ah = tadjh*ah_0/(1+ah_1*exp( ah_2*(vS-vShift_inact-vShift_inact_local)))
-    ah = ah*maxrate / (ah+maxrate)
+    ah = ah*maxrate / (ah+maxrate)   
+    ah = ah*ahfactor
+    bh = bh*bhfactor
 }
 

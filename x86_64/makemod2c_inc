@@ -15,6 +15,14 @@
 	@printf " -> $(C_GREEN)Compiling$(C_RESET) $<\n"
 	$(COMPILE) -I"../mechs" $(INCLUDES) -fPIC -c $< -o $@
 
+./na16factors.c: ../mechs/na16factors.mod
+	@printf " -> $(C_GREEN)NMODL$(C_RESET) $<\n"
+	(cd "../mechs"; MODLUNIT=$(NRNUNITS) $(NOCMODL) na16factors.mod -o "/global/homes/m/mikelam/SimulatingVariants/x86_64")
+
+./na16factors.o: ./na16factors.c
+	@printf " -> $(C_GREEN)Compiling$(C_RESET) $<\n"
+	$(COMPILE) -I"../mechs" $(INCLUDES) -fPIC -c $< -o $@
+
 ./na8stmut.c: ../mechs/na8stmut.mod
 	@printf " -> $(C_GREEN)NMODL$(C_RESET) $<\n"
 	(cd "../mechs"; MODLUNIT=$(NRNUNITS) $(NOCMODL) na8stmut.mod -o "/global/homes/m/mikelam/SimulatingVariants/x86_64")

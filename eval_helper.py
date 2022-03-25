@@ -305,7 +305,9 @@ def make_params_dict(params_list, is_HMM=False):
             'ah_2_na12mut8st' : params_list[17],
             'vShift_na12mut8st' : params_list[18],
             'vShift_inact_na12mut8st' : params_list[19], 
-            'maxrate_na12mut8st': params_list[20]
+            'maxrate_na12mut8st': params_list[20],
+            'ahfactor_na12mut8st': params_list[21],
+            'bhfactor_na12mut8st': params_list[22]
             }
     return params_dict
 
@@ -419,7 +421,9 @@ def scale_params_dict(down, params_arr, is_HMM=False):
         'ah_2_na12mut8st' : 2.680107016756367e-02,
         'vShift_na12mut8st' : 10,
         'vShift_inact_na12mut8st' : 10,
-        'maxrate_na12mut8st': 8.00e+03
+        'maxrate_na12mut8st': 8.00e+03,
+        'ahfactor_na12mut8st': 1,
+        'bhfactor_na12mut8st': 1
         }
         types = {
         'a1_0_na12mut8st' : 'md',
@@ -442,7 +446,9 @@ def scale_params_dict(down, params_arr, is_HMM=False):
         'ah_2_na12mut8st' : 'md',
         'vShift_na12mut8st' : 'p',
         'vShift_inact_na12mut8st' : 'p', 
-        'maxrate_na12mut8st':'md'
+        'maxrate_na12mut8st':'md',
+        'ahfactor_na12mut8st': 'md',
+        'bhfactor_na12mut8st': 'md'
         }
 
         inds = {
@@ -466,7 +472,9 @@ def scale_params_dict(down, params_arr, is_HMM=False):
         'ah_2_na12mut8st' : 17,
         'vShift_na12mut8st' : 18,
         'vShift_inact_na12mut8st' : 19, 
-        'maxrate_na12mut8st':20
+        'maxrate_na12mut8st':20,
+        'ahfactor_na12mut8st':21,
+        'bhfactor_na12mut8st':22
         }
 
 
@@ -551,5 +559,7 @@ def change_params_dict(new_params, is_HMM=False,sim_obj = None):
         currh.vShift_na12mut8st = new_params['vShift_na12mut8st']
         currh.vShift_inact_na12mut8st = new_params['vShift_inact_na12mut8st']
         currh.maxrate_na12mut8st = new_params['maxrate_na12mut8st']
+        soma.ahfactor_na12mut8st = new_params['ahfactor_na12mut8st']
+        soma.bhfactor_na12mut8st = new_params['bhfactor_na12mut8st']
     return
 
