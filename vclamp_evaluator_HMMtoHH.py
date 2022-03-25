@@ -155,7 +155,7 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         inact_obj = ggsdHMM.Inactivation(channel_name=self.channel_name_HMM)
         # recov_obj = ggsdHMM.RFI(channel_name=self.channel_name_HMM)
         recov_obj = None
-        eh.change_params(param_values, scaled=False, is_HMM=True, sim_obj=act_obj)
+        # eh.change_params(param_values, scaled=False, is_HMM=True, sim_obj=act_obj)
         eh.change_params(param_values, scaled=False, is_HMM=True, sim_obj=inact_obj)
         score = self.score_calculator.total_rmse(act_obj, inact_obj, recov_obj, is_HMM=True, objectives=self.objective_names)
         # print((param_values, score))

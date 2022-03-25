@@ -84,7 +84,7 @@ class Score_Function:
             return errors
         '''
         if 'inact' in objectives:
-            inact_err = self.calc_inact_err(inact_obj)*0.0000000000000000000000000000000000000000000000000001
+            inact_err = self.calc_inact_err(inact_obj)
             errors.append(inact_err)
             # errors.append(inact_err)
         if 'act' in objectives:
