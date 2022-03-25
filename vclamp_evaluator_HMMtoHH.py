@@ -192,16 +192,18 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         axs.text(-.120, 0.5, 'V50 (Optimized): ' + str(v_half) + ' mV')
         axs.text(-.120, 0.4, 'V50 (Experimental): ' + str(v_half_ssi_exp) + ' mV')
         axs.legend()
+        plt.show()
 
     
     def plot_act(self, param_values):
+        inact_obj = ggsdHMM.Inactivation(channel_name=self.channel_name_HMM)
         act_obj = ggsdHMM.Activation(channel_name=self.channel_name_HMM)
         fig, axs = plt.subplots(1, figsize=(10,10))
         # Calculate wild baseline values
         v_half_act_exp = self.wild_data['v_half_act'] + float(self.protocols['dv_half_act'])
         gv_slope_exp = self.wild_data['gv_slope'] + float(self.protocols['gv_slope']) / 100
         
-        eh.change_params(param_values, scaled=False, is_HMM=True, sim_obj=act_obj)     
+        eh.change_params(param_values, scaled=False, is_HMM=True, sim_obj=inact_obj)     
         gnorm_vec, v_vec, all_is = act_obj.genActivation()
         gnorm_array = np.array(gnorm_vec)
         v_array = np.array(v_vec)
@@ -223,6 +225,7 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         axs.text(-.120, 0.5, 'V50 (Optimized): ' + str(v_half) + ' mV')
         axs.text(-.120, 0.4, 'V50 (Experimental): ' + str(v_half_act_exp) + ' mV')
         axs.legend()
+        plt.show()
         
     def plot_rec(self, param_values):
         fig, axs = plt.subplots(1, figsize=(10,10))

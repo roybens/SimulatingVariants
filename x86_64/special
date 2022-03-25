@@ -1,25 +1,17 @@
 #!/bin/sh
 if test "x${NRNHOME}" = "x" ; then
-<<<<<<< HEAD
-    NRNHOME="/global/u1/m/mikelam/.local/lib/python3.8/site-packages/neuron/.data"
-=======
-    NRNHOME="/usr/local/lib/python3.8/dist-packages/neuron/.data"
->>>>>>> 4e890fbe21b04c4cb0844b23d20c1e52bb78ce5e
+    NRNHOME="/opt/anaconda3/lib/python3.7/site-packages/neuron/.data"
 fi
 if test "${NEURONHOME}" = "" ; then
     NEURONHOME=${NRNHOME}/share/nrn
     export NEURONHOME
 fi
 if test "x${NRNBIN}" = "x" ; then
-    NRNBIN="/usr/local/bin"
+    NRNBIN="/opt/anaconda3/bin"
 fi
 if test "" = "yes" ; then
     NRNIV="${NRNBIN}/nrniv.app/Contents/MacOS/nrniv"
 else
     NRNIV="${NRNBIN}/nrniv"
 fi
-<<<<<<< HEAD
-"${NRNIV}" -dll "/global/homes/m/mikelam/SimulatingVariants/x86_64/.libs/libnrnmech.so" "$@"
-=======
-"${NRNIV}" -dll "/global/homes/r/roybens/SimulatingVariants/x86_64/.libs/libnrnmech.so" "$@"
->>>>>>> 4e890fbe21b04c4cb0844b23d20c1e52bb78ce5e
+"${NRNIV}" -dll "/Users/workbench/SimulatingVariants/x86_64/.libs/libnrnmech.so" "$@"
