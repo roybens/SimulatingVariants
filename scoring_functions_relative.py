@@ -22,10 +22,10 @@ class Score_Function:
         self.tau_fast_diff = diff_dict['tau_fast']
         self.tau_slow_diff = diff_dict['tau_slow']
         self.percent_fast_diff = diff_dict['percent_fast']
-        self.udb20_diff = diff_dict['udb20']
+        # self.udb20_diff = diff_dict['udb20']
         self.tau0_diff = diff_dict['tau0']
-        self.ramp_diff = diff_dict['ramp']
-        self.persistent_diff = diff_dict['persistent']
+        # self.ramp_diff = diff_dict['ramp']
+        # self.persistent_diff = diff_dict['persistent']
 
         self.v_half_act_wild = wild_data['v_half_act']
         self.gv_slope_wild = wild_data['gv_slope']
@@ -34,30 +34,27 @@ class Score_Function:
         self.tau_fast_wild = wild_data['tau_fast']
         self.tau_slow_wild = wild_data['tau_slow']
         self.percent_fast_wild = wild_data['percent_fast']
-        self.udb20_wild = wild_data['udb20']
-        self.tau0_wild = wild_data['tau0']
-        self.ramp_wild = wild_data['ramp']
-        self.persistent_wild = wild_data['persistent']
+        # self.udb20_wild = wild_data['udb20']
+        # self.tau0_wild = wild_data['tau0']
+        # self.ramp_wild = wild_data['ramp']
+        # self.persistent_wild = wild_data['persistent']
         
         self.channel_name = channel_name
 
 
-    def total_rmse(self, is_HMM=False, objectives=['v_half_act', 'gv_slope', 'v_half_ssi', 'ssi_slope', 'tau_fast', 'tau_slow', 'percent_fast', 'udb20', 'tau0', 'ramp', 'persistent']):
+    def total_rmse(self, act_obj, inact_obj, recov_obj, is_HMM=False, objectives=['v_half_act', 'gv_slope', 'v_half_ssi', 'ssi_slope', 'tau_fast', 'tau_slow', 'percent_fast', 'udb20', 'tau0', 'ramp', 'persistent']):
         # When using the HH model, leave is_HMM as false. Otherwise, set it to true.
         try:
-            if not is_HMM:
-                gv_slope, v_half_act, top, bottom = cf.calc_act_obj(self.channel_name, is_HMM=False)
-                ssi_slope, v_half_inact, top, bottom, tau0 = cf.calc_inact_obj(self.channel_name, is_HMM=False)
-                y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(self.channel_name, is_HMM=False)
-            else:
-                gv_slope, v_half_act, top, bottom = cf.calc_act_obj(self.channel_name, is_HMM=True)
-                ssi_slope, v_half_inact, top, bottom, tau0 = cf.calc_inact_obj(self.channel_name, is_HMM=True)
-                y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(self.channel_name, is_HMM=True)
+            gv_slope, v_half_act, top, bottom = cf.calc_act_obj(act_obj)
+            ssi_slope, v_half_inact, top, bottom = cf.calc_inact_obj(inact_obj)
+            # y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(recov_obj)
                 
         except ZeroDivisionError:
             print('Zero Division Error')
-            return (1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000)
-        
+            error_val = []
+            for i in range(len(objectives)):
+                error_val.append(1000)
+            return tuple(error_val) 
         errors = []
         if 'v_half_act' in objectives:
             v_half_act_err = self.dv_half_act(self.dv_half_act_diff, v_half_act)

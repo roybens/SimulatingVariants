@@ -6,7 +6,7 @@
 import numpy as np
 import bluepyopt as bpop
 import eval_helper as eh
-import scoring_functions_exp as sf
+import scoring_functions_relative as sf  # Change this to scoring_functions_relative or scoring_functions_exp to change scoring functions
 import curve_fitting as cf
 import matplotlib.pyplot as plt
 import generalized_genSim_shorten_time_HMM as ggsdHMM
