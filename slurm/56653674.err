@@ -1,0 +1,10 @@
+/global/u2/r/roybens/SimulatingVariants/./drive.sh: line 6: nrnivmodl: command not found
+/global/u2/r/roybens/SimulatingVariants/./drive.sh: line 7: pip3: command not found
+/global/u2/r/roybens/SimulatingVariants/./drive.sh: line 8: pip3: command not found
+/global/u2/r/roybens/SimulatingVariants/./drive.sh: line 9: pip3: command not found
+Traceback (most recent call last):
+  File "//global/homes/r/roybens/SimulatingVariants/Optimization_HHtoHMM.py", line 1, in <module>
+    import neuron
+ModuleNotFoundError: No module named 'neuron'
+srun: error: nid01029: task 0: Exited with exit code 1
+srun: launch/slurm: _step_signal: Terminating StepId=56653674.0

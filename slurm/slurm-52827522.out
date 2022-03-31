@@ -1,3 +1,0 @@
-Warning: Python module not loaded, you already have Python loaded via conda init
-Fri Jan  7 00:17:17 2022: [unset]:_pmi_alps_init:alps_get_placement_info returned with error -1
-Fri Jan  7 00:17:17 2022: [unset]:_pmi_init:_pmi_alps_init returned -1

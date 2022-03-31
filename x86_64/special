@@ -1,6 +1,6 @@
 #!/bin/sh
 if test "x${NRNHOME}" = "x" ; then
-    NRNHOME="/global/u1/m/mikelam/.local/lib/python3.8/site-packages/neuron/.data"
+    NRNHOME="/usr/local/lib/python3.8/dist-packages/neuron/.data"
 fi
 if test "${NEURONHOME}" = "" ; then
     NEURONHOME=${NRNHOME}/share/nrn
@@ -14,4 +14,4 @@ if test "" = "yes" ; then
 else
     NRNIV="${NRNBIN}/nrniv"
 fi
-"${NRNIV}" -dll "/global/homes/m/mikelam/SimulatingVariants/x86_64/.libs/libnrnmech.so" "$@"
+"${NRNIV}" -dll "/global/homes/r/roybens/SimulatingVariants/x86_64/.libs/libnrnmech.so" "$@"

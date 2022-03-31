@@ -331,8 +331,8 @@ class Activation:
         
         
         plt.plot(self.v_vec, self.gnorm_vec, 'o', c=color)
-        #gv_slope, v_half, top, bottom = cf.calc_act_obj(self.channel_name)
-        gv_slope, v_half, top, bottom = cf.calc_act_obj(self.channel_name, True)
+        gv_slope, v_half, top, bottom = cf.calc_act_obj(self.channel_name)
+        #gv_slope, v_half, top, bottom = cf.calc_act_obj(self.channel_name, True)
         formatted_gv_slope = np.round(gv_slope, decimals=2)
         formatted_v_half = np.round(v_half, decimals=2)
         plt.text(-10, 0.5 + diff, f'Slope: {formatted_gv_slope}', c = color)

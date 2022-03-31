@@ -1,0 +1,70 @@
+/global/homes/r/roybens/SimulatingVariants
+Mod files: "mechs/na12_mut.mod" "mechs/na16.mod" "mechs/na8stmut.mod" "mechs/vclmp_pl.mod"
+
+COBJS=''
+ -> [32mCompiling[0m mod_func.c
+x86_64-linux-gnu-gcc -O2   -I.   -I/usr/local/lib/python3.8/dist-packages/neuron/.data/include  -I/nrnwheel/openmpi/include -fPIC -c mod_func.c -o mod_func.o
+ => [32mLINKING[0m shared library ./libnrnmech.so
+x86_64-linux-gnu-g++ -O2 -DVERSION_INFO='8.0.0' -std=c++11 -shared -fPIC  -I /usr/local/lib/python3.8/dist-packages/neuron/.data/include -o ./libnrnmech.so -Wl,-soname,libnrnmech.so \
+  ./mod_func.o ./na12_mut.o ./na16.o ./na8stmut.o ./vclmp_pl.o  -L/usr/local/lib/python3.8/dist-packages/neuron/.data/lib -lnrniv -Wl,-rpath,/usr/local/lib/python3.8/dist-packages/neuron/.data/lib   
+rm -f ./.libs/libnrnmech.so ; mkdir -p ./.libs ; cp ./libnrnmech.so ./.libs/libnrnmech.so
+Successfully created x86_64/special
+Defaulting to user installation because normal site-packages is not writeable
+Requirement already satisfied: scipy in /usr/lib/python3/dist-packages (1.3.3)
+Defaulting to user installation because normal site-packages is not writeable
+Requirement already satisfied: deap in /global/u2/r/roybens/.local/lib/python3.8/site-packages (1.3.1)
+Requirement already satisfied: numpy in /usr/lib/python3/dist-packages (from deap) (1.17.4)
+Defaulting to user installation because normal site-packages is not writeable
+Requirement already satisfied: bluepyopt in /global/u2/r/roybens/.local/lib/python3.8/site-packages (1.10.24)
+Requirement already satisfied: Pebble>=4.3.10 in /global/u2/r/roybens/.local/lib/python3.8/site-packages (from bluepyopt) (4.6.1)
+Requirement already satisfied: pickleshare>=0.7.3 in /usr/local/lib/python3.8/dist-packages (from bluepyopt) (0.7.5)
+Requirement already satisfied: pandas>=0.18 in /global/u2/r/roybens/.local/lib/python3.8/site-packages (from bluepyopt) (1.2.4)
+Requirement already satisfied: Jinja2>=2.8 in /usr/local/lib/python3.8/dist-packages (from bluepyopt) (3.0.3)
+Requirement already satisfied: future in /global/u2/r/roybens/.local/lib/python3.8/site-packages (from bluepyopt) (0.18.2)
+Requirement already satisfied: scoop>=0.7 in /global/u2/r/roybens/.local/lib/python3.8/site-packages (from bluepyopt) (0.7.1.1)
+Requirement already satisfied: numpy>=1.6 in /usr/lib/python3/dist-packages (from bluepyopt) (1.17.4)
+Requirement already satisfied: efel>=2.13 in /global/u2/r/roybens/.local/lib/python3.8/site-packages (from bluepyopt) (3.1.90)
+Requirement already satisfied: deap in /global/u2/r/roybens/.local/lib/python3.8/site-packages (from bluepyopt) (1.3.1)
+Requirement already satisfied: ipyparallel in /global/u2/r/roybens/.local/lib/python3.8/site-packages (from bluepyopt) (6.3.0)
+Requirement already satisfied: six in /usr/lib/python3/dist-packages (from efel>=2.13->bluepyopt) (1.14.0)
+Requirement already satisfied: MarkupSafe>=2.0 in /usr/local/lib/python3.8/dist-packages (from Jinja2>=2.8->bluepyopt) (2.0.1)
+Requirement already satisfied: python-dateutil>=2.7.3 in /usr/local/lib/python3.8/dist-packages (from pandas>=0.18->bluepyopt) (2.8.2)
+Requirement already satisfied: pytz>=2017.3 in /global/u2/r/roybens/.local/lib/python3.8/site-packages (from pandas>=0.18->bluepyopt) (2021.1)
+Requirement already satisfied: pyzmq>=13.1.0 in /usr/local/lib/python3.8/dist-packages (from scoop>=0.7->bluepyopt) (22.3.0)
+Requirement already satisfied: greenlet>=0.3.4 in /global/u2/r/roybens/.local/lib/python3.8/site-packages (from scoop>=0.7->bluepyopt) (1.0.0)
+Collecting argparse>=1.1
+  Using cached argparse-1.4.0-py2.py3-none-any.whl (23 kB)
+Requirement already satisfied: tornado>=4 in /usr/local/lib/python3.8/dist-packages (from ipyparallel->bluepyopt) (6.1)
+Requirement already satisfied: ipykernel>=4.4 in /usr/local/lib/python3.8/dist-packages (from ipyparallel->bluepyopt) (6.7.0)
+Requirement already satisfied: ipython>=4 in /usr/local/lib/python3.8/dist-packages (from ipyparallel->bluepyopt) (8.0.1)
+Requirement already satisfied: jupyter-client in /usr/local/lib/python3.8/dist-packages (from ipyparallel->bluepyopt) (7.1.1)
+Requirement already satisfied: ipython-genutils in /usr/local/lib/python3.8/dist-packages (from ipyparallel->bluepyopt) (0.2.0)
+Requirement already satisfied: decorator in /usr/lib/python3/dist-packages (from ipyparallel->bluepyopt) (4.4.2)
+Requirement already satisfied: traitlets>=4.3 in /usr/local/lib/python3.8/dist-packages (from ipyparallel->bluepyopt) (5.1.1)
+Requirement already satisfied: nest-asyncio in /usr/local/lib/python3.8/dist-packages (from ipykernel>=4.4->ipyparallel->bluepyopt) (1.5.4)
+Requirement already satisfied: matplotlib-inline<0.2.0,>=0.1.0 in /usr/local/lib/python3.8/dist-packages (from ipykernel>=4.4->ipyparallel->bluepyopt) (0.1.3)
+Requirement already satisfied: debugpy<2.0,>=1.0.0 in /usr/local/lib/python3.8/dist-packages (from ipykernel>=4.4->ipyparallel->bluepyopt) (1.5.1)
+Requirement already satisfied: prompt-toolkit!=3.0.0,!=3.0.1,<3.1.0,>=2.0.0 in /usr/local/lib/python3.8/dist-packages (from ipython>=4->ipyparallel->bluepyopt) (3.0.24)
+Requirement already satisfied: setuptools>=18.5 in /usr/lib/python3/dist-packages (from ipython>=4->ipyparallel->bluepyopt) (45.2.0)
+Requirement already satisfied: pexpect>4.3 in /usr/local/lib/python3.8/dist-packages (from ipython>=4->ipyparallel->bluepyopt) (4.8.0)
+Requirement already satisfied: backcall in /usr/local/lib/python3.8/dist-packages (from ipython>=4->ipyparallel->bluepyopt) (0.2.0)
+Requirement already satisfied: black in /usr/local/lib/python3.8/dist-packages (from ipython>=4->ipyparallel->bluepyopt) (21.12b0)
+Requirement already satisfied: pygments in /usr/local/lib/python3.8/dist-packages (from ipython>=4->ipyparallel->bluepyopt) (2.11.2)
+Requirement already satisfied: jedi>=0.16 in /usr/local/lib/python3.8/dist-packages (from ipython>=4->ipyparallel->bluepyopt) (0.18.1)
+Requirement already satisfied: stack-data in /usr/local/lib/python3.8/dist-packages (from ipython>=4->ipyparallel->bluepyopt) (0.1.4)
+Requirement already satisfied: jupyter-core>=4.6.0 in /usr/local/lib/python3.8/dist-packages (from jupyter-client->ipyparallel->bluepyopt) (4.9.1)
+Requirement already satisfied: entrypoints in /usr/local/lib/python3.8/dist-packages (from jupyter-client->ipyparallel->bluepyopt) (0.3)
+Requirement already satisfied: parso<0.9.0,>=0.8.0 in /usr/local/lib/python3.8/dist-packages (from jedi>=0.16->ipython>=4->ipyparallel->bluepyopt) (0.8.3)
+Requirement already satisfied: ptyprocess>=0.5 in /usr/local/lib/python3.8/dist-packages (from pexpect>4.3->ipython>=4->ipyparallel->bluepyopt) (0.7.0)
+Requirement already satisfied: wcwidth in /usr/local/lib/python3.8/dist-packages (from prompt-toolkit!=3.0.0,!=3.0.1,<3.1.0,>=2.0.0->ipython>=4->ipyparallel->bluepyopt) (0.2.5)
+Requirement already satisfied: mypy-extensions>=0.4.3 in /usr/local/lib/python3.8/dist-packages (from black->ipython>=4->ipyparallel->bluepyopt) (0.4.3)
+Requirement already satisfied: pathspec<1,>=0.9.0 in /usr/local/lib/python3.8/dist-packages (from black->ipython>=4->ipyparallel->bluepyopt) (0.9.0)
+Requirement already satisfied: platformdirs>=2 in /usr/local/lib/python3.8/dist-packages (from black->ipython>=4->ipyparallel->bluepyopt) (2.4.1)
+Requirement already satisfied: typing-extensions>=3.10.0.0 in /usr/local/lib/python3.8/dist-packages (from black->ipython>=4->ipyparallel->bluepyopt) (4.0.1)
+Requirement already satisfied: click>=7.1.2 in /usr/local/lib/python3.8/dist-packages (from black->ipython>=4->ipyparallel->bluepyopt) (8.0.3)
+Requirement already satisfied: tomli<2.0.0,>=0.2.6 in /usr/local/lib/python3.8/dist-packages (from black->ipython>=4->ipyparallel->bluepyopt) (1.2.3)
+Requirement already satisfied: executing in /usr/local/lib/python3.8/dist-packages (from stack-data->ipython>=4->ipyparallel->bluepyopt) (0.8.2)
+Requirement already satisfied: pure-eval in /usr/local/lib/python3.8/dist-packages (from stack-data->ipython>=4->ipyparallel->bluepyopt) (0.2.1)
+Requirement already satisfied: asttokens in /usr/local/lib/python3.8/dist-packages (from stack-data->ipython>=4->ipyparallel->bluepyopt) (2.0.5)
+Installing collected packages: argparse
+Successfully installed argparse-1.4.0
