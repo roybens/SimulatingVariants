@@ -93,16 +93,19 @@ def make_act_plots(new_params, mutant_name, mutant_protocol_csv_name, param_valu
     if param_values_wt is not None:
         set_param(param_values_wt, is_HMM,sim_obj = wt_act)
     wt_act.genActivation()
+    print('1')
     # (formatted_v_half, formatted_gv_slope)
     act_v_half_wt, act_slope_wt = wt_act.plotActivation_VGnorm_plt(plt, 'black')
-    
+    print('2')
 
    
     mut_act = module_name.Activation(channel_name = channel_name)
+    
     set_param(new_params, is_HMM,sim_obj = mut_act)
     mut_act.genActivation()
+    print('3')
     act_v_half_mut, act_slope_mut = mut_act.plotActivation_VGnorm_plt(plt, 'red')
-
+    print('4')
     ############################################################################################################
     figures.append(plt.figure())
     plt.xlabel('Voltage $(mV)$')

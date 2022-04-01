@@ -261,7 +261,7 @@ class Activation:
         plt.ylabel('Normalized conductance')
         plt.title('Activation: Voltage/Normalized conductance')
         plt.plot(self.v_vec, self.gnorm_vec, 'o', c='black')
-        gv_slope, v_half, top, bottom = cf.calc_act_obj()
+        gv_slope, v_half, top, bottom = cf.calc_act_obj(self)
         formatted_gv_slope = np.round(gv_slope, decimals=2)
         formatted_v_half = np.round(v_half, decimals=2)
         plt.text(-10, 0.5, f'Slope: {formatted_gv_slope}')
@@ -303,13 +303,18 @@ class Activation:
         # save as PGN file
         plt.savefig(os.path.join(os.path.split(__file__)[0], 'Plots_Folder/HMM_Activation Time Voltage Relation'))
 
-    def plotActivation_TCurrDensityRelation(self):
+    def plotActivation_TCurrDensityRelation(self,xlim = None):
         plt.figure()
         plt.xlabel('Time $(ms)$')
         plt.ylabel('Current density $(mA/cm^2)$')
         plt.title('Activation Time/Current density relation')
         curr = np.array(self.all_is)
         [plt.plot(self.t_vec[1:], curr[i], c='black') for i in np.arange(len(curr))]
+        if xlim is not None:
+            for i in np.arange(len(curr)):
+                plt.plot(self.t_vec[1:], curr[i], c='black')
+                plt.xlim(xlim)
+
         # save as PGN file
         plt.savefig(
             os.path.join(os.path.split(__file__)[0], "Plots_Folder/HMM_Activation Time Current Density Relation"))
@@ -331,7 +336,7 @@ class Activation:
         
         
         plt.plot(self.v_vec, self.gnorm_vec, 'o', c=color)
-        gv_slope, v_half, top, bottom = cf.calc_act_obj(self.channel_name)
+        gv_slope, v_half, top, bottom = cf.calc_act_obj(self)
         #gv_slope, v_half, top, bottom = cf.calc_act_obj(self.channel_name, True)
         formatted_gv_slope = np.round(gv_slope, decimals=2)
         formatted_v_half = np.round(v_half, decimals=2)
@@ -535,7 +540,7 @@ class Inactivation:
         plt.ylabel('Normalized current')
         plt.title('Inactivation: Voltage/HMM_Normalized Current Relation')
         plt.plot(self.v_vec, self.inorm_vec, 'o', c='black')
-        ssi_slope, v_half, top, bottom, tau0 = cf.calc_inact_obj()
+        ssi_slope, v_half, top, bottom, tau0 = cf.calc_inact_obj(self)
         formatted_ssi_slope = np.round(ssi_slope, decimals=2)
         formatted_v_half = np.round(v_half, decimals=2)
         plt.text(-10, 0.5, f'Slope: {formatted_ssi_slope}')
@@ -554,7 +559,7 @@ class Inactivation:
         if color == 'red':
             diff = 0.5
         plt.plot(self.v_vec, self.inorm_vec, 'o', c=color)
-        ssi_slope, v_half, top, bottom = cf.calc_inact_obj(self.channel_name, is_HMM = True)
+        ssi_slope, v_half, top, bottom = cf.calc_inact_obj(self)
         formatted_ssi_slope = np.round(ssi_slope, decimals=2)
         formatted_v_half = np.round(v_half, decimals=2)
         plt.text(-10, 0.5 + diff, f'Slope: {formatted_ssi_slope}', c = color)
@@ -616,21 +621,31 @@ class Inactivation:
             
         def fit_expon(x, a, b, c):
             return a + b * np.exp(-1 * c * x)
+        
+        def one_phase(x, y0, plateau, k):
+            return y0 + (plateau - y0) * (1 - np.exp(-k * x))
         act = Activation(channel_name = self.channel_name)
         act.clamp_at_volt(0)
         starting_index = list(act.i_vec).index(act.find_ipeaks_with_index()[1])
         
         t_vecc = act.t_vec[starting_index:upper]
         i_vecc = act.i_vec[starting_index:upper]
-        popt, pcov = optimize.curve_fit(fit_expon,t_vecc,i_vecc, method = 'dogbox')
-        
-        tau = 1/popt[2]
-        #tau = 1000 * tau
+        try:
+            popt, pcov = optimize.curve_fit(fit_expon,t_vecc,i_vecc, method = 'dogbox')
+            fit = 'exp'
+            tau = 1/popt[2]
+            fitted_i = fit_expon(act.t_vec[starting_index:upper],popt[0],popt[1],popt[2])
+        except:
+            popt, pcov = optimize.curve_fit(one_phase,t_vecc,i_vecc, method = 'dogbox')
+            fit = 'one_phase'
+            tau = 1/popt[2]
+            fitted_i = one_phase(act.t_vec[starting_index:upper],popt[0],popt[1],popt[2])
+    
         xmid = (max(t_vecc) + min(t_vecc))/2
         ymid = (max(i_vecc) + min(i_vecc))/2
         if color == 'red':
             diff = ymid*0.2
-        fitted_i = fit_expon(act.t_vec[starting_index:upper],popt[0],popt[1],popt[2])
+        
         plt.plot(act.t_vec[starting_index:upper], fitted_i, c=color)
         plt.plot(t_vecc,i_vecc,'o',c=color)
         plt.text(xmid, ymid + diff, f"Tau at 0 mV: {tau}", color=color)
