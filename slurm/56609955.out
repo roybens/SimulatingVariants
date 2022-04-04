@@ -1,3 +1,0 @@
-Defaulting to user installation because normal site-packages is not writeable
-Requirement already satisfied: scipy in /global/u1/m/mikelam/.local/lib/python2.7/site-packages (1.2.3)
-Requirement already satisfied: numpy>=1.8.2 in /global/u1/m/mikelam/.local/lib/python2.7/site-packages (from scipy) (1.16.6)

@@ -1,6 +1,0 @@
-Requirement already satisfied: scipy in /global/u1/m/mikelam/.local/cori/3.7-anaconda-2019.07/lib/python3.7/site-packages (1.1.0)
-Requirement already satisfied: numpy>=1.8.2 in /global/common/cori_cle7/software/python/3.7-anaconda-2019.07/lib/python3.7/site-packages (from scipy) (1.16.4)
-/global/cscratch1/sd/adisaran/neuronBBP_build2/nrn/lib/python/
-/global/u1/m/mikelam/SimulatingVariants
-mechs/na12_mut.mod mechs/na16.mod mechs/na8stmut.mod mechs/vclmp_pl.mod
-na12_mut.mod na16.mod na8stmut.mod vclmp_pl.mod
