@@ -1,0 +1,22 @@
+Traceback (most recent call last):
+  File "//global/homes/r/roybens/SimulatingVariants/Optimization_HHtoHMM.py", line 63, in <module>
+    pop, hof, log, hst = deap_opt.run(max_ngen=200, cp_filename=cp_file)  # CHANGE max_ngen
+  File "/global/homes/r/roybens/.local/lib/python3.8/site-packages/bluepyopt/deapext/optimisations.py", line 306, in run
+    pop, hof, log, history = algorithms.eaAlphaMuPlusLambdaCheckpoint(
+  File "/global/homes/r/roybens/.local/lib/python3.8/site-packages/bluepyopt/deapext/algorithms.py", line 158, in eaAlphaMuPlusLambdaCheckpoint
+    invalid_count = _evaluate_invalid_fitness(toolbox, population)
+  File "/global/homes/r/roybens/.local/lib/python3.8/site-packages/bluepyopt/deapext/algorithms.py", line 59, in _evaluate_invalid_fitness
+    fitnesses = toolbox.map(toolbox.evaluate, invalid_ind)
+  File "/usr/lib/python3.8/multiprocessing/pool.py", line 364, in map
+    return self._map_async(func, iterable, mapstar, chunksize).get()
+  File "/usr/lib/python3.8/multiprocessing/pool.py", line 771, in get
+    raise self._value
+  File "/usr/lib/python3.8/multiprocessing/pool.py", line 537, in _handle_tasks
+    put(task)
+  File "/usr/lib/python3.8/multiprocessing/connection.py", line 206, in send
+    self._send_bytes(_ForkingPickler.dumps(obj))
+  File "/usr/lib/python3.8/multiprocessing/reduction.py", line 51, in dumps
+    cls(buf, protocol).dump(obj)
+TypeError: HocObject: Only Vector instance can be pickled
+srun: error: nid00756: task 0: Exited with exit code 1
+srun: launch/slurm: _step_signal: Terminating StepId=56653643.0

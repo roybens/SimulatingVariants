@@ -93,16 +93,19 @@ def make_act_plots(new_params, mutant_name, mutant_protocol_csv_name, param_valu
     if param_values_wt is not None:
         set_param(param_values_wt, is_HMM,sim_obj = wt_act)
     wt_act.genActivation()
+    print('1')
     # (formatted_v_half, formatted_gv_slope)
     act_v_half_wt, act_slope_wt = wt_act.plotActivation_VGnorm_plt(plt, 'black')
-    
+    print('2')
 
    
     mut_act = module_name.Activation(channel_name = channel_name)
+    
     set_param(new_params, is_HMM,sim_obj = mut_act)
     mut_act.genActivation()
+    print('3')
     act_v_half_mut, act_slope_mut = mut_act.plotActivation_VGnorm_plt(plt, 'red')
-
+    print('4')
     ############################################################################################################
     figures.append(plt.figure())
     plt.xlabel('Voltage $(mV)$')
@@ -169,11 +172,15 @@ def make_act_plots(new_params, mutant_name, mutant_protocol_csv_name, param_valu
     peak_amp_dict = read_peak_amp_dict()
     
     figures.append(plt.figure())
-    goal_dict = read_mutant_protocols(mutant_protocol_csv_name, mutant_name)
-    plt.text(0.4,0.9,"(actual, goal)")
-    plt.text(0.1,0.7,"activation v half: " + str((act_v_half_mut - act_v_half_wt , goal_dict['dv_half_act'])))
-    plt.text(0.1,0.5,"activation slope: " + str((act_slope_mut/act_slope_wt , goal_dict['gv_slope']/100)))
-    plt.text(0.1,0.3,"peak amp: " + str((mut_peak_amp/wt_peak_amp , peak_amp_dict[mutant_name])))
+    if mutant_protocol_csv_name is not None:
+        goal_dict = read_mutant_protocols(mutant_protocol_csv_name, mutant_name)
+        plt.text(0.4,0.9,"(actual, goal)")
+        plt.text(0.1,0.7,"activation v half: " + str((act_v_half_mut - act_v_half_wt , goal_dict['dv_half_act'])))
+        plt.text(0.1,0.5,"activation slope: " + str((act_slope_mut/act_slope_wt , goal_dict['gv_slope']/100)))
+        plt.text(0.1,0.3,"peak amp: " + str((mut_peak_amp/wt_peak_amp , peak_amp_dict[mutant_name])))
+        print("(actual, goal)")
+        print("activation v half: " + str((act_v_half_mut - act_v_half_wt , goal_dict['dv_half_act'])))
+        print("activation slope: " + str((act_slope_mut/act_slope_wt , goal_dict['gv_slope']/100)))
 
     
 
@@ -184,9 +191,7 @@ def make_act_plots(new_params, mutant_name, mutant_protocol_csv_name, param_valu
 
     ############################################################################################################
     
-    print("(actual, goal)")
-    print("activation v half: " + str((act_v_half_mut - act_v_half_wt , goal_dict['dv_half_act'])))
-    print("activation slope: " + str((act_slope_mut/act_slope_wt , goal_dict['gv_slope']/100)))
+    
 
 
 def make_inact_plots(new_params, mutant_name, mutant_protocol_csv_name, param_values_wt, filename, is_HMM, channel_name):
@@ -274,12 +279,13 @@ def make_inact_plots(new_params, mutant_name, mutant_protocol_csv_name, param_va
 
     
     figures.append(plt.figure())
-    goal_dict = read_mutant_protocols(mutant_protocol_csv_name, mutant_name)
-    plt.text(0.4,0.9,"(actual, goal)")
-    plt.text(0.1,0.7,"tau: " + str((mut_tau/wt_tau , goal_dict['tau0']/100)))
-    plt.text(0.1,0.5,"persistent current: " + str((mut_per_cur/wt_per_cur, goal_dict['persistent']/100)))
-    plt.text(0.1,0.3,"inactivation v half: " + str((inact_v_half_mut - inact_v_half_wt , goal_dict['dv_half_ssi'])))
-    plt.text(0.1,0.1,"inactivation slope: " + str((inact_slope_mut/inact_slope_wt , goal_dict['ssi_slope']/100)))
+    if mutant_protocol_csv_name is not None:
+        goal_dict = read_mutant_protocols(mutant_protocol_csv_name, mutant_name)
+        plt.text(0.4,0.9,"(actual, goal)")
+        plt.text(0.1,0.7,"tau: " + str((mut_tau/wt_tau , goal_dict['tau0']/100)))
+        plt.text(0.1,0.5,"persistent current: " + str((mut_per_cur/wt_per_cur, goal_dict['persistent']/100)))
+        plt.text(0.1,0.3,"inactivation v half: " + str((inact_v_half_mut - inact_v_half_wt , goal_dict['dv_half_ssi'])))
+        plt.text(0.1,0.1,"inactivation slope: " + str((inact_slope_mut/inact_slope_wt , goal_dict['ssi_slope']/100)))
     plt.axis('off')
     for fig in figures: ## will open an empty extra figure :(
         pdf.savefig( fig )

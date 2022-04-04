@@ -1,0 +1,11 @@
+./drive.sh: line 5: shifter: command not found
+./drive.sh: line 6: nrnivmodl: command not found
+Keyring is skipped due to an exception: org.freedesktop.DBus.Error.FileNotFound: Failed to connect to socket /run/user/71705/bus: No such file or directory
+Keyring is skipped due to an exception: org.freedesktop.DBus.Error.FileNotFound: Failed to connect to socket /run/user/71705/bus: No such file or directory
+Keyring is skipped due to an exception: org.freedesktop.DBus.Error.FileNotFound: Failed to connect to socket /run/user/71705/bus: No such file or directory
+Traceback (most recent call last):
+  File "//global/homes/r/roybens/SimulatingVariants/Optimization_HHtoHMM.py", line 1, in <module>
+    import neuron
+ModuleNotFoundError: No module named 'neuron'
+srun: error: nid01029: task 0: Exited with exit code 1
+srun: launch/slurm: _step_signal: Terminating StepId=56653617.0
