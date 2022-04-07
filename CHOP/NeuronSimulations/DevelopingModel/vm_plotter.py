@@ -6,7 +6,7 @@ my_dpi = 96
 plt.rcParams['axes.spines.right'] = False
 plt.rcParams['axes.spines.top'] = False
 plt.rcParams['font.sans-serif'] = "Arial"
-plt.rcParams['font.family'] = "sans-serif"
+plt.rcParams['font.family'] = "Arial"
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 tick_major = 6
@@ -56,5 +56,6 @@ def plot_volts(volts, title_volts, axs = None, file_path_to_save=None,times=def_
     #plt.legend(bbox_to_anchor=(1.04,1), loc="upper left")
     #plt.tight_layout(pad=1)
     if file_path_to_save:
-        plt.savefig(file_path_to_save+'.pdf', format='pdf', dpi=my_dpi, bbox_inches="tight")
+        fig = axs.get_figure()
+        fig.savefig(file_path_to_save+'.pdf', format='pdf', dpi=my_dpi, bbox_inches="tight")
     return axs

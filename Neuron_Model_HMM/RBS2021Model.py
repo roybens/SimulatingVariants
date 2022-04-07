@@ -184,7 +184,7 @@ def run_model(start_Vm = -72):
         I['Na'][i] = h.cell.soma[0](0.5).ina
         I['Ca'][i] = h.cell.soma[0](0.5).ica
         I['K'][i] = h.cell.soma[0](0.5).ik
-        I['INa12'][i] = h.cell.soma[0].gna_na12
+        #I['INa12'][i] = h.cell.soma[0].gna_na12
         stim[i] = h.st.amp 
         t[i] = i*h.dt / 1000
         h.fadvance()
@@ -193,29 +193,31 @@ def run_model(start_Vm = -72):
 fig,ficurveax = plt.subplots(1,1)
 init_settings()
 h.working()
-mechs = ['na16','na16mut']
+mechs = ['na16']
+update_gbar(mechs,0,gbar_name = 'gbar')
+mechs = ['na16mut']
 WT_fn = './params/na16WT.txt'
 update_mechs_props(WT_fn,mechs)
+
+update_gbar(mechs,200,gbar_name = 'gbar')
 
 
 #mechs = ['na12','na12mut']
 #WT_fn = './params/na12WT.txt'
 #update_mechs_props(WT_fn,mechs)
-init_settings()
-h.working()
 #vshift_values = [-30,60]
 
 #explore_param(mechs,'vShift',vshift_values,False)
 #explore_param(mechs,'vShift_inact',vshift_values,False)
 #mechs = ['na12','na12mut','na16','na16mut']
 #update_gbar(mechs,10000,gbar_name = 'gbar')
-init_stim(amp=5)
+init_stim(amp=0.75)
 Vm, I, t, stim = run_model()
 plot_stim_volts_pair(Vm, 'Step Stim 200pA', file_path_to_save='./Plots/WTHMM',times=t)
-fig,ax = plt.subplots(1,1)
-ax.plot(t,I['INa12'],'black')
+#fig,ax = plt.subplots(1,1)
+#ax.plot(t,I['INa12'],'black')
 #ax.plot(t,I['Na'],'red')
-fig.savefig('./Plots/WTIna.pdf')
+#fig.savefig('./Plots/WTIna.pdf')
 
 
 
