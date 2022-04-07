@@ -139,7 +139,10 @@ class Activation:
         dens = 0
         self.f3cl.amp[1] = v_cl  # mV
         for _ in self.ntrials:
+            print('ntrials: ' + str(self.ntrials))
             while h.t < h.tstop:  # runs a single trace, calculates peak current
+                print('h.t: ' + str(h.t))
+                print('h.tstop: ' + str(h.tstop))
                 dens = self.f3cl.i / self.soma(0.5).area() * 100.0 - self.soma(
                     0.5).i_cap  # clamping current in mA/cm2, for each dt
                 # append data

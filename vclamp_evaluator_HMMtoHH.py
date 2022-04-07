@@ -12,6 +12,7 @@ import matplotlib.pyplot as plt
 import generalized_genSim_shorten_time_HMM as ggsdHMM
 import generalized_genSim_shorten_time as ggsd
 import eval_helper_na12mut as ehn
+import eval_helper_na12mut8st as ehn8
 
 
 class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
@@ -98,9 +99,9 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         # gv_slope, v_half_act, top, bottom = (1, 1, 1, 1)
         # ssi_slope, v_half_inact, top, bottom = (1, 1, 1, 1)
         # y0, plateau, percent_fast, k_fast, k_slow = (1, 1, 1, 1, 1)
-        tau0 = ehn.find_tau0()
-        peak_amp = ehn.find_peak_amp()
-        time_to_peak = ehn.find_time_to_peak()
+        tau0 = ehn8.find_tau0(act_obj)
+        peak_amp = ehn8.find_peak_amp(act_obj)
+        time_to_peak = ehn8.find_time_to_peak(act_obj)
         # Ramp Protocol
         # ramp = ggsdHMM.Ramp(channel_name=self.channel_name)
         # ramp_area = ramp.areaUnderCurve

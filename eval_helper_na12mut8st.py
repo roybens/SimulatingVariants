@@ -585,7 +585,7 @@ def scale_params_dict(down, params_arr):
     return new_params
 
 
-def find_tau0(upper = 700, make_plot = False, color = 'red'):
+def find_tau0(act_obj, upper = 700, make_plot = False, color = 'red'):
     """
     returns the tau 0 value, gieven that the NEURON model already has parameters properly set
     """
@@ -594,17 +594,16 @@ def find_tau0(upper = 700, make_plot = False, color = 'red'):
         return a + b * np.exp(-1 * c * x)
     def one_phase(self, x, y0, plateau, k): 
         y0 + (plateau - y0) * (1 - np.exp(-k * x))
-    act = ggsdHMM.Activation(channel_name = 'na12mut8st')
-    act.clamp_at_volt(0)
-    starting_index = list(act.i_vec).index(act.find_ipeaks_with_index()[1])
+    act_obj.clamp_at_volt(0)
+    starting_index = list(act_obj.i_vec).index(act_obj.find_ipeaks_with_index()[1])
     
-    t_vecc = act.t_vec[starting_index:upper]
-    i_vecc = act.i_vec[starting_index:upper]
+    t_vecc = act_obj.t_vec[starting_index:upper]
+    i_vecc = act_obj.i_vec[starting_index:upper]
     popt, pcov = optimize.curve_fit(fit_expon,t_vecc,i_vecc, method = 'dogbox')
     
     if make_plot:
-        fitted_i = fit_expon(act.t_vec[starting_index:upper],popt[0],popt[1],popt[2])
-        plt.plot(act.t_vec[starting_index:upper], fitted_i, c=color)
+        fitted_i = fit_expon(act_obj.t_vec[starting_index:upper],popt[0],popt[1],popt[2])
+        plt.plot(act_obj.t_vec[starting_index:upper], fitted_i, c=color)
         plt.show()
     
     tau = 1/popt[2]
@@ -612,17 +611,15 @@ def find_tau0(upper = 700, make_plot = False, color = 'red'):
     # to account for the second and millisecond difference, we multiply tau by 1000 for now
     return tau
 
-def find_peak_amp():
-    act = ggsdHMM.Activation(channel_name = 'na12mut8st')
-    act.clamp_at_volt(0)
+def find_peak_amp(act_obj):
+    act_obj.clamp_at_volt(0)
     return act.ipeak_vec[0]
 
-def find_time_to_peak():
-    act = ggsdHMM.Activation(channel_name = 'na12mut8st')
-    act.clamp_at_volt(0)
-    peak = act.ipeak_vec[0]
-    i_list = list(act.i_vec)
-    times = list(act.t_vec)
+def find_time_to_peak(act_obj):
+    act_obj.clamp_at_volt(0)
+    peak = act_obj.ipeak_vec[0]
+    i_list = list(act_obj.i_vec)
+    times = list(act_obj.t_vec)
     return times[i_list.index(peak)]
 
 def find_persistent_current():

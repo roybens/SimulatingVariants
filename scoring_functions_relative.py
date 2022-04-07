@@ -23,22 +23,11 @@ class Score_Function:
         #self.tau_slow_diff = diff_dict['tau_slow']
         #self.percent_fast_diff = diff_dict['percent_fast']
         # self.udb20_diff = diff_dict['udb20']
-        #self.tau0_diff = diff_dict['tau0']
+        self.tau0_diff = diff_dict['tau0']
         # self.ramp_diff = diff_dict['ramp']
         # self.persistent_diff = diff_dict['persistent']
-
-        self.v_half_act_wild = wild_data['v_half_act']
-        self.gv_slope_wild = wild_data['gv_slope']
-        self.v_half_ssi_wild = wild_data['v_half_ssi']
-        self.ssi_slope_wild = wild_data['ssi_slope']
-        #self.tau_fast_wild = wild_data['tau_fast']
-        #self.tau_slow_wild = wild_data['tau_slow']
-        #self.percent_fast_wild = wild_data['percent_fast']
-        # self.udb20_wild = wild_data['udb20']
-        # self.tau0_wild = wild_data['tau0']
-        # self.ramp_wild = wild_data['ramp']
-        # self.persistent_wild = wild_data['persistent']
-        
+        self.peak_amp_wild = wild_data['peak_amp']
+        self.time_to_peak_wild = wild_data['ttp'] 
         self.channel_name = channel_name
 
 
@@ -77,11 +66,17 @@ class Score_Function:
         if 'percent_fast' in objectives:
             percent_fast_err = self.percent_fast(self.percent_fast_diff, percent_fast)
             errors.append(percent_fast_err)
+        if 'ttp' in objectives:
+            ttp_err = self.calc_ttp_error(act_obj, True)
+            errors.append(ttp_err)
+        if 'peak_amp' in objectives:
+            peak_amp_err = self.calc_peak_amp_error(act_obj, True)
+            errors.append(peak_amp_err)
         if 'udb20' in objectives:
             udb20_err = 0
             errors.append(udb20_err)
         if 'tau0' in objectives:
-            tau0_err = self.tau0(self.tau0_diff, tau0)
+            tau0_err = self.calc_tau0_err(act_obj, True)
             errors.append(tau0_err)
         if 'ramp' in objectives:
             ramp_err = 0
@@ -170,16 +165,43 @@ class Score_Function:
             return 1000
 
     #def udb20(self, percent_wild):
-
-    def tau0(self, percent_wild, tau0_exp):
+    def calc_tau0_err(self, act_obj, is_HMM):
         try:
-            tau0_baseline = float(self.tau0_wild)*float(percent_wild) / 100
-            result = ((float(tau0_exp) - tau0_baseline)/tau0_baseline)**2
-            if math.isnan(result):
+            tau0 = cf.calc_tau0_obj(act_obj, is_HMM)
+            tau0_wild = float(self.tau0_wild)*float(self.tau0_diff)/100
+            error = (tau0 - tau0_wild)**2
+            # print('Tau error: ' + str((tau0 - tau0_wild)**2))
+            if np.isnan(error):
                 return 1000
-            return result
+            return error
         except:
-            print('tau0_error')
+            print('Error when calculating tau0')
+            return 1000
+
+    def calc_peak_amp_err(self,act_obj, is_HMM):
+        try:
+            peak_amp = cf.calc_peak_amp_obj(act_obj, is_HMM)
+            peak_amp_wild = float(self.peak_amp_wild)
+            error = (peak_amp - peak_amp_wild)**2
+            # print('peak_amp error: ' + str((peak_amp - peak_amp_wild)**2))
+            if np.isnan(error):
+                return 1000
+            return error
+        except:
+            print('Error when calculating peak_amp')
+            return 1000
+
+    def calc_ttp_err(self, act_obj, is_HMM):
+        try:
+            ttp = cf.calc_time_to_peak_obj(act_obj, is_HMM)
+            ttp_wild = float(self.time_to_peak_wild)
+            error = (ttp - ttp_wild)**2
+            if np.isnan(error):
+                return 1000
+            # print('ttp error: ' + str((ttp - ttp_wild)**2))
+            return error
+        except:
+            print('Error when calculating time-to-peak')
             return 1000
 
 
