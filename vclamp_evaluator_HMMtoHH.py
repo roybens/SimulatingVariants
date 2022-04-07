@@ -91,16 +91,16 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         # Create genSim objects
         act_obj = ggsdHMM.Activation(channel_name=self.channel_name_HH)
         inact_obj = ggsdHMM.Inactivation(channel_name=self.channel_name_HH)
-        recov_obj = ggsdHMM.RFI(channel_name=self.channel_name_HH)
+        #recov_obj = ggsdHMM.RFI(channel_name=self.channel_name_HH)
         gv_slope, v_half_act, top, bottom = cf.calc_act_obj(act_obj)
         ssi_slope, v_half_inact, top, bottom = cf.calc_inact_obj(inact_obj)
-        y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(recov_obj)
+        #y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(recov_obj)
         # gv_slope, v_half_act, top, bottom = (1, 1, 1, 1)
         # ssi_slope, v_half_inact, top, bottom = (1, 1, 1, 1)
         # y0, plateau, percent_fast, k_fast, k_slow = (1, 1, 1, 1, 1)
-        # tau0 = ehn.find_tau0()
-        # peak_amp = ehn.find_peak_amp()
-        # time_to_peak = ehn.find_time_to_peak()
+        tau0 = ehn.find_tau0()
+        peak_amp = ehn.find_peak_amp()
+        time_to_peak = ehn.find_time_to_peak()
         # Ramp Protocol
         # ramp = ggsdHMM.Ramp(channel_name=self.channel_name)
         # ramp_area = ramp.areaUnderCurve
@@ -110,17 +110,17 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         wild_data['gv_slope'] = gv_slope
         wild_data['v_half_ssi'] = v_half_inact
         wild_data['ssi_slope'] = ssi_slope
-        wild_data['tau_fast'] = 1 / k_fast
-        wild_data['tau_slow'] = 1 / k_slow
-        wild_data['percent_fast'] = percent_fast
+        #wild_data['tau_fast'] = 1 / k_fast
+        #wild_data['tau_slow'] = 1 / k_slow
+        #wild_data['percent_fast'] = percent_fast
         # wild_data['udb20'] = 0
-        # wild_data['tau0'] = tau0
+        wild_data['tau0'] = tau0
         # wild_data['ramp'] = ramp_area
         # wild_data['persistent'] = persistent_curr
         
         # Some extra objectives added last minute, so this is a bit hard-coded
-        # wild_data['peak_amp'] = peak_amp
-        # wild_data['time_to_peak'] = time_to_peak
+        wild_data['peak_amp'] = peak_amp
+        wild_data['time_to_peak'] = time_to_peak
         print(wild_data)
         return wild_data
 
@@ -157,7 +157,7 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         recov_obj = None
         eh.change_params(param_values, scaled=False, is_HMM=True, sim_obj=act_obj)
         eh.change_params(param_values, scaled=False, is_HMM=True, sim_obj=inact_obj)
-        score = self.score_calculator.total_rmse(act_obj, inact_obj, recov_obj, is_HMM=True, objectives=self.objective_names)
+        score = self.score_calculator.total_rmse(act_obj, inact_obj, None, is_HMM=True, objectives=self.objective_names)
         # print((param_values, score))
         return score
     

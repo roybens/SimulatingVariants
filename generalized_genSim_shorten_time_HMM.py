@@ -252,6 +252,28 @@ class Activation:
 
         return self.gnorm_vec, self.v_vec, self.all_is
 
+    def get_Tau_0mV(self,upper = 700):
+        def fit_expon(x, a, b, c):
+            return a + b * np.exp(-1 * c * x)
+        
+        def one_phase(x, y0, plateau, k):
+            return y0 + (plateau - y0) * (1 - np.exp(-k * x))
+        self.clamp_at_volt(0)
+        starting_index = list(self.i_vec).index(self.find_ipeaks_with_index()[1])
+        
+        t_vecc = act.t_vec[starting_index:upper]
+        i_vecc = act.i_vec[starting_index:upper]
+        try:
+            popt, pcov = optimize.curve_fit(fit_expon,t_vecc,i_vecc, method = 'dogbox')
+            fit = 'exp'
+            tau = 1/popt[2]
+            fitted_i = fit_expon(act.t_vec[starting_index:upper],popt[0],popt[1],popt[2])
+        except:
+            popt, pcov = optimize.curve_fit(one_phase,t_vecc,i_vecc, method = 'dogbox')
+            fit = 'one_phase'
+            tau = 1/popt[2]
+            fitted_i = one_phase(act.t_vec[starting_index:upper],popt[0],popt[1],popt[2])
+        return tau
     def plotActivation_VGnorm(self):
         """
         Saves activation plot as PGN file.

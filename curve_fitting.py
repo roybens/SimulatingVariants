@@ -52,7 +52,9 @@ def calc_act_obj(act_obj):
     gv_slope, v_half, top, bottom = popt
     return gv_slope, v_half, top, bottom
 
-
+def get_tau0mv(act_obj):
+    act_obj.get_Tau_0mV(act_obj)
+    return tau
 def calc_inact_obj(inact_obj):
     try:
         inorm_vec, v_vec, all_is = inact_obj.genInactivation()
@@ -67,6 +69,7 @@ def calc_inact_obj(inact_obj):
     ssi_slope, v_half, top, bottom = popt
     # taus, tau_sweeps, tau0 = ggsd.find_tau_inact(all_is)
     return ssi_slope, v_half, top, bottom
+
 
 def calc_recov_obj(recov_obj):
     try:

@@ -73,7 +73,7 @@ def find_peak_amp(channel_name, is_HMM):
     act.clamp_at_volt(0)
     return act.ipeak_vec[0]
 
-def make_act_plots(new_params, mutant_name, mutant_protocol_csv_name, param_values_wt, filename, is_HMM, channel_name):
+def make_act_plots(new_params, mutant_name, mutant_protocol_csv_name, param_values_wt, filename, is_HMM, channel_name,channel_name_HH = None):
     if is_HMM:
         module_name = ggsdHMM
     else:
@@ -87,9 +87,9 @@ def make_act_plots(new_params, mutant_name, mutant_protocol_csv_name, param_valu
     plt.xlabel('Voltage $(mV)$')
     plt.ylabel('Normalized conductance')
     plt.title(f'Activation: {mutant_name}')
-
-   
     wt_act = module_name.Activation(channel_name = channel_name)
+    if channel_name_HH:
+        wt_act = ggsd.Activation(channel_name = channel_name_HH)
     if param_values_wt is not None:
         set_param(param_values_wt, is_HMM,sim_obj = wt_act)
     wt_act.genActivation()
@@ -194,7 +194,7 @@ def make_act_plots(new_params, mutant_name, mutant_protocol_csv_name, param_valu
     
 
 
-def make_inact_plots(new_params, mutant_name, mutant_protocol_csv_name, param_values_wt, filename, is_HMM, channel_name):
+def make_inact_plots(new_params, mutant_name, mutant_protocol_csv_name, param_values_wt, filename, is_HMM, channel_name,channel_name_HH = None):
     pdf = matplotlib.backends.backend_pdf.PdfPages(filename)
     figures = []
     
@@ -210,8 +210,9 @@ def make_inact_plots(new_params, mutant_name, mutant_protocol_csv_name, param_va
     plt.xlabel('Voltage $(mV)$')
     plt.ylabel('Normalized current')
     plt.title(f'Inactivation: {mutant_name}')
-
     wt_inact = module_name.Inactivation(channel_name = channel_name)
+    if channel_name_HH:
+        wt_inact = ggsd.Inactivation(channel_name = channel_name_HH)
     if param_values_wt is not None:
         set_param(param_values_wt, is_HMM,sim_obj = wt_inact)
     wt_inact.genInactivation()
