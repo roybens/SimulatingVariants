@@ -1,0 +1,9 @@
+
+./na12.c: ../na12.mod
+	@printf " -> $(C_GREEN)NMODL$(C_RESET) $<\n"
+	(cd ".."; MODLUNIT=$(NRNUNITS) $(NOCMODL) na12.mod -o "/global/homes/r/roybens/SimulatingVariants/CHOP/files_for_optimization/x86_64")
+
+./na12.o: ./na12.c
+	@printf " -> $(C_GREEN)Compiling$(C_RESET) $<\n"
+	$(COMPILE) -I".." $(INCLUDES) -fPIC -c $< -o $@
+
