@@ -125,6 +125,9 @@ class Activation:
         self.ipeak_vec.append(self.find_ipeaks())
 
     def clamp_at_volt(self, v_cl):
+        self.t_vec = []
+        self.v_vec_t = []
+        self.i_vec = []
         """ Runs a trace and calculates peak currents.
         Args:
             v_cl (int): voltage to run
@@ -139,10 +142,10 @@ class Activation:
         dens = 0
         self.f3cl.amp[1] = v_cl  # mV
         for _ in self.ntrials:
-            print('ntrials: ' + str(self.ntrials))
+            #print('ntrials: ' + str(self.ntrials))
             while h.t < h.tstop:  # runs a single trace, calculates peak current
-                print('h.t: ' + str(h.t))
-                print('h.tstop: ' + str(h.tstop))
+                #print('h.t: ' + str(h.t))
+                #print('h.tstop: ' + str(h.tstop))
                 dens = self.f3cl.i / self.soma(0.5).area() * 100.0 - self.soma(
                     0.5).i_cap  # clamping current in mA/cm2, for each dt
                 # append data
@@ -334,7 +337,7 @@ class Activation:
 
     def plotActivation_TCurrDensityRelation_plt(self,plt,color):
         curr = np.array(self.all_is)
-        mask = np.where(np.logical_or(self.v_vec == 0, self.v_vec == 0))
+        mask = np.where(np.logical_or(self.v_vec == 0, self.v_vec == 10))
         [plt.plot(self.t_vec[190:300], curr[i][190:300], c=color) for i in np.arange(len(curr))[mask]]
         
     def plotActivation_allTraces(self):
@@ -631,7 +634,7 @@ class Inactivation:
             
         def fit_expon(x, a, b, c):
             return a + b * np.exp(-1 * c * x)
-        act = ggsd.Activation(channel_name = 'na12')
+        act = ggsd.Activation(channel_name = self.channel_name)
         act.clamp_at_volt(0)
         starting_index = list(act.i_vec).index(act.find_ipeaks_with_index()[1])
         
@@ -712,7 +715,7 @@ class Inactivation:
         # vmax = max(ys) - min(ys)  # get diff of max and min voltage
         # vt = min(ys) + .37 * vmax  # get vmax*1/e
         # tau = popt[2]
-        act = ggsd.Activation(channel_name = 'na12')
+        act = ggsd.Activation(channel_name = self.channel_name)
         act.clamp_at_volt(0)
         starting_index = list(act.i_vec).index(act.find_ipeaks_with_index()[1])
         

@@ -27,7 +27,7 @@ class Score_Function:
         # self.ramp_diff = diff_dict['ramp']
         # self.persistent_diff = diff_dict['persistent']
         self.peak_amp_wild = wild_data['peak_amp']
-        self.time_to_peak_wild = wild_data['ttp'] 
+        self.time_to_peak_wild = wild_data['time_to_peak'] 
         self.channel_name = channel_name
 
 
@@ -67,7 +67,7 @@ class Score_Function:
             percent_fast_err = self.percent_fast(self.percent_fast_diff, percent_fast)
             errors.append(percent_fast_err)
         if 'ttp' in objectives:
-            ttp_err = self.calc_ttp_error(act_obj, True)
+            ttp_err = self.calc_ttp_err(act_obj, True)
             errors.append(ttp_err)
         if 'peak_amp' in objectives:
             peak_amp_err = self.calc_peak_amp_error(act_obj, True)
@@ -95,7 +95,7 @@ class Score_Function:
                 return 1000
             return result
         except: 
-            print('v_half_act_error')
+            #print('v_half_act_error')
             return 1000
 
     def gv_slope(self, percent_wild, gv_slope):
@@ -106,7 +106,7 @@ class Score_Function:
                 return 1000
             return result
         except:
-            print('gv_slope_error')
+           # print('gv_slope_error')
             return 1000
 
     def dv_half_ssi(self, plus_minus_wild, v_half_ssi):
@@ -117,7 +117,7 @@ class Score_Function:
                 return 1000
             return result
         except:
-            print('v_half_ssi_error')
+            #print('v_half_ssi_error')
             return 1000
 
     def ssi_slope(self, percent_wild, ssi_slope_exp):
@@ -128,7 +128,7 @@ class Score_Function:
                 return 1000
             return result
         except:
-            print('ssi_slope_error')
+            #print('ssi_slope_error')
             return 1000
 
     def tau_fast(self, percent_wild, tau_fast_exp):
@@ -139,7 +139,7 @@ class Score_Function:
                 return 1000
             return result
         except:
-            print('tau_fast_error')
+            #print('tau_fast_error')
             return 1000
 
     def tau_slow(self, percent_wild, tau_slow_exp):
@@ -150,7 +150,7 @@ class Score_Function:
                 return 1000
             return result
         except:
-            print('tau_slow_error')
+            #print('tau_slow_error')
             return 1000
 
     def percent_fast(self, percent_wild, percent_fast_exp):
@@ -161,7 +161,7 @@ class Score_Function:
                 return 1000
             return result
         except:
-            print('percent_fast_error')
+            #print('percent_fast_error')
             return 1000
 
     #def udb20(self, percent_wild):
@@ -175,7 +175,7 @@ class Score_Function:
                 return 1000
             return error
         except:
-            print('Error when calculating tau0')
+            #print('Error when calculating tau0')
             return 1000
 
     def calc_peak_amp_err(self,act_obj, is_HMM):
@@ -188,7 +188,7 @@ class Score_Function:
                 return 1000
             return error
         except:
-            print('Error when calculating peak_amp')
+            #print('Error when calculating peak_amp')
             return 1000
 
     def calc_ttp_err(self, act_obj, is_HMM):
@@ -201,7 +201,7 @@ class Score_Function:
             # print('ttp error: ' + str((ttp - ttp_wild)**2))
             return error
         except:
-            print('Error when calculating time-to-peak')
+            #print('Error when calculating time-to-peak')
             return 1000
 
 
