@@ -123,8 +123,10 @@ class Activation:
                 h.fadvance()
                 pre_i = dens
 
-        # updates the vectors at the end of the run
-        self.ipeak_vec.append(curr_tr)
+                # find i peak of trace
+        peak,ttp = self.find_ipeaks()
+        self.ipeak_vec.append(peak)
+        self.ttp_vec.append(ttp)
 
     # Inserted from generalized_genSim_shorten_time.py
     def clamp_at_volt(self, v_cl):
@@ -179,7 +181,7 @@ class Activation:
         else:
             curr_tr = curr_min
             curr_index = np.argmin(self.i_vec)
-        return curr_tr, self.t_vec(curr_index)
+        return curr_tr, self.t_vec[curr_index]
     
     # Inserted from generalized_genSim_shorten_time.py
     def find_ipeaks_with_index(self):

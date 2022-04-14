@@ -175,11 +175,11 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
             errors.append(tau0_error*100)
         if 'peak_current' in self.objective_names:
             peak_amp = ehn.find_peak_amp(act_obj)
-            peak_amp_error = (peak_amp - self.wild_data['peak_amp'])**2
+            peak_amp_errors = np.sum([(peak_amp[i] - self.wild_data['peak_amp'][i])**2 for i in range(len(peak_amp))])
             errors.append(peak_amp_error)
         if 'ttp' in self.objective_names:
             time_to_peak = ehn.find_time_to_peak(act_obj)
-            time_to_peak_error = (time_to_peak - self.wild_data['time_to_peak'])**2
+            time_to_peak_error = np.sum([(time_to_peak[i] - self.wild_data['time_to_peak'][i])**2 for i in range(len(peak_amp))])
             errors.append(time_to_peak_error*100)
         print(errors)
         print(self.objectives)

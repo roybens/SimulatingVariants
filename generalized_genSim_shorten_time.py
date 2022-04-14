@@ -89,6 +89,7 @@ class Activation:
         self.v_vec_t = []  # vector for voltage as function of time
         self.i_vec = []  # vector for current
         self.ipeak_vec = []  # vector for peak current
+        self.ttp_vec = [] # vector for the time to peak
         self.gnorm_vec = []  # vector for normalized conductance
         self.all_is = []  # all currents
         self.all_v_vec_t = []
@@ -120,9 +121,11 @@ class Activation:
                 self.i_vec.append(dens)
                 # advance
                 h.fadvance()
-
         # find i peak of trace
-        self.ipeak_vec.append(self.find_ipeaks())
+        peak,ttp = self.find_ipeaks()
+        self.ipeak_vec.append(peak)
+        self.ttp_vec.append(ttp)
+        
 
     def clamp_at_volt(self, v_cl):
         self.t_vec = []
@@ -156,7 +159,9 @@ class Activation:
                 h.fadvance()
 
         # find i peak of trace
-        self.ipeak_vec.append(self.find_ipeaks())
+        peak,ttp = self.find_ipeaks()
+        self.ipeak_vec.append(peak)
+        self.ttp_vec.append(ttp)
 
     def find_ipeaks(self):
         """
@@ -172,9 +177,11 @@ class Activation:
         curr_min = np.min(i_slice)
         if np.abs(curr_max) > np.abs(curr_min):
             curr_tr = curr_max
+            curr_index = np.argmax(self.i_vec)
         else:
             curr_tr = curr_min
-        return curr_tr
+            curr_index = np.argmin(self.i_vec)
+        return curr_tr, self.t_vec[curr_index]
     
     def find_ipeaks_with_index(self):
         """

@@ -612,15 +612,27 @@ def find_tau0(act_obj, upper = 700, make_plot = False, color = 'red'):
     # to account for the second and millisecond difference, we multiply tau by 1000 for now
     return tau
 
-def find_peak_amp(act_obj):
-    act_obj.clamp_at_volt(0)
-    return np.min(act_obj.i_vec)
+def find_peak_amp(act_obj,ranges = None):
+    if not act_obj.ipeak_vec:
+        act_obj.genActivation()
+    if ranges is None:
+        return act_obj.ipeak_vec
+    else:
+        return act_obj.ipeak_vec[ranges[0]:ranges[1]]
 
-def find_time_to_peak(act_obj):
-    act_obj.clamp_at_volt(0)
-    peak_ind = np.argmin(act_obj.i_vec)
-    times = list(act_obj.t_vec)
-    return times[peak_ind]
+
+def find_time_to_peak(act_obj,ranges = None):
+    if not act_obj.ttp_vec:
+        act_obj.genActivation()
+    if ranges is None:
+        return act_obj.ttp_vec
+    else:
+        return act_obj.ttp_vec[ranges[0]:ranges[1]]
+        
+    #act_obj.clamp_at_volt(0)
+    #peak_ind = np.argmin(act_obj.i_vec)
+    #times = list(act_obj.t_vec)
+    #return times[peak_ind]
 
 def find_persistent_current():
     """
