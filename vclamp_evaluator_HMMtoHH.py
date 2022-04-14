@@ -27,7 +27,7 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
     '''
 
 
-    def __init__(self, params_file, mutant, channel_name_HMM, channel_name_HH, objective_names=['inact', 'act', 'recov']):
+    def __init__(self, params_file, mutant, channel_name_HMM, channel_name_HH, objective_names=[]):
         '''
         Constructor
 
