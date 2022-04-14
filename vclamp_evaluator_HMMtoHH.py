@@ -105,8 +105,8 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         # ssi_slope, v_half_inact, top, bottom = (1, 1, 1, 1)
         # y0, plateau, percent_fast, k_fast, k_slow = (1, 1, 1, 1, 1)
         tau0 = ehn.find_tau0(act_obj)
-        peak_amp = ehn.find_peak_amp(act_obj)
-        time_to_peak = ehn.find_time_to_peak(act_obj)
+        peak_amp = ehn.find_peak_amp(act_obj,[14,33])
+        time_to_peak = ehn.find_time_to_peak(act_obj,[14,33])
         # Ramp Protocol
         # ramp = ggsdHMM.Ramp(channel_name=self.channel_name)
         # ramp_area = ramp.areaUnderCurve
@@ -163,6 +163,14 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         if 'ssi_slope' in self.objectives:
             ssi_slope_error = (ssi_slope - self.wild_data['ssi_slope'])**2
             errors.append(ssi_slope_error)
+        if 'peak_current' in self.objective_names:
+            peak_amp = ehn.find_peak_amp(act_obj,[14,33])
+            peak_amp_errors = np.sum([(peak_amp[i] - self.wild_data['peak_amp'][i])**2 for i in range(len(peak_amp))])
+            errors.append(peak_amp_errors)
+        if 'ttp' in self.objective_names:
+            time_to_peak = ehn.find_time_to_peak(act_obj,[14,33])
+            time_to_peak_error = np.sum([(time_to_peak[i] - self.wild_data['time_to_peak'][i])**2 for i in range(len(peak_amp))])
+            errors.append(time_to_peak_error)
         if 'tau0' in self.objective_names:
             act_obj = ggsdHMM.Activation(channel_name=self.channel_name_HMM)
             eh.change_params(param_values, scaled=False, is_HMM=True, sim_obj=inact_obj)
@@ -173,14 +181,7 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
                 print('tau got 1000')
                 tau0_error = 1000
             errors.append(tau0_error*100)
-        if 'peak_current' in self.objective_names:
-            peak_amp = ehn.find_peak_amp(act_obj)
-            peak_amp_errors = np.sum([(peak_amp[i] - self.wild_data['peak_amp'][i])**2 for i in range(len(peak_amp))])
-            errors.append(peak_amp_error)
-        if 'ttp' in self.objective_names:
-            time_to_peak = ehn.find_time_to_peak(act_obj)
-            time_to_peak_error = np.sum([(time_to_peak[i] - self.wild_data['time_to_peak'][i])**2 for i in range(len(peak_amp))])
-            errors.append(time_to_peak_error*100)
+        
         print(errors)
         print(self.objectives)
         #python3 Optimization_HHtoHMM_rel.pypython3 Optimization_HHtoHMM_rel.py

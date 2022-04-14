@@ -614,6 +614,7 @@ def find_tau0(act_obj, upper = 700, make_plot = False, color = 'red'):
 
 def find_peak_amp(act_obj,ranges = None):
     if not act_obj.ipeak_vec:
+        print('regen activation in peak_amp')
         act_obj.genActivation()
     if ranges is None:
         return act_obj.ipeak_vec
@@ -623,6 +624,7 @@ def find_peak_amp(act_obj,ranges = None):
 
 def find_time_to_peak(act_obj,ranges = None):
     if not act_obj.ttp_vec:
+        print('regen activation in ttp')
         act_obj.genActivation()
     if ranges is None:
         return act_obj.ttp_vec

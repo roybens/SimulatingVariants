@@ -41,7 +41,7 @@ if not os.path.exists(final_directory):
 class Activation:
     def __init__(self, soma_diam=50, soma_L=63.66198, soma_nseg=1, soma_cm=1, soma_Ra=70,
                  channel_name='na12mut', soma_ena=55, h_celsius=33, v_init=-120, h_dt=0.025, ntrials=range(30),
-                 dur=20, step=10, st_cl=-120, end_cl=40, v_cl=-120,
+                 dur=20, step=5, st_cl=-120, end_cl=40, v_cl=-120,
                  f3cl_dur0=5, f3cl_amp0=-120, f3cl_dur2=5, f3cl_amp2=-120,
                  ):
 
