@@ -42,12 +42,12 @@ def calc_act_obj(act_obj):
         # ipdb.set_trace()
         gnorm_vec, v_vec, all_is = act_obj.genActivation()
     except:
-        print('Couldn\'t generate activation data')
+        #print('Couldn\'t generate activation data')
         return (1000, 1000, 1000, 1000)
     try:
         popt, pcov = optimize.curve_fit(boltzmann, v_vec, gnorm_vec)
     except:
-        print("Couldn't fit curve to activation.")
+        #print("Couldn't fit curve to activation.")
         return (1000, 1000, 1000, 1000)
     gv_slope, v_half, top, bottom = popt
     return gv_slope, v_half, top, bottom
@@ -59,12 +59,12 @@ def calc_inact_obj(inact_obj):
     try:
         inorm_vec, v_vec, all_is = inact_obj.genInactivation()
     except:
-        print('Couldn\'t generate inactivation data')
+        #print('Couldn\'t generate inactivation data')
         return (1000, 1000, 1000, 1000)
     try:
         popt, pcov = optimize.curve_fit(boltzmann, v_vec, inorm_vec)
     except:
-        print("Couldn't fit curve to inactivation.")
+        #print("Couldn't fit curve to inactivation.")
         return (1000, 1000, 1000, 1000)
     ssi_slope, v_half, top, bottom = popt
     # taus, tau_sweeps, tau0 = ggsd.find_tau_inact(all_is)
@@ -75,13 +75,13 @@ def calc_recov_obj(recov_obj):
     try:
         rec_inact_tau_vec, recov_curves, times = recov_obj.genRecInactTau()
     except:
-        print('Couldn\'t generate recovery data')
+        #print('Couldn\'t generate recovery data')
         return (1000, 1000, 1000, 1000, 1000)
     recov_curve = recov_obj.rec_vec
     try:
         popt, pcov = optimize.curve_fit(two_phase, np.log(times), recov_curve)
     except:
-        print("Couldn't fit curve to recovery.")
+        #print("Couldn't fit curve to recovery.")
         return (1000, 1000, 1000, 1000, 1000)
 
     y0, plateau, percent_fast, k_fast, k_slow = popt
@@ -100,7 +100,7 @@ def calc_tau0_obj(act_obj, is_HMM=False):
             tau0 = ehn8.find_tau0(act_obj)
         return tau0
     except:
-        print('Couldn\'t generate tau0 data')
+        #print('Couldn\'t generate tau0 data')
         return 1000
 
 # Technically not fitting any curves here, but Michael is placing this here for consistency until a better
@@ -113,7 +113,7 @@ def calc_peak_amp_obj(act_obj, is_HMM=False):
             peak_amp = ehn8.find_peak_amp(act_obj)
         return peak_amp
     except:
-        print('Couldn\'t generate peak_amp data')
+ #       print('Couldn\'t generate peak_amp data')
         return 1000
     
 # Technically not fitting any curves here, but Michael is placing this here for consistency until a better
@@ -126,5 +126,5 @@ def calc_time_to_peak_obj(act_obj, is_HMM=False):
             ttp = ehn8.find_time_to_peak(act_obj)            
         return ttp
     except:
-        print('Couldn\'t generate time-to-peak data')
+  #      print('Couldn\'t generate time-to-peak data')
         return 1000

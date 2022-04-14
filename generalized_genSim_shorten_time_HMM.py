@@ -84,6 +84,7 @@ class Activation:
         self.v_vec_t = []  # vector for voltage as function of time
         self.i_vec = []  # vector for current
         self.ipeak_vec = []  # vector for peak current
+        self.ttp_vec = [] # vector for the time to peak
         self.gnorm_vec = []  # vector for normalized conductance
         self.all_is = []  # all currents
         self.all_v_vec_t = []
@@ -127,6 +128,9 @@ class Activation:
 
     # Inserted from generalized_genSim_shorten_time.py
     def clamp_at_volt(self, v_cl):
+        self.t_vec = []
+        self.v_vec_t = []
+        self.i_vec = []
         """ Runs a trace and calculates peak currents.
         Args:
             v_cl (int): voltage to run
@@ -152,7 +156,9 @@ class Activation:
                 h.fadvance()
 
         # find i peak of trace
-        self.ipeak_vec.append(self.find_ipeaks())
+        peak,ttp = self.find_ipeaks()
+        self.ipeak_vec.append(peak)
+        self.ttp_vec.append(ttp)
 
     # Inserted from generalized_genSim_shorten_time.py
     def find_ipeaks(self):
@@ -169,9 +175,11 @@ class Activation:
         curr_min = np.min(i_slice)
         if np.abs(curr_max) > np.abs(curr_min):
             curr_tr = curr_max
+            curr_index = np.argmax(self.i_vec)
         else:
             curr_tr = curr_min
-        return curr_tr
+            curr_index = np.argmin(self.i_vec)
+        return curr_tr, self.t_vec(curr_index)
     
     # Inserted from generalized_genSim_shorten_time.py
     def find_ipeaks_with_index(self):
@@ -343,7 +351,7 @@ class Activation:
         
     def plotActivation_TCurrDensityRelation_plt(self,plt,color):
         curr = np.array(self.all_is)
-        mask = np.where(np.logical_or(self.v_vec == 0, self.v_vec == 0))
+        mask = np.where(np.logical_or(self.v_vec == 0, self.v_vec == 10))
         [plt.plot(self.t_vec[190:300], curr[i][190:300], c=color) for i in np.arange(len(curr))[mask]]
         
     
@@ -953,7 +961,7 @@ class RFI:
         ax.set_title('Time/Fractional recovery (P2/P1)')
         #y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(self.channel_name, is_HMM=True)
         #rec_inact_tau_vec, recov_curves, times = self.genRecInactTau()
-        print(f'{len(np.log(self.vec_pts))} {len(self.rec_vec)} {self.rec_vec}')
+        #print(f'{len(np.log(self.vec_pts))} {len(self.rec_vec)} {self.rec_vec}')
         try:
             popt, pcov = optimize.curve_fit(two_phase, np.log(self.vec_pts), self.rec_vec)
         except:

@@ -596,8 +596,8 @@ def find_tau0(act_obj, upper = 700, make_plot = False, color = 'red'):
     starting_index = list(act_obj.i_vec).index(act_obj.find_ipeaks_with_index()[1]) 
     t_vecc = act_obj.t_vec[starting_index:upper]
     i_vecc = act_obj.i_vec[starting_index:upper]
-    print(t_vecc)
-    print(i_vecc)
+    #print(t_vecc)
+    #print(i_vecc)
     # plt.scatter(t_vecc, i_vecc)
     # plt.show()
     popt, pcov = optimize.curve_fit(fit_expon,t_vecc,i_vecc, method = 'dogbox')
@@ -614,15 +614,13 @@ def find_tau0(act_obj, upper = 700, make_plot = False, color = 'red'):
 
 def find_peak_amp(act_obj):
     act_obj.clamp_at_volt(0)
-    return act_obj.ipeak_vec[0]
+    return np.min(act_obj.i_vec)
 
 def find_time_to_peak(act_obj):
-    act_obj = ggsd.Activation(channel_name = 'na12mut')
     act_obj.clamp_at_volt(0)
-    peak = act_obj.ipeak_vec[0]
-    i_list = list(act_obj.i_vec)
+    peak_ind = np.argmin(act_obj.i_vec)
     times = list(act_obj.t_vec)
-    return times[i_list.index(peak)]
+    return times[peak_ind]
 
 def find_persistent_current():
     """

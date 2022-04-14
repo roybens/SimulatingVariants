@@ -613,7 +613,7 @@ def find_tau0(act_obj, upper = 700, make_plot = False, color = 'red'):
 
 def find_peak_amp(act_obj):
     act_obj.clamp_at_volt(0)
-    return act.ipeak_vec[0]
+    return np.min(act.ipeak_vec)
 
 def find_time_to_peak(act_obj):
     act_obj.clamp_at_volt(0)

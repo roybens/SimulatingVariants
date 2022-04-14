@@ -1,6 +1,7 @@
 import generalized_genSim_shorten_time_HMM as ggsdHMM
 import matplotlib.backends.backend_pdf
 import eval_helper as eh
+import eval_helper_na12mut as ehn
 import matplotlib.pyplot as plt
 # other
 import curve_fitting as cf
@@ -63,15 +64,7 @@ def find_persistent_current(is_HMM):
     ramp.genRamp()
     return ramp.persistentCurrent()
 
-def find_peak_amp(channel_name, is_HMM):
-    if is_HMM:
-        module_name = ggsdHMM
-    else:
-        module_name = ggsd
-        
-    act = module_name.Activation(channel_name = channel_name)
-    act.clamp_at_volt(0)
-    return act.ipeak_vec[0]
+
 
 def make_act_plots(new_params, mutant_name, mutant_protocol_csv_name, param_values_wt, filename, is_HMM, channel_name,channel_name_HH = None):
     if is_HMM:
@@ -114,6 +107,8 @@ def make_act_plots(new_params, mutant_name, mutant_protocol_csv_name, param_valu
 
     
     wt_act = module_name.Activation(channel_name = channel_name)
+    if channel_name_HH:
+        wt_act = ggsd.Activation(channel_name = channel_name_HH)
     if param_values_wt is not None:
         set_param(param_values_wt, is_HMM,sim_obj = wt_act)
     wt_act.genActivation()
@@ -148,18 +143,20 @@ def make_act_plots(new_params, mutant_name, mutant_protocol_csv_name, param_valu
 
     
     wt_act = module_name.Activation(channel_name = channel_name)
+    if channel_name_HH:
+        wt_act = ggsd.Activation(channel_name = channel_name_HH)
     if param_values_wt is not None:
         set_param(param_values_wt, is_HMM,sim_obj = wt_act)
     wt_act.genActivation()
     wt_act.plotActivation_TCurrDensityRelation_plt(plt, 'black')
-    wt_peak_amp = find_peak_amp(channel_name, is_HMM)
+    wt_peak_amp = ehn.find_peak_amp(wt_act)
 
     
     mut_act = module_name.Activation(channel_name = channel_name)
     set_param(new_params, is_HMM, sim_obj = mut_act)
     mut_act.genActivation()
     mut_act.plotActivation_TCurrDensityRelation_plt(plt, 'red')
-    mut_peak_amp = find_peak_amp(channel_name, is_HMM)
+    mut_peak_amp = ehn.find_peak_amp(mut_act)
     
     
  ############################################################################################################
@@ -247,6 +244,8 @@ def make_inact_plots(new_params, mutant_name, mutant_protocol_csv_name, param_va
     plt.title(f'Inactivation: {mutant_name}')
 
     wt_inact = module_name.Inactivation(channel_name = channel_name)
+    if channel_name_HH:
+        wt_inact = ggsd.Inactivation(channel_name = channel_name_HH)
     if param_values_wt is not None:
         set_param(param_values_wt, is_HMM,sim_obj = wt_inact)
     wt_inact.genInactivation()
@@ -264,6 +263,8 @@ def make_inact_plots(new_params, mutant_name, mutant_protocol_csv_name, param_va
     plt.title(f'Inactivation Tau at 0 mV: {mutant_name}')
 
     wt_inact = module_name.Inactivation(channel_name = channel_name)
+    if channel_name_HH:
+        wt_inact = ggsd.Inactivation(channel_name = channel_name_HH)
     wt_inact.genInactivation()
     if param_values_wt is not None:
         set_param(param_values_wt, is_HMM,sim_obj = wt_inact)

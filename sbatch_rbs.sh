@@ -18,6 +18,6 @@ export OMP_PROC_BIND=spread
 
 #run the application:
 #pip install scipy
-srun -n 1 -c 64 --cpu_bind=cores ./drive.sh
+srun -n 1 -c 64 shifter python3 Optimization_HHtoHMM_rel.py
 
 
