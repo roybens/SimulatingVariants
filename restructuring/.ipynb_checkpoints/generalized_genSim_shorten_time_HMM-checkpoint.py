@@ -1,4 +1,4 @@
-""" VClamp SCN2A Variants (HMM)
+""" VClamp SCN2A Variants
  Generates simulated data for voltage-gated channel
  Hidden Markov Model
  Modified from Emilio Andreozzi "Phenomenological models of NaV1.5.
@@ -53,7 +53,12 @@ class Activation(Activation_general):
 
         for _ in self.ntrials:
             while h.t < h.tstop:  # runs a single trace, calculates peak current
-                self.update_clamp_time_step()
+                dens = self.f3cl.i / self.soma(0.5).area() * 100.0 - self.soma(
+                    0.5).i_cap  # clamping current in mA/cm2, for each dt
+
+                self.t_vec.append(h.t)
+                self.v_vec_t.append(self.soma.v)
+                self.i_vec.append(dens)
 
                 if (h.t > 5) and (h.t <= 10):  # evaluate the peak
                     if abs(dens) > abs(pre_i):
@@ -89,8 +94,12 @@ class Inactivation(Inactivation_general):
                     h.dt = dtsave
                 else:
                     h.dt = 1
-                self.update_clamp_time_step()
-                
+                dens = self.f3cl.i / self.soma(0.5).area() * 100.0 - self.soma(
+                    0.5).i_cap  # clamping current in mA/cm2, for each dt
+                self.t_vec.append(h.t)  # code for store the current
+                self.v_vec_t.append(self.soma.v)  # trace to be plotted
+                self.i_vec.append(dens)  # trace to be plotted
+
                 if (h.t >= 540) and (h.t <= 542):  # evaluate the peak
                     if abs(dens) > abs(peak_curr):
                         peak_curr = dens
