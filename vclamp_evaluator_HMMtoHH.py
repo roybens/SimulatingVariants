@@ -142,6 +142,7 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         Returns:
             List of float values of objective errors
         '''
+        '''
         errors = []
         act_obj = ggsdHMM.Activation(channel_name=self.channel_name_HMM)
         eh.change_params(param_values, scaled=False, is_HMM=True, sim_obj=act_obj)
@@ -150,7 +151,9 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         inact_obj = ggsdHMM.Inactivation(channel_name=self.channel_name_HMM)
         eh.change_params(param_values, scaled=False, is_HMM=True, sim_obj=inact_obj)
         ssi_slope, v_half_inact, top, bottom = cf.calc_inact_obj(inact_obj)
+        '''
         #'v_half_act', 'gv_slope', 'v_half_ssi', 'ssi_slope', 'tau0', 'ttp', 'peak_current']
+        '''
         if 'v_half_act' in self.objective_names:
             vhalf_act_error = (v_half_act - self.wild_data['v_half_act'])**2
             errors.append(vhalf_act_error)
@@ -181,11 +184,12 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
                 print('tau got 1000')
                 tau0_error = 1000
             errors.append(tau0_error*100)
-        
-        print(errors)
-        print(self.objectives)
+        '''
+        # print(errors)
+        # print(self.objectives)
         #python3 Optimization_HHtoHMM_rel.pypython3 Optimization_HHtoHMM_rel.py
-        return errors
+        # return errors
+        return self.calc_all_rmse(param_values)
     
 
     def calc_all_rmse(self, param_values):
@@ -200,14 +204,22 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
 
         '''
         assert len(param_values) == len(self.params), 'Parameter value list is not same length number of parameters' 
+        '''
         act_obj = ggsdHMM.Activation(channel_name=self.channel_name_HMM)
         inact_obj = ggsdHMM.Inactivation(channel_name=self.channel_name_HMM)
         # recov_obj = ggsdHMM.RFI(channel_name=self.channel_name_HMM)
         recov_obj = None
         eh.change_params(param_values, scaled=False, is_HMM=True, sim_obj=act_obj)
         eh.change_params(param_values, scaled=False, is_HMM=True, sim_obj=inact_obj)
+        '''
+        act_obj = ggsdHMM.Activation(channel_name=self.channel_name_HMM)
+        eh.change_params(param_values, scaled=False, is_HMM=True, sim_obj=act_obj)
+
+        inact_obj = ggsdHMM.Inactivation(channel_name=self.channel_name_HMM)
+        eh.change_params(param_values, scaled=False, is_HMM=True, sim_obj=inact_obj)
         score = self.score_calculator.total_rmse(act_obj, inact_obj, None, is_HMM=True, objectives=self.objective_names)
         # print((param_values, score))
+        # print(score)
         return score
     
     def plot_inact(self, param_values):

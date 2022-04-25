@@ -192,8 +192,8 @@ class NeuronModel:
         return Vm, I, t, stim
 
     def plot_stim(self, amp,fn,clr='blue'):
-        init_stim(amp=amp)
-        Vm, I, t, stim = run_model()
+        self.init_stim(amp=amp)
+        Vm, I, t, stim = self.run_model()
         plot_stim_volts_pair(Vm, f'Step Stim {amp}pA', file_path_to_save=f'./Plots/V1/{fn}_{amp}pA',times=t,color_str=clr)
         return I
 
@@ -241,33 +241,37 @@ class NeuronModel:
             all_prevs.append(prev)
 
             # plot FIs
-            self.plot_all_FIs(all_FIs[i], i, isTTX)  # running with the decided paramters (gSKV3.1x2 and extra of 0.1)
+            #self.plot_all_FIs(all_FIs[i], i, isTTX)  # running with the decided paramters (gSKV3.1x2 and extra of 0.1)
 
             # revert h back to initial condition
             self.reverse_update_K(ch_name, gbar_name, all_prevs[0])
 
-    def plot_all_FIs(self, condition_data, i, isTTX):
-        # save multiple figures in one pdf file
-        filename= f'Plots/Kexplore/FI_plots{i}.pdf'
-        fig = plt.figure()
-        x_axis, npeaks, name = condition_data[0]
-        plt.plot(x_axis, npeaks, label=name, color='black')
-        # plot mut
-        x_axis, npeaks, name = condition_data[1]
-        plt.plot(x_axis, npeaks, label=name, color='red')
-        if isTTX:
-            # plot wtTTX
-            x_axis, npeaks, name = condition_data[2]
-            plt.plot(x_axis, npeaks, label=name, color='black', linestyle='dashed')
-            # plot mutTTX
-            x_axis, npeaks, name = condition_data[3]
-            plt.plot(x_axis, npeaks, label=name, color='red', linestyle='dashed')
+        return all_FIs
 
-        plt.legend()
-        plt.xlabel('Stim [nA]')
-        plt.ylabel('nAPs for 500ms epoch')
-        plt.title(f'FI Curve: for range {i}')
-        fig.savefig(filename)
+    def plot_all_FIs(self, condition_data, isTTX):
+        for i in range(len(condition_data)):
+            data = condition_data[i]
+            # save multiple figures in one pdf file
+            filename= f'Plots/Kexplore/FI_plots{i}.pdf'
+            fig = plt.figure()
+            x_axis, npeaks, name = data[0]
+            plt.plot(x_axis, npeaks, label=name, color='black')
+            # plot mut
+            x_axis, npeaks, name = data[1]
+            plt.plot(x_axis, npeaks, label=name, color='red')
+            if isTTX:
+                # plot wtTTX
+                x_axis, npeaks, name = data[2]
+                plt.plot(x_axis, npeaks, label=name, color='black', linestyle='dashed')
+                # plot mutTTX
+                x_axis, npeaks, name = data[3]
+                plt.plot(x_axis, npeaks, label=name, color='red', linestyle='dashed')
+
+            plt.legend()
+            plt.xlabel('Stim [nA]')
+            plt.ylabel('nAPs for 500ms epoch')
+            plt.title(f'FI Curve: for range {i}')
+            fig.savefig(filename)
 
 
     ### Other Functions ###
@@ -414,7 +418,7 @@ if __name__ == "__main__":
 
         # create model
         model = NeuronModel()
-
+        isTTX = True
         # explore param
         ch_name = 'SKv3_1'
         gbar_name = 'gSKv3_1bar'
@@ -432,8 +436,8 @@ if __name__ == "__main__":
         channel = 'na16'
 
         # execute
-        model.explore_param(ch_name, gbar_name, ranges, extra,
+        condition_data = model.explore_param(ch_name, gbar_name, ranges, extra,
                             fi_ranges,
-                            channel_name, channel, updates, isTTX=True)
-
+                            channel_name, channel, updates, isTTX)
+        model.plot_all_FIs(condition_data, isTTX)
 
