@@ -21,7 +21,7 @@ import argparse
 import os
 import pickle
 import generalized_genSim_shorten_time as ggsd
-from generate_simulation import *
+from generate_simulation import * 
 
 import optimize_na_ga_v2 as opt
 import curve_fitting as cf

@@ -51,6 +51,10 @@ class Score_Function:
             gv_slope, v_half_act, top, bottom = cf.calc_act_obj(act_obj)
             ssi_slope, v_half_inact, top, bottom = cf.calc_inact_obj(inact_obj)
             # y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(recov_obj)
+            print('gv_slope: ' + str(gv_slope))
+            print('v_half_act: ' + str(v_half_act))
+            print('ssi_slope: ' + str(ssi_slope))
+            print('v_half_inact: ' + str(v_half_inact))
                 
         except ZeroDivisionError:
             print('Zero Division Error')
@@ -82,7 +86,7 @@ class Score_Function:
         if 'tau0' in objectives:
             tau0_error = self.calc_tau0_err(act_obj, inact_obj)
             errors.append(tau0_error)
-
+        print(errors)
         return tuple(errors)
         
     def dv_half_act(self, plus_minus_wild, v_half):
@@ -157,17 +161,9 @@ class Score_Function:
 
     #def udb20(self, percent_wild):
     def calc_tau0_err(self, act_obj, inact_obj):
-
-        # act_obj = ggsdHMM.Activation(channel_name=self.channel_name) # Hopefully, self.channel_name is an HMM channel
-        # eh.change_params(param_values, scaled=False, is_HMM=True, sim_obj=inact_obj)
         try:
-            # act_obj = ggsdHMM.Activation(channel_name=self.channel_name_HMM)
-            # eh.change_params(param_values, scaled=False, is_HMM=True, sim_obj=inact_obj)
-            try:
-                tau0 = ehn.find_tau0(act_obj)
-                tau0_error = (tau0 - self.tau0_wild)**2
-            except:
-                tau0_error = 1000
+            tau0 = ehn.find_tau0(act_obj)
+            tau0_error = (tau0 - self.tau0_wild)**2
         except:
             tau0_error = 1000
         return tau0_error
