@@ -450,7 +450,7 @@ def read_params_range(param_range_csv):
     
     result = {}
     for line in lines[1:]:
-        result[line[0]] = (float(line[1]), float(line[2]), float(line[3][:-1]))
+        result[line[0]] = (float(line[1].strip()), float(line[2].strip()), float(line[3][:-1].strip()))
     
     return result
     

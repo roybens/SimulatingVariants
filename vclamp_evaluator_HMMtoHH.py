@@ -168,11 +168,11 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
             errors.append(ssi_slope_error)
         if 'peak_current' in self.objective_names:
             peak_amp = ehn.find_peak_amp(act_obj,[14,33])
-            peak_amp_errors = np.sum([(peak_amp[i] - self.wild_data['peak_amp'][i])**2 for i in range(len(peak_amp))])
+            peak_amp_errors = np.sum([np.abs(peak_amp[i] - self.wild_data['peak_amp'][i]) for i in range(len(peak_amp))])
             errors.append(peak_amp_errors)
         if 'ttp' in self.objective_names:
             time_to_peak = ehn.find_time_to_peak(act_obj,[14,33])
-            time_to_peak_error = np.sum([(time_to_peak[i] - self.wild_data['time_to_peak'][i])**2 for i in range(len(peak_amp))])
+            time_to_peak_error = np.sum([np.abs(time_to_peak[i] - self.wild_data['time_to_peak'][i]) for i in range(len(peak_amp))])
             errors.append(time_to_peak_error)
         if 'tau0' in self.objective_names:
             act_obj = ggsdHMM.Activation(channel_name=self.channel_name_HMM)  # Check this out for bugs.
