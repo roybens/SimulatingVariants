@@ -175,7 +175,7 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
             time_to_peak_error = np.sum([(time_to_peak[i] - self.wild_data['time_to_peak'][i])**2 for i in range(len(peak_amp))])
             errors.append(time_to_peak_error)
         if 'tau0' in self.objective_names:
-            act_obj = ggsdHMM.Activation(channel_name=self.channel_name_HMM)
+            act_obj = ggsdHMM.Activation(channel_name=self.channel_name_HMM)  # Check this out for bugs.
             eh.change_params(param_values, scaled=False, is_HMM=True, sim_obj=inact_obj)
             try:
                 tau0 = ehn.find_tau0(act_obj)
