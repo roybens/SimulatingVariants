@@ -271,13 +271,13 @@ class Activation:
         self.clamp_at_volt(0)
         starting_index = list(self.i_vec).index(self.find_ipeaks_with_index()[1])
         
-        t_vecc = act.t_vec[starting_index:upper]
-        i_vecc = act.i_vec[starting_index:upper]
+        t_vecc = self.t_vec[starting_index:upper]
+        i_vecc = self.i_vec[starting_index:upper]
         try:
             popt, pcov = optimize.curve_fit(fit_expon,t_vecc,i_vecc, method = 'dogbox')
             fit = 'exp'
             tau = 1/popt[2]
-            fitted_i = fit_expon(act.t_vec[starting_index:upper],popt[0],popt[1],popt[2])
+            fitted_i = fit_expon(self.t_vec[starting_index:upper],popt[0],popt[1],popt[2])
         except:
             popt, pcov = optimize.curve_fit(one_phase,t_vecc,i_vecc, method = 'dogbox')
             fit = 'one_phase'
