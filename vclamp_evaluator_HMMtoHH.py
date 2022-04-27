@@ -96,33 +96,18 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         time_to_peak = ehn.find_time_to_peak(act_obj)
         act_obj = ggsd.Activation(channel_name=self.channel_name_HH)
         
-        #recov_obj = ggsdHMM.RFI(channel_name=self.channel_name_HH)
         gv_slope, v_half_act, top, bottom = cf.calc_act_obj(act_obj)
         inact_obj = ggsd.Inactivation(channel_name=self.channel_name_HH)
         ssi_slope, v_half_inact, top, bottom = cf.calc_inact_obj(inact_obj)
-        #y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(recov_obj)
-        # gv_slope, v_half_act, top, bottom = (1, 1, 1, 1)
-        # ssi_slope, v_half_inact, top, bottom = (1, 1, 1, 1)
-        # y0, plateau, percent_fast, k_fast, k_slow = (1, 1, 1, 1, 1)
         tau0 = ehn.find_tau0(act_obj)
         peak_amp = ehn.find_peak_amp(act_obj,[14,33])
         time_to_peak = ehn.find_time_to_peak(act_obj,[14,33])
-        # Ramp Protocol
-        # ramp = ggsdHMM.Ramp(channel_name=self.channel_name)
-        # ramp_area = ramp.areaUnderCurve
-        # persistent_curr = ramp.persistentCurrent()
 
         wild_data['v_half_act'] = v_half_act
         wild_data['gv_slope'] = gv_slope
         wild_data['v_half_ssi'] = v_half_inact
         wild_data['ssi_slope'] = ssi_slope
-        #wild_data['tau_fast'] = 1 / k_fast
-        #wild_data['tau_slow'] = 1 / k_slow
-        #wild_data['percent_fast'] = percent_fast
-        # wild_data['udb20'] = 0
         wild_data['tau0'] = tau0
-        # wild_data['ramp'] = ramp_area
-        # wild_data['persistent'] = persistent_curr
         
         # Some extra objectives added last minute, so this is a bit hard-coded
         wild_data['peak_amp'] = peak_amp
@@ -142,53 +127,6 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         Returns:
             List of float values of objective errors
         '''
-        '''
-        errors = []
-        act_obj = ggsdHMM.Activation(channel_name=self.channel_name_HMM)
-        eh.change_params(param_values, scaled=False, is_HMM=True, sim_obj=act_obj)
-        gv_slope, v_half_act, top, bottom = cf.calc_act_obj(act_obj)
-
-        inact_obj = ggsdHMM.Inactivation(channel_name=self.channel_name_HMM)
-        eh.change_params(param_values, scaled=False, is_HMM=True, sim_obj=inact_obj)
-        ssi_slope, v_half_inact, top, bottom = cf.calc_inact_obj(inact_obj)
-        '''
-        #'v_half_act', 'gv_slope', 'v_half_ssi', 'ssi_slope', 'tau0', 'ttp', 'peak_current']
-        '''
-        if 'v_half_act' in self.objective_names:
-            vhalf_act_error = (v_half_act - self.wild_data['v_half_act'])**2
-            errors.append(vhalf_act_error)
-        if 'gv_slope' in self.objective_names:
-            gv_slope_error = (gv_slope - self.wild_data['gv_slope'])**2
-            errors.append(gv_slope_error)
-        if 'v_half_ssi' in self.objective_names:
-            v_half_ssi_error = (v_half_inact - self.wild_data['v_half_ssi'])**2
-            errors.append(v_half_ssi_error)
-        if 'ssi_slope' in self.objectives:
-            ssi_slope_error = (ssi_slope - self.wild_data['ssi_slope'])**2
-            errors.append(ssi_slope_error)
-        if 'peak_current' in self.objective_names:
-            peak_amp = ehn.find_peak_amp(act_obj,[14,33])
-            peak_amp_errors = np.sum([np.abs(peak_amp[i] - self.wild_data['peak_amp'][i]) for i in range(len(peak_amp))])
-            errors.append(peak_amp_errors)
-        if 'ttp' in self.objective_names:
-            time_to_peak = ehn.find_time_to_peak(act_obj,[14,33])
-            time_to_peak_error = np.sum([np.abs(time_to_peak[i] - self.wild_data['time_to_peak'][i]) for i in range(len(peak_amp))])
-            errors.append(time_to_peak_error)
-        if 'tau0' in self.objective_names:
-            act_obj = ggsdHMM.Activation(channel_name=self.channel_name_HMM)
-            eh.change_params(param_values, scaled=False, is_HMM=True, sim_obj=inact_obj)
-            try:
-                tau0 = ehn.find_tau0(act_obj)
-                tau0_error = (tau0 - self.wild_data['tau0'])**2
-            except:
-                print('tau got 1000')
-                tau0_error = 1000
-            errors.append(tau0_error*100)
-        '''
-        # print(errors)
-        # print(self.objectives)
-        #python3 Optimization_HHtoHMM_rel.pypython3 Optimization_HHtoHMM_rel.py
-        # return errors
         return self.calc_all_rmse(param_values)
     
 
@@ -204,22 +142,12 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
 
         '''
         assert len(param_values) == len(self.params), 'Parameter value list is not same length number of parameters' 
-        '''
-        act_obj = ggsdHMM.Activation(channel_name=self.channel_name_HMM)
-        inact_obj = ggsdHMM.Inactivation(channel_name=self.channel_name_HMM)
-        # recov_obj = ggsdHMM.RFI(channel_name=self.channel_name_HMM)
-        recov_obj = None
-        eh.change_params(param_values, scaled=False, is_HMM=True, sim_obj=act_obj)
-        eh.change_params(param_values, scaled=False, is_HMM=True, sim_obj=inact_obj)
-        '''
         act_obj = ggsdHMM.Activation(channel_name=self.channel_name_HMM)
         eh.change_params(param_values, scaled=False, is_HMM=True, sim_obj=act_obj)
 
         inact_obj = ggsdHMM.Inactivation(channel_name=self.channel_name_HMM)
         eh.change_params(param_values, scaled=False, is_HMM=True, sim_obj=inact_obj)
         score = self.score_calculator.total_rmse(act_obj, inact_obj, None, is_HMM=True, objectives=self.objective_names)
-        # print((param_values, score))
-        # print(score)
         return score
     
     def plot_inact(self, param_values):
@@ -333,8 +261,4 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         plot_act(self)
 
 
-# if __name__ == '__main__':
-    # vce = Vclamp_evaluator_HMM('./param_stats_narrow.csv', 'A427D', 'na', objective_names=['inact', 'act', 'recov'])
-    # print(vce.channel_name)
-    # vce.unit_test()
     
