@@ -78,10 +78,10 @@ class Score_Function:
             errors.append(peak_amp_errors)
         if 'ttp' in objectives:
             time_to_peak_error = self.calc_ttp_err(act_obj)
-            errors.append(10*time_to_peak_error)
+            errors.append(1*time_to_peak_error)
         if 'tau0' in objectives:
             tau0_error = self.calc_tau0_err(act_obj)
-            errors.append(100*tau0_error)
+            errors.append(10*tau0_error)
 
         return tuple(errors)
         
@@ -157,17 +157,9 @@ class Score_Function:
 
     #def udb20(self, percent_wild):
     def calc_tau0_err(self, act_obj):
-
-        # act_obj = ggsdHMM.Activation(channel_name=self.channel_name) # Hopefully, self.channel_name is an HMM channel
-        # eh.change_params(param_values, scaled=False, is_HMM=True, sim_obj=inact_obj)
         try:
-            # act_obj = ggsdHMM.Activation(channel_name=self.channel_name_HMM)
-            # eh.change_params(param_values, scaled=False, is_HMM=True, sim_obj=inact_obj)
-            try:
-                tau0 = ehn.find_tau0(act_obj)
-                tau0_error = (tau0 - self.tau0_wild)**2
-            except:
-                tau0_error = 1000
+            tau0 = ehn.find_tau0(act_obj)
+            tau0_error = (tau0 - self.tau0_wild)**2
         except:
             tau0_error = 1000
         return tau0_error

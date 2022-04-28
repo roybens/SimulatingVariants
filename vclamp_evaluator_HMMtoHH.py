@@ -92,8 +92,8 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         # Create genSim objects
         act_obj = ggsd.Activation(channel_name=self.channel_name_HH)
         tau0 = ehn.find_tau0(act_obj)
-        peak_amp = ehn.find_peak_amp(act_obj)
-        time_to_peak = ehn.find_time_to_peak(act_obj)
+        peak_amp = ehn.find_peak_amp(act_obj,[14,33])
+        time_to_peak = ehn.find_time_to_peak(act_obj,[14,33])
         act_obj = ggsd.Activation(channel_name=self.channel_name_HH)
         
         #recov_obj = ggsdHMM.RFI(channel_name=self.channel_name_HH)
@@ -104,9 +104,6 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         # gv_slope, v_half_act, top, bottom = (1, 1, 1, 1)
         # ssi_slope, v_half_inact, top, bottom = (1, 1, 1, 1)
         # y0, plateau, percent_fast, k_fast, k_slow = (1, 1, 1, 1, 1)
-        tau0 = ehn.find_tau0(act_obj)
-        peak_amp = ehn.find_peak_amp(act_obj,[14,33])
-        time_to_peak = ehn.find_time_to_peak(act_obj,[14,33])
         # Ramp Protocol
         # ramp = ggsdHMM.Ramp(channel_name=self.channel_name)
         # ramp_area = ramp.areaUnderCurve
