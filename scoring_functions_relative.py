@@ -82,17 +82,11 @@ class Score_Function:
             errors.append(peak_amp_errors)
         if 'ttp' in objectives:
             time_to_peak_error = self.calc_ttp_err(act_obj)
-            errors.append(10*time_to_peak_error)
+            errors.append(time_to_peak_error)
         if 'tau0' in objectives:
-<<<<<<< HEAD
             tau0_error = self.calc_tau0_err(act_obj)
-            errors.append(100*tau0_error)
-
-=======
-            tau0_error = self.calc_tau0_err(act_obj, inact_obj)
             errors.append(tau0_error)
         print(errors)
->>>>>>> 7e373254e719c31b183953f5e0f4d1ddfb21112e
         return tuple(errors)
         
     def dv_half_act(self, plus_minus_wild, v_half):
@@ -166,14 +160,7 @@ class Score_Function:
             return 1000
 
     #def udb20(self, percent_wild):
-<<<<<<< HEAD
     def calc_tau0_err(self, act_obj):
-
-        # act_obj = ggsdHMM.Activation(channel_name=self.channel_name) # Hopefully, self.channel_name is an HMM channel
-        # eh.change_params(param_values, scaled=False, is_HMM=True, sim_obj=inact_obj)
-=======
-    def calc_tau0_err(self, act_obj, inact_obj):
->>>>>>> 7e373254e719c31b183953f5e0f4d1ddfb21112e
         try:
             tau0 = ehn.find_tau0(act_obj)
             tau0_error = (tau0 - self.tau0_wild)**2
