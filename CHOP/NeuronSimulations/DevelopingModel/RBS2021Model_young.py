@@ -12,6 +12,10 @@ import json
 from scipy.signal import find_peaks
 import json
 param_names = ['sh','tha','qa','Ra','Rb','thi1','thi2','qd','qg','mmin','hmin','q10','Rg','Rd','thinf','qinf','vhalfs','a0s','zetas','gms','smax','vvh','vvs']
+
+
+
+
 def read_params_data(fn):
     with open(fn) as f:
         data = f.read()
@@ -123,14 +127,22 @@ def get_fi_curve(s_amp,e_amp,nruns,wt_data=None,ax1=None):
     ax1.set_title('FI Curve')
     ax1.set_xlabel('Stim [nA]')
     ax1.set_ylabel('nAPs for 500ms epoch')
+    ax1.set_xticks(x_axis)
     if wt_data is None:
         return npeaks
     else:
         ax1.plot(x_axis,npeaks,'red')
+        ax1.plot(x_axis,npeaks,'o',color = 'red')
         ax1.plot(x_axis,wt_data,'black')
+    
     plt.show()
     
-def run_model(start_Vm = -72):
+def run_model(start_Vm = -72,stim_fn = None):
+    if stim_fn is not None:
+        stim_in = np.genfromtxt(stim_fn, dtype=np.float32)
+        st.del = 0
+        st.dur = 1e9
+        st.amp = stim_in[0]
     h.working_young()
     h.finitialize(start_Vm)
     timesteps = int(h.tstop/h.dt)
@@ -141,8 +153,9 @@ def run_model(start_Vm = -72):
     I['K'] = np.zeros(timesteps)
     stim = np.zeros(timesteps)
     t = np.zeros(timesteps)
-    
     for i in range(timesteps):
+        if stim_fn is not None:
+            st.amp = stim_in[i]
         Vm[i] = h.cell.soma[0].v
         I['Na'][i] = h.cell.soma[0](0.5).ina
         I['Ca'][i] = h.cell.soma[0](0.5).ica
@@ -185,8 +198,23 @@ def run_young_model(mut,amps,fi_range,nsweeps):
     ficurveax.set_title(f'FI Curve {mut}')
     fig.savefig(f'./Plots/{mut}_FI_curve.pdf')    
 
-run_young_model('T400R',[0.5,1.25],[0,1.5],7)
-run_young_model('M1770L',[0.5,1.25],[0,1.5],7)
+def run_wt(amps):
+    init_settings()
+    fig,vax = plt.subplots(1,1)
+    vs_plots = []
+    update_na12('na12A', param_names, var_param_dict['A_WT'])
+    update_na12('na12N', param_names, var_param_dict['N_WT'])
+    update_na12('na12A_Mut', param_names, var_param_dict['A_WT'])
+    update_na12('na12N_Mut', param_names, var_param_dict['N_WT'])
+    for cur_amp in amps:
+        init_stim(amp=cur_amp)
+        Vm, I, t, stim = run_model()
+        plot_volts(Vm, f'Step {cur_amp}nA', times=t,axs = vax)
+    fig.savefig(f'./Plots/WTNEW.pdf')
+#run_wt([0.7])
+#run_wt([0.7])
+#run_young_model('T400R',[0.5,1.25],[0,1.5],7)
+run_young_model('M1770L',[0.8,1.6],[0,2],11)
 # fig,ficurveax = plt.subplots(1,1)
 # init_settings()
 # init_stim(amp=0.75)
