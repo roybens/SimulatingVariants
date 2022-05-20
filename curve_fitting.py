@@ -6,8 +6,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import eval_helper as eh
-import generalized_genSim_shorten_time as ggsd
-import generalized_genSim_shorten_time_HMM as ggsdHMM
 from scipy import optimize, stats
 import eval_helper_na12mut as ehn
 import eval_helper_na12mut8st as ehn8

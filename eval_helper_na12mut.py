@@ -3,7 +3,6 @@
 #### Authors: Michael Lam, Jinan Jiang #################
 ########################################################
 import generalized_genSim_shorten_time as ggsd
-import generalized_genSim_shorten_time_HMM as ggsdHMM
 import matplotlib.pyplot as plt
 import curve_fitting as cf
 from scipy import optimize

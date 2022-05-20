@@ -85,8 +85,8 @@ def plot_act(wild_params, wild_channel_name, wild_is_HMM, mut_params, mut_channe
     plt.xlabel('Voltage $(mV)$')
     plt.ylabel('Normalized conductance')
     plt.title(f'Activation: {mutant_name}')
-
-    set_param(wild_params, wild_is_HMM)
+    if wild_params is not None:
+        set_param(wild_params, wild_is_HMM)
     wt_act = module_name_wild.Activation(channel_name=wild_channel_name)
     wt_act.genActivation()
     # (formatted_v_half, formatted_gv_slope)

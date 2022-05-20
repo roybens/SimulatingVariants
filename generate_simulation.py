@@ -22,7 +22,6 @@ from scipy.signal import find_peaks
 import argparse
 import os
 import pickle
-import generalized_genSim_shorten_time as ggsd
 
 
 import curve_fitting as cf
