@@ -261,8 +261,165 @@ def plot_act(wild_params, wild_channel_name, wild_is_HMM, mut_params, mut_channe
     pdf.close()
 
     ############################################################################################################
-    
-    
+
+def plotInactivation_VInormRelation(inact_obj):
+    plt.figure()
+    plt.xlabel('Voltage $(mV)$')
+    plt.ylabel('Normalized current')
+    plt.title('Inactivation: Voltage/HMM_Normalized Current Relation')
+    plt.plot(inact_obj.v_vec, inact_obj.inorm_vec, 'o', c='black')
+    ssi_slope, v_half, top, bottom, tau0 = cf.calc_inact_obj(inact_obj)
+    formatted_ssi_slope = np.round(ssi_slope, decimals=2)
+    formatted_v_half = np.round(v_half, decimals=2)
+    plt.text(-10, 0.5, f'Slope: {formatted_ssi_slope}')
+    plt.text(-10, 0.3, f'V50: {formatted_v_half}')
+    x_values_v = np.arange(inact_obj.st_cl, inact_obj.end_cl, 1)
+    curve = cf.boltzmann(x_values_v, ssi_slope, v_half, top, bottom)
+    plt.plot(x_values_v, curve, c='red')
+    # save as PGN file
+    plt.savefig(
+        os.path.join(os.path.split(__file__)[0],
+                     'Plots_Folder/HMM_Inactivation Voltage Normalized Current Relation'))
+
+def plotInactivation_VInormRelation_plt(inact_obj, plt, color):
+
+    diff = 0
+    if color == 'red':
+        diff = 0.5
+    plt.plot(inact_obj.v_vec, inact_obj.inorm_vec, 'o', c=color)
+    ssi_slope, v_half, top, bottom = cf.calc_inact_obj(inact_obj)
+    formatted_ssi_slope = np.round(ssi_slope, decimals=2)
+    formatted_v_half = np.round(v_half, decimals=2)
+    plt.text(-10, 0.5 + diff, f'Slope: {formatted_ssi_slope}', c=color)
+    plt.text(-10, 0.3 + diff, f'V50: {formatted_v_half}', c=color)
+    x_values_v = np.arange(inact_obj.st_cl, inact_obj.end_cl, 1)
+    curve = cf.boltzmann(x_values_v, ssi_slope, v_half, top, bottom)
+    plt.plot(x_values_v, curve, c=color)
+    return (formatted_v_half, formatted_ssi_slope)
+
+def plotInactivation_TimeVRelation(inact_obj):
+    plt.figure()
+    plt.xlabel('Time $(ms)$')
+    plt.ylabel('Voltage $(mV)$')
+    plt.title('Inactivation Time/Voltage relation')
+    [plt.plot(inact_obj.t_vec, inact_obj.all_v_vec_t[i], c='black') for i in np.arange(inact_obj.L)]
+    # save as PGN file
+    plt.savefig(os.path.join(os.path.split(__file__)[0], 'Plots_Folder/HMM_Inactivation Time Voltage Relation'))
+
+def plotInactivation_TCurrDensityRelation(inact_obj):
+    plt.figure()
+    plt.xlabel('Time $(ms)$')
+    plt.ylabel('Current density $(mA/cm^2)$')
+    plt.title('Inactivation Time/Current density relation')
+    [plt.plot(inact_obj.t_vec[1:], inact_obj.all_is[i], c='black') for i in np.arange(inact_obj.L)]
+    # save as PGN file
+    plt.savefig(
+        os.path.join(os.path.split(__file__)[0], "Plots_Folder/HMM_Inactivation Time Current Density Relation"))
+
+def plotInactivation_TCurrDensityRelation(inact_obj, plt, color):
+    [plt.plot(inact_obj.t_vec[-800:-700], inact_obj.all_is[i][-800:-700], c=color) for i in np.arange(inact_obj.L)]
+
+def plotInactivation_Tau_0mV(inact_obj):
+    plt.figure()
+    plt.xlabel('Time $(ms)$')
+    plt.ylabel('Current density $(mA/cm^2)$')
+    plt.title('Inactivation Tau at 0 mV')
+    # select 0 mV
+    volt = 0  # mV
+    mask = np.where(inact_obj.v_vec == volt)[0]
+    curr = np.array(inact_obj.all_is)[mask][0]
+    time = np.array(inact_obj.t_vec)[1:]
+    # fit exp: IFit(t) = A * exp (-t/τ) + C
+    ts, data, xs, ys, tau = inact_obj.find_tau0_inact(curr)
+    # plot
+    plt.plot(ts, data, color="black")
+    plt.plot(xs, ys, color="red")
+    formatted_tau = np.round(tau, decimals=3)
+    plt.text(0.2, -0.01, f"Tau at 0 mV: {formatted_tau}", color='blue')
+    # save as PGN file
+    plt.savefig(os.path.join(os.path.split(__file__)[0], "Plots_Folder/HMM_Inactivation Tau at 0 mV"))
+
+def plotInactivation_Tau_0mV_plt(inact_obj, plt, color, upper=700):
+
+    diff = 0
+    if color == 'red':
+        diff = 1.5
+
+    def fit_expon(x, a, b, c):
+        return a + b * np.exp(-1 * c * x)
+
+    def one_phase(x, y0, plateau, k):
+        return y0 + (plateau - y0) * (1 - np.exp(-k * x))
+
+    act = Activation(channel_name=inact_obj.channel_name)
+    act.clamp_at_volt(0)
+    starting_index = list(act.i_vec).index(act.find_ipeaks_with_index()[1])
+
+    t_vecc = act.t_vec[starting_index:upper]
+    i_vecc = act.i_vec[starting_index:upper]
+    try:
+        popt, pcov = optimize.curve_fit(fit_expon, t_vecc, i_vecc, method='dogbox')
+        fit = 'exp'
+        tau = 1 / popt[2]
+        fitted_i = fit_expon(act.t_vec[starting_index:upper], popt[0], popt[1], popt[2])
+    except:
+        popt, pcov = optimize.curve_fit(one_phase, t_vecc, i_vecc, method='dogbox')
+        fit = 'one_phase'
+        tau = 1 / popt[2]
+        fitted_i = one_phase(act.t_vec[starting_index:upper], popt[0], popt[1], popt[2])
+
+    xmid = (max(t_vecc) + min(t_vecc)) / 2
+    ymid = (max(i_vecc) + min(i_vecc)) / 2
+    if color == 'red':
+        diff = ymid * 0.2
+
+    plt.plot(act.t_vec[starting_index:upper], fitted_i, c=color)
+    plt.plot(t_vecc, i_vecc, 'o', c=color)
+    plt.text(xmid, ymid + diff, f"Tau at 0 mV: {tau}", color=color)
+
+    return tau
+
+    # select 0 mV
+    volt = 0  # mV
+    mask = np.where(inact_obj.v_vec == volt)[0]
+    curr = np.array(inact_obj.all_is)[mask][0]
+    time = np.array(inact_obj.t_vec)[1:]
+    # fit exp: IFit(t) = A * exp (-t/τ) + C
+    ts, data, xs, ys, tau = inact_obj.find_tau0_inact(curr)
+    # plot
+    plt.plot(ts, data, color=color)
+    plt.plot(xs, ys, color=color)
+    formatted_tau0 = np.round(tau, decimals=3)
+
+    return tau
+
+def fit_exp(inact_obj, x, a, b, c):
+    """
+    IFit(t) = A * exp (-t/τ) + C
+    """
+    return a * np.exp(-x / b) + c
+
+def find_tau0_inact(inact_obj, raw_data):
+    # take peak curr and onwards
+    min_val, mindex = min((val, idx) for (idx, val) in enumerate(raw_data[:int(0.7 * len(raw_data))]))
+    padding = 15  # after peak
+    data = raw_data[mindex:mindex + padding]
+    ts = [0.1 * i for i in range(len(data))]  # make x values which match sample times
+
+    # calc tau and fit exp
+    popt, pcov = optimize.curve_fit(fit_exp, ts, data)  # fit exponential curve
+    perr = np.sqrt(np.diag(pcov))
+    # print('in ' + str(all_tau_sweeps[i]) + ' the error was ' + str(perr))
+    xs = np.linspace(ts[0], ts[len(ts) - 1], 1000)  # create uniform x values to graph curve
+    ys = fit_exp(xs, *popt)  # get y values
+    vmax = max(ys) - min(ys)  # get diff of max and min voltage
+    vt = min(ys) + .37 * vmax  # get vmax*1/e
+    # tau = (np.log([(vt - popt[2]) / popt[0]]) / (-popt[1]))[0]  # find time at which curve = vt
+    # Roy said tau should just be the parameter b from fit_exp
+    tau = popt[1]
+    return ts, data, xs, ys, tau
+
+
 def plot_inact(wild_params, wild_channel_name, wild_is_HMM, mut_params, mut_channel_name, mut_is_HMM, outfile, mutant_name):
     pdf = matplotlib.backends.backend_pdf.PdfPages(outfile)
     figures = []
@@ -279,8 +436,8 @@ def plot_inact(wild_params, wild_channel_name, wild_is_HMM, mut_params, mut_chan
     plt.xlabel('Voltage $(mV)$')
     plt.ylabel('Normalized current')
     plt.title(f'Inactivation: {mutant_name}')
-    
-    set_param(wild_params, wild_is_HMM)
+    if wild_params is not None:
+        set_param(wild_params, wild_is_HMM)
     wt_inact = module_name_wild.Inactivation(channel_name=wild_channel_name)
     wt_inact.genInactivation()
     inact_v_half_wt, inact_slope_wt = wt_inact.plotInactivation_VInormRelation_plt(plt, 'black')
@@ -294,8 +451,8 @@ def plot_inact(wild_params, wild_channel_name, wild_is_HMM, mut_params, mut_chan
     plt.xlabel('Time $(ms)$')
     plt.ylabel('Voltage $(mV)$')
     plt.title(f'Inactivation: {mutant_name}')
-    
-    set_param(wild_params, wild_is_HMM)
+    if wild_params is not None:
+        set_param(wild_params, wild_is_HMM)
     wt_inact = module_name_wild.Inactivation(channel_name=wild_channel_name)
     wt_inact.genInactivation()
     plotInactivation_TCurrDensityRelation(wt_inact, plt, 'black')
@@ -309,8 +466,8 @@ def plot_inact(wild_params, wild_channel_name, wild_is_HMM, mut_params, mut_chan
     plt.xlabel('Time $(ms)$')
     plt.ylabel('Current density $(mA/cm^2)$')
     plt.title('Inactivation Tau at 0 mV')
-    
-    set_param(wild_params, wild_is_HMM)
+    if wild_params is not None:
+        set_param(wild_params, wild_is_HMM)
     wt_inact = module_name.Inactivation(channel_name= wild_channel_name)
     wt_inact.genInactivation()
     wt_tau = wt_inact.plotInactivation_Tau_0mV_plt(plt, 'black')
