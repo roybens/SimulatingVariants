@@ -165,6 +165,45 @@ def plotActivation_VGnorm_plt(act_obj,plt,color):
     plt.plot(x_values_v, curve, c=color)
     return (formatted_v_half, formatted_gv_slope)
 
+def plotInactivation_Tau_0mV_plt(act_obj, plt, color, upper=700):
+
+    diff = 0
+    if color == 'red':
+        diff = 1.5
+
+    def fit_expon(x, a, b, c):
+        return a + b * np.exp(-1 * c * x)
+
+    def one_phase(x, y0, plateau, k):
+        return y0 + (plateau - y0) * (1 - np.exp(-k * x))
+
+    act_obj.clamp_at_volt(0)
+    starting_index = list(act_obj.i_vec).index(act_obj.find_ipeaks_with_index()[1])
+
+    t_vecc = act_obj.t_vec[starting_index:upper]
+    i_vecc = act_obj.i_vec[starting_index:upper]
+    try:
+        popt, pcov = optimize.curve_fit(fit_expon, t_vecc, i_vecc, method='dogbox')
+        fit = 'exp'
+        tau = 1 / popt[2]
+        fitted_i = fit_expon(act_obj.t_vec[starting_index:upper], popt[0], popt[1], popt[2])
+    except:
+        popt, pcov = optimize.curve_fit(one_phase, t_vecc, i_vecc, method='dogbox')
+        fit = 'one_phase'
+        tau = 1 / popt[2]
+        fitted_i = one_phase(act_obj.t_vec[starting_index:upper], popt[0], popt[1], popt[2])
+
+    xmid = (max(t_vecc) + min(t_vecc)) / 2
+    ymid = (max(i_vecc) + min(i_vecc)) / 2
+    if color == 'red':
+        diff = ymid * 0.2
+
+    plt.plot(act_obj.t_vec[starting_index:upper], fitted_i, c=color)
+    plt.plot(t_vecc, i_vecc, 'o', c=color)
+    plt.text(xmid, ymid + diff, f"Tau at 0 mV: {tau}", color=color)
+
+    return tau
+
 
 
 def plot_act(wild_params, wild_channel_name, wild_is_HMM, mut_params, mut_channel_name, mut_is_HMM, outfile, mutant_name):
@@ -195,7 +234,7 @@ def plot_act(wild_params, wild_channel_name, wild_is_HMM, mut_params, mut_channe
     set_param(mut_params, mut_is_HMM)
     mut_act = module_name_mut.Activation(channel_name=mut_channel_name)
     mut_act.genActivation()
-    act_v_half_mut, act_slope_mut = plotActivation_VGnorm_plt(wt_act, plt, 'red')
+    act_v_half_mut, act_slope_mut = plotActivation_VGnorm_plt(mut_act, plt, 'red')
 
     ############################################################################################################
     figures.append(plt.figure())
@@ -253,8 +292,21 @@ def plot_act(wild_params, wild_channel_name, wild_is_HMM, mut_params, mut_channe
 
     set_param(mut_params, mut_is_HMM)
     mut_peak_amp = find_peak_amp(mut_channel_name, mut_is_HMM)
-    
-    
+
+    figures.append(plt.figure())
+    plt.xlabel('Time $(ms)$')
+    plt.ylabel('Current density $(mA/cm^2)$')
+    if wild_params is not None:
+        set_param(wild_params, wild_is_HMM)
+    wt_act = module_name_wild.Activation(channel_name= wild_channel_name)
+    wt_act.genActivation()
+    wt_tau = plotInactivation_Tau_0mV_plt(wt_act, plt, 'black')
+    #wt_per_cur = find_persistent_current(wild_is_HMM)
+
+    set_param(mut_params, mut_is_HMM)
+    mut_inact = module_name_mut.Activation(channel_name=mut_channel_name)
+    mut_inact.genActivation()
+    mut_tau = plotInactivation_Tau_0mV_plt(mut_act, plt, 'red')
 ############################################################################################################    
     for fig in figures: ## will open an empty extra figure :(
         pdf.savefig( fig )
@@ -339,59 +391,9 @@ def plotInactivation_Tau_0mV(inact_obj):
     # save as PGN file
     plt.savefig(os.path.join(os.path.split(__file__)[0], "Plots_Folder/HMM_Inactivation Tau at 0 mV"))
 
-def plotInactivation_Tau_0mV_plt(inact_obj, plt, color, upper=700):
 
-    diff = 0
-    if color == 'red':
-        diff = 1.5
 
-    def fit_expon(x, a, b, c):
-        return a + b * np.exp(-1 * c * x)
 
-    def one_phase(x, y0, plateau, k):
-        return y0 + (plateau - y0) * (1 - np.exp(-k * x))
-
-    act = Activation(channel_name=inact_obj.channel_name)
-    act.clamp_at_volt(0)
-    starting_index = list(act.i_vec).index(act.find_ipeaks_with_index()[1])
-
-    t_vecc = act.t_vec[starting_index:upper]
-    i_vecc = act.i_vec[starting_index:upper]
-    try:
-        popt, pcov = optimize.curve_fit(fit_expon, t_vecc, i_vecc, method='dogbox')
-        fit = 'exp'
-        tau = 1 / popt[2]
-        fitted_i = fit_expon(act.t_vec[starting_index:upper], popt[0], popt[1], popt[2])
-    except:
-        popt, pcov = optimize.curve_fit(one_phase, t_vecc, i_vecc, method='dogbox')
-        fit = 'one_phase'
-        tau = 1 / popt[2]
-        fitted_i = one_phase(act.t_vec[starting_index:upper], popt[0], popt[1], popt[2])
-
-    xmid = (max(t_vecc) + min(t_vecc)) / 2
-    ymid = (max(i_vecc) + min(i_vecc)) / 2
-    if color == 'red':
-        diff = ymid * 0.2
-
-    plt.plot(act.t_vec[starting_index:upper], fitted_i, c=color)
-    plt.plot(t_vecc, i_vecc, 'o', c=color)
-    plt.text(xmid, ymid + diff, f"Tau at 0 mV: {tau}", color=color)
-
-    return tau
-
-    # select 0 mV
-    volt = 0  # mV
-    mask = np.where(inact_obj.v_vec == volt)[0]
-    curr = np.array(inact_obj.all_is)[mask][0]
-    time = np.array(inact_obj.t_vec)[1:]
-    # fit exp: IFit(t) = A * exp (-t/τ) + C
-    ts, data, xs, ys, tau = inact_obj.find_tau0_inact(curr)
-    # plot
-    plt.plot(ts, data, color=color)
-    plt.plot(xs, ys, color=color)
-    formatted_tau0 = np.round(tau, decimals=3)
-
-    return tau
 
 def fit_exp(inact_obj, x, a, b, c):
     """
@@ -440,12 +442,12 @@ def plot_inact(wild_params, wild_channel_name, wild_is_HMM, mut_params, mut_chan
         set_param(wild_params, wild_is_HMM)
     wt_inact = module_name_wild.Inactivation(channel_name=wild_channel_name)
     wt_inact.genInactivation()
-    inact_v_half_wt, inact_slope_wt = wt_inact.plotInactivation_VInormRelation_plt(plt, 'black')
+    inact_v_half_wt, inact_slope_wt = plotInactivation_VInormRelation_plt(wt_inact, plt, 'black')
 
     set_param(mut_params, mut_is_HMM)
     mut_inact = module_name_mut.Inactivation(channel_name=mut_channel_name)
     mut_inact.genInactivation()
-    inact_v_half_mut, inact_slope_mut =  mut_inact.plotInactivation_VInormRelation_plt(plt, 'red')
+    inact_v_half_mut, inact_slope_mut = plotInactivation_VInormRelation_plt(mut_inact, plt, 'red')
     
     figures.append(plt.figure())
     plt.xlabel('Time $(ms)$')
@@ -457,27 +459,12 @@ def plot_inact(wild_params, wild_channel_name, wild_is_HMM, mut_params, mut_chan
     wt_inact.genInactivation()
     plotInactivation_TCurrDensityRelation(wt_inact, plt, 'black')
 
-    set_param(mut_params, is_HMM)
-    mut_inact = module_name.Inactivation(channel_name=mut_channel_name)
-    mut_inact.genInactivation()
-    mut_inact.plotInactivation_TCurrDensityRelation(plt, 'red')
-    
-    figures.append(plt.figure())
-    plt.xlabel('Time $(ms)$')
-    plt.ylabel('Current density $(mA/cm^2)$')
-    plt.title('Inactivation Tau at 0 mV')
-    if wild_params is not None:
-        set_param(wild_params, wild_is_HMM)
-    wt_inact = module_name.Inactivation(channel_name= wild_channel_name)
-    wt_inact.genInactivation()
-    wt_tau = wt_inact.plotInactivation_Tau_0mV_plt(plt, 'black')
-    wt_per_cur = find_persistent_current(wild_is_HMM)
-
     set_param(mut_params, mut_is_HMM)
-    mut_inact = module_name.Inactivation(channel_name=mut_channel_name)
+    mut_inact = module_name_mut.Inactivation(channel_name=mut_channel_name)
     mut_inact.genInactivation()
-    mut_tau = mut_inact.plotInactivation_Tau_0mV_plt(plt, 'red')
-    mut_per_cur = find_persistent_current(mut_is_HMM)
+    plotInactivation_TCurrDensityRelation(mut_inact, plt, 'red')
+
+
     
     for fig in figures: ## will open an empty extra figure :(
         pdf.savefig( fig )
