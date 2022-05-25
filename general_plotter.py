@@ -363,13 +363,14 @@ def plotInactivation_TCurrDensityRelation(inact_obj):
     plt.xlabel('Time $(ms)$')
     plt.ylabel('Current density $(mA/cm^2)$')
     plt.title('Inactivation Time/Current density relation')
-    [plt.plot(inact_obj.t_vec[1:], inact_obj.all_is[i], c='black') for i in np.arange(inact_obj.L)]
+    mask_arr = (np.array(inact_obj.t_vec) > inact_obj.st_step_time) & (np.array(inact_obj.t_vec) < inact_obj.end_step_time)
+    [plt.plot(inact_obj.t_vec[mask_arr], inact_obj.all_is[i][mask_arr], c='black') for i in np.arange(inact_obj.L)]
     # save as PGN file
     plt.savefig(
         os.path.join(os.path.split(__file__)[0], "Plots_Folder/HMM_Inactivation Time Current Density Relation"))
 
-def plotInactivation_TCurrDensityRelation(inact_obj, plt, color):
-    [plt.plot(inact_obj.t_vec[-800:-700], inact_obj.all_is[i][-800:-700], c=color) for i in np.arange(inact_obj.L)]
+#def plotInactivation_TCurrDensityRelation(inact_obj, plt, color):
+#    [plt.plot(inact_obj.t_vec[-800:-700], inact_obj.all_is[i][-800:-700], c=color) for i in np.arange(inact_obj.L)]
 
 
 
