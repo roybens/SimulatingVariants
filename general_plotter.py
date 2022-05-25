@@ -165,7 +165,7 @@ def plotActivation_VGnorm_plt(act_obj,plt,color):
     plt.plot(x_values_v, curve, c=color)
     return (formatted_v_half, formatted_gv_slope)
 
-def plotInactivation_Tau_0mV_plt(act_obj, plt, color, upper=700):
+def plotActivation_Tau_0mV_plt(act_obj, plt, color, upper=700):
 
     diff = 0
     if color == 'red':
@@ -300,13 +300,13 @@ def plot_act(wild_params, wild_channel_name, wild_is_HMM, mut_params, mut_channe
         set_param(wild_params, wild_is_HMM)
     wt_act = module_name_wild.Activation(channel_name= wild_channel_name)
     wt_act.genActivation()
-    wt_tau = plotInactivation_Tau_0mV_plt(wt_act, plt, 'black')
+    wt_tau = plotActivation_Tau_0mV_plt(wt_act, plt, 'black')
     #wt_per_cur = find_persistent_current(wild_is_HMM)
 
     set_param(mut_params, mut_is_HMM)
     mut_inact = module_name_mut.Activation(channel_name=mut_channel_name)
     mut_inact.genActivation()
-    mut_tau = plotInactivation_Tau_0mV_plt(mut_act, plt, 'red')
+    mut_tau = plotActivation_Tau_0mV_plt(mut_act, plt, 'red')
 ############################################################################################################    
     for fig in figures: ## will open an empty extra figure :(
         pdf.savefig( fig )
@@ -370,26 +370,6 @@ def plotInactivation_TCurrDensityRelation(inact_obj):
 
 def plotInactivation_TCurrDensityRelation(inact_obj, plt, color):
     [plt.plot(inact_obj.t_vec[-800:-700], inact_obj.all_is[i][-800:-700], c=color) for i in np.arange(inact_obj.L)]
-
-def plotInactivation_Tau_0mV(inact_obj):
-    plt.figure()
-    plt.xlabel('Time $(ms)$')
-    plt.ylabel('Current density $(mA/cm^2)$')
-    plt.title('Inactivation Tau at 0 mV')
-    # select 0 mV
-    volt = 0  # mV
-    mask = np.where(inact_obj.v_vec == volt)[0]
-    curr = np.array(inact_obj.all_is)[mask][0]
-    time = np.array(inact_obj.t_vec)[1:]
-    # fit exp: IFit(t) = A * exp (-t/τ) + C
-    ts, data, xs, ys, tau = inact_obj.find_tau0_inact(curr)
-    # plot
-    plt.plot(ts, data, color="black")
-    plt.plot(xs, ys, color="red")
-    formatted_tau = np.round(tau, decimals=3)
-    plt.text(0.2, -0.01, f"Tau at 0 mV: {formatted_tau}", color='blue')
-    # save as PGN file
-    plt.savefig(os.path.join(os.path.split(__file__)[0], "Plots_Folder/HMM_Inactivation Tau at 0 mV"))
 
 
 

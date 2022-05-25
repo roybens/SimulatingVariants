@@ -105,44 +105,7 @@ class Activation(Activation_general):
         self.ipeak_vec.append(peak)
         self.ttp_vec.append(ttp)
 
-    def find_ipeaks(self):
-        """
-        Evaluate the peak and updates the peak current.
-        Returns peak current.
-        Finds positive and negative peaks.
-        """
-        self.i_vec = np.array(self.i_vec)
-        self.t_vec = np.array(self.t_vec)
-        mask = np.where(np.logical_and(self.t_vec >= 4, self.t_vec <= 10))
-        i_slice = self.i_vec[mask]
-        curr_max = np.max(i_slice)
-        curr_min = np.min(i_slice)
-        if np.abs(curr_max) > np.abs(curr_min):
-            curr_tr = curr_max
-            curr_index = np.argmax(self.i_vec)
-        else:
-            curr_tr = curr_min
-            curr_index = np.argmin(self.i_vec)
-        return curr_tr, self.t_vec[curr_index]
-    
-    def find_ipeaks_with_index(self):
-        """
-        Evaluate the peak and updates the peak current.
-        Returns peak current.
-        Finds positive and negative peaks.
-        """
-        self.i_vec = np.array(self.i_vec)
-        self.t_vec = np.array(self.t_vec)
-        mask = np.where(np.logical_and(self.t_vec >= 4, self.t_vec <= 10))
-        i_slice = self.i_vec[mask]
-        curr_max = np.max(i_slice)
-        curr_min = np.min(i_slice)
-        if np.abs(curr_max) > np.abs(curr_min):
-            curr_tr = curr_max
-        else:
-            curr_tr = curr_min
-        curr_tr_index = list(i_slice).index(curr_tr)
-        return curr_tr_index, curr_tr
+
 
 ##################
 # Inactivation
@@ -184,28 +147,6 @@ class Inactivation(Inactivation_general):
         # updates the vectors at the end of the run
         self.ipeak_vec.append(peak_curr)
 
-
-    def find_tau0_inact(self, raw_data):
-        # take peak curr and onwards
-        min_val, mindex = min((val, idx) for (idx, val) in enumerate(raw_data[:int(0.7 * len(raw_data))]))
-        padding = 15  # after peak
-        data = raw_data[mindex:mindex + padding]
-        ts = [0.1 * i for i in range(len(data))]  # make x values which match sample times
-
-        # calc tau and fit exp
-        popt, pcov = optimize.curve_fit(fit_exp, ts, data)  # fit exponential curve
-        perr = np.sqrt(np.diag(pcov))
-        # print('in ' + str(all_tau_sweeps[i]) + ' the error was ' + str(perr))
-        xs = np.linspace(ts[0], ts[len(ts) - 1], 1000)  # create uniform x values to graph curve
-        ys = fit_exp(xs, *popt)  # get y values
-        vmax = max(ys) - min(ys)  # get diff of max and min voltage
-        vt = min(ys) + .37 * vmax  # get vmax*1/e
-        #tau = (np.log([(vt - popt[2]) / popt[0]]) / (-popt[1]))[0]  # find time at which curve = vt
-        #Roy said tau should just be the parameter b from fit_exp
-        tau = popt[1]
-        return ts, data, xs, ys, tau
-    
-    
 ##################
 # Recovery from Inactivation (RFI)
 # &  RFI Tau

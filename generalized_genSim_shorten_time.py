@@ -78,83 +78,7 @@ class Activation(Activation_general):
         self.ttp_vec.append(ttp)
 
 
-    def clamp_at_volt(self, v_cl):
-        """ Runs a trace and calculates peak currents.
-        Args:
-            v_cl (int): voltage to run
-        """
-        self.t_vec = []
-        self.v_vec_t = []
-        self.i_vec = []
-        """ Runs a trace and calculates peak currents.
-        Args:
-            v_cl (int): voltage to run
-        """
-        if self.gnorm_vec == []:
-            time_padding = 5  # ms
-            h.tstop = time_padding + self.dur + time_padding  # time stop
 
-        curr_tr = 0  # initialization of peak current
-        h.finitialize(self.v_init)  # calling the INITIAL block of the mechanism inserted in the section.
-        pre_i = 0  # initialization of variables used to commute the peak current
-        dens = 0
-        self.f3cl.amp[1] = v_cl  # mV
-        for _ in self.ntrials:
-            while h.t < h.tstop:  # runs a single trace, calculates peak current
-                dens = self.f3cl.i / self.soma(0.5).area() * 100.0 - self.soma(
-                    0.5).i_cap  # clamping current in mA/cm2, for each dt
-                # append data
-                self.t_vec.append(h.t)
-                self.v_vec_t.append(self.soma.v)
-                self.i_vec.append(dens)
-                # advance
-                h.fadvance()
-
-        # find i peak of trace
-        peak,ttp = self.find_ipeaks()
-        self.ipeak_vec.append(peak)
-        self.ttp_vec.append(ttp)
-
-
-    def find_ipeaks(self):
-        """
-        Evaluate the peak and updates the peak current.
-        Returns peak current.
-        Finds positive and negative peaks.
-        """
-        self.i_vec = np.array(self.i_vec)
-        self.t_vec = np.array(self.t_vec)
-        mask = np.where(np.logical_and(self.t_vec >= 4, self.t_vec <= 10))
-        i_slice = self.i_vec[mask]
-        curr_max = np.max(i_slice)
-        curr_min = np.min(i_slice)
-        if np.abs(curr_max) > np.abs(curr_min):
-            curr_tr = curr_max
-            curr_index = np.argmax(self.i_vec)
-        else:
-            curr_tr = curr_min
-            curr_index = np.argmin(self.i_vec)
-        return curr_tr, self.t_vec[curr_index] 
-
-    def find_ipeaks_with_index(self):
-        """
-        Evaluate the peak and updates the peak current.
-        Returns peak current.
-        Finds positive and negative peaks.
-        """
-        self.i_vec = np.array(self.i_vec)
-        self.t_vec = np.array(self.t_vec)
-        mask = np.where(np.logical_and(self.t_vec >= 4, self.t_vec <= 10))
-        i_slice = self.i_vec[mask]
-        curr_max = np.max(i_slice)
-        curr_min = np.min(i_slice)
-        if np.abs(curr_max) > np.abs(curr_min):
-            curr_tr = curr_max
-        else:
-            curr_tr = curr_min
-        curr_tr_index = list(i_slice).index(curr_tr)
-        return curr_tr_index, curr_tr
-    
 
 ##################
 # Inactivation
@@ -244,50 +168,6 @@ class Inactivation(Inactivation_general):
         https://www.graphpad.com/guides/prism/latest/curve-fitting/reg_exponential_association.htm    
         '''
         return y0 + (plateau - y0) * (1 - np.exp(-k * x))
-    
-    # one phase asso
-    # 1/b as tau
-
-    def find_tau0_inact(self, raw_data,upper=700):
-        
-        
-        def one_phase(x, y0, plateau, k):
-            return y0 + (plateau - y0) * (1 - np.exp(-k * x))
-        
-        def fit_expon(x, a, b, c):
-            return a + b * np.exp(-1 * c * x)
-    
-        
-        # # take peak curr and onwards
-        # min_val, mindex = min((val, idx) for (idx, val) in enumerate(raw_data[:int(0.7 * len(raw_data))]))
-        # padding = 15  # after peak
-        # data = raw_data[mindex:mindex + padding]
-        # ts = [0.1 * i for i in range(len(data))]  # make x values which match sample times
-
-        # # calc tau and fit exp
-        # # cuts data points in half
-        # length = len(ts) // 2
-        # popt, pcov = optimize.curve_fit(fit_expon, ts[0:length], data[0:length])  # fit exponential curve
-        # perr = np.sqrt(np.diag(pcov))
-        # # print('in ' + str(all_tau_sweeps[i]) + ' the error was ' + str(perr))
-        # xs = np.linspace(ts[0], ts[len(ts) - 1], 1000)  # create uniform x values to graph curve
-        # ys = fit_expon(xs, *popt)  # get y values
-        # vmax = max(ys) - min(ys)  # get diff of max and min voltage
-        # vt = min(ys) + .37 * vmax  # get vmax*1/e
-        # tau = popt[2]
-        act = ggsd.Activation(channel_name = 'na12')
-        act.clamp_at_volt(0)
-        starting_index = list(act.i_vec).index(act.find_ipeaks_with_index()[1])
-        
-        t_vecc = act.t_vec[starting_index:upper]
-        i_vecc = act.i_vec[starting_index:upper]
-        popt, pcov = optimize.curve_fit(fit_expon,t_vecc,i_vecc, method = 'dogbox') 
-        fitted_i = fit_expon(act.t_vec[starting_index:upper],popt[0],popt[1],popt[2])
-        tau = 1/popt[2]
-        return t_vecc, i_vecc, t_vecc, fitted_i, tau
-
-
-
 
 ##################
 # Recovery from Inactivation (RFI)

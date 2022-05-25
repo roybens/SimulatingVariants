@@ -40,7 +40,13 @@ class General_protocol:
         self.soma.Ra = soma_Ra  # ohm-cm
         self.soma.insert(channel_name)  # insert mechanism
         self.soma.ena = soma_ena
-        
+        self.f3cl = h.VClamp(self.soma(0.5))
+        self.v_init = -65
+        self.t_vec = []  # vector for time steps (h.dt)
+        self.v_vec = []
+        self.v_vec_t = []  # vector for voltage as function of time
+        self.i_vec = []  # vector for current
+
     def update_clamp_time_step(self):
         dens = self.f3cl.i / self.soma(0.5).area() * 100.0 - self.soma(
                     0.5).i_cap  # clamping current in mA/cm2, for each dt
@@ -48,6 +54,111 @@ class General_protocol:
         self.t_vec.append(h.t)
         self.v_vec_t.append(self.soma.v)
         self.i_vec.append(dens)
+
+    def clamp(self, v_cl):
+        """ Runs a trace and calculates peak currents.
+        Args:
+            v_cl (int): voltage to run
+        """
+        curr_tr = 0  # initialization of peak current
+        h.finitialize(self.v_init)  # calling the INITIAL block of the mechanism inserted in the section.
+        pre_i = 0  # initialization of variables used to commute the peak current
+        dens = 0
+        self.f3cl.amp[1] = v_cl  # mV
+
+        for _ in self.ntrials:
+            while h.t < h.tstop:  # runs a single trace, calculates peak current
+                dens = self.f3cl.i / self.soma(0.5).area() * 100.0 - self.soma(
+                    0.5).i_cap  # clamping current in mA/cm2, for each dt
+
+                self.t_vec.append(h.t)
+                self.v_vec_t.append(self.soma.v)
+                self.i_vec.append(dens)
+
+                if (h.t > 5) and (h.t <= 10):  # evaluate the peak
+                    if abs(dens) > abs(pre_i):
+                        curr_tr = dens  # updates the peak current
+
+                h.fadvance()
+                pre_i = dens
+
+                # find i peak of trace
+        peak, ttp = self.find_ipeaks()
+        self.ipeak_vec.append(peak)
+        self.ttp_vec.append(ttp)
+
+    # Inserted from generalized_genSim_shorten_time.py
+    def clamp_at_volt(self, v_cl):
+        self.t_vec = []
+        self.v_vec_t = []
+        self.i_vec = []
+        """ Runs a trace and calculates peak currents.
+        Args:
+            v_cl (int): voltage to run
+        """
+        if self.gnorm_vec == []:
+            time_padding = 5  # ms
+            h.tstop = time_padding + self.dur + time_padding  # time stop
+
+        curr_tr = 0  # initialization of peak current
+        h.finitialize(self.v_init)  # calling the INITIAL block of the mechanism inserted in the section.
+        pre_i = 0  # initialization of variables used to commute the peak current
+        dens = 0
+        self.f3cl.amp[1] = v_cl  # mV
+        for _ in self.ntrials:
+            while h.t < h.tstop:  # runs a single trace, calculates peak current
+                dens = self.f3cl.i / self.soma(0.5).area() * 100.0 - self.soma(
+                    0.5).i_cap  # clamping current in mA/cm2, for each dt
+                # append data
+                self.t_vec.append(h.t)
+                self.v_vec_t.append(self.soma.v)
+                self.i_vec.append(dens)
+                # advance
+                h.fadvance()
+
+        # find i peak of trace
+        peak, ttp = self.find_ipeaks()
+        self.ipeak_vec.append(peak)
+        self.ttp_vec.append(ttp)
+    def find_ipeaks(self,ranges = [4,10]):
+        """
+        Evaluate the peak and updates the peak current.
+        Returns peak current.
+        Finds positive and negative peaks.
+        """
+        self.i_vec = np.array(self.i_vec)
+        self.t_vec = np.array(self.t_vec)
+        mask = np.where(np.logical_and(self.t_vec >= ranges[0], self.t_vec <= ranges[1]))
+        i_slice = self.i_vec[mask]
+        curr_max = np.max(i_slice)
+        curr_min = np.min(i_slice)
+        if np.abs(curr_max) > np.abs(curr_min):
+            curr_tr = curr_max
+            curr_index = np.argmax(self.i_vec)
+        else:
+            curr_tr = curr_min
+            curr_index = np.argmin(self.i_vec)
+        return curr_tr, self.t_vec[curr_index]
+
+    def find_ipeaks_with_index(self):
+        """
+        Evaluate the peak and updates the peak current.
+        Returns peak current.
+        Finds positive and negative peaks.
+        """
+        self.i_vec = np.array(self.i_vec)
+        self.t_vec = np.array(self.t_vec)
+        mask = np.where(np.logical_and(self.t_vec >= 4, self.t_vec <= 10))
+        i_slice = self.i_vec[mask]
+        curr_max = np.max(i_slice)
+        curr_min = np.min(i_slice)
+        if np.abs(curr_max) > np.abs(curr_min):
+            curr_tr = curr_max
+        else:
+            curr_tr = curr_min
+        curr_tr_index = list(i_slice).index(curr_tr)
+        return curr_tr_index, curr_tr
+
 
 class Activation_general(General_protocol):
     def __init__(self, soma_diam=50, soma_L=63.66198, soma_nseg=1, soma_cm=1, soma_Ra=70,
@@ -127,7 +238,44 @@ class Activation_general(General_protocol):
         for volt in v_vec:
             norm_g.append(1 / (1 + np.exp(-(volt - self.v_half) / self.s)))
         return norm_g
-    
+
+    def clamp_at_volt(self, v_cl):
+        """ Runs a trace and calculates peak currents.
+        Args:
+            v_cl (int): voltage to run
+        """
+        self.t_vec = []
+        self.v_vec_t = []
+        self.i_vec = []
+        """ Runs a trace and calculates peak currents.
+        Args:
+            v_cl (int): voltage to run
+        """
+        if self.gnorm_vec == []:
+            time_padding = 5  # ms
+            h.tstop = time_padding + self.dur + time_padding  # time stop
+
+        curr_tr = 0  # initialization of peak current
+        h.finitialize(self.v_init)  # calling the INITIAL block of the mechanism inserted in the section.
+        pre_i = 0  # initialization of variables used to commute the peak current
+        dens = 0
+        self.f3cl.amp[1] = v_cl  # mV
+        for _ in self.ntrials:
+            while h.t < h.tstop:  # runs a single trace, calculates peak current
+                dens = self.f3cl.i / self.soma(0.5).area() * 100.0 - self.soma(
+                    0.5).i_cap  # clamping current in mA/cm2, for each dt
+                # append data
+                self.t_vec.append(h.t)
+                self.v_vec_t.append(self.soma.v)
+                self.i_vec.append(dens)
+                # advance
+                h.fadvance()
+
+        # find i peak of trace
+        peak, ttp = self.find_ipeaks()
+        self.ipeak_vec.append(peak)
+        self.ttp_vec.append(ttp)
+
     def genActivation(self):
         #same
         """ Generates simulated activation data
@@ -141,6 +289,7 @@ class Activation_general(General_protocol):
             h.tstop = time_padding + self.dur + time_padding  # time stop
 
             # iterates across voltages (mV)
+            v_cls = np.arange(self.st_cl, self.end_cl, self.step)
             for v_cl in np.arange(self.st_cl, self.end_cl, self.step):  # self.vec
                 # resizing the vectors
                 self.t_vec = []
@@ -156,7 +305,51 @@ class Activation_general(General_protocol):
             self.gnorm_vec = self.findG(self.v_vec, self.ipeak_vec)
 
         return self.gnorm_vec, self.v_vec, self.all_is
-    
+
+    def get_Tau_0mV(self, upper=700):
+        def fit_expon(x, a, b, c):
+            return a + b * np.exp(-1 * c * x)
+
+        def one_phase(x, y0, plateau, k):
+            return y0 + (plateau - y0) * (1 - np.exp(-k * x))
+
+        self.clamp_at_volt(0)
+        starting_index = list(self.i_vec).index(self.find_ipeaks_with_index()[1])
+
+        t_vecc = self.t_vec[starting_index:upper]
+        i_vecc = self.i_vec[starting_index:upper]
+        try:
+            popt, pcov = optimize.curve_fit(fit_expon, t_vecc, i_vecc, method='dogbox')
+            fit = 'exp'
+            tau = 1 / popt[2]
+            fitted_i = fit_expon(self.t_vec[starting_index:upper], popt[0], popt[1], popt[2])
+        except:
+            popt, pcov = optimize.curve_fit(one_phase, t_vecc, i_vecc, method='dogbox')
+            fit = 'one_phase'
+            tau = 1 / popt[2]
+            fitted_i = one_phase(self.t_vec[starting_index:upper], popt[0], popt[1], popt[2])
+        return tau
+
+    def find_peak_amp(self, ranges=None):
+        if not self.ipeak_vec:
+            print('regen activation in peak_amp')
+            self.genActivation()
+        if ranges is None:
+            return self.ipeak_vec
+        else:
+            return self.ipeak_vec[ranges[0]:ranges[1]]
+
+    def find_time_to_peak(self, ranges=None):
+        if not self.ttp_vec:
+            print('regen activation in ttp')
+            self.genActivation()
+        if ranges is None:
+            return self.ttp_vec
+        else:
+            return self.ttp_vec[ranges[0]:ranges[1]]
+
+
+
     
 class Inactivation_general(General_protocol):
     def __init__(self, soma_diam=50, soma_L=63.66198, soma_nseg=1, soma_cm=1, soma_Ra=70,

@@ -5,10 +5,7 @@
 
 import matplotlib.pyplot as plt
 import numpy as np
-import eval_helper as eh
 from scipy import optimize, stats
-import eval_helper_na12mut as ehn
-import eval_helper_na12mut8st as ehn8
 
 def boltzmann(x, slope, v_half, top, bottom):
     '''
@@ -90,13 +87,8 @@ def calc_recov_obj(recov_obj):
 # Technically not fitting any curves here, but Michael is placing this here for consistency until a better
 # place is found.
 def calc_tau0_obj(act_obj, is_HMM=False):
-    # Can't actually use the channel_name right now because the eval_helper (ehn) files aren't generalizable yet.
     try:
-        if not is_HMM:
-            tau0 = ehn.find_tau0(act_obj)
-        else:
-            tau0 = ehn8.find_tau0(act_obj)
-        return tau0
+        tau0 = act_obj.get_Tau_0mV()
     except:
         #print('Couldn\'t generate tau0 data')
         return 1000
@@ -105,10 +97,7 @@ def calc_tau0_obj(act_obj, is_HMM=False):
 # place is found.
 def calc_peak_amp_obj(act_obj, is_HMM=False):
     try:
-        if not is_HMM:
-            peak_amp = ehn.find_peak_amp(act_obj)
-        else:
-            peak_amp = ehn8.find_peak_amp(act_obj)
+        peak_amp = act_obj.find_peak_amp()
         return peak_amp
     except:
  #       print('Couldn\'t generate peak_amp data')
@@ -118,10 +107,7 @@ def calc_peak_amp_obj(act_obj, is_HMM=False):
 # place is found.
 def calc_time_to_peak_obj(act_obj, is_HMM=False):
     try:
-        if not is_HMM:
-            ttp = ehn.find_time_to_peak(act_obj)
-        else:
-            ttp = ehn8.find_time_to_peak(act_obj)            
+        ttp = act_obj.find_time_to_peak()
         return ttp
     except:
   #      print('Couldn\'t generate time-to-peak data')
