@@ -137,10 +137,10 @@ def plotActivation_TCurrDensityRelation(act_obj,xlim = None):
     plt.savefig(
         os.path.join(os.path.split(__file__)[0], "Plots_Folder/HMM_Activation Time Current Density Relation"))
         
-def plotActivation_TCurrDensityRelation_plt(act_obj,plt,color):
-    curr = np.array(act_obj.all_is)
-    mask = np.where(np.logical_or(act_obj.v_vec == 0, act_obj.v_vec == 10))
-    [plt.plot(act_obj.t_vec[190:300], curr[i][190:300], c=color) for i in np.arange(len(curr))[mask]]
+#def plotActivation_TCurrDensityRelation_plt(act_obj,plt,color):
+#    curr = np.array(act_obj.all_is)
+#    mask = np.where(np.logical_or(act_obj.v_vec == 0, act_obj.v_vec == 10))
+#    [plt.plot(act_obj.t_vec[190:300], curr[i][190:300], c=color) for i in np.arange(len(curr))[mask]]
 
 
 def plotActivation_VGnorm_plt(act_obj,plt,color):
@@ -358,13 +358,17 @@ def plotInactivation_TimeVRelation(inact_obj):
     # save as PGN file
     plt.savefig(os.path.join(os.path.split(__file__)[0], 'Plots_Folder/HMM_Inactivation Time Voltage Relation'))
 
-def plotInactivation_TCurrDensityRelation(inact_obj):
+def plotInactivation_TCurrDensityRelation(inact_obj,padding = 3):
     plt.figure()
     plt.xlabel('Time $(ms)$')
     plt.ylabel('Current density $(mA/cm^2)$')
     plt.title('Inactivation Time/Current density relation')
-    mask_arr = (np.array(inact_obj.t_vec) > inact_obj.st_step_time) & (np.array(inact_obj.t_vec) < inact_obj.end_step_time)
-    [plt.plot(inact_obj.t_vec[mask_arr], inact_obj.all_is[i][mask_arr], c='black') for i in np.arange(inact_obj.L)]
+    inds_arr = [i for i in range(len(inact_obj.t_vec)) if
+                (inact_obj.t_vec[i] > (inact_obj.st_step_time -padding)) & (inact_obj.t_vec[i] < (inact_obj.st_step_time +padding))]
+    inds_arr = np.array(inds_arr[:-1])
+    time_arr =  np.array(inact_obj.t_vec)[inds_arr.astype(int)]
+
+    [plt.plot(time_arr, np.array(inact_obj.all_is[i])[inds_arr.astype(int)], c='black') for i in np.arange(inact_obj.L)]
     # save as PGN file
     plt.savefig(
         os.path.join(os.path.split(__file__)[0], "Plots_Folder/HMM_Inactivation Time Current Density Relation"))
