@@ -53,7 +53,7 @@ class Score_Function:
             #print('v_half_inact: ' + str(v_half_inact))
                 
         except ZeroDivisionError:
-            #print('Zero Division Error')
+            print('Zero Division Error************')
             error_val = []
             for i in range(len(objectives)):
                 error_val.append(1000)
@@ -80,7 +80,7 @@ class Score_Function:
             time_to_peak_error = self.calc_ttp_err(act_obj)
             errors.append(time_to_peak_error)
         if 'tau0' in objectives:
-            tau0_error = self.calc_tau0_err(act_obj)
+            tau0_error = self.calc_tau0_err(act_obj)*100
             errors.append(tau0_error)
         #print(errors)
         return tuple(errors)
@@ -158,7 +158,7 @@ class Score_Function:
     #def udb20(self, percent_wild):
     def calc_tau0_err(self, act_obj):
         try:
-            tau0 = act_obj.find_tau0(act_obj)
+            tau0 = act_obj.get_Tau_0mV()
             tau0_error = (tau0 - self.tau0_wild)**2
         except:
             tau0_error = 1000
@@ -166,7 +166,7 @@ class Score_Function:
 
     def calc_peak_amp_err(self,act_obj):
         try:
-            peak_amp = act_obj.find_peak_amp(act_obj,[14,33])
+            peak_amp = act_obj.find_peak_amp([14,33])
             peak_amp_errors = np.sum([(peak_amp[i] - self.peak_amp_wild[i])**2 for i in range(len(peak_amp))])
             return peak_amp_errors
         except:
@@ -174,7 +174,7 @@ class Score_Function:
 
     def calc_ttp_err(self, act_obj):
         try: 
-            time_to_peak = act_obj.find_time_to_peak(act_obj,[14,33])
+            time_to_peak = act_obj.find_time_to_peak([14,33])
             time_to_peak_error = np.sum([(time_to_peak[i] - self.time_to_peak_wild[i])**2 for i in range(len(time_to_peak))])
             return time_to_peak_error
         except:

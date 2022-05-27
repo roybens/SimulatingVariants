@@ -71,8 +71,6 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         self.protocols = eh.read_mutant_protocols('csv_files/mutant_protocols.csv', mutant)
         self.score_calculator = sf.Score_Function(self.protocols, self.wild_data, self.channel_name_HMM)
 
-        
-
     def initialize_wild_data(self):
         '''
         Using the current channel's mod file, calculate and load all objective values into a dict.
