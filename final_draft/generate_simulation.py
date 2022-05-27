@@ -84,11 +84,10 @@ class General_protocol:
         curr_min = np.min(i_slice)
         if np.abs(curr_max) > np.abs(curr_min):
             curr_tr = curr_max
-            curr_index = np.argmax(self.i_vec)
         else:
             curr_tr = curr_min
-            curr_index = np.argmin(self.i_vec)
-        return curr_tr, self.t_vec[curr_index]
+        curr_index = np.where(self.i_vec == curr_tr)[0][0]
+        return curr_tr, self.t_vec[curr_index],curr_index
 
     def find_ipeaks_with_index(self):
         """
@@ -187,7 +186,7 @@ class Activation_general(General_protocol):
             h.fadvance()
             pre_i = dens
         # find i peak of trace
-        peak, ttp = self.find_ipeaks()
+        peak, ttp,_ = self.find_ipeaks()
         self.ipeak_vec.append(peak)
         self.ttp_vec.append(ttp)
 
@@ -261,8 +260,9 @@ class Activation_general(General_protocol):
             return y0 + (plateau - y0) * (1 - np.exp(-k * x))
 
         self.clamp(0)
-        starting_index = list(self.i_vec).index(self.find_ipeaks_with_index()[1])
-        #print(f' starting index is: {starting_index}')
+        curr_peak, peak_time, peak_index = self.find_ipeaks()
+        starting_index = peak_index
+        print(f' starting index is: {starting_index}')
         t_vecc = self.t_vec[starting_index:upper]
         i_vecc = self.i_vec[starting_index:upper]
         try:
