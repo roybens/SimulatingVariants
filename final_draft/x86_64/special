@@ -14,4 +14,4 @@ if test "" = "yes" ; then
 else
     NRNIV="${NRNBIN}/nrniv"
 fi
-"${NRNIV}" -dll "/neuron_wrk/SimulatingVariants/final_draft/x86_64/.libs/libnrnmech.so" "$@"
+"${NRNIV}" -dll "/global/homes/r/roybens/SimulatingVariants/final_draft/x86_64/.libs/libnrnmech.so" "$@"
