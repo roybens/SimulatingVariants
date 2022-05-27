@@ -163,6 +163,8 @@ class Activation_general(General_protocol):
         Args:
             v_cl (int): voltage to run
         """
+        time_padding = 5  # ms
+        h.tstop = time_padding + self.dur + time_padding  # time stop
         self.t_vec = []
         self.v_vec_t = []
         self.i_vec = []
@@ -260,7 +262,7 @@ class Activation_general(General_protocol):
 
         self.clamp(0)
         starting_index = list(self.i_vec).index(self.find_ipeaks_with_index()[1])
-
+        print(f' starting index is: {starting_index}')
         t_vecc = self.t_vec[starting_index:upper]
         i_vecc = self.i_vec[starting_index:upper]
         try:
