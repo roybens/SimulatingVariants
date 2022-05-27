@@ -104,7 +104,7 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         wild_data['peak_amp'] = peak_amp
         wild_data['time_to_peak'] = time_to_peak
         self.wild_data = wild_data
-        print(wild_data)
+        #print(wild_data)
         return wild_data
 
 

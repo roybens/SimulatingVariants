@@ -47,13 +47,13 @@ class Score_Function:
             gv_slope, v_half_act, top, bottom = cf.calc_act_obj(act_obj)
             ssi_slope, v_half_inact, top, bottom = cf.calc_inact_obj(inact_obj)
             # y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(recov_obj)
-            print('gv_slope: ' + str(gv_slope))
-            print('v_half_act: ' + str(v_half_act))
-            print('ssi_slope: ' + str(ssi_slope))
-            print('v_half_inact: ' + str(v_half_inact))
+            #print('gv_slope: ' + str(gv_slope))
+            #print('v_half_act: ' + str(v_half_act))
+            #print('ssi_slope: ' + str(ssi_slope))
+            #print('v_half_inact: ' + str(v_half_inact))
                 
         except ZeroDivisionError:
-            print('Zero Division Error')
+            #print('Zero Division Error')
             error_val = []
             for i in range(len(objectives)):
                 error_val.append(1000)
@@ -82,7 +82,7 @@ class Score_Function:
         if 'tau0' in objectives:
             tau0_error = self.calc_tau0_err(act_obj)
             errors.append(tau0_error)
-        print(errors)
+        #print(errors)
         return tuple(errors)
         
     def dv_half_act(self, plus_minus_wild, v_half):

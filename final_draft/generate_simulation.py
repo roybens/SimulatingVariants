@@ -262,7 +262,7 @@ class Activation_general(General_protocol):
 
         self.clamp(0)
         starting_index = list(self.i_vec).index(self.find_ipeaks_with_index()[1])
-        print(f' starting index is: {starting_index}')
+        #print(f' starting index is: {starting_index}')
         t_vecc = self.t_vec[starting_index:upper]
         i_vecc = self.i_vec[starting_index:upper]
         try:
@@ -279,7 +279,7 @@ class Activation_general(General_protocol):
 
     def find_peak_amp(self, ranges=None):
         if not self.ipeak_vec:
-            print('regen activation in peak_amp')
+            #print('regen activation in peak_amp')
             self.genActivation()
         if ranges is None:
             return self.ipeak_vec
@@ -288,7 +288,7 @@ class Activation_general(General_protocol):
 
     def find_time_to_peak(self, ranges=None):
         if not self.ttp_vec:
-            print('regen activation in ttp')
+            #print('regen activation in ttp')
             self.genActivation()
         if ranges is None:
             return self.ttp_vec
