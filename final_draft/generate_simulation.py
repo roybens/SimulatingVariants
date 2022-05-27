@@ -262,7 +262,7 @@ class Activation_general(General_protocol):
         self.clamp(0)
         curr_peak, peak_time, peak_index = self.find_ipeaks()
         starting_index = peak_index
-        print(f' starting index is: {starting_index}')
+        #print(f' starting index is: {starting_index}')
         t_vecc = self.t_vec[starting_index:upper]
         i_vecc = self.i_vec[starting_index:upper]
         try:
