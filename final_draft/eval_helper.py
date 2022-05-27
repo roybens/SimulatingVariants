@@ -534,7 +534,7 @@ def change_params_dict(new_params, is_HMM=False,sim_obj = None):
         currh.zetas_na12mut= new_params['zetas_na12mut']
     elif is_HMM:
         if sim_obj is None:
-            sim_obj = generate_simulation.Activation_general()
+            sim_obj = generate_simulation.Activation_general('na12mut8st')
         soma = sim_obj.soma
         currh = sim_obj.h
         soma.a1_0_na12mut8st = new_params['a1_0_na12mut8st']
@@ -562,3 +562,17 @@ def change_params_dict(new_params, is_HMM=False,sim_obj = None):
         soma.bhfactor_na12mut8st = new_params['bhfactor_na12mut8st']
     return
 
+
+def read_params_range(param_range_csv):
+    """
+    returns a dictionary mapping parameter names to its (val, min, max)
+    """
+
+    with open(param_range_csv, 'r') as csv_file:
+        lines = [line.split(",") for line in csv_file]
+
+    result = {}
+    for line in lines[1:]:
+        result[line[0]] = (float(line[1]), float(line[2]), float(line[3][:-1]))
+
+    return result

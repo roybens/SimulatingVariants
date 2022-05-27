@@ -1242,8 +1242,6 @@ class Ramp:
         diff = 0
         if color == "red":
             diff = 0.2
-
-
         # starting + first step + ramp section
         ax1.plot(self.t_current[:self.t_start_persist], self.i_vec[:self.t_start_persist], 'o', c=color, markersize=0.1)
         plt.text(0.05, 0.2 + diff, f'Normalized \nAUC: {area}', c=color, fontsize=10)

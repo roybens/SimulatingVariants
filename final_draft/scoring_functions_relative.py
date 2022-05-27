@@ -1,9 +1,6 @@
-import eval_helper as eh
-#import mutant_protocols as mp
+
 import curve_fitting as cf
-from scipy.stats import linregress
 import math
-import eval_helper as eh
 import numpy as np
 '''
 This file contains various scoring functions that can be used in the evaluator's

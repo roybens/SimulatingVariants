@@ -1,0 +1,149 @@
+#From score function 
+
+   def get_values_from_gensim(k_fast, k_slow, span_fast, span_slow):
+        '''
+        Calculates various values for the scoring function, and stores the result as member variables of the object.
+        ---
+        Args:
+            k_fast and k_slow are the two rate constant, expressed in reciprocal of the X axis time units. If X is in minutes, then K is expressed in inverse minute
+        '''
+        gen_data = eh.gen_sim_data()
+
+        def find_half_and_slope(v_vec, ipeak_vec):
+            """ 
+            Returns V50 and slope
+            """
+            # convert to numpy arrays
+            v_vec = np.array(v_vec)
+            ipeak_vec = np.array(ipeak_vec)
+
+            # find start of linear portion (0 mV and onwards)
+            inds = np.where(v_vec >= 0)
+
+            # take linear portion of voltage and current relationship
+            lin_v = v_vec[inds]
+            lin_i = ipeak_vec[inds]
+            
+            #boltzmann for conductance
+            def boltzmann(vm, Gmax, v_half, s):
+                vrev = stats.linregress(lin_i, lin_v).intercept
+                return Gmax * (vm - vrev) / (1 + np.exp((v_half - vm) / s))
+
+            Gmax, v_half, s = optimize.curve_fit(boltzmann, v_vec, ipeak_vec)[0]
+            return s, v_half
+
+        self.gv_slope, self.dv_half_act = find_half_and_slope(gen_data['act sweeps'], gen_data['act'])
+        self.ssi_slope, self.dv_half_ssi = find_half_and_slope(gen_data['inact sweeps'], gen_data['inact'])
+        self.tau_0 = gen_data['tau0']
+        self.tau_fast = 1 / k_fast
+        self.tau_slow = 1 / k_slow
+        self.percent_fast = span_fast / span_slow
+        #self.udb20: ignore it for now
+        #ramp and persistent: not ready yet
+
+
+#Plot stuff:
+    def plot_inact(self, param_values):
+        fig, axs = plt.subplots(1, figsize=(10,10))
+        inact_obj = ggsdHMM.Inactivation(channel_name=self.channel_name_HMM)
+        # Inactivation curve
+        # Calculate wild baseline values
+        v_half_ssi_exp = self.wild_data['v_half_ssi'] + float(self.protocols['dv_half_ssi'])
+        ssi_slope_exp = self.wild_data['ssi_slope'] * float(self.protocols['ssi_slope']) / 100
+        eh.change_params(param_values, scaled=False, is_HMM=True, sim_obj=inact_obj)
+        inorm_vec, v_vec, all_is = inact_obj.genInactivation()
+        inorm_array = np.array(inorm_vec)
+        v_array = np.array(v_vec)
+
+        ssi_slope, v_half, top, bottom = cf.calc_inact_obj(inact_obj)
+
+
+        even_xs = np.linspace(v_array[0], v_array[len(v_array)-1], 100)
+        curve = cf.boltzmann(even_xs, ssi_slope, v_half, top, bottom)
+        axs.set_xlabel('Voltage (mV)')
+        axs.set_ylabel('Fraction Inactivated')
+        axs.set_title("Inactivation Curve")
+        axs.scatter(v_array, inorm_array, color='red', marker='s', label='Optimized Inactivation')
+        axs.plot(even_xs, curve, color='red', label="Fitted Inactivation")
+
+
+        curve_exp = cf.boltzmann(even_xs, ssi_slope_exp, v_half_ssi_exp, 0, 1)
+        axs.plot(even_xs, curve_exp, color='black', label='Inactivation experimental')
+        axs.text(-.120, 0.7, 'Slope (Optimized): ' + str(ssi_slope) + ' /mV')
+        axs.text(-.120, 0.6, 'Slope (Experimental): ' + str(ssi_slope_exp) + ' /mV')
+        axs.text(-.120, 0.5, 'V50 (Optimized): ' + str(v_half) + ' mV')
+        axs.text(-.120, 0.4, 'V50 (Experimental): ' + str(v_half_ssi_exp) + ' mV')
+        axs.legend()
+        plt.show()
+
+
+    def plot_act(self, param_values):
+        act_obj = ggsdHMM.Activation(channel_name=self.channel_name_HMM)
+        fig, axs = plt.subplots(1, figsize=(10,10))
+        # Calculate wild baseline values
+        v_half_act_exp = self.wild_data['v_half_act'] + float(self.protocols['dv_half_act'])
+        gv_slope_exp = self.wild_data['gv_slope'] + float(self.protocols['gv_slope']) / 100
+
+        eh.change_params(param_values, scaled=False, is_HMM=True, sim_obj=act_obj)
+        gnorm_vec, v_vec, all_is = act_obj.genActivation()
+        gnorm_array = np.array(gnorm_vec)
+        v_array = np.array(v_vec)
+        gv_slope, v_half, top, bottom = cf.calc_act_obj(act_obj)
+
+        even_xs = np.linspace(v_array[0], v_array[len(v_array)-1], 100)
+        curve = cf.boltzmann(even_xs, gv_slope, v_half, top, bottom)
+        axs.set_xlabel('Voltage (mV)')
+        axs.set_ylabel('Fraction Activated')
+        axs.set_title("Activation Curve")
+        axs.scatter(v_array, gnorm_array, color='red',marker='s', label='Optimized Activation')
+        axs.plot(even_xs, curve, color='red', label="Fitted Activation")
+
+
+        curve_exp = cf.boltzmann(even_xs, gv_slope_exp, v_half_act_exp, 1, 0)
+        axs.plot(even_xs, curve_exp, color='black', label='Activation Experimental')
+        axs.text(-.120, 0.7, 'Slope (Optimized): ' + str(gv_slope) + ' /mV')
+        axs.text(-.120, 0.6, 'Slope (Experimental): ' + str(gv_slope_exp) + ' /mV')
+        axs.text(-.120, 0.5, 'V50 (Optimized): ' + str(v_half) + ' mV')
+        axs.text(-.120, 0.4, 'V50 (Experimental): ' + str(v_half_act_exp) + ' mV')
+        axs.legend()
+        plt.show()
+
+    def plot_rec(self, param_values):
+        fig, axs = plt.subplots(1, figsize=(10,10))
+        tau_fast_exp = self.wild_data['tau_fast'] * float(self.protocols['tau_fast']) / 100
+        tau_slow_exp = self.wild_data['tau_slow']  * float(self.protocols['tau_slow']) / 100
+        percent_fast_exp = self.wild_data['percent_fast'] * float(self.protocols['percent_fast']) / 100
+
+        eh.change_params(param_values, scaled=False, is_HMM=True, sim_obj=self.act_obj)
+        rec_inact_tau_vec, recov_curves, times = self.recov_obj.genRecInactTau()
+        times = np.array(times)
+        data_pts = np.array(recov_curves[0])
+        even_xs = np.linspace(times[0], times[len(times)-1], 10000)
+        y0, plateau, percent_fast, k_fast, k_slow = cf.calc_recov_obj(self.channel_name_HMM, self.recov_obj)
+        curve = cf.two_phase(even_xs, y0, plateau, percent_fast, k_fast, k_slow)
+        # red curve: using the optimization fitted params to plot on the given x values
+        axs.plot(np.log(even_xs), curve, c='red',label="Recovery Fit")
+        # curve_exp = cf.two_phase(even_xs, y0, plateau, percent_fast_exp, 1/tau_fast_exp, 1/tau_slow_exp)
+        curve_exp = cf.two_phase(even_xs, 0, 1, percent_fast_exp, 1/tau_fast_exp, 1/tau_slow_exp)
+        print(y0)
+        print(plateau)
+        print(percent_fast_exp)
+        print(tau_fast_exp)
+        print(tau_slow_exp)
+        # black curve: plotted from given data
+        axs.plot(np.log(even_xs), curve_exp, c='black')
+        # red dots: plot the given data points
+        print(np.log(times))
+        print(data_pts)
+        axs.scatter(np.log(times), data_pts, label='Optimized Recovery', color='red')
+
+        axs.set_xlabel('Log(Time)')
+        axs.set_ylabel('Fractional Recovery')
+        axs.set_title("Recovery from Inactivation")
+        axs.text(4, 0.9, 'Tau Fast (Optimized): ' + str(1/k_fast))
+        axs.text(4, 0.85, 'Tau Fast (Experimental): ' + str(tau_fast_exp))
+        axs.text(4, 0.8, 'Tau Slow (Optimized): ' + str(1/k_slow))
+        axs.text(4, 0.75, 'Tau Slow (Experimental): ' + str(tau_slow_exp))
+        axs.text(4, 0.7, 'Percent Fast (Optimized): ' + str(percent_fast))
+        axs.text(4, 0.65, 'Percent Fast (Experimental): ' + str(percent_fast_exp))
+        axs.legend()

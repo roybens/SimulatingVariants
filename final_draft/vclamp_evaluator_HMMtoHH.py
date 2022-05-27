@@ -8,7 +8,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import curve_fitting as cf
 import eval_helper as eh
-import scoring_functions_relative as sf  # Change this to scoring_functions_relative or scoring_functions_exp to change scoring functions
+import \
+    scoring_functions_relative as sf  # Change this to scoring_functions_relative or scoring_functions_exp to change scoring functions
 from generate_simulation import *
 
 

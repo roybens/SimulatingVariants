@@ -163,6 +163,9 @@ class Activation_general(General_protocol):
         Args:
             v_cl (int): voltage to run
         """
+        self.t_vec = []
+        self.v_vec_t = []
+        self.i_vec = []
         curr_tr = 0  # initialization of peak current
         h.finitialize(self.v_init)  # calling the INITIAL block of the mechanism inserted in the section.
         pre_i = 0  # initialization of variables used to commute the peak current

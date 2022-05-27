@@ -1,16 +1,14 @@
 import os
-
-import generalized_genSim_shorten_time_HMM as ggsdHMM
-import generalized_genSim_shorten_time as ggsd
 import matplotlib.backends.backend_pdf
 import eval_helper as eh
 import matplotlib.pyplot as plt
 import curve_fitting as cf
 import numpy as np
 from scipy import optimize
-
-def set_param(param, is_HMM):
-    eh.change_params(param, scaled=False, is_HMM=is_HMM)
+import generate_simulation
+module_name = generate_simulation
+def set_param(param, is_HMM,sim_obj):
+    eh.change_params(param, scaled=False, is_HMM=is_HMM,sim_obj=sim_obj)
 def read_peak_amp_dict():
     return {"T400RAdult": 0.645, "I1640NAdult": 0.24, "m1770LAdult": 0.4314, "neoWT": 0.748, "T400RAneo": 0.932, "I1640NNeo": 0.28, "m1770LNeo": 1, "K1260E" : 1}
         
@@ -51,24 +49,11 @@ def find_persistent_current(is_HMM):
     """
     returns the persistent current, gieven that the NEURON model already has parameters properly set
     """
-    if is_HMM:
-        module_name = ggsdHMM
-    else:
-        module_name = ggsd
+
         
     ramp = module_name.Ramp()
     ramp.genRamp()
     return ramp.persistentCurrent()
-
-def find_peak_amp(channel_name, is_HMM):
-    if is_HMM:
-        module_name = ggsdHMM
-    else:
-        module_name = ggsd
-        
-    act = module_name.Activation(channel_name = channel_name)
-    act.clamp_at_volt(0)
-    return act.ipeak_vec[0]
 
 def plotActivation_VGnorm(act_obj):
     """
@@ -121,16 +106,19 @@ def plotActivation_TimeVRelation(act_obj):
     # save as PGN file
     plt.savefig(os.path.join(os.path.split(__file__)[0], 'Plots_Folder/HMM_Activation Time Voltage Relation'))
 
-def plotActivation_TCurrDensityRelation(act_obj,xlim = None):
-    plt.figure()
+def plotActivation_TCurrDensityRelation(act_obj,plt_in = None,color = 'black',xlim = None):
+    if plt_in is None:
+        plt.figure()
+    else:
+        plt = plt_in
     plt.xlabel('Time $(ms)$')
     plt.ylabel('Current density $(mA/cm^2)$')
     plt.title('Activation Time/Current density relation')
     curr = np.array(act_obj.all_is)
-    [plt.plot(act_obj.t_vec[1:], curr[i], c='black') for i in np.arange(len(curr))]
+    [plt.plot(act_obj.t_vec[1:], curr[i], c=color) for i in np.arange(len(curr))]
     if xlim is not None:
         for i in np.arange(len(curr)):
-            plt.plot(act_obj.t_vec[1:], curr[i], c='black')
+            plt.plot(act_obj.t_vec[1:], curr[i], c=color)
             plt.xlim(xlim)
 
     # save as PGN file
@@ -177,7 +165,7 @@ def plotActivation_Tau_0mV_plt(act_obj, plt, color, upper=700):
     def one_phase(x, y0, plateau, k):
         return y0 + (plateau - y0) * (1 - np.exp(-k * x))
 
-    act_obj.clamp_at_volt(0)
+    act_obj.clamp(0)
     starting_index = list(act_obj.i_vec).index(act_obj.find_ipeaks_with_index()[1])
 
     t_vecc = act_obj.t_vec[starting_index:upper]
@@ -207,32 +195,25 @@ def plotActivation_Tau_0mV_plt(act_obj, plt, color, upper=700):
 
 
 def plot_act(wild_params, wild_channel_name, wild_is_HMM, mut_params, mut_channel_name, mut_is_HMM, outfile, mutant_name):
-    if wild_is_HMM:
-        module_name_wild = ggsdHMM
-    else:
-        module_name_wild = ggsd
-    if mut_is_HMM:
-        module_name_mut = ggsdHMM
-    else:
-        module_name_mut = ggsd
     
     pdf = matplotlib.backends.backend_pdf.PdfPages(outfile)
     figures = []
-    
     ############################################################################################################
     figures.append(plt.figure())
     plt.xlabel('Voltage $(mV)$')
     plt.ylabel('Normalized conductance')
     plt.title(f'Activation: {mutant_name}')
+    wt_act = module_name.Activation_general(channel_name=wild_channel_name)
     if wild_params is not None:
-        set_param(wild_params, wild_is_HMM)
-    wt_act = module_name_wild.Activation(channel_name=wild_channel_name)
+        set_param(wild_params, wild_is_HMM, sim_obj=wt_act )
+
     wt_act.genActivation()
     # (formatted_v_half, formatted_gv_slope)
     act_v_half_wt, act_slope_wt = plotActivation_VGnorm_plt(wt_act, plt, 'black')
 
-    set_param(mut_params, mut_is_HMM)
-    mut_act = module_name_mut.Activation(channel_name=mut_channel_name)
+
+    mut_act = module_name.Activation_general(channel_name=mut_channel_name)
+    set_param(mut_params, mut_is_HMM, sim_obj=mut_act)
     mut_act.genActivation()
     act_v_half_mut, act_slope_mut = plotActivation_VGnorm_plt(mut_act, plt, 'red')
 
@@ -241,73 +222,26 @@ def plot_act(wild_params, wild_channel_name, wild_is_HMM, mut_params, mut_channe
     plt.xlabel('Voltage $(mV)$')
     plt.ylabel('Peak Current $(pA)$')
     plt.title(f'Activation: {mutant_name} IV Curve')
-    if wild_params is not None:
-        set_param(wild_params, wild_is_HMM)
-    wt_act = module_name_wild.Activation(channel_name=wild_channel_name)
-    wt_act.genActivation()
     plotActivation_IVCurve_plt(wt_act, plt, 'black')
-
-    set_param(mut_params, mut_is_HMM)
-    mut_act = module_name_mut.Activation(channel_name=mut_channel_name)
-    mut_act.genActivation()
     plotActivation_IVCurve_plt(mut_act, plt, 'red')
 
-    ############################################################################################################
-    # figures.append(plt.figure())
-    # plt.xlabel('Time $(ms)$')
-    # plt.ylabel('Voltage $(mV)$')
-    # plt.title('Activation Time/Voltage relation')
 
-    # set_param(param_values_wt, is_HMM)
-    # wt_act = module_name.Activation(channel_name = channel_name)
-    # wt_act.genActivation()
-    # wt_act.plotActivation_TimeVRelation_plt(plt, 'black')
-
-    # set_param(new_params, is_HMM)
-    # mut_act = module_name.Activation(channel_name = channel_name)
-    # mut_act.genActivation()
-    # mut_act.plotActivation_TimeVRelation_plt(plt, 'red')
-
-    ############################################################################################################
     figures.append(plt.figure())
     plt.xlabel('Time $(ms)$')
     plt.ylabel('I $(mA/cm^2)$')
     plt.title(f'Activation waveform at 0mV: {mutant_name}')
-    if wild_params is not None:
-        set_param(wild_params, wild_is_HMM)
-    wt_act = module_name_wild.Activation(channel_name=wild_channel_name)
-    wt_act.genActivation()
-    plotActivation_TCurrDensityRelation_plt(wt_act, plt, 'black')
-
-    set_param(mut_params, mut_is_HMM)
-    mut_act = module_name_mut.Activation(channel_name=mut_channel_name)
-    mut_act.genActivation()
-    plotActivation_TCurrDensityRelation_plt(mut_act, plt, 'red')
+    plotActivation_TCurrDensityRelation(wt_act, plt_in = plt, color = 'black')
+    plotActivation_TCurrDensityRelation(mut_act, plt_in = plt, color = 'red')
     
     
  ############################################################################################################
-    if wild_params is not None:
-        set_param(wild_params, wild_is_HMM)
-    wt_peak_amp = find_peak_amp(wild_channel_name, wild_is_HMM)
-
-    set_param(mut_params, mut_is_HMM)
-    mut_peak_amp = find_peak_amp(mut_channel_name, mut_is_HMM)
-
     figures.append(plt.figure())
     plt.xlabel('Time $(ms)$')
     plt.ylabel('Current density $(mA/cm^2)$')
-    if wild_params is not None:
-        set_param(wild_params, wild_is_HMM)
-    wt_act = module_name_wild.Activation(channel_name= wild_channel_name)
-    wt_act.genActivation()
     wt_tau = plotActivation_Tau_0mV_plt(wt_act, plt, 'black')
     #wt_per_cur = find_persistent_current(wild_is_HMM)
-
-    set_param(mut_params, mut_is_HMM)
-    mut_inact = module_name_mut.Activation(channel_name=mut_channel_name)
-    mut_inact.genActivation()
     mut_tau = plotActivation_Tau_0mV_plt(mut_act, plt, 'red')
-############################################################################################################    
+############################################################################################################
     for fig in figures: ## will open an empty extra figure :(
         pdf.savefig( fig )
     pdf.close()
@@ -380,60 +314,23 @@ def plotInactivation_TCurrDensityRelation(inact_obj,plt_in = None,color = 'black
 #    [plt.plot(inact_obj.t_vec[-800:-700], inact_obj.all_is[i][-800:-700], c=color) for i in np.arange(inact_obj.L)]
 
 
-
-
-
-def fit_exp(inact_obj, x, a, b, c):
-    """
-    IFit(t) = A * exp (-t/τ) + C
-    """
-    return a * np.exp(-x / b) + c
-
-def find_tau0_inact(inact_obj, raw_data):
-    # take peak curr and onwards
-    min_val, mindex = min((val, idx) for (idx, val) in enumerate(raw_data[:int(0.7 * len(raw_data))]))
-    padding = 15  # after peak
-    data = raw_data[mindex:mindex + padding]
-    ts = [0.1 * i for i in range(len(data))]  # make x values which match sample times
-
-    # calc tau and fit exp
-    popt, pcov = optimize.curve_fit(fit_exp, ts, data)  # fit exponential curve
-    perr = np.sqrt(np.diag(pcov))
-    # print('in ' + str(all_tau_sweeps[i]) + ' the error was ' + str(perr))
-    xs = np.linspace(ts[0], ts[len(ts) - 1], 1000)  # create uniform x values to graph curve
-    ys = fit_exp(xs, *popt)  # get y values
-    vmax = max(ys) - min(ys)  # get diff of max and min voltage
-    vt = min(ys) + .37 * vmax  # get vmax*1/e
-    # tau = (np.log([(vt - popt[2]) / popt[0]]) / (-popt[1]))[0]  # find time at which curve = vt
-    # Roy said tau should just be the parameter b from fit_exp
-    tau = popt[1]
-    return ts, data, xs, ys, tau
-
-
 def plot_inact(wild_params, wild_channel_name, wild_is_HMM, mut_params, mut_channel_name, mut_is_HMM, outfile, mutant_name):
     pdf = matplotlib.backends.backend_pdf.PdfPages(outfile)
     figures = []
-    
-    if wild_is_HMM:
-        module_name_wild = ggsdHMM
-    else:
-        module_name_wild = ggsd
-    if mut_is_HMM:
-        module_name_mut = ggsdHMM
-    else:
-        module_name_mut = ggsd
+
     figures.append(plt.figure())
     plt.xlabel('Voltage $(mV)$')
     plt.ylabel('Normalized current')
     plt.title(f'Inactivation: {mutant_name}')
     if wild_params is not None:
         set_param(wild_params, wild_is_HMM)
-    wt_inact = module_name_wild.Inactivation(channel_name=wild_channel_name)
+    wt_inact = module_name.Inactivation_general(channel_name=wild_channel_name)
     wt_inact.genInactivation()
     inact_v_half_wt, inact_slope_wt = plotInactivation_VInormRelation_plt(wt_inact, plt, 'black')
 
-    set_param(mut_params, mut_is_HMM)
-    mut_inact = module_name_mut.Inactivation(channel_name=mut_channel_name)
+
+    mut_inact = module_name.Inactivation_general(channel_name=mut_channel_name)
+    set_param(mut_params, mut_is_HMM, mut_inact)
     mut_inact.genInactivation()
     inact_v_half_mut, inact_slope_mut = plotInactivation_VInormRelation_plt(mut_inact, plt, 'red')
     
@@ -441,15 +338,7 @@ def plot_inact(wild_params, wild_channel_name, wild_is_HMM, mut_params, mut_chan
     plt.xlabel('Time $(ms)$')
     plt.ylabel('Voltage $(mV)$')
     plt.title(f'Inactivation: {mutant_name}')
-    if wild_params is not None:
-        set_param(wild_params, wild_is_HMM)
-    wt_inact = module_name_wild.Inactivation(channel_name=wild_channel_name)
-    wt_inact.genInactivation()
     plotInactivation_TCurrDensityRelation(wt_inact, plt, 'black')
-
-    set_param(mut_params, mut_is_HMM)
-    mut_inact = module_name_mut.Inactivation(channel_name=mut_channel_name)
-    mut_inact.genInactivation()
     plotInactivation_TCurrDensityRelation(mut_inact, plt, 'red')
 
 
