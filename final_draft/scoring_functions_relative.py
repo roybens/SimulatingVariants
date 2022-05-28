@@ -80,7 +80,7 @@ class Score_Function:
             time_to_peak_error = self.calc_ttp_err(act_obj)
             errors.append(time_to_peak_error)
         if 'tau0' in objectives:
-            tau0_error = self.calc_tau0_err(act_obj)*100
+            tau0_error = self.calc_tau0_err(act_obj)*10
             errors.append(tau0_error)
         #print(errors)
         return tuple(errors)
