@@ -30,9 +30,16 @@ def init_settings(nav12=1,
                   dend_K=1,
                   gpas_all=1):
 
-    h.dend_na12 = 0.026145/2 
-    h.dend_na16 = h.dend_na12 
-    h.dend_k = 0.004226 * soma_K
+        self.h = h  # NEURON h
+        h.load_file("runModel.hoc")
+        self.soma_ref = h.root.sec
+        self.soma = h.secname(sec=self.soma_ref)
+        self.sl = h.SectionList()
+        self.sl.wholetree(sec=self.soma_ref)
+
+        h.dend_na12 = 0.026145/2
+        h.dend_na16 = h.dend_na12
+        h.dend_k = 0.004226 * soma_K
 
 
     h.soma_na12 = 0.983955/10 
@@ -83,6 +90,10 @@ def update_mechs_props(dict_fn,mechs):
                     hoc_cmd = f'{curr_name}.{p_name}_{curr_mech} = {param_dict[p_name]}'
                     print(hoc_cmd)
                     h(hoc_cmd)
+                #in case we need to go per sec:
+                  #  for seg in curr_sec:
+                  #      hoc_cmd = f'{curr_name}.gbar_{channel}({seg.x}) *= {wt_mul}'
+                  #      print(hoc_cmd)
 
 def update_gbar(mechs,mltplr,gbar_name = 'gbar'):
     for curr_sec in sl:
@@ -165,7 +176,8 @@ def get_fi_curve(s_amp,e_amp,nruns,wt_data=None,ax1=None):
 
     
     
-def run_model(start_Vm = -72):
+def run_model(start_Vm = -72,dt = 0.025):
+    h.dt = dt
     #h.working()
     h.finitialize(start_Vm)
     timesteps = int(h.tstop/h.dt)
@@ -178,7 +190,6 @@ def run_model(start_Vm = -72):
     I['INa12'] = np.zeros(timesteps)
     stim = np.zeros(timesteps)
     t = np.zeros(timesteps)
-    
     for i in range(timesteps):
         Vm[i] = h.cell.soma[0].v
         I['Na'][i] = h.cell.soma[0](0.5).ina
@@ -188,18 +199,33 @@ def run_model(start_Vm = -72):
         stim[i] = h.st.amp 
         t[i] = i*h.dt / 1000
         h.fadvance()
+    return Vm, I ,t, stim
+
         
-    return Vm, I, t,stim
+## WT
+
 fig,ficurveax = plt.subplots(1,1)
 init_settings()
 h.working()
 mechs = ['na16']
-update_gbar(mechs,0,gbar_name = 'gbar')
+update_gbar(mechs,2,gbar_name = 'gbar')
 mechs = ['na16mut']
-WT_fn = './params/na16WT.txt'
-update_mechs_props(WT_fn,mechs)
+update_gbar(mechs,0,gbar_name = 'gbar')
+init_stim(amp=0.5)
+Vm, I, t, stim = run_model(dt = 0.1)
+plot_stim_volts_pair(Vm, 'Step Stim 500pA', file_path_to_save='./Plots/WT_500pA',times=t)
 
-update_gbar(mechs,200,gbar_name = 'gbar')
+
+
+
+#mechs = ['na16']
+#update_gbar(mechs,0,gbar_name = 'gbar')
+#mechs = ['na16mut']
+#WT_fn = './params/na16WT.txt'
+#update_mechs_props(WT_fn,mechs)
+
+
+#update_gbar(mechs,200,gbar_name = 'gbar')
 
 
 #mechs = ['na12','na12mut']
@@ -211,9 +237,10 @@ update_gbar(mechs,200,gbar_name = 'gbar')
 #explore_param(mechs,'vShift_inact',vshift_values,False)
 #mechs = ['na12','na12mut','na16','na16mut']
 #update_gbar(mechs,10000,gbar_name = 'gbar')
-init_stim(amp=0.75)
-Vm, I, t, stim = run_model()
-plot_stim_volts_pair(Vm, 'Step Stim 200pA', file_path_to_save='./Plots/WTHMM',times=t)
+#update_mechs_props(WT_fn,mechs)
+#init_stim(amp=0.75)
+#Vm, I, t, stim = run_model()
+#plot_stim_volts_pair(Vm, 'Step Stim 200pA', file_path_to_save='./Plots/WTHMM',times=t)
 #fig,ax = plt.subplots(1,1)
 #ax.plot(t,I['INa12'],'black')
 #ax.plot(t,I['Na'],'red')
