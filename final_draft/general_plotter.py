@@ -230,8 +230,8 @@ def plot_act(wild_params, wild_channel_name, wild_is_HMM, mut_params, mut_channe
     plt.xlabel('Time $(ms)$')
     plt.ylabel('I $(mA/cm^2)$')
     plt.title(f'Activation waveform at 0mV: {mutant_name}')
-    plotActivation_TCurrDensityRelation(wt_act, plt_in = plt, color = 'black')
-    plotActivation_TCurrDensityRelation(mut_act, plt_in = plt, color = 'red')
+    plotActivation_TCurrDensityRelation(wt_act, plt_in = plt, color = 'black',xlim=[4.9,10])
+    plotActivation_TCurrDensityRelation(mut_act, plt_in = plt, color = 'red',xlim=[4.9,10])
     
     
  ############################################################################################################
@@ -301,7 +301,7 @@ def plotInactivation_TCurrDensityRelation(inact_obj,plt_in = None,color = 'black
     plt.ylabel('Current density $(mA/cm^2)$')
     plt.title('Inactivation Time/Current density relation')
     inds_arr = [i for i in range(len(inact_obj.t_vec)) if
-                (inact_obj.t_vec[i] > (inact_obj.st_step_time -padding)) & (inact_obj.t_vec[i] < (inact_obj.st_step_time +padding))]
+                (inact_obj.t_vec[i] > (inact_obj.st_step_time -padding/2)) & (inact_obj.t_vec[i] < (inact_obj.st_step_time +padding*2))]
     inds_arr = np.array(inds_arr[:-1])
     time_arr =  np.array(inact_obj.t_vec)[inds_arr.astype(int)]
 
