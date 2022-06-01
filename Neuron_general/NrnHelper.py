@@ -7,11 +7,11 @@ from neuron import h
 
 
 
-def update_mechs_props(sl,dict_fn,mechs):
+def update_mech_from_dict(mdl,dict_fn,mechs):
     with open(dict_fn) as f:
         data = f.read()
     param_dict = json.loads(data)
-    for curr_sec in sl:
+    for curr_sec in mdl.sl:
         for curr_mech in mechs:
             if h.ismembrane(curr_mech, sec=curr_sec):
                 curr_name = h.secname(sec=curr_sec)
@@ -24,8 +24,8 @@ def update_mechs_props(sl,dict_fn,mechs):
                   #      hoc_cmd = f'{curr_name}.gbar_{channel}({seg.x}) *= {wt_mul}'
                   #      print(hoc_cmd)
 
-def update_gbar(sl,mechs,mltplr,gbar_name = 'gbar'):
-    for curr_sec in sl:
+def update_mod_param(mdl,mechs,mltplr,gbar_name = 'gbar'):
+    for curr_sec in mdl.sl:
         curr_name = h.secname(sec=curr_sec)
         for curr_mech in mechs:
             if h.ismembrane(curr_mech, sec=curr_sec):
@@ -36,16 +36,16 @@ def update_gbar(sl,mechs,mltplr,gbar_name = 'gbar'):
                     h(hoc_cmd)
                     assigned_value = h(f'{curr_name}.{gbar_name}_{curr_mech}({seg.x})')
                     print(f'par_value before{par_value} and after {assigned_value}')
-def multiply_param(sl,mechs,p_name,multiplier):
-    for curr_sec in sl:
+def multiply_param(mdl,mechs,p_name,multiplier):
+    for curr_sec in mdl.sl:
         for curr_mech in mechs:
             if h.ismembrane(curr_mech, sec=curr_sec):
                 curr_name = h.secname(sec=curr_sec)
                 hoc_cmd = f'{curr_name}.{p_name}_{curr_mech} *= {multiplier}'
                 print(hoc_cmd)
                 h(hoc_cmd)
-def offset_param(sl,mechs,p_name,offset):
-    for curr_sec in sl:
+def offset_param(mdl,mechs,p_name,offset):
+    for curr_sec in mdl.sl:
         for curr_mech in mechs:
             if h.ismembrane(curr_mech, sec=curr_sec):
                 curr_name = h.secname(sec=curr_sec)
@@ -53,7 +53,7 @@ def offset_param(sl,mechs,p_name,offset):
                 print(hoc_cmd)
                 h(hoc_cmd)
 #### Emily's code
-def update_channel(self, channel_name, channel, dict_fn, wt_mul, mut_mul):
+def update_channel(mdl, channel_name, channel, dict_fn, wt_mul, mut_mul):
     """
     channel_name: str e.g 'na16mut'
     channel: str e.g. 'na16'
@@ -61,7 +61,7 @@ def update_channel(self, channel_name, channel, dict_fn, wt_mul, mut_mul):
     with open(dict_fn) as f:
         data = f.read()
     param_dict = json.loads(data)
-    for curr_sec in self.sl:
+    for curr_sec in mdl.sl:
         if h.ismembrane(channel_name, sec=curr_sec):
             curr_name = h.secname(sec=curr_sec)
             for seg in curr_sec:
@@ -80,10 +80,10 @@ def update_channel(self, channel_name, channel, dict_fn, wt_mul, mut_mul):
                 h(hoc_cmd)
 
 
-def update_K(self, channel_name, gbar_name, mut_mul):
+def update_K(mdl, channel_name, gbar_name, mut_mul):
     k_name = f'{gbar_name}_{channel_name}'
     prev = []
-    for curr_sec in self.sl:
+    for curr_sec in mdl.sl:
         if h.ismembrane(channel_name, sec=curr_sec):
             curr_name = h.secname(sec=curr_sec)
             for seg in curr_sec:
@@ -96,10 +96,10 @@ def update_K(self, channel_name, gbar_name, mut_mul):
     return prev
 
 
-def reverse_update_K(self, channel_name, gbar_name, prev):
+def reverse_update_K(mdl, channel_name, gbar_name, prev):
     k_name = f'{gbar_name}_{channel_name}'
     index = 0
-    for curr_sec in self.sl:
+    for curr_sec in mdl.sl:
         if h.ismembrane(channel_name, sec=curr_sec):
             curr_name = h.secname(sec=curr_sec)
             for seg in curr_sec:
@@ -107,13 +107,13 @@ def reverse_update_K(self, channel_name, gbar_name, prev):
                 h(hoc_cmd)
                 index += 1
 
-def plot_stim(self, amp,fn,clr='blue'):
-    self.init_stim(amp=amp)
-    Vm, I, t, stim = self.run_model()
+def plot_stim(mdl, amp,fn,clr='blue'):
+    mdl.init_stim(amp=amp)
+    Vm, I, t, stim = mdl.run_model()
     plot_stim_volts_pair(Vm, f'Step Stim {amp}pA', file_path_to_save=f'./Plots/V1/{fn}_{amp}pA',times=t,color_str=clr)
     return I
 
-def plot_all_FIs(self, fis, extra_cond = False):
+def plot_all_FIs(mdl, fis, extra_cond = False):
     for i in range(len(fis)):
         data = fis[i]
         # save multiple figures in one pdf file
