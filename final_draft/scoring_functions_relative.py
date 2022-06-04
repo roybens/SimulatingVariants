@@ -36,7 +36,7 @@ class Score_Function:
         # self.percent_fast_wild = wild_data['percent_fast']
         # self.udb20_wild = wild_data['udb20']
         self.tau0_wild = wild_data['tau0']
-        self.prst_act_wild = wild_data['persistent']
+        self.prst_act_wild = wild_data['prst_act']
         # self.ramp_wild = wild_data['ramp']
         #
         self.channel_name = channel_name
@@ -84,7 +84,7 @@ class Score_Function:
             tau0_error = self.calc_tau0_err(act_obj)*10
             errors.append(tau0_error)
         if 'prst_act' in objectives:
-            prst_act_error = self.calc_prst_act(act_obj)*10
+            prst_act_error = self.calc_prst_act(act_obj)*100
             errors.append(prst_act_error)
         #print(errors)
         return tuple(errors)

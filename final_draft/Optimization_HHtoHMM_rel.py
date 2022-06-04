@@ -48,7 +48,7 @@ hof = tools.ParetoFront()
 algo._update_history_and_hof = my_update
 algo._record_stats = my_record_stats
 pool = multiprocessing.Pool(processes=64)
-deap_opt = bpop.optimisations.DEAPOptimisation(evaluator, offspring_size=10, hof = hof, map_function=pool.map)  # CHANGE offspring_size
+deap_opt = bpop.optimisations.DEAPOptimisation(evaluator, offspring_size=500, hof = hof, map_function=pool.map)  # CHANGE offspring_size
 
 cp_file = './cp.pkl'
 
