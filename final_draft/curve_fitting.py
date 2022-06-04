@@ -118,5 +118,5 @@ def calc_act_prst_curr(act_obj, v_trace = 0,is_HMM=False):
         prst_curr,t_mask = act_obj.get_perst_curr(v_trace)
         return np.mean(prst_curr)
     except Exception as e:
-        print(e)
+        print(f'at calc_act_prst_curr: {e}')
         return 1000

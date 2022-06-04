@@ -6,7 +6,7 @@ import time
 from deap import tools
 import multiprocessing
 
-evaluator = vcl_ev.Vclamp_evaluator_HMM('./csv_files/params_na12mut8st_mod_med.csv', 'Basis', 'na12mut8st', 'na16', objective_names=['v_half_act', 'gv_slope', 'v_half_ssi', 'ssi_slope', 'tau0', 'ttp', 'peak_current']) # Add time-to-peak, peak-current, tau0
+evaluator = vcl_ev.Vclamp_evaluator_HMM('./csv_files/params_na12mut8st_mod_med.csv', 'Basis', 'na12mut8st', 'na16', objective_names=['v_half_act', 'gv_slope', 'v_half_ssi', 'ssi_slope', 'tau0', 'ttp', 'peak_current','prst_act']) # Add time-to-peak, peak-current, tau0
 
 print(evaluator.wild_data)
 gen_counter = 0
@@ -48,7 +48,7 @@ hof = tools.ParetoFront()
 algo._update_history_and_hof = my_update
 algo._record_stats = my_record_stats
 pool = multiprocessing.Pool(processes=64)
-deap_opt = bpop.optimisations.DEAPOptimisation(evaluator, offspring_size=500, hof = hof, map_function=pool.map)  # CHANGE offspring_size
+deap_opt = bpop.optimisations.DEAPOptimisation(evaluator, offspring_size=10, hof = hof, map_function=pool.map)  # CHANGE offspring_size
 
 cp_file = './cp.pkl'
 

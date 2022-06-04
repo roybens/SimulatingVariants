@@ -24,7 +24,7 @@ class Score_Function:
         # self.udb20_diff = diff_dict['udb20']
         self.tau0_diff = diff_dict['tau0']
         # self.ramp_diff = diff_dict['ramp']
-        # self.persistent_diff = diff_dict['persistent']
+        #self.persistent_diff = diff_dict['persistent']
         self.peak_amp_wild = wild_data['peak_amp']
         self.time_to_peak_wild = wild_data['time_to_peak'] 
         self.v_half_act_wild = wild_data['v_half_act']
@@ -36,8 +36,9 @@ class Score_Function:
         # self.percent_fast_wild = wild_data['percent_fast']
         # self.udb20_wild = wild_data['udb20']
         self.tau0_wild = wild_data['tau0']
+        self.prst_act_wild = wild_data['persistent']
         # self.ramp_wild = wild_data['ramp']
-        # self.persistent_wild = wild_data['persistent']
+        #
         self.channel_name = channel_name
 
 
@@ -82,6 +83,9 @@ class Score_Function:
         if 'tau0' in objectives:
             tau0_error = self.calc_tau0_err(act_obj)*10
             errors.append(tau0_error)
+        if 'prst_act' in objectives:
+            prst_act_error = self.calc_prst_act(act_obj)*10
+            errors.append(prst_act_error)
         #print(errors)
         return tuple(errors)
         
@@ -179,7 +183,13 @@ class Score_Function:
             return time_to_peak_error
         except:
             return 1000
-
+    def calc_prst_act(self, act_obj):
+        try:
+            prst_act = cf.calc_act_prst_curr(act_obj)
+            prst_act_error = (prst_act - self.prst_act_wild) ** 2
+            return prst_act_error
+        except:
+            return 1000
 
     #def ramp(self, percent_wild):
 

@@ -92,6 +92,7 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         peak_amp = act_obj.find_peak_amp([14, 33])
         time_to_peak = act_obj.find_time_to_peak([14, 33])
         gv_slope, v_half_act, top, bottom = cf.calc_act_obj(act_obj)
+        prst_act = cf.calc_act_prst_curr(act_obj)
         inact_obj = Inactivation_general(channel_name=self.channel_name_HH)
         ssi_slope, v_half_inact, top, bottom = cf.calc_inact_obj(inact_obj)
         wild_data['v_half_act'] = v_half_act
@@ -101,6 +102,7 @@ class Vclamp_evaluator_HMM(bpop.evaluators.Evaluator):
         wild_data['tau0'] = tau0
         wild_data['peak_amp'] = peak_amp
         wild_data['time_to_peak'] = time_to_peak
+        wild_data['prst_act'] = prst_act
         self.wild_data = wild_data
         #print(wild_data)
         return wild_data
