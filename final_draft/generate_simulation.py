@@ -36,6 +36,7 @@ class General_protocol:
         self.v_vec = []
         self.v_vec_t = []  # vector for voltage as function of time
         self.i_vec = []  # vector for current
+
     def get_h(self):
         return self.h
     def update_clamp_time_step(self):
@@ -107,8 +108,10 @@ class General_protocol:
             curr_tr = curr_min
         curr_tr_index = list(i_slice).index(curr_tr)
         return curr_tr_index, curr_tr
-
-
+    ##TODO where we have
+    def get_time_inds(self,st_time,end_time):
+        t_mask = np.where(np.logical_and(self.t_vec >= st_time, self.t_vec <= end_time))
+        return t_mask
 class Activation_general(General_protocol):
     def __init__(self, soma_diam=50, soma_L=63.66198, soma_nseg=1, soma_cm=1, soma_Ra=70,
                  channel_name='na12', soma_ena=55, h_celsius=33, v_init=-120, h_dt=0.025,
@@ -136,7 +139,8 @@ class Activation_general(General_protocol):
         self.f3cl.amp[1] = v_cl  # mV
         self.f3cl.dur[2] = f3cl_dur2  # ms
         self.f3cl.amp[2] = f3cl_amp2  # mV
-
+        self.st_step_time = self.f3cl.dur[0]
+        self.end_step_time = self.f3cl.dur[0] + self.f3cl.dur[1]
         # vectors for data handling
         self.t_vec = []  # vector for time steps (h.dt)
         self.v_vec = np.arange(st_cl, end_cl, step)  # vector for voltage
@@ -294,7 +298,12 @@ class Activation_general(General_protocol):
             return self.ttp_vec
         else:
             return self.ttp_vec[ranges[0]:ranges[1]]
-
+    def get_perst_curr(self, v_trace = 0):
+        v_ind = np.where(self.v_vec == v_trace)[0][0]
+        per_len = int(0.1*(self.end_step_time - self.st_step_time))
+        t_mask = self.get_time_inds(self.end_step_time-per_len,0.99*self.end_step_time)
+        per_curr = self.all_is[v_ind][t_mask]
+        return per_curr,t_mask
 
 
     
@@ -336,7 +345,7 @@ class Inactivation_general(General_protocol):
         self.inorm_vec = []  # vector for normalized current
         self.all_is = []  # all currents
         self.all_v_vec_t = []  # all voltages
-
+        self.ttp_vec = []
         self.L = len(self.v_vec)
     def clamp(self, v_cl):
         """ Runs a trace and calculates peak currents.
@@ -367,9 +376,9 @@ class Inactivation_general(General_protocol):
                     t_peak = h.t
 
             h.fadvance()
-
         # updates the vectors at the end of the run
         self.ipeak_vec.append(peak_curr)
+        self.ttp_vec.append(t_peak)
         
     def genInactivation(self):
         #same
@@ -392,6 +401,23 @@ class Inactivation_general(General_protocol):
 
         return self.inorm_vec, self.v_vec, self.all_is
 
+    def find_peak_amp(self, ranges=None):
+        if not self.ipeak_vec:
+            #print('regen activation in peak_amp')
+            self.genInactivation()
+        if ranges is None:
+            return self.ipeak_vec
+        else:
+            return self.ipeak_vec[ranges[0]:ranges[1]]
+
+    def find_time_to_peak(self, ranges=None):
+        if not self.ttp_vec:
+            #print('regen activation in ttp')
+            self.genInactivation()
+        if ranges is None:
+            return self.ttp_vec
+        else:
+            return self.ttp_vec[ranges[0]:ranges[1]]
         
 class RFI_general(General_protocol):
     def __init__(self, soma_diam=50, soma_L=63.66198, soma_nseg=1, soma_cm=1, soma_Ra=70,

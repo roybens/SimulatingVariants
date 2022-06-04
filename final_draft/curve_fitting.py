@@ -111,3 +111,12 @@ def calc_time_to_peak_obj(act_obj, is_HMM=False):
     except:
   #      print('Couldn\'t generate time-to-peak data')
         return 1000
+# Technically not fitting any curves here, but Michael is placing this here for consistency until a better
+# place is found.
+def calc_act_prst_curr(act_obj, v_trace = 0,is_HMM=False):
+    try:
+        prst_curr,t_mask = act_obj.get_perst_curr(v_trace)
+        return np.mean(prst_curr)
+    except Exception as e:
+        print(e)
+        return 1000
