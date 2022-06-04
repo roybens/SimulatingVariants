@@ -79,12 +79,12 @@ class Score_Function:
             errors.append(peak_amp_errors)
         if 'ttp' in objectives:
             time_to_peak_error = self.calc_ttp_err(act_obj)
-            errors.append(time_to_peak_error)
+            errors.append(time_to_peak_error)*10
         if 'tau0' in objectives:
-            tau0_error = self.calc_tau0_err(act_obj)*10
+            tau0_error = self.calc_tau0_err(act_obj)*100
             errors.append(tau0_error)
         if 'prst_act' in objectives:
-            prst_act_error = self.calc_prst_act(act_obj)*100
+            prst_act_error = self.calc_prst_act(act_obj)*1000000
             errors.append(prst_act_error)
         #print(errors)
         return tuple(errors)
