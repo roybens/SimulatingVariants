@@ -53,7 +53,7 @@ deap_opt = bpop.optimisations.DEAPOptimisation(evaluator, offspring_size=500, ho
 cp_file = './cp.pkl'
 
 start_time = time.time()
-pop, hof, log, hst = deap_opt.run(max_ngen=500, cp_filename=cp_file)  # CHANGE max_ngen
+pop, hof, log, hst = deap_opt.run(max_ngen=500,continue_cp = True, cp_filename=cp_file)  # CHANGE max_ngen
 end_time = time.time()
 print(end_time - start_time)
 
