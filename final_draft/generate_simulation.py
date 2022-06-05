@@ -281,7 +281,7 @@ class Activation_general(General_protocol):
             fitted_i = one_phase(self.t_vec[starting_index:upper], popt[0], popt[1], popt[2])
         return tau
 
-    def find_peak_amp(self, ranges=None):
+    def find_peak_amp(self, ranges=[14, 33]):
         if not self.ipeak_vec:
             #print('regen activation in peak_amp')
             self.genActivation()
@@ -290,7 +290,7 @@ class Activation_general(General_protocol):
         else:
             return self.ipeak_vec[ranges[0]:ranges[1]]
 
-    def find_time_to_peak(self, ranges=None):
+    def find_time_to_peak(self, ranges=[14, 33]):
         if not self.ttp_vec:
             #print('regen activation in ttp')
             self.genActivation()
